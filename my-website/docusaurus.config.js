@@ -107,7 +107,7 @@ const config = {
               },
               {
                 label: 'Notion',
-                href: 'https://www.notion.so/f4609718f0114ce1a3ab000ada0d21e0',
+                href: 'https://www.notion.so',
               },
             ],
           },
