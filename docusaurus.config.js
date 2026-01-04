@@ -21,7 +21,7 @@ const config = {
 
   // Set the production url of your site here
   url: 'https://rstGlitcher.github.io',
-  baseUrl: '/playbook-tldr/',
+  baseUrl: '/Playbook/',
   organizationName: 'rstGlitcher',
   projectName: 'glitchtldr',
   onBrokenLinks: 'throw',
