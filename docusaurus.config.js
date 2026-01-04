@@ -21,9 +21,9 @@ const config = {
 
   // Set the production url of your site here
   url: 'https://rstGlitcher.github.io',
-  baseUrl: '/stavels-mbti/',
+  baseUrl: '/playbook-tldr/',
   organizationName: 'rstGlitcher',
-  projectName: 'stavels-mbti',
+  projectName: 'glitchtldr',
   onBrokenLinks: 'throw',
 
   i18n: {
