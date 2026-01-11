@@ -1,0 +1,102 @@
+---
+title: "Text"
+---
+
+Notepad tool which is commonly used. There are alternatives which can be used instead.
+
+VIM is a highly configurable text editor that is an improved version of the classic Unix text editor Vi.
+It is designed for efficient text editing and is often used in a command-line environment.
+VIM has a steep learning curve but offers powerful features for editing code and text.
+
+- VIM (navigation short-cuts below)
+- Nano
+- Sublime Text
+- Atom
+- Notepad++
+
+---
+
+```bash
+vim filename.txt
+```
+
+#### Starting & Exiting
+
+| Vim Command | Purpose               |
+|--------------|-----------------------|
+| vim _____    | open file             |
+| :q           | quit / close current  |
+| :q!          | quit don't save       |
+| :w           | save changes          |
+| :wq / ZZ     | save & quit           |
+
+---
+
+#### Editing
+
+| Vim Command   | Purpose                   |
+|---------------|---------------------------|
+| i             | insert before cursor      |
+| a             | insert after cursor       |
+| oO            | new line below / above    |
+| x             | delete under cursor       |
+| dd            | delete current line       |
+| yy            | copy current line         |
+| pp            | paste before / after      |
+| ^             | beginning of current line |
+| $             | end of current line       |
+| r             | replace single character  |
+| R             | overtype mode             |
+| .-            | repeat previous command   |
+| /searchString | search for                |
+| ?searchString | reverse search            |
+
+---
+
+#### Navigation
+
+| Vim Command    | Purpose                   |
+|-----------------|---------------------------|
+| hjkl            | left, down, up, right     |
+| gg              | move to beginning file    |
+| G               | move to end of file       |
+| w b             | fwd / bckwd by words      |
+| 0               | beginning of current line |
+| $               | end of current line       |
+| ctrl f / ctrl b | scroll fwd / bckwd        |
+
+---
+
+#### Search & Replace
+
+| Vim Command              | Purpose                 |
+|---------------------------|-------------------------|
+| /pattern                  | search pattern          |
+| n                         | move to next search     |
+| N                         | move to previous search |
+| :s/pattern/replacement/g  | line/                   |
+| :%s/pattern/replacement/g | file -- replace         |
+
+
+---
+
+#### Undo & Redo & Cut & Copy
+
+| Vim Command    | Purpose      |
+|----------------|--------------|
+| u              | undo         |
+| ctrl r         | redo on undo |
+| x              | cut          |
+| y              | copy         |
+| p              | paste        |
+
+---
+
+#### Other
+
+| Vim Command    | Purpose    |
+|----------------|------------|
+| :help          | open help  |
+| :set number    | display    |
+| :set nonumber  | undo       |
+| :w filename    | undo       |

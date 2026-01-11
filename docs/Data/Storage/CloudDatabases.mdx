@@ -1,0 +1,54 @@
+---
+title: "Cloud-Based Databases"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+<details>
+<summary>Local vs Managed Databases</summary>
+
+Why?
+
+| Local | Managed/Cloud |
+|-------|---------------|
+| MySQL | CloudSQL      |
+|       | BigQuery      |
+|       |               |
+
+</details>
+
+<details>
+<summary>SQL vs no-SQL</summary>
+
+Why?
+
+| SQL       | no-SQL          |
+|-----------|-----------------|
+| BigQuery  | noSQL Analytics |
+| Redshift  | MongoDB         |
+| Snowflake | Cassandra       |
+
+</details>
+
+
+## Databases & Warehouses
+
+<Tabs>
+<TabItem value="bigQuery" label="BigQuery">
+
+As part of the development of BigQuery, the team designed an abstraction (MapReduce) that allows complex computations to be expressed in terms of two steps:
+- `map function` - Processed a key/value pair to generate a set of intermediate key/value pairs
+- `reduce function` - Merged all intermediate values associated with the same intermediate key
+
+This led to the development of **Apache Hadoop**.
+
+</TabItem>
+<TabItem value="noSQL" label="NoSQL or Analytics DB">
+
+
+</TabItem>
+</Tabs>
+
+## How to start investigating data sauces

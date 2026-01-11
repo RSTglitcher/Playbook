@@ -1,0 +1,202 @@
+
+CREATE A WEBDRIVER SCRIPT
+
+INGREDIENTS
+-Project in IDE. (i.e. Maven Project in Eclipse)
+-Webdriver dependencies (i.e. updated dependencies in POM)
+-Minimum on 1 web browser driver on machine to be referenced by IDE project (i.e. if you're testing with Chrome, you better have Chrome)
+-configuration file to control browser testing during execution (i.e. set up config.properties file)
+-set up an execution class (i.e. class with main method to execute script)
+-call all classes/methods needed to execute.
+-test the package (@Test annotations indicate JUnit test)
+-create code for the WebDriver to perform the automated actions in the browser
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RECIPE -->
+
+1. Create Java Project
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. Create Main Method Class
+	2.1. Test: Syso("Welcome to project")
+	2.2. Run as Java Application
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Add Selenium Driver --USING JAR FILES
+	3.1. Selenium site - download Selenium Java
+	3.2. Save whole file (multiple jar files within)
+	3.3. Right click on Project
+		> Build Path
+			> External Archive
+				> Select first 2 JAR files
+					>Repeat, but go to libs file
+						>Select the remaining JAR files
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Add Selenium Dependencies --USING MAVEN
+	3.1. Start Maven Project
+	3.2. POM File - set up dependencies section
+	3.4. Go to https://mvnrepository.com/
+			> Selenium Java
+				> Latest Version
+					>Copy Maven <dependency></dependency>
+						>Paste in pom file.
+			>WebDriverManager
+				>Latest Version
+					>Copy Maven <dependency></dependency>
+						>Paste in pom file.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Add WebDrivers - Chrome and Safari
+	4.1. Download Chrome Driver from Selenium site
+	4.2. Copy this into the Project Folder
+	4.3. In Main Method: If the driver is in your Project Folder, you can just use the name (as below). Otherwise, you have to use the file pathway + name.
+				//JAR approach - Chrome - ("define the driver", "location of driver")
+				System.setProperty("webdriver.chrome.driver", "chromedriver");
+				//Maven approach -
+				WebDriverManager.chromedriver().setup();
+	4.4. Launch Chrome Browser
+				WebDriver driver = new ChromeDriver();
+
+	4.5. Get the website location URL
+				driver.get("https://www.youtube.com/");
+
+	4.6. Print the site title in your console
+		System.out.println(driver.getTitle());
+
+	4.7. Make sure you close the driver when you are done.
+		driver.close();
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5. Make a configuration File
+
+	public class PropertiesFile {
+	static Properties prop = new Properties();
+
+	public static void main(String[] args) {
+		readPropertiesFile();
+		writePropertiesFile();
+	}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+6. Make the code Modular
+
+			public static void setBrowser() {
+			browser = "Chrome";
+		}
+
+		public static void setBrowserConfig() {
+			String projectLocation = System.getProperty("user.dir");
+			if(browser.contains("Chrome")) {
+			System.setProperty("webdriver.chrome.driver", projectLocation+"/chromedriver");
+			driver = new ChromeDriver();
+			}
+		}
+
+		public static void runTest() {
+			driver.get("https://seleniumhq.org/");
+			driver.quit();
+		}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7. Input Information from .properties file
+
+	```java
+    public static void readPropertiesFile() {
+
+        try {
+            InputStream input = new FileInputStream("/Users/rebeccastaveley-taylor/eclipse-workspace/SeleniumProject/src/config/config.properties");
+            prop.load(input);
+            System.out.println(prop.getProperty("browser"));
+
+        }catch (IOException e) {
+            System.out.println("Error loading the config file");
+            e.printStackTrace();
+        }
+    }
+	```
+
+	7.1. Create the config file
+				>Right click on package
+					>Create File
+						>Name: config.properties
+							>Contents: browser = Google Chrome
+
+	7.2. Create a class to call the configurtion file
+
+	7.3. Create an object of the properties class
+							Properties prop = new Properties();
+
+	7.4. Create an object of the InputStream class. Try/Catch block may be needed.
+	```java
+	InputStream input = new FileInputStream("/Users/rebeccastaveley-taylor/eclipse-workspace/SeleniumProject/src/config/config.properties");
+	```
+
+	7.5. Load the properties file
+	```java
+	prop.load(input);
+	```
+
+	7.6. Call the property key "browser" for the associated value.
+	
+	```java
+	prop.getProperty("browser");
+	```
+
+	7.7. Run this with the main method
+
+	```java
+	public static void main(String[] args) {
+		readPropertiesFile();
+	}
+	```
+
+7. Output data to properties File
+
+    ```java
+   public static void writePropertiesFile() {
+    	OutputStream output;
+        	try {	
+   				output = new FileOutputStream("/Users/rebeccastaveley-taylor/eclipse-workspace/SeleniumProject/src/config/config.properties");
+                prop.setProperty("browser", "Chrome");
+                prop.setProperty("result", "pass");
+                prop.store(output, null);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+	```
+
+    7.8. Create an object of class Properties class
+    ```java
+    Properties prop = new Properties();
+    ```
+    7.9. Create an object of class Output Stream
+	```java
+	OutputStream output = new FileOutputStream("/Users/rebeccastaveley-taylor/eclipse-workspace/SeleniumProject/src/config/config.properties");
+	```
+	7.10. Set Value to be output
+	```java
+	prop.setProperty("browser", "Chrome");
+	prop.setProperty("result", "pass");
+	```
+							
+	7.11. Store Values in properties file
+	```java
+	prop.store(output, "comments");
+	```
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+8. Execute the lot
+```java
+     public class Runner {
+     public static void main(String[] args) {
+         PropertiesFile.readPropertiesFile();
+         SeleniumProgram.setBrowserConfig();
+         SeleniumProgram.runTest();
+     }
+     }
+```
+
+
+

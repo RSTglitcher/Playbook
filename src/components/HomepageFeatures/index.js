@@ -4,50 +4,33 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Get Inspired',
+    Svg: require('@site/static/img/coverpage/pinterest.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Use social sites and other platforms to be inspired
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Take Quick Notes',
+    Svg: require('@site/static/img/coverpage/notion.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Write quick notes during the day to review
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Store Info that Matters',
+    Svg: require('@site/static/img/coverpage/github.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Store key knowledge for long term reference
       </>
     ),
   },
 ];
-
-function Feature({Svg, title, description}) {
-  return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HomepageFeatures() {
   return (
@@ -62,3 +45,65 @@ export default function HomepageFeatures() {
     </section>
   );
 }
+
+
+function Feature({ Svg, title, description, link }) {
+  return (
+    <div className={clsx("col col--4")}>
+      <div className="text--center">
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ position: 'relative', display: 'inline-block' }}
+        >
+          <Svg
+            className={styles.featureSvg}
+            role="img"
+            style={{
+              cursor: 'pointer',
+              transition: 'transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease',
+              borderRadius: '12px',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              willChange: 'transform', // Add hardware acceleration
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.filter = 'brightness(85%)';
+              e.currentTarget.style.transform = 'scale(1.1)';
+              e.currentTarget.style.boxShadow = '0px 6px 12px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.filter = 'brightness(100%)';
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.1)';
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              color: '#FFFFFF',
+              fontSize: '16px',
+              fontWeight: '400',
+              padding: '10px 20px',
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              borderRadius: '8px',
+              opacity: '0',
+              transition: 'opacity 0.15s ease-out',
+            }}
+            className="hover-overlay"
+          >
+            Click to Learn More
+          </div>
+        </a>
+      </div>
+      <div className="text--center padding-horiz--md">
+        <h3 style={{ fontFamily: 'Arial, sans-serif', fontSize: '20px', fontWeight: 'bold' }}>{title}</h3>
+        <p>{description}</p>
+      </div>
+    </div>
+  );
+}
+

@@ -1,0 +1,60 @@
+---
+title: "Servers"
+---
+
+
+## Servers
+
+- What type of servers are there?
+- When do you need to use one?
+- Do all servers use protocols?
+- What is the alternative to HTTP/HTTPS?
+
+### SSL/TLS
+
+## Protocol
+
+HTTP vs HTTPs
+
+Stateless vs Stateful
+
+---
+
+| Actions       | Stateless                                     | Stateful                                          |
+|---------------|-----------------------------------------------|---------------------------------------------------|
+| Tools         | HTTPS / DNS / UDP                             | FPT / Telnet                                      |
+| Server        | Simple design, different servers available    | Complex and heavy server design                   |
+| Server-Client | No dependency                                 | Dependency                                        |
+| Session       | No server info/session details saved          | Save server info/session details                  |
+| Crash         | Great - Nothing to restore                    | Struggles due to saved session details to recover |
+| Speed         | Fast, scales easily                           | Slow, scales with difficulties                    |
+| Requests      | Self-contained  & Different servers available | Server-dependent  & Same server                   |
+
+- What is a Protocol?
+
+---
+
+
+<details>
+<summary>HTTPS</summary>
+
+Hypertext Transfer Protocol
+
+|GET|PUT|POST| DELETE  |
+|---|---|----|---------|
+
+| Methods  | Request                          | Response                                          |
+|----------|----------------------------------|---------------------------------------------------|
+| Methods  | GET/PUT/POST/DELETE              | 200/400/500/etc.                                  |
+| Features | URL Addresses                    ||
+| Headers  | Referer / User-Agent/Host/Cookie | Server / Set-Cookie/Message Body / Content-Length |
+| Body     | Optional Message                 | HTTPversion / Numeric Code / Textual Description  |
+
+
+**Asymmetric Encryption Systems**
+- Transport Layer Security (TLS)
+- Secure Sockets Layer (SSL)
+
+SSL-TLS handshake = public key (encryption) / private key (decryption)
+
+</details>

@@ -1,0 +1,74 @@
+---
+title: "Architecture"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Software Architecture (e.g., monolithic vs microservices, layered architecture)
+Data Architecture (e.g., data warehousing, ELT vs ETL)
+Cloud Architecture (e.g., serverless, distributed systems)
+Infrastructure as Code (e.g., Terraform, Ansible, CloudFormation)
+
+<Tabs>
+<TabItem value="hardware" label="Computer System Architecture">
+
+```mermaid
+stateDiagram-v2
+    [*] --> Computer
+
+    state Computer {
+        [*] --> Applications
+        
+ 
+        state Applications {
+            [*] --> IDE
+            IDE --> Compiler
+            Compiler --> Kernel
+            [*] --> Libraries: Functions, Classes, Concepts,Objects
+
+            state Utilities {
+                CLI --> OS: UNIX, MS-WINDOWS, MAC-OS, MACH, MS-DOS
+                state Libraries {
+
+                   state Shell {
+                   
+                      OS --> General: (CommandPrompt or Terminal)
+                      OS --> Cloud: (CommandPrompt or Terminal)
+                      OS --> Protocol: (CommandPrompt or Terminal)
+                      General --> Local: Bash, Zsh, Unix
+                      
+                      Cloud --> Virtual: Gcloud,Kubectl, etc.
+                      Protocol --> Remote: Ssh
+                      Remote --> [*]
+                      
+                      Local --> Kernel
+                      Virtual --> Containers
+                      Virtual --> VirtualMachines
+        
+                       state Kernel {
+                         [*] --> Hardware : IOBuffer, Process Management, Memory Management, CPU Scheduling 
+                         Hardware --> Binary: CPU, Compilers, Hard drive
+                      }
+                      state Containers {
+                        [*] --> VirtualOS
+                         VirtualOS --> ContainerShell: Bash, Zsh
+                      }
+                      state VirtualMachines {
+                         [*] --> GuestOS
+                         GuestOS --> VMShell: Bash, Zsh
+                      }
+                   }
+                }
+            }
+        }
+    }
+```
+
+
+</TabItem>
+
+
+
+
+</Tabs>

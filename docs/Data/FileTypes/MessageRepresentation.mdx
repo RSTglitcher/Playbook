@@ -1,0 +1,40 @@
+---
+title: "Messages"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="intro" label="Introduction">
+
+</TabItem>
+<TabItem value="xsd" label="XSD - XML Schema Definition">
+
+Schema language. Defines the possible structure of XML formatting.
+Used to describe and validate the structure and the content of XML data.
+XML schema defines the elements, attributes, and data types. Schema element supports Namespaces.
+Need to declare a schema in your XML document
+XSD is controlled by teh World Wide Web Consortium (W3C)
+
+XSD is a specification that defines the elements, attributes, and data types allowed in an XML document.
+It serves as a blueprint for XML documents, ensuring their structure and content adhere to a predefined set of rules.
+
+```xsdregexp
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="person">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="age" type="xs:int"/>
+        <xs:element name="city" type="xs:string"/>
+        <xs:element name="isStudent" type="xs:boolean"/>
+        <xs:element name="courses" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+```
+
+</TabItem>
+</Tabs>

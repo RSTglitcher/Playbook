@@ -1,0 +1,94 @@
+---
+title: "Data"
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="intro" label="Introduction">
+
+### Use Cases
+1. Data
+2. Schema
+
+</TabItem>
+<TabItem value="json" label="JSON - JavaScript Object Notation">
+
+Syntactically similar to JavaScript code - can easily be sent between computers and other programming languages.
+Possible to store JavaScript objects as text.
+Readable and lightweight. Good alternative to XML as less formatting is required.
+Easily share, store, and work with data.
+
+Uses human-readable text for storing and transmitting data objects containing attribute value pairs and arrays.
+- organised
+- easy to access
+
+Data is written in key:value pairs. Values can include -
+- Number
+- String
+- Boolean
+- Array
+- null / white space - JSON ignores whitespace between its elements.
+
+  Built in Functions:
+  convert JSON strings to JavaScript objects --> JSON.parse()
+  convert object to JSON String --> JSON.stringify()
+
+JSON is a lightweight data interchange format.
+It is easy for humans to read and write and easy for machines to parse and generate.
+JSON is often used to transmit data between a server and a web application, as well as for configuration files.
+
+```json
+{
+  "name": "John Doe",
+  "age": 30,
+  "city": "New York",
+  "isStudent": false,
+  "courses": ["Math", "English", "History"]
+}
+
+```
+
+[Convert to JSON](https://shancarter.github.io/mr-data-converter/)
+[Validate JSON](https://jsonlint.com/)
+[Test JSON](https://jsfiddle.net/)
+
+</TabItem>
+<TabItem value="xml" label="XML - eXtensible Markup Language">
+
+Markup language used to store & transport data. Self descriptive writing.
+A way to store accessible data that can be read by both humans and machines.
+Requires much more text so is longer in length and more time consuming to read and write.
+Must be parsed with an XML parser.
+
+Desiged to store data, used to transfer data. Allows you to define markup elements and generate customized markup language.
+
+Data can include -
+- CANNOT use Arrays
+
+Requirements/Capabilities:
+Requires end tags.
+Convert to XML:
+
+XML is a markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.
+It is widely used for representing structured data and exchanging information between systems.
+
+```xml
+<person>
+  <name>John Doe</name>
+  <age>30</age>
+  <city>New York</city>
+  <isStudent>false</isStudent>
+  <courses>
+    <course>Math</course>
+    <course>English</course>
+    <course>History</course>
+  </courses>
+</person>
+
+```
+
+</TabItem>
+</Tabs>
