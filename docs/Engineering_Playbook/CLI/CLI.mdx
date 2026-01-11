@@ -1,0 +1,311 @@
+---
+title: "Command Line Interface"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Command-Line Practices
+ - scripting
+ - automation
+ 
+Analysis Practices
+- data analysis (Pandas, NumPy, Matplotlib, Jupyter Notebooks)
+- software analysis
+
+<Tabs>
+
+<TabItem value="tools" label="Complimentary Tools">
+
+These are separate projects which a user would usually choose between. If you use both, it would be typical to isolate
+the environments and frequently keep them updated to avoid version conflicts.
+
+##  SDKMAN
+
+Focused on Software Development Kits for different programming languages (Java, Groovy, Scala, Kotlin, Maven, Gradle etc.).
+It provides a convenient command-line interface for installing, managing, and switching between different versions of SDKs and tools.
+
+shell
+curl -s "https://get.sdkman.io" | bash # Install sdkman locally
+sdk sdk install java 8.0.392-zulu # Install java 8
+sdk env install # Install sdkman in environment
+sed -i '' 's/sdkman_auto_env=false/sdkman_auto_env=true/g' $HOME/.sdkman/etc/config # Update sdkman config to automatically switch to the correct version when entering the directory
+
+
+
+##  ASDF
+
+Focused on more generalised version management for multiple programming languages, runtimes, and tools.  It is not language specific 
+and can be extended to support a wide range of languages and tools. It provides a more consistent interface for installing and
+managing different versions of runtime environments and tools across various languages. 
+
+shell
+brew install asdf # Install ASDF
+brew install jenv # Similar to pyenv, this is to manage specific java version for projects
+asdf plugin-add java https://github.com/halcyon/asdf-java.git #To be able to install java versions with asdf
+asdf install java zulu-8.74.0.17
+asdf install java zulu-11.68.17
+asdf local java  zulu-11.68.17
+
+
+</TabItem>
+</Tabs>
+
+## COMMAND HISTORY
+| Command    | Description                                                                          |
+|------------|-------------------------------------------------------------------------------------|
+| Ctrl + R	  | Search through previously used commands                                             |
+| history n	 | Shows the previous commands you've typed. Add a number to limit to the last n items |
+| ![value]	  | Execute the last command typed that starts with a value                             |
+| !!	        | Execute the last command typed                                                      |
+
+## DICTIONARY
+| Command | Description                                                           |
+|---------|-----------------------------------------------------------------------|
+| /       | Root directory                                                        |
+| /bin    | Bin programs                                                          |
+| /boot   | All files related to booting                                          |
+| /dev    | Devices, directories, network sockets. Files needed to access devices |
+| /etc    | Editable configuration - configuration files                          |
+| / home  | Each user's home directory                                            |
+| /root   | Home directory of root user                                           |
+| /lib    | Library files for software library dependencies                       |
+| /var    | Variable files that are updated frequently                            |
+| /proc   | Processes                                                             |
+
+
+## BASIC MOVEMENT
+| Command         | Description                                                |
+|-----------------|------------------------------------------------------------|
+| /               | (Forward Slash)	Top level directory                        |
+| .               | (Single Period)	Current directory                          |
+| ..              | (Double Period)	Parent directory                           |
+| ~ (Tilde)	      | Home directory                                             |
+| sudo [command]	 | Run command with the security privileges of the super user |
+| nano [file]	    | Opens the Terminal editor                                  |
+| open [file]	    | Opens a file                                               |
+| [command] -h	   | Get help about a command                                   |
+| man [command]	  | Show the help manual of the command                        |
+| pwd	            | Show your working directory                                |
+| cd	             | Home directory                                             |
+| cd [folder]	    | Change directory, e.g. cd Documents                        |
+| cd ~	           | Home directory                                             |
+| cd/	            | Root of the drive                                          |
+| cd -	           | Previous directory or folder you last browsed              |
+| cd..	           | Move up to the parent directory                            |
+| cd../..         | 	Move up two levels                                        |
+
+## PERMISSIONS - Read (-r/4); Write (-w/2); Execute (-x/1)
+| Command                      | Description                                                                         |
+|------------------------------|-------------------------------------------------------------------------------------|
+| ls -ld	                      | Display the default permission for a home directory                                 |
+| ls -ld/dir	                | Display the read, write, and access permission of a particular folder               |
+| chmod 755 file	            | Change the permission of a file to 755 (User/Group/Owner)                           |
+| chmod -R 600 dir	          | Change the permission of a folder (and its contents) to 600                         |
+| chown user:group file	 | Change the ownership of a file to user and group. Add -R to include folder contents |
+| chmod u                      | Change User/Owner (rwx)                                                             |
+| chmod g                      | Change Group (rx)                                                                   |
+| chmod o                      | Change Other/Rest of the world (x)                                                  |
+| chmod a                      | Change All                                                                          |
+
+## FILE AND DIRECTORY MANAGEMENT
+| Command                                  | Description                                                                                             |
+|-----------------------------------------|--------------------------------------------------------------------------------------------------------|
+| du                                      | List directories and how much disk space                                                               |
+| mkdir dir	                            | Create new folder named                                                                        |
+| mkdir -p dir/dir	                   | Create nested folders                                                                                  |
+| mkdir dir1 dir2 dir3	             | Create several folders at once                                                                         |
+| mkdir "dir"	                          | Create a folder with a space in the filename                                                           |
+| rmdir dir	                            | Delete a folder (only works on empty folders)                                                          |
+| rm -R dir	                            | Delete a folder and its contents                                                                       |
+| touch file	                           | Create a new file without any extension                                                                |
+| cp filedir                         | Copy a file to the folder                                                                              |
+| cp file newfile                     | Copy a file to the current folder                                                                      |
+| cp file~/dir/ newfile	             | Copy a file to the folder and rename the copied file                                                   |
+| cp -R dir new dir	                | Copy a folder to a new folder with spaces in the filename                                              |
+| cp -i filedir	                      | Prompts you before copying a file with a warning overwrite message                                     |
+| cp file1 file2 file3/Users/dir	 | Copy multiple files to a folder                                                                        |
+| ditto -V [folder path][new folder]	     | Copy the contents of a folder to new folder. In here "-V" print a line of status for every file copied |
+| rm file	                              | Delete a file (This deletes the file permanently; use with caution.)                                   |
+| rm -i file	                           | Delete a file only when you give confirmation                                                          |
+| rm -f file	                           | Force removal without confirmation                                                                     |
+| rm file1 file2 file3	             | Delete multiple files without any confirmation                                                         |
+| mv file newfilename	                | Move/rename                                                                                            |
+| mv filedir	                        | Move a file to the folder, possibly by overwriting an existing file                                    |
+| mv -i filedir	                     | Optional -i flag to warn you before overwriting the file                                               |
+| mv *.png ~/dir	                       | Move all PNG files from current folder to a different folder                                           |
+
+## LIST DIRECTORY CONTENTS
+| Command | Description                                                                                                                                          |
+|---------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| tree    | Display the directories and files in a tree structure.                                                                                               |
+| ls	     | Display the name of files and subdirectories in the directory                                                                                        |
+| ls -C   | 	Force multi-column output of the listing                                                                                                            |
+| ls -a   | 	List all entries including those with .(period) and ..(double period)                                                                               |
+| ls -1   | 	Output the list of files in one entry per line format                                                                                               |
+| ls -F   | 	Display a / (slash) immediately after each path that is a directory, * (asterisk) after executable programs or scripts, and @ after a symbolic link |
+| ls -S   | 	Sort files or entries by size                                                                                                                       |
+| ls -l   | 	List in a long format. Includes file mode, owner and group name, date and time file was modified, pathname, and more                                |
+| ls -l / | 	List of the file system from root with symbolic links                                                                                               |
+| ls -lt	 | List the files sorted by time modified (most recent first)                                                                                           |
+| ls -lh	 | Long listing with human readable file sizes in KB, MB, or GB                                                                                         |
+| ls -lo	 | List the file names with size, owner, and flags                                                                                                      |
+| ls -la	 | List detailed directory contents, including hidden files                                                                                             |
+| ls –r	  | reverse. Sorts listing in reverse order.                                                                                                             |
+| ls –R	  | recursive, including subdirectories                                                                                                                  |
+
+
+## FIND FILES
+| Command                                 | Description                                                                                   |
+|-----------------------------------------|-----------------------------------------------------------------------------------------------|
+| find –                                  | Find Files or Directories                                                                     |
+| find myFile				                         | finds myFile in the current directory                                                         |
+| find . -name myFile		                   | 		finds myFile in current directory and its sub-folders                                       |
+| .                                       | indicates the current directory, which is the default                                         |
+| find . -size -10k				                   | finds any file less than 10k in size                                                          |
+| find . -size +10k				                   | finds any file over 10k in size                                                               |
+| find . -type f -size +10k	              | finds any file over 10k. Type uses f for file, d for directory, l for link                    |
+| find /usr /bin -name myFile             | 	finds an item in specific directories (item – file/directory)                                |
+| find . -mtime -2			                     | 	 finds items modified during the past 2 days                                                 |
+| find . -mmin -60			                     | 	finds items modified in the past 60 minutes                                                  |
+| find . -mmin +60			                     | 	finds items modified more than 60 minutes ago                                                |
+| find . -name myFile –print	             | 	-print is the default action and not always required                                         |
+| find . -name "The*" -exec rm {} \;	     | execute rm on all files starting with “The” in the current directory and every sub-directory. |
+| find . -name "The*" -exec rm -i {} \;	  | an interactive version                                                                        |
+
+
+## CHECK PROCESSES
+# Foreground (Default - interrupts your session to run)
+# Background ( & - Specified by & at the right of the command. Does not interrupt session )
+| Command            | Description                                                                                                                                 |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| ps -f              | List all processes currently running                                                                                                       |
+| jobs -l            | list of all background and stopped tasks                                                                                                  |
+| ps -ax	            | Output currently running processes. Here, a shows processes from all users and x shows processes that are not connected with the Terminal |
+| ps -aux            | Shows all the processes with %cpu, %mem, page in, PID, and command                                                                        |
+| top	               | Display live information about currently running processes                                                                                |
+| top -ocpu -s 5	    | Display processes sorted by CPU usage, updating every 5 seconds                                                                           |
+| top -o rsize	      | Sort top by memory usage                                                                                                                  |
+| kill processid	    | Quit process with ID PID. ProcessId is a column in the Activity Monitor. Ctrl + C                                                       |
+| kill -19 processid  | Pause process for 19 seconds. Ctrl + Z.                                                                                                   |
+| fg % jobid          | Continue in Foreground                                                                                                                     |
+| bg % jobid         | Continue in Background (Restarts stopped processes)                                                                                        |
+| kill -18 processid | Continue in Background (Restarts stopped processes)                                                                                        |
+
+## FILE SIZE AND DISK SPACE
+| Command            | Description                                                                                                        |
+|--------------------|--------------------------------------------------------------------------------------------------------------------|
+| du	                | List usage for each subdirectory and its contents                                                                  |
+| du -sh [folder]	   | Human readable output of all files in a directory                                                                  |
+| du -s	             | Display an entry for each specified file                                                                           |
+| du -sk*  sort -nr	 | List files and folders, totaling the size including the subfolders. Replace sk* with sm* to list directories in MB |
+| df -h	             | Calculate your system's free disk space                                                                            |
+| df -H	             | Calculate free disk space in powers of 1,000 (as opposed to 1,024)                                                 |
+
+## NETWORK PROCESSES
+| Command                               | Description                                                                                                  |
+|---------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| ping host	                          | Ping host and display status                                                                                 |
+| whois domain	                       | Output whois info for a domain                                                                               |
+|   curl -O url/to/file	                | Download file via HTTP, HTTPS, or FTP                                                                        |
+| ssh username@host	                | Establish SSH connection to host with user username>                                                     |
+| scp fileuser@host:/remote/path	 | Copy file to a remote host                                                                              |
+| arp -a	                               | View a list of all devices on your local network. It will show you the IP and MAC address of all the devices |
+| ifconfig en0	                         | View your device IP and MAC address                                                                          |
+| traceroute [hostname]	                | Identify the path and the hops traversed by the packets from your device to the destination address          |
+
+
+
+## SEARCH
+| Command                     | Description                                                                                   |
+|-----------------------------|-----------------------------------------------------------------------------------------------|
+| find dir -name file	  | Find all files named file inside dir. Use wildcards (*) to search for parts of filenames  |
+
+
+## PATTERN MATCHING & SEARCHING - grep [-options] pattern filename
+| Command                  | Description                                                                                                                                                  |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GREP                     | Global Regular Expression Print. Read only - does not overwrite anything                                                                                     |
+| grep -V                  | Check version of grep used                                                                                                                                   |
+| grep "text" file	    | Output all occurrences of text inside file (add -i for case insensitivity)                                                                               |
+| grep -rl "text" dir	 | Search for all files containing text inside dir                                                                                                          |
+| grep appname           | Find a process by name or PID                                                                                                                                |
+| grep the filename		      | Retrieves lines that contain "the"                                                                                                                           |                                           
+| grep -v the filename 	   | 	inverse: returns lines that do not contain "the"                                                                                                            |                            
+| grep -i the filename	    | 	case insensitive                                                                                                                                            |                           
+| grep -w the filename	    | 	match whole word                                                                                                                                            |
+| grep -c the filename	    | 	count the number of lines containing "the"                                                                                                                  |
+| uniq myFile		            | displays lines from the file but eliminates repeats if that repeat occurs on the very next line.  To eliminate all duplicates the input file must be sorted. |
+| uniq –d myFile		         | displays only lines that are repeated.                                                                                                                       |
+| wc is word count.        | When using wc with a filename, it displays the name of the file.                                                                                             |
+| wc myFile			             | displays the number of lines, words, bytes and the name of the file                                                                                          |
+| wc -l myFile		           | number of lines                                                                                                                                              |
+| wc -w myFile		           | number of words (delimited by white space)                                                                                                                   |
+| wc -c myFile		           | number of bytes                                                                                                                                              |
+| wc -m myFile		           | number of characters                                                                                                                                         |
+
+
+## ENVIRONMENT VARIABLE OR PATH
+| Command                                      | Description                                                                                                                            |
+|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| printenv	                                    | Display a list of currently set environment variables. Also tells you which shell you're using                                         |
+| $echo	                                       | Tells the terminal to print something and show it to you                                                                               |
+| echo $PATH	                                  | Check the value of the PATH variable which store a a list of directories with executable files                                          |
+| echo $PATH >path.txt	                        | Export the path directory to a text file                                                                                               |
+| echo word > word.txt                         | Writes content to file                                                                                                                 |
+| echo hello                                   | tr -d h			deletes all the 'h' character (ello)                                                                                         |
+| echo hello                                   | tr -d ho			deletes all instances of the 'h' and 'o' (ell)                                                                              |
+| export PATH=$PATH:absolute/path to/program/	 | Execute a program via terminal only in your current session. If you use a program regularly, add the path to shell configuration file. |
+
+## DATA COMMANDS
+| Command                   | Description                                                                                                                                                                    |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| >                         | Create file (program1	> out.log). Take output from program and send it to out.log.                                                                                             |
+| >>                       | Append information to existing file (program1	>> out.log).                                                                                                                     |
+| cat file	               | Output the content of file                                                                                                                                                  |
+| cat file1.txt > file2.txt | Redirect content to other location                                                                                                                                             |
+| cat myFile                | tr [:lower:] [:upper:]   	turn lowercase characters into uppercase                                                                                                             |
+| less file	              | Less lets you scroll forward and backwards through a file, using the up and down arrow keys.                                                                                   |
+| more /file/file	      | More lets you scroll forwards and backwards through a file, using the [Enter] key.                                                                                             |
+| head /file/file	      | First 10 lines of file                                                                                                                                                         |
+| head -5 myFile		 	        | retrieves the first 5 lines                                                                                                                                                    |
+| head -c100 myFile		       | 	retrieves the first 100 characters                                                                                                                                            |
+| tail /file/file	      | Last 10 lines of file                                                                                                                                                          |
+| tail -5 myFile.txt			     | returns the last 5 lines from myFile.txt                                                                                                                                       |
+| tail –c20 myFile.txt		    | 	returns the last 20 characters from myFile.txt                                                                                                                                |
+| wc /file/file	        | Counts words, lines, bytes                                                                                                                                                     |
+| cmd > > file	         | Appends the output of cmd to file                                                                                                                                         |
+| cmd > file	           | Direct the output of cmd into file                                                                                                                                        |
+| cmd1cmd2	             | "Direct the output of cmd1 to cmd2                                                                                                                                         |
+| cmp                       | Compares two files on a, byte by byte basis.  Returns the first position (byte number and line) where the files differ.  If there are no differences then cmp returns nothing. |
+| cut                       | Cuts a portion from each line of a file. Cut either, a range of characters or specific fields, using a delimiter. e.g. cut -c2 filename                                        |
+| diff                      | Compares two files on a line by line basis.  Shows how the two files differ.                                                                                                   |
+
+## METHODS
+| Command                       | Description                                                                                                            |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| program0	                     | 0 (Input) stdin - takes in data and supplies it to a program as input                                                  |
+| program1 > out.log 2 > output | 2 (Error) stderr - go to Terminal as default. Run program1, send the output and error to out.log. Nothing to Terminal. |
+| sort file1                    |                                                                                                                        |
+| sort –r file1                 | 			sort in reverse order                                                                                               |
+
+## PERMISSIONS
+| Commands | Description                            |
+|----------|----------------------------------------|
+| cd       | Change Directory                       |
+| chmod    | Change Permissions                     |
+| chown    | Change Owner                           |
+| dirname  | Removes file basename and returns path |
+| u        | means "user/owner"                     |
+| o        | means “other”                          |
+| g        | means “group”                          |
+| a        | means “all”                            |
+| +r       | add permission to read                 |
+| -r       | revoke permission to read              |
+| +w       | add permission to write                |
+| -w       | revoke permission to write             |
+| +x       | add permission to execute              |
+| -x       | revoke permission to execute           |
+
+
+

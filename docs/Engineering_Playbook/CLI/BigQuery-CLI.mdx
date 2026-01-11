@@ -1,0 +1,31 @@
+---
+title: "BigQuery CLI"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+<Tabs>
+<TabItem value="install" label="Install">
+
+## Installation
+
+1. Install the BigQuery CLI
+   `pip install --upgrade google-cloud-bigquery`
+2. Authenticate with Google Cloud
+   `gcloud auth application-default login`
+3. Explore your BigQuery resources
+```shell
+bq ls
+bq ls dataset_name
+bq show project_id:dataset_name.table_name
+bq show --project_id 'project-name' [dataset-name]
+```
+4. Explore BigQuery labels
+```shell
+bq show --format=prettyjson project_id:dataset_name
+```
+
+</TabItem>
+</Tabs>

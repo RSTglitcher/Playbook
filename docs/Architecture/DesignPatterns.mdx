@@ -1,0 +1,59 @@
+---
+title: "Design Patterns"
+
+---
+
+## Design Patterns
+
+High level: structure & behaviour of applications
+
+Define relationship between different components and modules
+
+Solve: Overall organisation and composition of the entire system
+
+| Pattern                             | Scalability | Performance | Modifiability | System Complexity |
+|-------------------------------------|-------------|-------------|---------------|-------------------|
+| MVC - Model-View-Control            |             |             |               |                   |
+| LA - Layered Architecture           |             |             |               |                   |
+| Microservices                       |             |             |               |                   |
+| EDA - Event-Driven-Architecture     |             |             |               |                   |
+| SOA - Service-Oriented-Architecture |             |             |               |                   |
+| Monolithic Architecture             |             |             |               |                   |
+
+
+## Design Patterns
+
+Low level: structure, maintainability & flexibilty of code
+
+Reusable solutions to common design problems
+
+Solve: Implementation level problems
+
+Choose carefully, avoid unnecessary complexity.
+
+| Creational | Structural | Behavioural |
+|------------|------------|-------------|
+| Singleton  | Adapter    | Observer    |
+| Factory    | Decorator  | Strategy    |
+| Abstract   | Facade     | Command     |
+| Builder    | Proxy      | Template    |
+
+---
+
+## Observer Pattern
+
+- Are we implementing the Observer Pattern ?
+    - The subject knows about an observer and implements an interface The subject doesn't need to know the concrete class of the observer what it does , or anything else about it
+    - Because they are loosely coupled , we can easily reuse them as long as the Objects continue to meet their obligations to implement the subject or observer interfaces
+    - Notifies user's when the subject's state has changed
+- How would we implement this?
+    - ingestion metrics
+    - update contents
+    - Alerts
+- To Do
+    - Register Observers (array)
+    - Option to remove observers
+    - Notify observers
+    - Set measurements
+    - Display method
+        - calls all the methods above to share output with observers

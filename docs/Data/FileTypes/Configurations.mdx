@@ -1,0 +1,243 @@
+---
+title: "Configurations"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="intro" label="Introduction">
+
+Resource management in Kubernetes involves defining and managing various types of resources required for your application
+to run efficiently.
+- Application containers
+- Configuration data
+- Secrets
+- Persistent storage
+- Networking
+- etc.
+
+All these resources are managed using declarative YAML files, which define the desired state of the cluster.
+Write YAML files for each resource you need (Pods, Deployments, Services, ConfigMaps, etc.):
+
+**1. Declarative Configuration:**
+
+You define the desired state of your resources in YAML files.
+Kubernetes continually works to ensure the actual state matches the desired state defined in these files.
+
+**2. Namespaces:**
+
+Used to organize resources within the cluster.
+Helps in resource isolation and managing multiple environments (e.g., development, testing, production) in the same cluster.
+
+
+## Core Resource Types
+
+**1. Pods:**
+
+The smallest deployable units in Kubernetes, representing a single instance of a running process in your cluster.
+Can contain one or more containers
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: my-image:latest
+
+```
+
+
+**2. Deployments:**
+
+Provide declarative updates for Pods and ReplicaSets.
+Ensure that a specified number of pod replicas are running at any one time.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: my-image:latest
+```
+
+**3. Services:**
+
+Define a logical set of Pods and a policy by which to access them.
+Provide stable IP addresses and DNS names for your pods
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+```
+
+**4. ConfigMaps:**
+
+Used to store configuration data in key-value pairs.
+Can be injected into pods as environment variables or mounted as files
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data:
+  key1: value1
+  key2: value2
+```
+
+**5. Secrets:**
+
+Similar to ConfigMaps but used for sensitive data like passwords, OAuth tokens, and SSH keys.
+Data is encoded in base64
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+data:
+  username: bXl1c2VybmFtZQ==
+  password: cGFzc3dvcmQ=
+```
+
+**6. Persistent Volumes and Persistent Volume Claims:**
+
+Manage persistent storage for your pods.
+Persistent Volumes (PVs) are storage resources in the cluster, while Persistent Volume Claims (PVCs) are requests for those resources.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+</TabItem>
+<TabItem value="yaml" label="YAML - YAML Ain't Markup Language">
+
+YAML is a human-readable data serialization format.
+**Used For:**
+- Configuration files
+- Data exchange between languages with different data structures
+- Tasks like writing playbooks in configuration management tools
+
+**How it works:**
+- Uses indentation to represent the structure
+- Doesn't rely on explicit markers like braces or brackets.
+
+```yaml
+person:
+  name: John Doe
+  age: 30
+  city: New York
+  isStudent: false
+  courses:
+    - Math
+    - English
+    - History
+```
+
+</TabItem>
+<TabItem value="raml" label="RAML - RESTful API Modelling Language">
+
+RAML is a YAML-based language used for describing APIs in a human-readable format.
+**Used For:**
+- Concise and expressive way to design RESTful APIs.
+- Describe the resources, methods, parameters, and responses of an API.
+- Mock an API
+- Generate API interfaces
+
+**How it works:**
+- Uses indentation and colons to represent the structure
+- Doesn't rely on explicit markers like braces or brackets.
+
+```raml
+#%RAML 1.0
+title: Sample API
+version: v1
+/users:
+  get:
+    description: Get a list of users
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                { "id": 1, "name": "John Doe" },
+                { "id": 2, "name": "Jane Smith" }
+              ]
+```
+
+</TabItem>
+<TabItem value="jinja" label="JINJA">
+
+## JINJA
+
+Templating file type used with Python frameworks
+
+</TabItem>
+<TabItem value="deploy" label="Steps to Deploy Resources">
+
+
+Check Resource Status:
+
+Use kubectl get and kubectl describe commands to inspect the status and details of your resources.
+
+Update Resources:
+
+Modify the YAML files as needed and re-apply them using kubectl apply.
+
+Summary
+Resource management in Kubernetes revolves around defining and managing resources like Pods, Deployments, Services,
+ConfigMaps, and Secrets using declarative YAML files. This approach allows for a clear separation of concerns, version
+control of configuration, and dynamic management of application settings and infrastructure. By understanding these core
+concepts and using the kubectl command-line tool, you can efficiently deploy, update, and manage your Kubernetes applications.
+
+</TabItem>
+</Tabs>

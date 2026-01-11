@@ -1,0 +1,43 @@
+---
+title: "BigQuery"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+<Tabs>
+<TabItem value="bq" label="BigQuery CLI">
+
+## Installation
+
+1. Install the BigQuery CLI
+   `pip install --upgrade google-cloud-bigquery`
+2. Authenticate with Google Cloud
+   `gcloud auth application-default login`
+3. Explore your BigQuery resources
+```shell
+bq ls
+bq ls dataset_name
+bq show project_id:dataset_name.table_name
+bq show --project_id 'project-name' [dataset-name]
+```
+4. Explore BigQuery labels
+```shell
+bq show --format=prettyjson project_id:dataset_name
+```
+
+</TabItem>
+<TabItem value="software" label="Software">
+
+As part of the development of BigQuery, the team designed an abstraction (MapReduce) that allows complex computations to be expressed in terms of two steps:
+- `map function` - Processed a key/value pair to generate a set of intermediate key/value pairs
+- `reduce function` - Merged all intermediate values associated with the same intermediate key
+
+This led to the development of **Apache Hadoop**.
+
+</TabItem>
+</Tabs>
+
+## How to start investigating data sauces

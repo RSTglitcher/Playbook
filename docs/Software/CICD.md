@@ -1,0 +1,61 @@
+---
+title: "CICD"
+---
+
+A set of practices and principles for automating software delivery processes, including building, testing, and deploying applications.
+Software is built, tested, and released more frequently
+
+
+| Continuous Integration                                                                         | Continuous Delivery                                                                                                                                                                                                                           |
+|------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Automatically building and unit testing the entire application                                 | Deploying every change to a production-like environment and performs automated integration and acceptance testing to reduce the cost, time, and risk of incremental software releases. |
+| Code > Build > Unit Tests > Code Validation > Packaging > Artifact                             | Code > Version Control > CI build > Artifact added to central repo > Staging > Smoke/Integration Testing > Artifact is released to production environment                                                                                     |
+| Build must be quicker than it takes to make coffee (5mins)                                     | Only build artifacts once                                                                                                                                                                                                                     |
+| Commit really small bits (easier to isolate failures)                                          | Artifacts should be immutable (store & set permissions so immutable - CI system can only write and Deployment only has read access)                                                                                                           |
+| Do not leave build fails                                                                       | Staging should be a copy of production                                                                                                                                                                                                        |
+| Trunk-based development (work from a master branch and frequently commit back to the original) ||
+| Don't allow flaky tests (fix them)                                                             ||
+| Build should return status + log + artifact (record of the build run)                          | Development, Test, Potential Staging and final production release are all automated. After testing every change, automatically deploying to production                                                                                        |
+
+
+
+## [Distributed Version Control](http://localhost:3000/docs/CICD/Git)
+
+- Git is a distributed version control system (DVCS).
+- Tracking changes in source code during software development.
+- Supports these CI/CD practices.
+- Reliable and collaborative way to manage source code changes.
+
+
+## [Deployment and Management](http://localhost:3000/docs/CICD/GCloud)
+
+- GCloud is a cloud computing platform
+- Provides infrastructure and services for building and running applications in the cloud. 
+- Services for computing, storage, databases, machine learning, and more.
+- GCP SDK is a set of CLI tools that allows users to interact with Google Cloud Platform (GCP) services and resources. 
+- Deploying and managing applications on Google Cloud.
+
+## [Deployment and Orchestration](http://localhost:3000/docs/CICD/Orchestration)
+
+- Kubernetes is a container orchestration platform.
+- Manage the deployment, scaling, and operation of containerized applications. 
+- Abstracts away the underlying infrastructure.
+- Provides features like automated scaling, rolling updates, and self-healing for containerized applications.
+- It provides a framework for deploying and managing containerized applications at scale.
+- Ensures that containerized applications run consistently across different environments.
+- Practices and principles for automating software delivery processes, including building, testing, and deploying applications.
+
+## [Build, Test, and Deploy](http://localhost:3000/docs/CICD/Pipelines)
+
+- Jenkins is an open source automation server which enables developers around the world to reliably build, test, and deploy their software.
+- Primarily an automation server used to define and execute continuous integration and continuous delivery (CI/CD). 
+- Facilitates the automation of building, testing, and deployment processes.
+- Jenkins provides a flexible and extensible platform that supports a wide variety of plugins and integrations.
+- Works with different technologies and tools.
+- Integrate code changes from version control systems, running tests, and deploying applications.
+
+
+
+
+
+      

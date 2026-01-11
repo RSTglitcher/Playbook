@@ -1,0 +1,71 @@
+---
+title: "Containerised Environments"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+- Kubernetes
+- Docker
+
+<Tabs>
+<TabItem value="objects" label="K9s Tools">
+
+**ConfigMaps**
+
+- A built-in Kubernetes API object that stores your application's non-sensitive key-value config data.
+- Allows you to keep config values separate from your code and container images.
+- String or Base64-encoded binary.
+
+1. Create ConfigMap
+2. Content is saved to your Kubernetes cluster
+3. Pods then consume the values as environment variables, command line arguments, or filesystem volumes.
+
+- Persistent Volumes
+- Pods
+
+
+### Persistent Volume
+
+A persistent volume is a storage resource that provides durable storage for pods beyond their lifecycle.
+
+**When to use?**
+I want my data ...
+- to survive restarts
+- to be accessible the other tools
+- to be large scale
+- to be securely managed over time
+- to be backed up /restored for debugging /auditing
+  So that ...
+  [Application Purpose]
+  [Business Case]
+  [Product Description]
+
+**Features**
+- Storage
+- Capacity
+- Access
+- Reclaim
+- Provisioning
+
+**Requirements**
+- Accessmode
+- Storage
+- Resources to be included
+- Customisations to be included
+
+**Steps**
+1. Stop existing deployments is the target environment
+2. Stop all services in the target enviroment
+3. Add the new resource
+4. Test the new resource be restarting deployments
+5. Check if there are any version upgrades to apply
+6. Restart ingestion capability container
+7. Inspect the UI /end product (should not have content yet)
+8. Restart the metadata containers
+
+
+
+</TabItem>
+
+</Tabs>

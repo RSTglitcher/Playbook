@@ -1,0 +1,43 @@
+# Compliance Training 
+
+CIA Triad
+
+- Confidentiality
+> - Protecting sensitive information for unauthorised access or disclosure
+>> - e.g. stealing information 
+
+- Integrity
+> - Accuracy, consistency, and trustworthiness of information 
+>> - e.g. false information like malware
+
+ - Availability
+> - The ability of authorised users to access information and resources when needed
+>> - e.g. denial of service attack
+
+...
+
+Zero-Day Vulnerability
+> - Hackers discovered
+> - Application owners were unaware
+> - Microsoft were quick to offer patches, but their Consumers were slow to implement and damage was caused in the meantime
+
+
+## Secure Development Lifecycle
+
+1. Standards - Prepare
+2. Artisanship - Prepare
+3. Initiative Onboarding - Plan
+4. Third-Party Integration - Architect
+5. Threat Modelling - Architect
+6. Secure Design Patterns - Architect
+7. Secure Coding - Develop & Test
+8. Pen Testing - Validate
+
+## Security Principles 
+
+1. Build security in, rather than after
+2. Implement features securely rather than adding security features
+3. Iterating and learning continously over gating decisions
+4. Completing a few, over starting many 
+5. Empowering technologists, over relying on security specialists (SDL 12)
+6. Growing a culture of secure practices, rather than policing for enforcement

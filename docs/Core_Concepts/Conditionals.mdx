@@ -1,0 +1,112 @@
+### BOOLEAN
+if test 5 -gt 3
+   then echo $
+fi
+
+### IF
+
+```
+   if ______
+   then
+      __echo__
+   else
+      __echo__
+   fi
+```
+
+
+```
+   if __command1__
+   then
+      __echo__
+   elif __command2__
+   then
+      __echo__
+   else
+      __echo__
+   fi
+```
+
+### CASE
+
+```
+   case value in
+      pattern1)
+      code;;
+      pattern2)
+      code;;
+      patternN)
+      code;;
+      *)
+         code;;
+   esac
+```
+
+### FLOW CONTROL - FOR/WHILE/UNTIL
+
+```
+   for i in 1 2 3 4 5 6 7 8 9 10
+      do
+         echo $i
+      done
+```
+
+##FOR
+
+```
+   for ((i=1; i<=10; i++))
+      do
+         echo $i
+      done
+```
+
+
+##WHILE
+A while loop executes until the condition becomes false
+Break - terminates the loop
+Continue - terminates the current iteration
+
+```
+   while [$x-lt5]
+      do
+         echo $x
+         ((x++))
+      done
+```
+
+```
+   while [True]
+      do
+         echo ' '
+         read -p ' ' pin
+         if [  ]
+            then
+               echo '  '
+         else
+            break
+         fi
+      done
+      echo '    '
+```
+
+##UNTIL
+An until loop executes until the condition becomes true
+
+```
+   until [condition]
+      do
+         command
+      done
+```
+
+### FUNCTIONS
+
+```
+functionName(){
+   code e.g. echo$1
+   code e.g. echo$2
+}
+functionName Parameter1 Parameter2
+
+echo 'My name is' $(functionName)
+```
