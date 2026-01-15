@@ -1,47 +1,135 @@
 ---
+title: Writing Guide
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+Keep the site as simple as possible. The content is the most valuable part here for learning on the fly so do not waste 
+time with overly complicated React components unless there is a real visual benefit in the end result.
 
-Let's discover **Docusaurus in less than 5 minutes**.
 
-## Getting Started
+## Front Matter
 
-Get started by **creating a new site**.
+```text title="my-doc.md"
+// highlight-start
+---
+id: my-doc-id
+title: My document title
+description: My document description
+slug: /my-custom-url
+---
+// highlight-end
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Markdown heading
 
-### What you'll need
+Markdown text with [links](./hello.md)
+```
+## Images
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+Regular Markdown images are supported.
 
-## Generate a new site
+You can use absolute paths to reference images in the static directory (`static/img/docusaurus.png`):
 
-Generate a new Docusaurus site using the **classic template**.
+![Docusaurus logo](/img/docusaurus.png)
 
-The classic template will automatically be added to your project after you run the command:
+You can reference images relative to the current file as well. This is particularly useful to colocate images close to the Markdown files using them:
 
-```bash
-npm init docusaurus@latest my-website classic
+```md
+![Docusaurus logo](./img/docusaurus.png)
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+## Code Blocks
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+Markdown code blocks are supported with Syntax highlighting.
 
-## Start your site
+````md
+```jsx title="src/components/HelloDocusaurus.js"
+function HelloDocusaurus() {
+  return <h1>Hello, Docusaurus!</h1>;
+}
+```
+````
 
-Run the development server:
-
-```bash
-cd my-website
-npm run start
+```jsx title="src/components/HelloDocusaurus.js"
+function HelloDocusaurus() {
+  return <h1>Hello, Docusaurus!</h1>;
+}
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+## Admonitions
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+Docusaurus has a special syntax to create admonitions and callouts:
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+```md
+:::tip My tip
+
+Use this awesome feature option
+
+:::
+
+:::danger Take care
+
+This action is dangerous
+
+:::
+```
+
+:::tip My tip
+
+Use this awesome feature option
+
+:::
+
+:::danger Take care
+
+This action is dangerous
+
+:::
+
+## MDX and React Components
+
+[MDX](https://mdxjs.com/) can make your documentation more **interactive** and allows using any **React components inside Markdown**:
+
+```jsx
+export const Highlight = ({children, color}) => (
+  <span
+    style={{
+      backgroundColor: color,
+      borderRadius: '20px',
+      color: '#fff',
+      padding: '10px',
+      cursor: 'pointer',
+    }}
+    onClick={() => {
+      alert(`You clicked the color ${color} with label ${children}`)
+    }}>
+    {children}
+  </span>
+);
+
+This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
+
+This is <Highlight color="#1877F2">Facebook blue</Highlight> !
+```
+
+export const Highlight = ({children, color}) => (
+<span
+style={{
+backgroundColor: color,
+borderRadius: '20px',
+color: '#fff',
+padding: '10px',
+cursor: 'pointer',
+}}
+onClick={() => {
+alert(`You clicked the color ${color} with label ${children}`);
+}}>
+{children}
+</span>
+);
+
+This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
+
+This is <Highlight color="#1877F2">Facebook blue</Highlight> !
+
+---
+

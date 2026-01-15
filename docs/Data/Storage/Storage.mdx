@@ -1,97 +1,140 @@
 ---
-title: "Storage Decision Tree"
+title: "Storage"
 ---
 
-Common storage tools and services used for various purposes in containerized environments cland platforms , and data management :
+:::tip Storage
+
+Common storage tools and services used for various purposes in containerized environments cloud platforms , and data management.
+:::
+
 
 ```mermaid
-graph TD
-    A[Do you need to store and analyze large-scale data?] --> B{Yes}
-    A --> C{No}
-    B --> D[Cloud Warehouse/DB]
-    click D href "http://localhost:3001/FullStackDevelopmentNotes/docs/Storage/CloudServices" _blank
-    C --> E[Do you need persistent storage in a containerized application?]
-    E --> F{Yes}
-    E --> G{No}
-    F --> H[Kubernetes-Specific]
-    click H href "http://localhost:3001/FullStackDevelopmentNotes/docs/Storage/Kubernetes-Storage" _blank
-    G --> I[What type of data are you storing?]
-    I --> J{Structured}
-    I --> K{Semi-Structured}
-    I --> L{Unstructured}
-    J --> D
-    K --> D
-    K --> O[Is the data regularly accessed or requires fast reads/writes?]
-    L --> O
-    O --> P{Yes}
-    O --> Q{No}
-    P --> R[Block/Object]
-    click R href "http://localhost:3001/FullStackDevelopmentNotes/docs/Storage/CloudStorage" _blank
-    Q --> S[Does your data require backup, replication, or disaster recovery?]
-    S --> T{Yes}
-    S --> U{No}
-    T --> V[Backup and Data Recovery]
-    click V href "http://localhost:3001/FullStackDevelopmentNotes/docs/Storage/BackupRecoveryStorage" _blank
-    U --> W[Do you need a consistent, hybrid/multi-cloud storage strategy?]
-    W --> X{Yes}
-    W --> Y{No}
-    X --> Z[Storage Virtualization]
-    click Z href "http://localhost:3001/FullStackDevelopmentNotes/docs/Storage/StorageVirtualisation" _blank
-    Y --> AA[End]
-    
-    %% New branches for Additional Storage Types
-    K --> BB[Do you need fast, temporary access to frequently used data?]
-    BB --> CC{Yes}
-    BB --> DD{No}
-    CC --> EE[Cache Storage]
-    DD --> FF[Does your data require full-text searching or indexing?]
-    FF --> GG{Yes}
-    FF --> HH{No}
-    GG --> II[Search Engine Storage]
-    HH --> JJ[Does your data consist of time-stamped or sequential records?]
-    JJ --> KK{Yes}
-    JJ --> LL{No}
-    KK --> MM[Time-Series Database]
-    LL --> NN[Does your data need to be archived for long-term storage?]
-    NN --> OO{Yes}
-    NN --> PP{No}
-    OO --> QQ[Cold Storage]
-    PP --> RR[End]
-
-
+Storage
+├── Analytics & Warehousing
+│   ├── Data Warehouses
+│   ├── Data Lakes
+│   └── Lakehouse Architectures
+│
+├── Application Storage
+│   ├── Container & Platform Storage
+│   │   └── Kubernetes Persistent Storage
+│   │
+│   ├── Databases
+│   │   ├── Structured (Relational)
+│   │   ├── Semi-Structured (Document / KV)
+│   │   └── Time-Series
+│   │
+│   ├── File & Object Storage
+│   │   ├── Block Storage
+│   │   └── Object Storage
+│   │
+│   ├── Performance-Oriented Storage
+│   │   ├── Cache Storage
+│   │   └── Search Engine Storage
+│   │
+│   └── Archival Storage
+│       └── Cold Storage
+│
+└── Cross-Cutting Storage Capabilities
+    ├── Backup & Disaster Recovery
+    └── Storage Virtualization
 ```
 
----
 
-### 1. Cloud-Based Data Warehouses and Databases
-   - **Overview:** Discusses cloud-based data warehouses and databases, focusing on structured data and large-scale data storage/analysis (e.g., SQL-based solutions, NoSQL, cloud-native databases like BigQuery, Redshift, and Snowflake).
-   - **Relevant in the diagram:** The flow through Cloud Warehouse/DB for both structured and semi-structured data.
-### 2. Kubernetes-Specific Storage Solutions
-   - **Overview:** Focuses on storage needs in containerized environments, particularly within Kubernetes. This would include managing persistent storage for containerized apps (e.g., Persistent Volumes, StatefulSets).
-   - **Relevant in the diagram:** The Kubernetes-Specific storage question that guides the user when persistent storage is needed in Kubernetes.
-### 3. Block and Object Storage (Cloud Services)
-   - **Overview:** Covers the concepts of block storage and object storage as essential cloud storage solutions, useful for storing large volumes of structured or unstructured data.
-   - **Relevant in the diagram:** The Block/Object decision point based on data access patterns and requirements, and also addresses the need for cloud storage (e.g., AWS S3, Google Cloud Storage, EBS).
-### 4. Distributed File Systems & Data Lakes
-   - **Overview:** Discusses solutions for large, unstructured datasets or files (e.g., Distributed File Systems like Ceph, GlusterFS, or Data Lake solutions like Hadoop HDFS, and MinIO).
-   - **Relevant in the diagram:** Data classified as unstructured that might lead to a Distributed File System or Data Lake decision point.
-### 5. Backup and Data Recovery Solutions
-   - **Overview:** Focuses on ensuring the durability and availability of data through backup, replication, and disaster recovery (e.g., Velero, Veeam, AWS Backup).
-   - **Relevant in the diagram:** The Backup and Data Recovery flow for handling data redundancy and recovery needs.
-### 6. Storage Virtualization
-   - **Overview:** Explores storage abstraction, where multiple physical storage resources can be managed as a unified solution, which is particularly useful in hybrid or multi-cloud environments.
-   - **Relevant in the diagram:** Storage Virtualization for hybrid/multi-cloud storage management (e.g., Portworx, StorageOS).
-### 7. Caching Solutions
-   - **Overview:** Addresses the need for fast, temporary storage solutions (e.g., Cache Storage with Redis or Memcached for frequently accessed data).
-   - **Relevant in the diagram:** The question about Cache Storage for fast access to frequently used data.
-### 8. Search Engine Storage
-   - **Overview:** Discusses the storage solutions for full-text search and indexing, often used for large, searchable datasets (e.g., Search Engines like Elasticsearch).
-   - **Relevant in the diagram:** The decision for Search Engine Storage, typically used for unstructured data requiring indexing and search capabilities.
-### 9. Time-Series Database Storage
-   - **Overview:** Covers specialized databases for time-series data, commonly used in IoT, monitoring, or real-time analytics (e.g., InfluxDB, Prometheus).
-   - **Relevant in the diagram:** The question about Time-Series Database for handling time-stamped or sequential data.
-### 10. Cold Storage Solutions
-    - **Overview:** Deals with the long-term archival of data that is infrequently accessed but needs to be retained, such as Cold Storage options (e.g., Amazon Glacier, Azure Blob Storage Archive tier).
-    - **Relevant in the diagram:** The question about Cold Storage for data needing to be archived or stored for the long term.
+## Analytics & Warehousing
 
+Storage designed for large-scale analytical workloads, reporting, and historical analysis.
+
+### Cloud Data Warehouses / Analytical Databases
+  Used for querying and analysing large volumes of structured or semi-structured data. Optimised for read-heavy, analytical workloads.
+  Covers the concepts of block storage and object storage as essential cloud storage solutions, useful for storing large volumes of structured or unstructured data. (e.g., AWS S3, Google Cloud Storage, EBS).
+  Discusses cloud-based data warehouses and databases, focusing on structured data and large-scale data storage/analysis (e.g., SQL-based solutions, NoSQL, cloud-native databases like BigQuery, Redshift, and Snowflake).
+
+### Data Warehouses
+Discusses solutions for large, unstructured datasets or files (e.g., Distributed File Systems like Ceph, GlusterFS, or Data Lake solutions like Hadoop HDFS, and MinIO).
+
+### Data Lakes
+
+
+## Application Storage
+
+Storage used directly by applications and services to persist operational data.
+
+### Container & Platform Storage
+
+### Kubernetes Persistent Storage
+  Persistent volumes and storage abstractions used by containerised workloads running in Kubernetes.
+  Focuses on storage needs in containerized environments, particularly within Kubernetes. This would include managing persistent storage for containerized apps (e.g., Persistent Volumes, StatefulSets).
+
+### Databases
+
+Structured storage systems optimised for querying, indexing, and transactional workloads.
+
+### Structured Data
+  Relational databases with fixed schemas and strong consistency guarantees.
+
+### Semi-Structured Data
+  Flexible-schema databases such as document stores and key-value stores.
+
+### Time-Series Data
+  Databases optimised for time-stamped, sequential, or metric-based data.
+  Covers specialized databases for time-series data, commonly used in IoT, monitoring, or real-time analytics (e.g., InfluxDB, Prometheus).
+
+### File & Object Storage
+
+Storage systems for binary data, files, and large unstructured objects.
+
+### Block Storage
+  Low-latency storage typically attached to compute instances.
+
+### Object Storage
+  Scalable storage for unstructured data such as media, backups, and artifacts.
+
+## Performance-Oriented Storage
+
+Specialised storage designed to improve application performance and data access speed.
+
+### Cache Storage
+  Fast, temporary storage for frequently accessed data.
+  Addresses the need for fast, temporary storage solutions (e.g., Cache Storage with Redis or Memcached for frequently accessed data).
+
+### Search Engine Storage
+  Storage optimised for indexing, full-text search, and query performance.
+  Discusses the storage solutions for full-text search and indexing, often used for large, searchable datasets (e.g., Search Engines like Elasticsearch), unstructured data requiring indexing and search capabilities.
+
+
+### Archival Storage
+
+Storage optimised for long-term retention and infrequent access.
+
+### Cold Storage
+  Cost-efficient storage for archival data and compliance retention.
+  Deals with the long-term archival of data that is infrequently accessed but needs to be retained, such as Cold Storage options (e.g., Amazon Glacier, Azure Blob Storage Archive tier).
+
+## Cross-Cutting Storage Capabilities
+
+Storage solutions that apply across multiple storage categories.
+
+### Backup & Disaster Recovery
+  Ensures data protection, replication, and recoverability.
+  Focuses on ensuring the durability and availability of data through backup, replication, and disaster recovery (e.g., Velero, Veeam, AWS Backup).
+
+
+### Storage Virtualization
+  Abstraction layers enabling hybrid and multi-cloud storage strategies.
+  Explores storage abstraction, where multiple physical storage resources can be managed as a unified solution, which is particularly useful in hybrid or multi-cloud environments.(e.g., Portworx, StorageOS).
+
+
+
+
+## Data Storage Systems (Structured or Unstructured Data Repositories)
+These platforms serve as persistent data sources for analytics or operations.
+
+| Platform                   | Definition                                                                                      | Role in Data Flow                                                                      |
+|----------------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| BigQuery                   | 	Google’s serverless, fully managed data warehouse that supports SQL queries on large datasets. | 	Data Source & Consumer — stores curated data used for analysis and reporting.         |
+| Firestore                  | 	NoSQL document-oriented database from Google Cloud, often used for app backends.               | 	Data Source / Producer — collects operational data, often feeding downstream systems. |
+| Google Cloud Storage (GCS) | 	Object storage system for unstructured data (e.g., logs, backups, files).                      | 	Data Source / Landing Zone — holds raw or semi-processed data, often before ETL.      |
+| AWS S3                     | 	Amazon's equivalent of GCS — object storage for any kind of data.                              | 	Data Source / Landing Zone — same role as GCS.                                        |
+| Salesforce Cloud-based     | CRM platform that stores structured customer and sales data.                                    | 	Data Source — holds business-critical data, often extracted for analytics.            |
 

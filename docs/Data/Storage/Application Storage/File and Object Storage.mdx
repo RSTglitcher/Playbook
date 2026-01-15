@@ -1,0 +1,158 @@
+---
+title: "File & Object Storage"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Definition
+
+:::tip Definition
+**File & Object Storage** refers to storage systems that persist **unstructured or semi-structured data** outside of databases, with access via file paths or object keys.
+
+**Examples:** NFS, Ceph, AWS S3, Google Cloud Storage, MinIO
+:::
+
+---
+
+## Benefit / What problem does it solve?
+
+File and object storage solve these problems:
+
+- **Persistent storage** for applications beyond the lifetime of a process or container
+- **Large-scale storage** for media, logs, backups, and datasets
+- **Flexible access patterns**, supporting both sequential and random reads/writes
+- **Separation of compute and storage**, enabling horizontal scaling
+
+---
+
+## When to Use
+
+**Use File & Object Storage when:**
+
+- Applications require filesystem-like access or object key storage
+- Data must survive pod restarts or system failures
+- Storing large unstructured datasets (media files, logs, backups)
+- Sharing data across multiple services or environments
+
+**Typical examples:**
+
+- Databases storing binary files (BLOBs)
+- Media file storage (images, videos)
+- Backup and archival
+- Cloud-native applications storing logs or artifacts
+
+---
+
+## When Not to Use
+
+**Avoid relying on File/Object Storage when:**
+
+- Low-latency, key-based access is critical (use Cache)
+- Complex querying, indexing, or aggregations are needed (use Search Engine Storage)
+- Strong ACID transactions are required (use Databases or Data Warehouses)
+
+---
+
+## Key Terminology & Definitions
+
+- **Block Storage:** Low-level raw blocks mounted to hosts, high-performance, usually single-writer
+- **File Storage:** Shared filesystem with directories and files, multiple readers/writers
+- **Object Storage:** Flat key-based storage for unstructured data, typically immutable
+- **Bucket / Container:** Logical namespace for objects in object storage
+- **Filesystem:** Hierarchical organization of files and directories
+- **Mount Path:** Location where storage is exposed to an application
+
+---
+
+## Storage Variants (Access & Scope)
+
+<Tabs>
+<TabItem value="block" label="Block Storage">
+
+- Raw block devices mounted into hosts or containers
+- Low latency, high performance, usually single-writer
+- Examples: AWS EBS, Google Persistent Disk
+
+</TabItem>
+<TabItem value="file" label="File Storage">
+
+- Shared filesystem for multiple readers/writers
+- Supports hierarchical directories
+- Examples: NFS, CephFS, SMB
+
+</TabItem>
+<TabItem value="object" label="Object Storage">
+
+- Key-based storage, optimized for large unstructured datasets
+- Often immutable and highly scalable
+- Examples: AWS S3, Google Cloud Storage, MinIO
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="tiering" label="Storage Tiering">
+
+- Move data between hot, warm, and cold tiers
+- Responsibility: Storage platform or admin
+- Focus: Cost optimization and performance
+
+</TabItem>
+<TabItem value="replication" label="Replication & Durability">
+
+- Copy data across multiple nodes or regions
+- Ensures availability and resiliency
+- Responsibility: Storage backend
+
+</TabItem>
+<TabItem value="versioning" label="Versioning & Snapshotting">
+
+- Track changes or snapshots of objects/files
+- Enables rollback and recovery
+- Responsibility: Storage system or application
+
+</TabItem>
+<TabItem value="accesscontrol" label="Access Control / IAM">
+
+- Define read/write permissions for users or services
+- Responsibility: Platform / admin
+- Focus: Security and compliance
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Path-based (File Storage) or key-based (Object Storage)
+- **Operations:** READ, WRITE, LIST, DELETE, COPY
+- **Interfaces:** POSIX filesystem APIs, SDKs, REST APIs, cloud console
+
+**Example (Object Storage - S3):**
+
+```bash
+aws s3 cp localfile.txt s3://my-bucket/path/
+aws s3 ls s3://my-bucket/path/
+aws s3 rm s3://my-bucket/path/localfile.txt
+```
+
+---
+
+### What Do Results Normally Look Like
+
+- Files and directories (file storage)
+- Objects with keys and metadata (object storage)
+- Large datasets persisted for later analytics, backup, or processing
+- Data is not queryable beyond list operations and key/path lookups
+
+Simplified Architecture
+
+```mermaid
+Application --> File/Object Storage --> Persistent Disk / Cloud Storage
+```

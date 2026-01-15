@@ -1,0 +1,264 @@
+---
+title: "Databases"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Database Storage
+Systems designed to **persist data reliably** and act as the **source of truth** for applications.
+Examples: **PostgreSQL, MySQL, Cassandra, MongoDB**
+:::
+
+### Definition
+
+A **database** is a system for **durable, structured data storage** that provides guarantees around **consistency, integrity, and correctness**.
+
+Databases are typically the **system of record** for an application and are responsible for enforcing schemas, constraints, and transactional behaviour.
+
+---
+
+### Benefit / What problem does it solve?
+
+Databases provide:
+
+- **Durable storage** (data survives restarts and failures)
+- **Strong consistency guarantees**
+- **Transactional safety** (ACID or defined consistency models)
+- **Structured querying and indexing**
+- **Data integrity enforcement**
+
+They are the foundation upon which caches and search engines are built.
+
+---
+
+### When to use
+
+Use a database when:
+
+- Data must be **correct and authoritative**
+- Writes and updates matter
+- You need transactions or constraints
+- Data relationships must be enforced
+- You need reliable recovery and backups
+
+Typical examples:
+- User accounts
+- Orders and payments
+- Configuration and reference data
+- Core business entities
+
+---
+
+### When not to use
+
+Avoid using a database directly when:
+
+- Extremely low latency is required (use cache)
+- Data is derived or denormalised (use search)
+- Workloads are read-heavy and repetitive without strict consistency needs
+- You need flexible, ad-hoc full-text search
+
+---
+
+### Key Terminology & Definitions
+
+- **Schema** – Definition of data structure
+- **Table / Collection** – Logical grouping of records
+- **Row / Document** – Individual record
+- **Primary key** – Unique identifier
+- **Index** – Data structure for faster queries
+- **Transaction** – Atomic unit of work
+- **ACID** – Atomicity, Consistency, Isolation, Durability
+- **Replication** – Copying data for availability
+- **Sharding / Partitioning** – Splitting data across nodes
+
+---
+
+### Database Variants (By Data Model)
+
+<Tabs>
+
+  <TabItem value="relational" label="Relational Databases">
+
+  - Fixed schemas and strong consistency
+  - SQL-based querying
+  - Excellent transactional guarantees
+
+  **Examples:** PostgreSQL, MySQL, SQL Server
+
+  </TabItem>
+
+  <TabItem value="document" label="Document Databases">
+
+  - Flexible, schema-light documents
+  - JSON-like data models
+  - Easier schema evolution
+
+  **Examples:** MongoDB, CouchDB
+
+  </TabItem>
+
+  <TabItem value="keyvalue" label="Key-Value Stores">
+
+  - Simple key-based access
+  - Extremely scalable
+  - Limited querying capabilities
+
+  **Examples:** DynamoDB, Riak
+
+  </TabItem>
+
+  <TabItem value="widecolumn" label="Wide-Column Databases">
+
+  - Optimised for large-scale, distributed workloads
+  - Tunable consistency
+  - High write throughput
+
+  **Examples:** Cassandra, HBase
+
+  </TabItem>
+
+</Tabs>
+
+---
+
+### Key Strategies
+
+<Tabs>
+
+  <TabItem value="transactions" label="Transactional Writes">
+
+  **Definition (TA view):**
+  A mechanism that ensures a group of database operations are executed as a **single, atomic unit**, guaranteeing data integrity even in the presence of failures.
+
+  **Key features:**
+  - Atomic execution (all succeed or all fail)
+  - Automatic rollback on error
+  - Isolation from concurrent operations
+  - Durability once committed
+
+  **Primary purpose:**
+  To **maintain correctness and integrity** of critical data during write operations.
+
+  **Performance / Access notes:**
+  - Generally **write-heavy**, because the focus is on ensuring safe writes
+  - Can reduce write throughput under high concurrency
+
+  **Examples:**
+  - **PostgreSQL** or **MySQL** using transactions for payment processing
+  - **Banking systems** enforcing multi-step transfers
+  - Inventory updates that must succeed atomically
+
+  </TabItem>
+
+  <TabItem value="replication" label="Replication Strategy">
+
+  **Definition (TA view):**
+  A strategy where data is **copied and synchronised across multiple database nodes** to improve availability and resilience.
+
+  **Key features:**
+  - Primary–replica or multi-leader setups
+  - Improved read scalability
+  - Redundancy for fault tolerance
+  - Potential replication lag
+
+  **Primary purpose:**
+  To **increase availability and fault tolerance** while supporting higher read throughput.
+
+  **Performance / Access notes:**
+  - Typically **read-heavy**, reads can be served from replicas
+  - Writes have overhead due to replication propagation
+
+  **Examples:**
+  - **PostgreSQL streaming replication** for reporting vs OLTP
+  - **MongoDB replica sets** for high availability
+  - **MySQL master-slave** for read scaling
+
+  </TabItem>
+
+  <TabItem value="partitioning" label="Partitioning / Sharding">
+
+  **Definition (TA view):**
+  A method of **dividing data across multiple nodes** so that each node stores only a subset of the total dataset.
+
+  **Key features:**
+  - Data distributed by shard key
+  - Horizontal scalability
+  - Reduced per-node load
+  - More complex query routing and operations
+
+  **Primary purpose:**
+  To **enable horizontal scaling** for large datasets and high-throughput workloads.
+
+  **Performance / Access notes:**
+  - Supports **parallel reads and writes**
+  - Can increase latency for cross-shard queries
+  - Workload can be read-heavy or write-heavy depending on shard distribution
+
+  **Examples:**
+  - **Cassandra** storing IoT time-series data across nodes
+  - **MongoDB sharded clusters** for multi-tenant applications
+  - **HBase** for massive, distributed log storage
+
+  </TabItem>
+
+  <TabItem value="consistency" label="Consistency Models">
+
+  **Definition (TA view):**
+  A set of rules defining **how and when changes become visible** to readers in a distributed database system.
+
+  **Key features:**
+  - Strong vs eventual consistency options
+  - Tunable consistency levels (system-specific)
+  - Trade-offs between latency and correctness
+  - Impact on read and write performance
+
+  **Primary purpose:**
+  To **balance correctness, performance, and availability** based on system requirements.
+
+  **Performance / Access notes:**
+  - Strong consistency can **reduce read/write efficiency** due to coordination
+  - Eventual consistency improves speed and scalability at the cost of temporary divergence
+  - Read-heavy vs write-heavy depends on workload and consistency level
+
+  **Examples:**
+  - **Cassandra** tunable consistency per operation
+  - **DynamoDB** eventual consistency for read-heavy workloads
+  - **Google Spanner** providing strong consistency across regions
+
+  </TabItem>
+
+</Tabs>
+
+---
+
+### How to interact with it
+
+- **Access pattern:** Query-based
+- **Interfaces:** SQL, database-specific query languages, ORMs
+- **Operations:** `SELECT`, `INSERT`, `UPDATE`, `DELETE`
+
+Databases support **rich querying**, joins, constraints, and transactions.
+
+---
+
+### What do results normally look like
+
+- Rows (tables) or documents (collections)
+- Strongly typed and structured data
+- Guaranteed to reflect committed state (subject to isolation level)
+
+Results are typically returned as:
+- Rows / records
+- Objects mapped via ORMs
+- Structured result sets
+
+---
+
+### Relationship to Cache and Search
+
+```mermaid
+Client --> Cache --> Database
+Database --> Indexer --> Search Engine
+Client --> Search Engine

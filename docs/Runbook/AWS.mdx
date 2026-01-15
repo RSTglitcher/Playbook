@@ -1,0 +1,396 @@
+---
+title: "AWS Runbook"
+---
+
+:::tip AWS Runbook
+An **engineering-aware reference** for Technical Analysts working with Amazon Web Services (AWS).
+
+Focuses on **core AWS services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::
+
+---
+
+## Overview
+
+AWS is a **modular cloud platform** offering infrastructure, managed services, and data systems.
+
+As a TA, your role is to understand:
+- What engineers must configure
+- Which services interact
+- Where complexity and risk live
+- Why estimates include “platform work”
+
+---
+
+## Core AWS Concepts (Foundational)
+
+### AWS Accounts
+**What it is:**
+A **hard isolation boundary** for resources, IAM, and billing.
+
+**Why engineers care:**
+- Stronger isolation than GCP projects
+- Often multiple accounts per environment (dev / prod)
+
+**TA red flags:**
+- Cross-account access → IAM + trust policies
+- New account → networking + logging + guardrails
+
+---
+
+### Regions & Availability Zones
+**What it is:**
+- Region = geographic area
+- AZ = isolated data centre within region
+
+**Why engineers care:**
+- High availability designs require multiple AZs
+- Some services are regional, some global
+
+---
+
+### IAM (Identity & Access Management)
+
+**Key concepts:**
+- **User** (human)
+- **Role** (assumed identity)
+- **Policy** (JSON permissions)
+- **Trust policy** (who can assume a role)
+
+**Important difference from GCP:**
+- IAM is **global**
+- Roles are assumed, not assigned
+
+**TA red flags:**
+- Overuse of `AdministratorAccess`
+- Missing trust relationships
+- Cross-account role assumptions
+
+---
+
+### Service Roles (Critical Concept)
+
+**What it is:**
+AWS services often require a **role to act on your behalf**.
+
+**Examples:**
+- Lambda execution role
+- ECS task role
+- Glue job role
+
+**TA insight:**
+If a service “can’t access” something, it’s almost always a role issue.
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### S3 (Object Storage)
+
+**What it actually is:**
+- Globally scalable object storage
+- Buckets are regional
+- Objects are immutable
+
+**Engineering setup includes:**
+- Bucket policy
+- IAM permissions
+- Encryption (default or custom)
+- Lifecycle rules
+
+**TA questions:**
+- Raw vs curated data?
+- Retention requirements?
+- Who can delete?
+
+---
+
+### Redshift (Data Warehouse)
+
+**What it is:**
+- OLAP data warehouse
+- Cluster-based or serverless
+- Columnar storage
+
+**Engineering considerations:**
+- Node types / scaling
+- Distribution keys
+- Sort keys
+
+**TA red flags:**
+- Treating it like a transactional DB
+- Underestimating schema design effort
+
+---
+
+## NoSQL & High-Scale Datastores
+
+### DynamoDB
+
+**What it is:**
+- Fully managed key-value / document database
+- Partition key (+ optional sort key)
+- Single-digit millisecond latency
+
+**Design reality:**
+- Schema is defined by **access patterns**
+- No joins
+- Limited transactions
+
+**TA questions:**
+- What are the access patterns?
+- Hot partitions?
+- Read vs write capacity?
+
+---
+
+### Amazon Keyspaces (Apache Cassandra)
+
+**What it is:**
+A **managed Apache Cassandra service** using:
+- Cassandra Query Language (CQL)
+- Keyspaces
+- Tables with partition + clustering keys
+
+**What “keyspace” means:**
+- A **namespace** in Cassandra
+- Roughly equivalent to:
+  - BigQuery dataset
+  - Database schema
+
+**Why teams use it:**
+- Massive write throughput
+- Time-series or event data
+- Multi-region replication
+
+**Trade-offs:**
+- Eventual consistency
+- Query-driven schema
+- Limited querying flexibility
+
+**TA red flags:**
+- Expecting ad-hoc queries
+- Missing TTL strategy
+- Poor partition key design
+
+---
+
+## Compute & Workloads
+
+### ECS / EKS (Containers)
+
+**Concepts you must understand:**
+- Task definitions
+- Services
+- Execution roles vs task roles
+
+**TA red flags:**
+- State stored in containers
+- Missing persistent storage plan
+
+---
+
+### Lambda (Serverless)
+
+**Key constraints:**
+- Cold starts
+- Timeout limits
+- Stateless by design
+
+**TA questions:**
+- Is execution time predictable?
+- Is state externalised?
+
+---
+
+## Messaging & Integration
+
+### SQS / SNS
+
+**What they are:**
+- SQS: queue (point-to-point)
+- SNS: pub/sub
+
+**Engineering setup includes:**
+- Dead-letter queues
+- Visibility timeouts
+- IAM permissions
+
+---
+
+## Observability
+
+### CloudWatch
+
+**Covers:**
+- Logs
+- Metrics
+- Alarms
+
+**TA red flags:**
+- No alarms
+- No log retention strategy
+
+---
+
+## Networking (Often Hidden Work)
+
+### VPC
+
+**Why it matters:**
+- Private access
+- Security boundaries
+- Connectivity to managed services
+
+**TA indicators of complexity:**
+- Private endpoints
+- VPC peering
+- No public internet access
+
+---
+
+## Cost & Limits
+
+**AWS realities:**
+- Service quotas
+- Per-request costs
+- Data transfer costs
+
+**TA role:**
+- Ask how often jobs run
+- Identify unbounded workloads
+
+---
+
+// Install AWS CLI v2 (macOS)
+brew install awscli
+
+// Verify AWS CLI installation
+aws --version
+
+// Configure AWS credentials (access keys or SSO)
+aws configure
+
+// Authenticate using AWS SSO (common in enterprises)
+aws sso login
+
+// List configured AWS profiles
+aws configure list-profiles
+
+// Show identity of the currently authenticated user/role
+aws sts get-caller-identity
+
+// List available AWS regions
+aws ec2 describe-regions --query "Regions[].RegionName"
+
+// Set default region for the current profile
+aws configure set region eu-west-1
+
+// List all S3 buckets (account-wide)
+aws s3 ls
+
+// List objects in a specific S3 bucket
+aws s3 ls s3://bucket-name/
+
+// Inspect bucket configuration (encryption, versioning, lifecycle)
+aws s3api get-bucket-encryption --bucket bucket-name
+aws s3api get-bucket-versioning --bucket bucket-name
+aws s3api get-bucket-lifecycle-configuration --bucket bucket-name
+
+// List Redshift clusters
+aws redshift describe-clusters
+
+// Describe a specific Redshift cluster
+aws redshift describe-clusters \
+  --cluster-identifier CLUSTER_ID
+
+// List Redshift databases (requires SQL access via psql/jdbc, not CLI-native)
+// Engineers often use:
+// psql -h redshift-endpoint -U user -d database
+
+// List DynamoDB tables
+aws dynamodb list-tables
+
+// Describe a DynamoDB table (keys, throughput, indexes)
+aws dynamodb describe-table \
+  --table-name TABLE_NAME
+
+// List DynamoDB Global Secondary Indexes (from table description)
+// Look under: GlobalSecondaryIndexes
+
+// List Amazon Keyspaces (Cassandra-compatible) keyspaces
+aws keyspaces list-keyspaces
+
+// Describe a Keyspaces keyspace
+aws keyspaces get-keyspace \
+  --keyspace-name KEYSPACE_NAME
+
+// List tables in a Keyspaces keyspace
+aws keyspaces list-tables \
+  --keyspace-name KEYSPACE_NAME
+
+// Describe a Keyspaces table (schema, throughput)
+aws keyspaces get-table \
+  --keyspace-name KEYSPACE_NAME \
+  --table-name TABLE_NAME
+
+// Note: Keyspaces uses CQL, not SQL
+// Engineers will connect via cqlsh or application drivers
+
+// List EKS clusters
+aws eks list-clusters
+
+// Update kubeconfig for an EKS cluster
+aws eks update-kubeconfig \
+  --region REGION \
+  --name CLUSTER_NAME
+
+// Verify current Kubernetes context
+kubectl config current-context
+
+// List Kubernetes namespaces
+kubectl get namespaces
+
+// List pods in a namespace
+kubectl get pods -n NAMESPACE
+
+// Describe a deployment (events, rollout status)
+kubectl describe deployment DEPLOYMENT_NAME -n NAMESPACE
+
+// List persistent volumes
+kubectl get pv
+
+// List persistent volume claims in a namespace
+kubectl get pvc -n NAMESPACE
+
+// List IAM roles
+aws iam list-roles
+
+// Get IAM role policy attachments
+aws iam list-attached-role-policies \
+  --role-name ROLE_NAME
+
+// Inspect inline policies for a role
+aws iam list-role-policies \
+  --role-name ROLE_NAME
+
+// List CloudWatch log groups
+aws logs describe-log-groups
+
+// Tail logs from a specific log group
+aws logs tail LOG_GROUP_NAME --follow
+
+// List CloudWatch alarms
+aws cloudwatch describe-alarms
+
+// Sanity check: am I in the right account?
+aws sts get-caller-identity
+
+// Sanity check: does the table exist?
+aws dynamodb describe-table --table-name TABLE_NAME
+
+// Sanity check: does the keyspace exist?
+aws keyspaces list-keyspaces
+
+// Sanity check: is the Kubernetes namespace real?
+kubectl get namespaces

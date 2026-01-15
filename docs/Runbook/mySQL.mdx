@@ -1,0 +1,52 @@
+---
+title: "mySQL"
+---
+
+**Download MySQL Workbench:**
+
+- Visit [MySQL Workbench Download Page](https://dev.mysql.com/downloads/workbench/).
+- If you have an M1 MacBook, use the ARM download link.
+
+**Add a MySQL Connection in MySQL Workbench**
+
+- Hostname: how do you find this out?
+- Port: how do you find this out?
+- Username: how is this set?
+- Password: how is this set?
+
+---
+
+```shell
+// Logging in
+kubectx <context-name>
+kubectl port-forward services/XXX port:port
+
+// If you have issues, use
+`gcloud --project=XX-XX-XX container clusters get-credentials XX-XX --location XXX-XXXX
+
+// Basic Database Inspection
+SHOW DATABASES;
+USE database_name;
+SHOW TABLES;
+DESCRIBE table_name;
+SHOW INDEX FROM table_name;
+SELECT COUNT(*) FROM table_name;
+
+// Users & Privileges
+
+SELECT user, host FROM mysql.user;
+SHOW GRANTS FOR 'user'@'%';
+
+// Storage & Performance Checks
+
+SHOW TABLE STATUS;
+SHOW VARIABLES LIKE 'max_connections';
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+
+// Kubernetes-Level Debugging
+
+kubectl get pods -n <namespace>
+kubectl describe pod <pod-name> -n <namespace>
+kubectl logs <pod-name> -n <namespace>
+
+```

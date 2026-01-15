@@ -1,0 +1,221 @@
+---
+title: Data Warehouses
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## What is a Data Warehouse?
+
+A **data warehouse** is a **centralised analytical data store** designed to support **large-scale, read-heavy analytical queries** across historical data.
+
+### How a Data Warehouse differs from a Database
+
+| Database (OLTP) | Data Warehouse (OLAP) |
+|-----------------|-----------------------|
+| Supports day-to-day application operations | Supports analytics, reporting, and decision-making |
+| Optimised for small, frequent reads and writes | Optimised for large scans and aggregations |
+| Row-based storage | Columnar storage |
+| Strong transactional guarantees | Limited or relaxed transactional behaviour |
+| Millisecond latency | Seconds-to-minutes latency acceptable |
+
+**Key distinction:**
+> A database answers *“What is happening right now?”*
+> A data warehouse answers *“What has happened over time?”*
+
+---
+
+## What problem does a Data Warehouse solve?
+
+- Operational databases struggle with large analytical queries
+- Analytics workloads can overload production systems
+- Historical data needs to be queried efficiently at scale
+
+A data warehouse:
+- Offloads analytics from operational systems
+- Enables fast aggregation over massive datasets
+- Provides a consistent source for reporting and BI tools
+
+---
+
+## When to use a Data Warehouse
+
+Use a data warehouse when you need:
+
+- Analytical queries over large datasets
+- Historical trend analysis
+- Reporting and dashboards
+- Data aggregation across many sources
+- Read-heavy workloads
+
+**Common use cases:**
+- Business intelligence (BI)
+- Data analytics
+- Monitoring and metrics analysis
+- Financial and product reporting
+
+---
+
+## When *not* to use a Data Warehouse
+
+Avoid using a data warehouse when you need:
+
+- High-frequency transactional writes
+- Single-row lookups with low latency
+- Frequent updates or deletes
+- Strong transactional guarantees
+
+**Anti-patterns:**
+- Using a warehouse as an application backend
+- Performing per-request queries from user-facing services
+
+---
+
+## Key Terminology & Definitions
+
+- **OLAP (Online Analytical Processing):** Query patterns focused on aggregation and analysis
+- **Columnar Storage:** Data stored by column for efficient scanning
+- **Partitioning:** Dividing data by time or key to limit scanned data
+- **Clustering:** Physically organising data to improve query performance
+- **ETL / ELT:** Extract, Transform, Load (or Load then Transform)
+- **Fact Table:** Stores measurable events (e.g. transactions)
+- **Dimension Table:** Stores descriptive attributes (e.g. user, region)
+
+---
+
+## Key Strategies
+
+<Tabs>
+
+  <TabItem value="ingestion" label="Batch & Streaming Ingestion">
+
+  **TA definition:**
+  Controlled loading of large volumes of data optimised for analytics, not transactions.
+
+  **Key features:**
+  - Append-oriented writes
+  - Batch loads or streaming inserts
+  - Minimal locking
+
+  **Primary purpose:**
+  Efficient ingestion of analytical data at scale
+
+  **Read/Write profile:**
+  Write-light, read-heavy
+
+  **Examples:**
+  - BigQuery streaming inserts
+  - Nightly batch ETL jobs
+
+  </TabItem>
+
+  <TabItem value="partitioning" label="Partitioning Strategy">
+
+  **TA definition:**
+  Organising data by time or key to reduce query scan size.
+
+  **Key features:**
+  - Time-based partitions
+  - Query pruning
+  - Cost reduction
+
+  **Primary purpose:**
+  Query performance and cost control
+
+  **Read/Write profile:**
+  Read-optimised
+
+  **Examples:**
+  - Partitioning BigQuery tables by ingestion date
+
+  </TabItem>
+
+  <TabItem value="clustering" label="Clustering Strategy">
+
+  **TA definition:**
+  Physically grouping related data within partitions.
+
+  **Key features:**
+  - Improves filter and join performance
+  - Reduces scanned data
+
+  **Primary purpose:**
+  Faster analytical queries
+
+  **Read/Write profile:**
+  Read-heavy
+
+  **Examples:**
+  - Clustering by user_id or region
+
+  </TabItem>
+
+  <TabItem value="consistency" label="Consistency Model">
+
+  **TA definition:**
+  Warehouses prioritise availability and query throughput over strict transactional consistency.
+
+  **Key features:**
+  - Eventual consistency acceptable
+  - Immutable or append-only data
+
+  **Primary purpose:**
+  Analytical correctness over transactional correctness
+
+  **Read/Write profile:**
+  Read-heavy
+
+  **Examples:**
+  - BigQuery’s append-first model
+
+  </TabItem>
+
+</Tabs>
+
+---
+
+## How to interact with a Data Warehouse
+
+- Interaction is **query-based**, not key-based
+- Queries typically scan many rows and aggregate results
+
+**Query type:**
+- SQL-based analytical queries
+
+**Query content:**
+- Aggregations, joins, filters, window functions
+
+**Storage structure:**
+- Tables (facts and dimensions)
+- Column-oriented storage
+
+---
+
+## What do results normally look like?
+
+- Aggregated datasets
+- Summaries and metrics
+- Time-series trends
+- BI-friendly tables
+
+**Common consumers:**
+- Dashboards (Looker, Tableau)
+- Scheduled reports
+- Data science notebooks
+- Downstream analytics pipelines
+
+---
+
+## Common Tools & Examples
+
+- **Google BigQuery**
+- **Snowflake**
+- **Amazon Redshift**
+- **Azure Synapse Analytics**
+
+---
+
+## Where Data Warehouses fit architecturally
+
+Data warehouses typically sit **downstream** of operational systems:
+

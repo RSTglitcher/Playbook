@@ -1,0 +1,274 @@
+---
+title: Performance-Oriented Storage
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Cache Storage
+
+:::tip Cache Storage
+**Fast, temporary storage** for frequently accessed data, kept closer to the application than the original data source.
+Examples: **Redis, Memcached, in-memory caches**
+:::
+
+### Definition
+
+A **cache** stores copies of data retrieved from slower systems (databases, APIs, services) so that future requests can be served **faster and more reliably**.
+
+Caches are typically **key–value stores**, not relational databases, and are **not systems of record**.
+
+---
+
+### Benefit / What problem does it solve?
+
+Caching helps to:
+
+- **Reduce load** on databases and downstream services
+- **Lower latency** for end users
+- **Increase resiliency** during partial outages
+- Absorb traffic spikes and bursty workloads
+
+```mermaid
+Client --> Cache --|on miss|--> Database / API
+```
+
+#### When to use
+
+**Use caching when:**
+
+Data is read frequently
+The same request is repeated many times
+Slight staleness is acceptable
+You want to protect a downstream dependency
+
+**Typical examples:**
+
+API responses
+Database query results
+Reference or configuration data
+
+#### When not to use
+
+**Avoid caching when:**
+
+- Data must be strongly consistent
+- Every request is unique
+- Writes vastly outnumber reads
+- You cannot tolerate stale data
+
+### Key Terminology & Definitions
+
+- TTL (Time To Live) – How long cached data remains valid
+- Cache hit / miss – Whether data is found in cache
+- Eviction – Removing entries when capacity is reached
+- Cold cache – Empty cache (e.g. after restart)
+- Warm cache – Cache already populated
+- Fail-open / fail-closed – Behaviour when cache is unavailable
+
+### Cache Variants (Placement)
+
+<Tabs> <TabItem value="data" label="Data Cache">
+
+- Stores database query results or computed values
+- Usually Redis or Memcached-
+Protects databases from read load
+
+</TabItem> <TabItem value="response" label="Response Cache">
+
+- Stores full HTTP responses
+- Implemented via CDNs or reverse proxies
+- Can bypass backend services entirely
+
+</TabItem> <TabItem value="memory" label="In-Memory Cache">
+
+- Lives inside the application process
+- Extremely fast
+- Lost on restart (important for resiliency)
+
+</TabItem> </Tabs>
+
+### Key Strategies
+
+<Tabs> <TabItem value="aside" label="Cache-Aside (Lazy Loading)">
+
+- Application checks cache first
+- On miss, reads from DB and populates cache
+- Responsibility: Application manages cache lifecycle
+
+</TabItem> <TabItem value="readthrough" label="Read-Through Cache">
+
+- Cache intercepts reads automatically
+- Cache fetches from DB on miss
+- Responsibility: Cache layer manages population
+
+</TabItem> <TabItem value="writethrough" label="Write-Through Cache">
+
+- Writes go to cache and DB synchronously
+- Focus: Stronger consistency
+
+</TabItem> <TabItem value="writebehind" label="Write-Behind Cache">
+
+- Writes go to cache first
+- DB updates asynchronously
+- Focus: Write performance
+
+</TabItem> </Tabs>
+
+### How to interact with it
+
+**Access pattern:** Key-based
+** Operations:** GET, SET, DELETE
+
+**Query style:** Exact key lookup only
+Caches do not support rich querying.
+
+### What do results normally look like
+
+- Simple values or objects
+- Serialized data (JSON, Protobuf, blobs)
+- Already processed and ready for use
+
+---
+
+## Search Engine Storage
+
+:::tip Search Engine Storage
+Storage optimised for indexing, full-text search, filtering, and aggregation across large datasets.
+Examples: Elasticsearch, OpenSearch, Solr
+:::
+
+### Definition
+
+Search engine storage systems pre-index data so it can be searched efficiently using flexible queries.
+They store documents, not tables or key–value pairs, and are not systems of record.
+Data is typically derived from a database or event stream.
+
+### Benefit / What problem does it solve?
+
+**Search engines enable:**
+
+- Full-text search
+- Filtering and sorting
+- Aggregations and analytics
+- Querying when you don’t know exact keys
+- They prioritise read performance and query power over strict consistency.
+
+#### When to use
+
+- Use search engine storage when:
+- Users search by text
+- Queries involve filters, ranges, or relevance scoring
+- You need fast reads over large datasets
+
+**Typical examples:**
+- Log search
+- Monitoring dashboards
+- Product or document search
+
+#### When not to use
+
+**Avoid search engines when:**
+- You need strong transactional guarantees
+- Data must be immediately consistent
+- You already know the exact key (use cache)
+- It must be a source of truth
+
+### Key Terminology & Definitions
+
+- Index – Searchable data structure
+- Document – A searchable unit of data
+- Field – Attribute within a document
+- Analyzer – Text tokenisation and processing rules
+- Shard – Partition of an index
+- Replica – Copy of a shard for resiliency
+- Reindexing – Rebuilding indexes after schema changes
+
+### Search Variants (Scope & Internal Caching)
+<Tabs> <TabItem value="index" label="Index Storage">
+
+- Primary searchable data store
+- Sharded and replicated
+- Backed by disk
+
+</TabItem> <TabItem value="query" label="Query Cache">
+
+- Caches frequent query results
+- Improves repeat search performance
+- Managed internally by the search engine
+
+</TabItem> <TabItem value="filter" label="Filter / Field Cache">
+
+- Optimises common filters and aggregations
+- Transparent to applications
+
+</TabItem> </Tabs>
+
+### Key Strategies
+
+<Tabs>
+
+  <TabItem value="async" label="Asynchronous Indexing">
+
+  - Data is written to a primary datastore first
+  - Updates are indexed later (eventually consistent)
+  - Responsibility: Indexing pipeline (jobs, streams)
+
+  **Focus:** Write throughput and system decoupling
+
+  </TabItem>
+
+  <TabItem value="event" label="Event-Driven Indexing">
+
+  - Changes published as events (e.g. Kafka)
+  - Search index updates react to events
+  - Responsibility: Event consumers / indexers
+
+  **Focus:** Scalability and near-real-time updates
+
+  </TabItem>
+
+  <TabItem value="bulk" label="Bulk / Batch Indexing">
+
+  - Read-optimised query execution
+  - Data indexed in large batches
+  - Common for backfills or reindexing
+  - Responsibility: Offline or scheduled jobs
+
+  **Focus:** Efficient large-scale indexing
+
+  </TabItem>
+
+  <TabItem value="querycache" label="Query & Filter Caching">
+
+  - Caching hot queries
+  - Frequently executed queries are cached
+  - Filter and aggregation results reused
+  - Responsibility: Search engine internals
+
+  **Focus:** Read performance and latency
+
+  </TabItem>
+
+</Tabs>
+
+```mermaid
+Database --> Indexer --> Search Engine
+Client --> Search Engine
+```
+
+### How to interact with it
+
+**Access pattern:** Query-based
+**Query types:** Search, filter, aggregate
+**Interface:** JSON APIs, DSLs, SDKs
+
+**You ask:** “Which documents match this query?”
+**Not:** “Give me the value for this key”
+
+### What do results normally look like
+
+- Lists of matching documents
+- Relevance-scored results
+- Aggregated summaries (counts, metrics)
+- Results are typically returned as JSON documents.

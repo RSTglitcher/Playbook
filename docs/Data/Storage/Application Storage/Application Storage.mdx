@@ -1,0 +1,59 @@
+---
+title: "Application Storage"
+---
+
+:::tip Application Storage
+refers to the collection of storage systems and resources that applications use to **persist, retrieve, or manage data** during their operation.
+:::
+
+**Application Storage**
+Unlike **analytics or warehouse storage**, which focuses on large-scale reporting or historical analysis, application storage is concerned with **day-to-day operational data**, configuration, and stateful workload support.
+
+Application storage encompasses:
+
+- **Databases** – structured, semi-structured, and time-series storage
+- **Container & platform storage** – persistent volumes, ephemeral storage, and configuration (e.g., ConfigMaps, Secrets)
+- **File & object storage** – block devices, file shares, object stores for application data
+- **Performance-oriented storage** – caches and search engine indices
+- **Archival storage** – cold storage for long-term retention of application data
+
+---
+
+## When to Consider Application Storage
+
+You should evaluate **application storage** when:
+
+- Your application requires **persistent state** beyond the lifetime of a process or container
+- Data must survive **system restarts or failures**
+- You need **structured access** (databases) or **filesystem/block access** (platform storage)
+- You need to **accelerate read access** for hot data (caching) or **searchable access** (search engine storage)
+- You need to **retain logs, artifacts, or backups** for compliance or audit
+
+---
+
+## When to Use Application Storage
+
+Use application storage when:
+
+- You are running **stateful applications** (databases, message brokers, CI/CD tooling)
+- Data must survive **pod restarts, crashes, or redeployments**
+- Applications require **file, block, or object interfaces**
+- You need to **support read-heavy or write-heavy workloads**
+- You want **platform-managed lifecycle and consistency guarantees**
+
+**Examples:**
+
+- Relational databases running inside Kubernetes
+- Message brokers like Kafka or RabbitMQ
+- Stateful microservices
+- Configuration storage (ConfigMaps, Secrets)
+- Persistent volumes for CI/CD artifacts
+
+---
+
+### Key Takeaways for Technical Analysts
+
+- **Application storage is about data and state for running applications**, not analytics.
+- It supports **resiliency, durability, and operational efficiency**.
+- Choosing the right type depends on **access pattern**, **durability requirements**, and **performance needs**.
+- It forms the foundation for **caching, search, database, and archival strategies** explored in the sub-pages.
