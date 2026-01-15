@@ -1,0 +1,182 @@
+---
+title: "Container Orchestration"
+---
+
+:::tip Container Orchestration
+
+Platforms and tools that automate the deployment, scaling, and management of containerized applications.
+:::
+
+```mermaid
+ContainerOrchestration
+├── Orchestrators
+│   ├── Kubernetes
+│   ├── Docker Swarm
+│   └── Nomad
+│
+├── Core Concepts
+│   ├── Pods
+│   ├── Services
+│   ├── Namespaces
+│   ├── ConfigMaps
+│   └── Secrets
+│
+├── Workload Types
+│   ├── Deployments
+│   ├── StatefulSets
+│   ├── DaemonSets
+│   └── Jobs / CronJobs
+│
+├── Scheduling & Scaling
+│   ├── Horizontal Pod Autoscaler
+│   ├── Cluster Autoscaler
+│   └── Affinity & Tolerations
+│
+└── Observability & Management
+    ├── Logs & Metrics
+    ├── Health Checks (Liveness / Readiness)
+    ├── Rollouts & Rollbacks
+    └── Debugging Tools (kubectl, k9s)
+```
+---
+
+:::danger **Best Practices for Technical Analysts**
+- Understand namespaces, ConfigMaps, and Secrets when requesting infrastructure changes.
+- Know which workload type suits your application (stateless vs stateful).
+- Be aware of autoscaling implications on resource consumption and cost.
+- Ask engineers about cluster-level policies (RBAC, network policies, quotas).
+- Recognize the difference between configuration objects (ConfigMaps) and persistent storage (PersistentVolumes).
+:::
+
+
+---
+
+## Orchestrators
+
+- Platforms that manage containers across clusters.
+
+### Kubernetes
+
+- Open-source container orchestration platform.
+- Automates deployment, scaling, and management of containerized workloads.
+- Provides declarative APIs, service discovery, self-healing, and rolling updates.
+
+### Docker Swarm
+
+- Native orchestration for Docker.
+- Simpler than Kubernetes, suited for small clusters or simpler deployments.
+
+### Nomad
+
+- Lightweight orchestrator from HashiCorp.
+- Integrates with Consul and Vault for service discovery and secrets management.
+
+##Core Concepts
+
+### Pods
+
+- Smallest deployable unit in Kubernetes.
+- Groups one or more containers that share storage, network, and spec.
+- Useful for tightly coupled services.
+
+### Services
+
+- Stable network endpoint for pods.
+- Enables service discovery and load balancing.
+
+### Namespaces
+
+- Virtual clusters inside a physical cluster.
+- Provide isolation and resource quotas for teams or environments.
+
+### ConfigMaps
+
+- Store non-sensitive configuration as key-value pairs.
+- Mounted into pods as files or environment variables.
+- Not storage — used for runtime configuration.
+
+### Secrets
+
+- Like ConfigMaps but for sensitive data (passwords, keys).
+- Stored in etcd, optionally encrypted.
+
+## Workload Types
+
+### Deployments
+
+- Declarative updates for stateless applications.
+- Handles scaling, rolling updates, and rollbacks.
+
+### StatefulSets
+
+- Manages stateful applications.
+- Provides stable network IDs and persistent storage for pods.
+
+### DaemonSets
+
+- Ensures one pod runs on each node (or subset of nodes).
+- Common for logging or monitoring agents.
+
+### Jobs / CronJobs
+
+- Run tasks to completion.
+- CronJobs allow scheduled execution.
+
+## Scheduling & Scaling
+### Horizontal Pod Autoscaler (HPA)
+
+- Scales pods based on CPU, memory, or custom metrics.
+- Helps maintain performance under variable load.
+
+### Cluster Autoscaler
+
+- Adds/removes nodes based on pod demand.
+- Works with cloud providers for dynamic resource management.
+
+### Affinity & Tolerations
+
+- Control which nodes pods can schedule on.
+- Useful for hardware constraints, zones, or taints.
+
+## Observability & Management
+### Logs & Metrics
+
+- Centralized logging (ELK, Fluentd) and monitoring (Prometheus, Grafana).
+- Essential for debugging and performance tuning.
+
+### Health Checks
+
+- Liveness probes: detect and restart unhealthy pods.
+- Readiness probes: signal when pods are ready to serve traffic.
+
+### Rollouts & Rollbacks
+
+- Manage deployments with minimal downtime.
+- Declarative configuration ensures reproducibility.
+
+### Debugging Tools
+
+- kubectl for cluster management.
+- k9s for interactive terminal UI.
+- Port-forwarding, exec, and logs commands for pod inspection.
+
+---
+
+Common Tools & Examples
+Tool / Platform	Definition	Use Case
+Kubernetes	Open-source orchestration platform	Production container deployments, scaling, service management
+Docker Swarm	Native Docker orchestration	Simple container clusters, dev/test environments
+Nomad	Lightweight orchestrator	Integration with HashiCorp stack for deployments
+Helm	Kubernetes package manager	Manage deployments and dependencies
+k9s	Terminal UI for Kubernetes	Cluster inspection and debugging
+Prometheus/Grafana	Metrics collection & visualization	Observability and alerting
+Fluentd / ELK	Log collection and aggregation	Centralized logging and troubleshooting
+Where Container Orchestration fits architecturally
+
+Application Containers → Orchestrator (Kubernetes/Swarm/Nomad) → Cluster Nodes (VMs / Cloud Instances / Bare Metal) → Storage & Network Abstractions
+
+Supports: Stateful apps, stateless microservices, CI/CD pipelines
+
+Integrates with: Persistent storage, ConfigMaps, Secrets, Service Mesh
+
+Does not replace: databases, caches, or analytics systems
