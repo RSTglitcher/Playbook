@@ -1,0 +1,134 @@
+---
+title: "Messaging / Event-Driven"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+A software engineering approach focused on **asynchronous communication between components via messages or events**, enabling decoupled, reactive, and scalable systems.
+
+**Examples:**
+:::
+
+Typical examples include:
+- Microservices communicating via message queues
+- Event-driven architectures for real-time analytics
+- IoT devices publishing events to a central system
+
+---
+
+## Benefit / What problem does it solve?
+
+Using Messaging/Event-Driven Software Engineering enables:
+
+- **Decoupling:** Services/components can operate independently, reducing tight coupling
+- **Scalability:** Systems can scale horizontally by processing events asynchronously
+- **Resilience:** Components can continue operating even if other parts of the system are temporarily unavailable
+
+---
+
+## When to Use
+
+**Use Messaging/Event-Driven Software Engineering when:**
+
+- Components need to operate asynchronously or independently
+- The system requires **high scalability** or **elastic processing**
+- You need **real-time processing** of streams, events, or notifications
+
+**Typical examples:**
+
+- E-commerce order processing pipelines
+- IoT sensor networks with event reporting
+- Analytics pipelines ingesting streaming data (e.g., Kafka Streams)
+
+---
+
+## When Not to Use
+
+**Avoid Messaging/Event-Driven Software Engineering when:**
+
+- System interactions are simple and synchronous, with no need for async decoupling
+- Latency-sensitive applications where immediate response is critical
+- The added complexity of event brokers or queues outweighs the benefits
+
+---
+
+## Key Terminology & Definitions
+
+- **Event** – A significant occurrence or state change in a system
+- **Message** – Data payload sent between components to indicate an event or request an action
+- **Broker** – Middleware that routes messages/events between producers and consumers (e.g., Kafka, RabbitMQ)
+- **Producer** – Component that generates messages/events
+- **Consumer** – Component that receives and processes messages/events
+- **Topic / Queue** – Logical channels used to categorize and deliver messages
+
+---
+
+## Variants / Types
+
+<Tabs>
+<TabItem value="message-queue" label="Message Queue">
+
+- **Key characteristics:** FIFO delivery, decouples producers and consumers, ensures reliable message delivery
+- **Example tools:** RabbitMQ, AWS SQS, ActiveMQ
+- **Primary purpose / benefit:** Decouples components and provides reliable, asynchronous communication
+
+</TabItem>
+<TabItem value="pub-sub" label="Publish / Subscribe">
+
+- **Key characteristics:** Producers publish events to topics; multiple consumers can subscribe independently
+- **Example tools:** Apache Kafka, Google Pub/Sub, NATS
+- **Primary purpose / benefit:** Enables real-time streaming and broadcast to multiple subscribers
+
+</TabItem>
+<TabItem value="event-stream" label="Event Streaming">
+
+- **Key characteristics:** Persistent log of events that consumers can replay; supports event sourcing
+- **Example tools:** Kafka Streams, Kinesis, Pulsar
+- **Primary purpose / benefit:** Ensures auditability, reprocessing, and temporal decoupling
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="async-processing" label="Asynchronous Processing">
+
+- Use events/messages to trigger downstream processing asynchronously
+- Responsibility: Offload work from synchronous request paths
+- Focus / goal: Improve scalability and reduce latency in request-response cycles
+
+</TabItem>
+<TabItem value="event-sourcing" label="Event Sourcing">
+
+- Persist state changes as a sequence of immutable events
+- Responsibility: Enable replay, auditing, and reconstruction of system state
+- Focus / goal: Maintain complete history of changes for reliability and traceability
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Event-driven triggers, subscription-based, asynchronous pull/push
+- **Operations / Interfaces:** Publish / Subscribe, enqueue / dequeue, stream processing APIs, SDKs
+- **Interaction model:** Through brokers or middleware; can be integrated with microservices, serverless functions, or IoT devices
+
+---
+
+## What Do Results Normally Look Like
+
+- Event logs or streams persisted in topics or queues
+- State changes applied asynchronously to downstream systems
+- Metrics/notifications triggered by event handling
+
+**Notes:**
+- Messages/events are typically serialized in formats like JSON, Avro, or Protobuf
+- Ordering guarantees (FIFO, at-least-once, exactly-once) depend on the underlying broker
+- Consumers may need idempotent handling to avoid duplicate processing

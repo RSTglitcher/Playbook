@@ -1,0 +1,174 @@
+---
+title: "Protocols"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+Protocols define **rules and conventions for communication between systems or components** in software engineering.
+
+**Examples:**
+:::
+
+Typical examples include:
+- HTTP / HTTPS for web communication
+- TCP / UDP for transport-level communication
+- WebSockets for real-time bidirectional messaging
+
+
+## HTTP Methods
+
+| Method | Meaning / Purpose                                      |
+|--------|--------------------------------------------------------|
+| GET    | Retrieve a resource; should not modify server state    |
+| POST   | Create a new resource or submit data to a server       |
+| PUT    | Update an existing resource or create it if it doesn’t exist |
+| PATCH  | Apply partial modifications to a resource             |
+| DELETE | Remove a resource                                      |
+| HEAD   | Retrieve headers only, no body                        |
+| OPTIONS| Discover available HTTP methods for a resource        |
+| CONNECT| Establish a tunnel to a server (used for proxies)     |
+| TRACE  | Echo the received request for diagnostic purposes      |
+
+
+## HTTP Status Codes
+
+| Status Code Class | Meaning / Description                                                                 |
+|------------------|--------------------------------------------------------------------------------------|
+| 1xx (Informational) | Request received, continuing process                                                |
+| 2xx (Success)       | Action successfully received, understood, and accepted (e.g., 200 OK, 201 Created) |
+| 3xx (Redirection)   | Further action needed to complete request (e.g., 301 Moved Permanently, 302 Found) |
+| 4xx (Client Error)  | Request contains an error (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found) |
+| 5xx (Server Error)  | Server failed to fulfill a valid request (e.g., 500 Internal Server Error)         |
+
+
+---
+
+## Benefit / What problem does it solve?
+
+Using Protocols enables:
+
+- **Interoperability:** Different systems and platforms can communicate reliably
+- **Consistency:** Messages are interpreted in a predictable, agreed-upon format
+- **Control:** Provides mechanisms for error handling, sequencing, and flow control
+
+---
+
+## When to Use
+
+**Use Protocols when:**
+
+- Multiple systems need to communicate over a network
+- Communication reliability, ordering, or format is important
+- You need to define standard interfaces for integration
+
+**Typical examples:**
+
+- Web applications interacting with backend services (HTTP/HTTPS)
+- Real-time dashboards and live notifications (WebSockets)
+- IoT devices communicating with a central server (MQTT, CoAP)
+
+---
+
+## When Not to Use
+
+**Avoid Protocols when:**
+
+- Components run in the same memory space and can use direct function calls
+- Performance is extremely latency-sensitive and protocol overhead is unacceptable
+- Low-level device-specific communication that bypasses standard protocols
+
+---
+
+## Key Terminology & Definitions
+
+- **Protocol** – A set of rules defining how data is formatted, transmitted, and interpreted
+- **Transport Layer** – The layer responsible for end-to-end communication (TCP, UDP)
+- **Application Layer** – Defines higher-level communication semantics (HTTP, WebSockets)
+- **Handshake** – Initial negotiation between communicating parties to establish connection
+- **Encryption / Security** – Mechanisms to protect data in transit (TLS, SSL)
+
+---
+
+## Variants / Types
+
+<Tabs>
+<TabItem value="http" label="HTTP / HTTPS">
+
+- **Key characteristics:** Request-response model, stateless by default, widely supported
+- **Example tools / libraries:** cURL, Postman, Axios, Fetch API
+- **Primary purpose / benefit:** Standard for web communication; HTTPS adds encryption
+
+</TabItem>
+<TabItem value="tcp-udp" label="TCP / UDP">
+
+- **Key characteristics:** TCP is connection-oriented and reliable; UDP is connectionless and low-latency
+- **Example tools / libraries:** Sockets API, Netcat, Wireshark
+- **Primary purpose / benefit:** Enables transport-layer communication with reliability (TCP) or speed (UDP)
+
+</TabItem>
+<TabItem value="websocket" label="WebSockets">
+
+- **Key characteristics:** Full-duplex, bidirectional communication over a single TCP connection
+- **Example tools / libraries:** Socket.IO, ws (Node.js), native browser WebSocket API
+- **Primary purpose / benefit:** Real-time messaging for dashboards, notifications, and chat systems
+
+</TabItem>
+<TabItem value="iot-protocols" label="IoT / Lightweight Protocols">
+
+- **Key characteristics:** Lightweight, optimized for low-bandwidth or constrained devices
+- **Example tools / libraries:** MQTT, CoAP
+- **Primary purpose / benefit:** Efficient communication for IoT and embedded systems
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="reliable-comm" label="Reliable Communication">
+
+- Ensure ordered delivery and error recovery (TCP, acknowledgment patterns)
+- Responsibility: Guarantee message delivery between systems
+- Focus / goal: Prevent data loss and maintain system integrity
+
+</TabItem>
+<TabItem value="low-latency" label="Low-Latency / Real-Time Communication">
+
+- Use protocols optimized for speed, possibly at the cost of reliability (UDP, WebSockets)
+- Responsibility: Enable real-time responsiveness
+- Focus / goal: Fast, efficient communication for real-time applications
+
+</TabItem>
+<TabItem value="secure-comm" label="Secure Communication">
+
+- Encrypt data in transit using TLS/SSL or similar mechanisms
+- Responsibility: Protect confidentiality, integrity, and authenticity of data
+- Focus / goal: Prevent eavesdropping and tampering
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Request-response, publish-subscribe, streaming, or bidirectional
+- **Operations / Interfaces:** HTTP methods (GET, POST, PUT, DELETE), WebSocket messages, TCP/UDP sockets
+- **Interaction model:** Direct client-server calls, message brokers, or peer-to-peer
+
+---
+
+## What Do Results Normally Look Like
+
+- Structured data (JSON, XML, Protobuf) delivered reliably or in real-time
+- Acknowledgments, error codes, or retransmissions depending on the protocol
+- Encrypted traffic when using secure protocols (HTTPS / TLS)
+
+**Notes:**
+- Choice of protocol affects latency, throughput, reliability, and security
+- Many protocols can be layered (e.g., WebSockets over TCP, HTTPS over TCP/IP)
+- Proper error handling and retry strategies are essential for robust communication
