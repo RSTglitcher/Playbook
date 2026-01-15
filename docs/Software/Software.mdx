@@ -5,6 +5,63 @@ title: "Software Engineering"
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+```mermaid
+SoftwareEngineering
+│
+├── Software Architecture
+│   ├── Project Architecture
+│   │   ├── Monolith vs Microservices
+│   │   ├── Layered Architecture (Presentation / Business / Data)
+│   │   ├── Clean Architecture / Hexagonal Architecture
+│   │   └── Design Patterns (Factory, Singleton, Observer, Strategy)
+│   ├── OS Architecture
+│   │   ├── Kernel / User Space / Hardware
+│   │   └── Processes / Memory / File System / Network
+│
+├── Communication
+│   └── API Design
+│    ├── REST
+│    ├── GraphQL
+│    └── gRPC / RPC
+|
+├── Development Practices
+│   ├── Version Control (Git)
+│   ├── CI/CD Pipelines
+│   ├── Test-Driven Development (TDD)
+│   ├── Code Review & Static Analysis
+│   └── Documentation Practices
+│
+├── Containerization & Orchestration
+│   ├── Docker
+│   ├── Kubernetes
+│   ├── Docker Compose
+│   └── Helm / Charts
+│
+├── Dependency & Package Management
+│   ├── npm / yarn / pip / Maven / Gradle
+│   └── Dependency Graph & Versioning
+│
+├── Security & Quality
+│   ├── Secure Coding Principles
+│   ├── Input Validation & Authentication
+│   ├── Testing (Unit, Integration, E2E)
+│   └── Monitoring & Logging
+│
+├── Performance & Scalability (Core SWE)
+│   ├── Profiling / Bottleneck Analysis
+│   ├── Load Balancing
+│   └── Horizontal vs Vertical Scaling
+│
+└── DevOps & Infrastructure
+    ├── Infrastructure as Code (Terraform, Ansible)
+    ├── Cloud Providers (AWS / GCP / Azure)
+    ├── Deployment Strategies (Blue/Green, Canary)
+    └── Monitoring / Observability Tools
+```
+
+
+---
+
 ## Principles
 
 <Tabs>
@@ -75,67 +132,3 @@ Functions as first-class citizens; can accept or return other functions.
 
 </TabItem>
 </Tabs>
-
----
-
-## OS Architecture Taxonomy
-
-
-```mermaid
-OSArchitecture
-├── User Space
-│   ├── Terminal / CLI
-│   ├── GUI
-│   └── Applications
-│
-├── Kernel Space
-│   ├── Process Management
-│   ├── Memory Management
-│   ├── File System Management
-│   ├── Device Drivers
-│   └── Network Stack
-│
-└── Hardware
-    ├── CPU
-    ├── RAM
-    ├── Storage (HDD/SSD)
-    └── Network Interface Card (NIC)
-```
-
-## Project Taxonomy
-
-```mermaid
-ProjectArchitecture
-├── Source Code
-│   ├── Modules / Packages
-│   ├── Functions / Classes
-│   └── Config Files
-│
-├── Version Control
-│   ├── Git
-│   ├── Branching Strategies
-│   └── Pull Requests / Code Reviews
-│
-├── Build & Dependency Management
-│   ├── Build Tools (Maven, Gradle, Make)
-│   ├── Package Managers (npm, pip)
-│   └── Dependency Tracking
-│
-├── Testing
-│   ├── Unit Tests
-│   ├── Integration Tests
-│   ├── End-to-End Tests
-│   └── Test Coverage / Quality Metrics
-│
-├── Deployment
-│   ├── CI/CD Pipelines
-│   ├── Containers (Docker)
-│   ├── Orchestration (Kubernetes)
-│   └── Cloud / On-Prem Environments
-│
-└── Monitoring & Maintenance
-├── Logging
-├── Metrics / Alerts
-├── Health Checks
-└── Debugging Tools
-```
