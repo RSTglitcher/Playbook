@@ -1,0 +1,202 @@
+---
+title: "Container & Platform Storage"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Container & Platform Storage
+**Platform-managed persistent storage** for containerised workloads, decoupling data from the lifecycle of individual containers.
+Examples: **Kubernetes Persistent Volumes (PV/PVC), CSI drivers, cloud block storage (EBS, Persistent Disk), network filesystems**
+:::
+
+### Definition
+
+**Container & platform storage** provides **persistent data storage** for workloads running in container orchestration platforms (most commonly Kubernetes).
+
+Unlike caches, databases, or search engines, this layer:
+- Does **not define query semantics**
+- Does **not interpret data**
+- Focuses on **where and how data is stored**, not how it is queried
+
+Its primary role is to ensure data **survives container restarts, rescheduling, and failures**.
+
+---
+
+### Benefit / What problem does it solve?
+
+Containers are inherently **ephemeral**:
+- Pods can restart
+- Nodes can be replaced
+- Containers can be rescheduled anywhere
+
+Platform storage solves this by:
+
+- **Decoupling data from containers**
+- Enabling **stateful workloads** in Kubernetes
+- Providing **durability and availability guarantees**
+- Standardising how applications request storage
+
+```mermaid
+Pod --> Persistent Volume Claim --> Platform Storage --> Physical / Cloud Disk
+```
+
+---
+
+#### When to use
+
+**Use container & platform storage when:**
+
+- Running stateful workloads in Kubernetes
+- Data must survive pod restarts
+- Applications require filesystem or block storage
+- Storage lifecycle should be managed by the platform
+
+**Typical examples:**
+
+- Databases running in Kubernetes
+- Message brokers
+- CI/CD tooling
+- Stateful microservices
+
+---
+
+#### When not to use
+
+**Avoid relying on this layer when:**
+
+- Data is purely temporary
+- You need querying, indexing, or aggregation
+- Low-latency key-based access is required (use cache)
+- Analytics or reporting is the primary workload
+
+**This layer is not:**
+
+- A database
+- A cache
+- A search engine
+- A data warehouse
+
+---
+
+### Key Terminology & Definitions
+
+- Persistent Volume (PV) – Platform-managed storage resource
+- Persistent Volume Claim (PVC) – Request for storage by a workload
+- StorageClass – Defines how storage is provisioned
+- CSI (Container Storage Interface) – Standard interface for storage providers
+- StatefulSet – Kubernetes workload type for stateful applications
+- Ephemeral storage – Storage lost when a pod terminates
+
+---
+
+### Platform Storage Variants (Access & Scope)
+
+<Tabs> <TabItem value="block" label="Block Storage">
+
+- Raw block devices mounted into containers
+- Low latency, high performance
+- Typically single-writer
+- Examples: Cloud disks (EBS, Persistent Disk)
+
+</TabItem> <TabItem value="file" label="File Storage">
+
+- Shared filesystem
+- Multiple readers and writers
+- Higher latency than block storage
+- Examples: NFS, CephFS
+
+</TabItem> <TabItem value="ephemeral" label="Ephemeral Volumes">
+
+- Tied to pod lifecycle
+- No persistence guarantees
+- Extremely fast
+- Examples: emptyDir volumes
+
+</TabItem> </Tabs>
+
+---
+
+### Key Strategies
+<Tabs> <TabItem value="dynamic" label="Dynamic Provisioning">
+
+- Storage created automatically on demand
+- Defined via StorageClasses
+- No manual volume management
+- Focus: Scalability and operational simplicity
+
+</TabItem> <TabItem value="stateful" label="Stateful Workload Strategy">
+
+- Stable identities for pods
+- One-to-one mapping between pod and volume
+- Ordered startup and shutdown
+- Focus: Safe stateful execution
+
+</TabItem> <TabItem value="snapshot" label="Snapshot & Backup Strategy">
+
+- Volume-level snapshots
+- Restore and disaster recovery
+- Platform-integrated backups
+- Focus: Data protection and resiliency
+
+</TabItem> </Tabs>
+
+---
+
+### How to interact with it
+
+- Access pattern: Declarative
+- Interaction model: Infrastructure configuration
+
+**You define:**
+
+- Size
+- Access mode (ReadWriteOnce, ReadOnlyMany, etc.)
+- Performance class
+
+**Example:**
+
+```yaml
+volumeMounts:
+  - mountPath: /data
+    name: app-storage
+```
+
+**Applications then interact with storage via:**
+
+- Filesystems
+- Mounted paths
+- Block devices
+
+---
+
+### What do results normally look like
+
+- Files and directories
+- Database data files
+- Logs, artifacts, binaries
+- Raw data blocks
+
+**Important:**
+This layer returns no query results — it exposes storage, not data semantics.
+
+---
+
+### Where Container & Platform Storage fits architecturally
+
+```mermaid
+Application Container
+        ↓
+Platform Storage Abstractions (PV / PVC)
+        ↓
+Physical or Cloud Storage
+```
+
+**It supports:**
+
+- Databases
+- Caches
+- Search engines
+
+But does not replace them.
+

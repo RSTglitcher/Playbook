@@ -1,0 +1,148 @@
+---
+title: "Lakehouse Architecture"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Definition
+
+:::tip Definition
+A **Lakehouse** is a modern architecture that combines the **flexibility and scale of a Data Lake** with the **management, performance, and transactional capabilities of a Data Warehouse**.
+
+**Examples:**
+- Databricks Delta Lake
+- Apache Iceberg
+- Apache Hudi
+:::
+
+---
+
+## Benefit / What problem does it solve?
+
+Lakehouses solve the following problems:
+
+- **Unified storage** for raw, semi-structured, and structured data
+- **ACID transactions** on large-scale datasets
+- **Direct analytics and BI workloads** on data without needing multiple copies
+- **Supports batch and streaming data** in a single platform
+
+---
+
+## When to Use
+
+**Use a Lakehouse when:**
+
+- You need **both raw data storage and structured analytics**
+- You want **ACID transactions on top of a data lake**
+- Analytics, reporting, and ML must **operate on the same underlying data**
+- You want **simplified architecture** without moving data between a lake and a warehouse
+
+**Typical examples:**
+
+- Streaming event data combined with historical datasets for analytics
+- Machine learning pipelines operating on curated and raw data
+- BI dashboards querying operational + historical datasets together
+
+---
+
+## When Not to Use
+
+**Avoid Lakehouses when:**
+
+- Your workload is purely **transactional** and requires a relational DB
+- Data is **ephemeral or temporary** (use cache or ephemeral storage)
+- You have **strict low-latency key-value access requirements**
+- You only need a **simple data warehouse** for reporting
+
+---
+
+## Key Terminology & Definitions
+
+- **Delta Lake / Iceberg / Hudi** – Implementations of the Lakehouse pattern
+- **ACID Transactions** – Guarantees consistency across multiple operations
+- **Schema Enforcement** – Ensures structured data conforms to schema-on-write rules
+- **Versioned Tables** – Track historical snapshots for rollback or time travel
+- **Partitioning & Clustering** – Organize data for efficient queries
+- **Streaming + Batch** – Supports both types of data pipelines on the same storage
+
+---
+
+## Lakehouse Variants
+
+<Tabs>
+<TabItem value="delta" label="Delta Lake">
+
+- Built on cloud object storage (S3, ADLS, GCS)
+- Supports ACID transactions, schema enforcement, and time travel
+- Examples: Databricks Delta Lake
+
+</TabItem>
+<TabItem value="iceberg" label="Apache Iceberg">
+
+- Open table format for huge analytic datasets
+- Supports partitioning, schema evolution, and versioned tables
+- Examples: Iceberg tables on Spark, Flink, or Presto
+
+</TabItem>
+<TabItem value="hudi" label="Apache Hudi">
+
+- Storage layer with incremental processing support
+- Efficient upserts and streaming ingestion
+- Examples: Hudi tables on Hadoop, Spark, or cloud storage
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="unified-storage" label="Unified Storage">
+
+- Store raw, curated, and structured data in a single repository
+- Responsibility: Platform / Lakehouse management layer
+- Focus: Simplifying architecture and eliminating duplication
+
+</TabItem>
+<TabItem value="transactional" label="Transactional Tables">
+
+- ACID support for batch and streaming writes
+- Responsibility: Lakehouse engine (Delta, Iceberg, Hudi)
+- Focus: Data correctness and consistency
+
+</TabItem>
+<TabItem value="time-travel" label="Versioning / Time Travel">
+
+- Track historical snapshots of tables
+- Enables rollback and reproducible analyses
+- Responsibility: Lakehouse engine
+- Focus: Auditing, debugging, and reproducibility
+
+</TabItem>
+<TabItem value="partitioning" label="Partitioning & Clustering">
+
+- Organize data for query efficiency
+- Responsibility: Data engineers / Lakehouse engine
+- Focus: Read performance and cost optimization
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Query-based (SQL, Spark, Flink)
+- **Operations / Interfaces:** SQL queries, data frame APIs, streaming jobs
+- **Interaction model:** Schema-on-write for structured tables, schema-on-read for raw data
+
+**Example queries:**
+
+```sql
+SELECT user_id, COUNT(*)
+FROM events
+WHERE event_date BETWEEN '2026-01-01' AND '2026-01-14'
+GROUP BY user_id
+```

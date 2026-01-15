@@ -70,7 +70,7 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Play',
           },
           {
             href: 'https://github.com/facebook/docusaurus',
@@ -86,7 +86,7 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Play',
                 to: '/docs/intro',
               },
               {

@@ -2,16 +2,302 @@
 title: "File Types"
 ---
 
+:::tip Definition
+File Types refer to **the format and structure of data stored or transmitted**.
+They define how information is encoded, represented, and interpreted by applications or services.
 
-- Configurations
-  - (e.g., YAML, JSON, and tools like Ansible)
-- Data Representation
-- Message Representation
-- Text Editing
-- Template Engines 
-  - (e.g., Jinja, Mustache)
-- Databases in Software Engineering 
-  - (e.g., using MySQL with applications, ORM frameworks)
+**Examples:** JSON, XML, CSV, Protobuf, Avro, Parquet
+:::
+
+---
+
+```mermaid
+File Types
+├── Serialization & Messaging Formats
+│   ├── Text-Based Formats
+│   │   ├── JSON (.json)
+│   │   └── XML (.xml)
+│   │
+│   └── Binary Formats
+│       ├── Protobuf (.proto)
+│       └── Avro (.avsc)
+│
+├── Configuration & Infrastructure Files
+│   ├── YAML (.yaml / .yml)
+│   ├── TOML (.toml)
+│   └── ENV (.env)
+│
+├── Programming & Schema Definition Files
+│   ├── SQL (.sql)
+│   ├── GraphQL (.graphql)
+│   └── XSD (.xsd)
+│
+├── Documentation & Markup Files
+│   ├── Markdown (.md)
+│   └── HTML (.html)
+│
+└── Data & Analytics Files
+    ├── CSV (.csv)
+    └── Parquet (.parquet)
+```
 
 
+---
+
+## Benefit / What problem does it solve?
+
+Understanding file types helps you:
+
+- **Interpret and parse data correctly** between systems
+- **Enable interoperability** between services and platforms
+- **Optimize performance** for storage, transmission, or analytics
+- Ensure **data integrity** during serialization and deserialization
+
+---
+
+## When to Use
+
+- When you need to **store structured or unstructured data**
+- When transmitting data between applications or services
+- When selecting a format for **analytics, logging, or configuration**
+- When enforcing **schemas or validation rules**
+
+**Typical examples:**
+
+- JSON for REST API payloads
+- CSV for data import/export
+- Protobuf for service-to-service communication
+- Parquet for analytics and data lakes
+
+---
+
+## When Not to Use
+
+- File types are **not storage systems**
+- They cannot provide durability, replication, or indexing on their own
+- They do not manage concurrency or access control
+
+---
+
+## Key Terminology & Definitions
+
+- **Serialization:** Converting an object into a format for storage or transmission
+- **Deserialization:** Converting stored/transmitted data back into an object
+- **Schema:** Definition of structure for structured data formats (e.g., Protobuf, Avro, XSD)
+- **Text-based format:** Human-readable (JSON, XML, CSV)
+- **Binary format:** Efficient, machine-readable (Protobuf, Avro, Parquet)
+
+---
+
+## Data Serialization & Messaging Formats
+
+Formats used to encode structured data for storage or transmission between systems.
+
+### Protobuf (`.proto`)
+**What it is:**
+A **binary serialization format** with a strongly defined schema, developed by Google.
+
+**When to use it:**
+- High-performance systems
+- Service-to-service communication (e.g. gRPC)
+- Storing structured objects in caches
+- When payload size and speed matter
+
+**Live example:**
+- gRPC APIs
+- Redis storing protobuf-encoded objects
+- Google internal systems
+
+---
+
+### JSON (`.json`)
+**What it is:**
+A **human-readable text format** for structured data.
+
+**When to use it:**
+- APIs
+- Configuration files
+- Debugging and logging
+- Interoperability between systems
+
+**Live example:**
+- REST API responses
+- Frontend-backend communication
+- OpenAPI schemas
+
+---
+
+### XML (`.xml`)
+**What it is:**
+A **markup-based structured data format** with strict schemas.
+
+**When to use it:**
+- Legacy systems
+- Enterprise integrations
+- Document-based data exchange
+
+**Live example:**
+- SOAP APIs
+- Financial and government systems
+
+---
+
+## Configuration & Infrastructure Files
+
+Files used to configure systems, environments, and infrastructure.
+
+### YAML (`.yaml`, `.yml`)
+**What it is:**
+A **human-readable configuration format** designed for clarity.
+
+**When to use it:**
+- Infrastructure configuration
+- Kubernetes manifests
+- CI/CD pipelines
+
+**Live example:**
+- Kubernetes `Deployment.yaml`
+- GitHub Actions workflows
+
+---
+
+### TOML (`.toml`)
+**What it is:**
+A **minimal, strongly-typed configuration format**.
+
+**When to use it:**
+- Tool configuration
+- Projects needing clear, predictable config parsing
+
+**Live example:**
+- `pyproject.toml`
+- Rust project configuration
+
+---
+
+### ENV (`.env`)
+**What it is:**
+A simple **key-value file** for environment variables.
+
+**When to use it:**
+- Local development
+- Injecting secrets and config at runtime
+
+**Live example:**
+- Docker Compose
+- Local application setup
+
+---
+
+## Programming & Schema Definition Files
+
+Files that define structure, contracts, or executable logic.
+
+### SQL (`.sql`)
+**What it is:**
+A **query and schema language** for relational databases.
+
+**When to use it:**
+- Defining tables and indexes
+- Querying relational data
+- Data migrations
+
+**Live example:**
+- MySQL / PostgreSQL scripts
+- Data warehouse queries
+
+---
+
+### GraphQL (`.graphql`)
+**What it is:**
+A **query language and schema definition** for APIs.
+
+**When to use it:**
+- Client-driven APIs
+- Reducing over-fetching and under-fetching
+
+**Live example:**
+- Frontend querying backend services
+- API gateway schemas
+
+---
+
+### Avro (`.avsc`)
+**What it is:**
+A **schema-based binary serialization format** used heavily in data streaming.
+
+**When to use it:**
+- Event streaming
+- Schema evolution in pipelines
+
+**Live example:**
+- Kafka message schemas
+- Data ingestion pipelines
+
+---
+
+## Documentation & Markup Files
+
+Files designed for writing and rendering documentation.
+
+### Markdown (`.md`)
+**What it is:**
+A **lightweight markup language** for formatted text.
+
+**When to use it:**
+- Documentation
+- Knowledge bases
+- Static sites
+
+**Live example:**
+- Docusaurus pages
+- GitHub READMEs
+
+---
+
+### HTML (`.html`)
+**What it is:**
+The **standard markup language for web pages**.
+
+**When to use it:**
+- Web content
+- UI rendering
+
+**Live example:**
+- Web applications
+- Documentation sites
+
+---
+
+## Data & Analytics Files
+
+Formats commonly used in analytics and data workflows.
+
+### CSV (`.csv`)
+**What it is:**
+A **plain-text tabular data format**.
+
+**When to use it:**
+- Simple data exchange
+- Data imports/exports
+
+**Live example:**
+- Spreadsheet exports
+- Data ingestion jobs
+
+---
+
+### Parquet (`.parquet`)
+**What it is:**
+A **columnar, compressed data format** optimized for analytics.
+
+**When to use it:**
+- Large-scale analytical workloads
+- Data lakes and warehouses
+
+**Live example:**
+- BigQuery
+- Spark and Hadoop ecosystems
+
+---
 

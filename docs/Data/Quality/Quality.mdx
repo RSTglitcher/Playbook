@@ -1,0 +1,149 @@
+---
+title: "Data Quality"
+---
+
+:::tip Data Quality
+Practices, rules, and controls that ensure data is **accurate, complete, consistent, timely, and fit for purpose** across systems and pipelines.
+:::
+
+```mermaid
+Data Quality
+├── Quality Dimensions
+│   ├── Accuracy
+│   ├── Completeness
+│   ├── Consistency
+│   ├── Timeliness
+│   └── Validity
+│
+├── Validation & Rules
+│   ├── Schema Validation
+│   ├── Business Rules
+│   └── Constraint Enforcement
+│
+├── Monitoring & Observability
+│   ├── Data Profiling
+│   ├── Freshness Checks
+│   └── Anomaly Detection
+│
+├── Data Pipelines
+│   ├── Ingestion Quality Checks
+│   ├── Transformation Validation
+│   └── Output Verification
+│
+└── Cross-Cutting Quality Capabilities
+    ├── Governance & Ownership
+    ├── Metadata & Lineage
+    └── Incident Management
+```
+
+## Foundational Quality Dimensions
+
+Core attributes that define whether data can be trusted at all.
+
+### Accuracy
+
+Data correctly represents the real-world entity or event (e.g. order totals, customer attributes).
+
+### Completeness
+
+Required data is present and not missing (e.g. non-null keys, full daily ingestion).
+
+### Consistency
+
+Data does not conflict across systems or datasets (e.g. metrics align between sources).
+
+### Timeliness
+
+Data is available within expected time windows (e.g. daily data refreshed by SLA).
+
+### Validity
+
+Data conforms to defined formats, ranges, and allowed values (e.g. enums, regex checks).
+
+---
+
+## Structural & Schema Quality
+
+Ensures data adheres to expected technical structure.
+
+### Schema Enforcement
+
+Controls and detects schema changes that may break downstream consumers.
+
+### Data Types & Constraints
+
+Ensures values match declared types and constraints (e.g. numeric ranges, uniqueness).
+
+### Referential Integrity
+
+Maintains valid relationships between datasets (e.g. foreign keys resolve).
+
+---
+
+## Operational Quality
+
+Day-to-day checks that ensure pipelines behave as expected.
+
+### Freshness
+
+Detects delayed or stalled data updates.
+
+### Volume & Distribution
+
+Ensures record counts and value distributions fall within expected bounds.
+
+### Anomaly Detection
+
+Flags unexpected changes in metrics or patterns over time.
+
+---
+
+## Business & Semantic Quality
+
+Ensures data aligns with business meaning.
+
+### Business Rules
+
+Validates domain-specific logic (e.g. order value > 0, valid lifecycle states).
+
+### Metric Definitions
+
+Ensures metrics are calculated and interpreted consistently across teams.
+
+### Domain Constraints
+
+Applies industry- or business-specific validation rules.
+
+---
+
+### Pipeline & Processing Quality
+
+Protects data quality during ingestion and transformation.
+
+### Ingestion Validation
+
+Checks data correctness at entry points (e.g. malformed records rejected).
+
+### Transformation Integrity
+
+Ensures transformations do not introduce loss or distortion.
+
+### Deduplication & Idempotency
+
+Prevents duplicate or inconsistent outputs during reprocessing.
+
+## Cross-Cutting Quality Capabilities
+
+Practices that support all quality dimensions.
+
+### Observability & Alerting
+
+Monitoring and alerts for data quality issues.
+
+### Data Quality SLAs
+
+Explicit expectations for freshness, accuracy, and availability.
+
+### Ownership & Accountability
+
+Clear responsibility for data quality at dataset level.

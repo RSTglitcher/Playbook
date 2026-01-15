@@ -1,0 +1,229 @@
+---
+title: "Cloud Data Warehouses"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Cloud Data Warehouse
+A **managed, scalable, centralised analytical data store** designed to support **large-scale, read-heavy analytical queries** across historical and aggregated data, delivered as a **fully-managed cloud service**.
+:::
+
+### How a Cloud Data Warehouse differs from a traditional Database
+
+| Database (OLTP) | Cloud Data Warehouse (OLAP) |
+|-----------------|----------------------------|
+| Supports day-to-day application operations | Supports analytics, reporting, and decision-making |
+| Optimised for small, frequent reads and writes | Optimised for large scans, joins, and aggregations |
+| Row-based storage | Columnar storage |
+| Strong transactional guarantees | Eventual / relaxed consistency acceptable |
+| Millisecond latency | Seconds-to-minutes latency acceptable |
+
+**Key distinction:**
+> A database answers *“What is happening right now?”*
+> A cloud data warehouse answers *“What has happened over time, and what trends can we analyse?”*
+
+---
+
+## What problem does a Cloud Data Warehouse solve?
+
+- Offloads analytics from operational systems to prevent performance impact
+- Aggregates and stores **historical data** efficiently
+- Enables **fast, scalable analytical queries** without infrastructure management
+
+Cloud data warehouses provide:
+- Automatic scaling for large queries
+- Columnar storage optimised for analytics
+- Fully managed operations including backup, replication, and patching
+
+---
+
+## When to use a Cloud Data Warehouse
+
+Use a cloud data warehouse when you need:
+
+- Large-scale analytics and reporting
+- Historical trend analysis over years of data
+- Aggregations across multiple sources
+- Read-heavy, compute-intensive workloads
+
+**Typical examples:**
+- BI dashboards and reports
+- Marketing analytics
+- Finance and sales performance reporting
+- Data science model feature extraction
+
+---
+
+## When *not* to use a Cloud Data Warehouse
+
+Avoid when:
+
+- High-frequency transactional writes are required
+- Single-row lookups with low latency are critical
+- Applications require strong OLTP guarantees
+
+**Anti-patterns:**
+- Using it as a primary operational database
+- Performing per-user request lookups directly from the warehouse
+
+---
+
+## Key Terminology & Definitions
+
+- **OLAP (Online Analytical Processing):** Query patterns focused on aggregation and analysis
+- **Columnar Storage:** Efficient scanning by storing data by column instead of row
+- **Partitioning:** Dividing tables by time or key to reduce scanned data
+- **Clustering:** Organising data within partitions for faster filters and joins
+- **ETL / ELT:** Extract, Transform, Load (or Load then Transform)
+- **Fact Table:** Table containing measured events (e.g., sales)
+- **Dimension Table:** Table containing descriptive attributes (e.g., customer, region)
+
+---
+
+| Concept | AWS | GCP |
+|------|-----|-----|
+| Project / Account | Account | Project |
+| Object storage | S3 | GCS |
+| Data warehouse | Redshift | BigQuery |
+| Key-value DB | DynamoDB | Firestore |
+| Wide-column DB | Keyspaces | Bigtable |
+| IAM | IAM Roles | IAM Bindings |
+
+---
+
+## Key Strategies
+
+<Tabs>
+
+<TabItem value="ingestion" label="Batch & Streaming Ingestion">
+
+**TA definition:** Controlled loading of large volumes of analytical data in cloud-managed pipelines.
+
+**Key features:**
+- Append-oriented writes
+- Batch or streaming ingestion
+- Minimal transactional locking
+
+**Primary purpose:** Efficient, scalable ingestion of analytical datasets
+
+**Read/Write profile:** Write-light, read-heavy
+
+**Examples:**
+- BigQuery streaming inserts
+- Redshift COPY commands from S3
+- Snowflake bulk loads
+
+</TabItem>
+
+<TabItem value="partitioning" label="Partitioning Strategy">
+
+**TA definition:** Dividing tables into segments to reduce query scan sizes and cost.
+
+**Key features:**
+- Time-based partitions
+- Query pruning automatically applied
+- Cost-efficient scanning
+
+**Primary purpose:** Improve query performance and control resource usage
+
+**Read/Write profile:** Read-optimised
+
+**Examples:**
+- Partitioning BigQuery tables by ingestion date
+- Redshift spectrum partitioned external tables
+
+</TabItem>
+
+<TabItem value="clustering" label="Clustering Strategy">
+
+**TA definition:** Physically grouping related data within partitions for faster filtering.
+
+**Key features:**
+- Improves filter and join performance
+- Reduces scanned data for queries
+
+**Primary purpose:** Faster analytical queries on large datasets
+
+**Read/Write profile:** Read-heavy
+
+**Examples:**
+- BigQuery clustering by customer_id
+- Snowflake clustering keys on region or product
+
+</TabItem>
+
+<TabItem value="consistency" label="Consistency Model">
+
+**TA definition:** Prioritising query availability and throughput over strict transactional consistency.
+
+**Key features:**
+- Eventual consistency acceptable
+- Append-only or immutable workloads common
+
+**Primary purpose:** Analytical correctness over transactional correctness
+
+**Read/Write profile:** Read-heavy
+
+**Examples:**
+- BigQuery append-only streaming
+- Snowflake multi-cluster reads
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## How to interact with a Cloud Data Warehouse
+
+- **Access pattern:** Query-based, not key-based
+- **Query type:** SQL / analytical queries
+- **Query content:** Aggregations, joins, filters, window functions
+- **Storage structure:** Tables (fact/dimension), columnar storage
+
+**You ask:** “What are the aggregated sales per region over the last quarter?”
+**Not:** “Give me the value for this key”
+
+---
+
+## What do results normally look like?
+
+- Aggregated tables
+- Summaries, metrics, and KPIs
+- Time-series or trend analysis
+- BI-ready datasets for dashboards
+
+**Consumers:**
+- Looker, Tableau, PowerBI
+- Scheduled reports
+- Data science notebooks
+- Downstream analytics pipelines
+
+---
+
+## Common Cloud Tools & Examples
+
+- **Google BigQuery**
+- **Amazon Redshift**
+- **Snowflake**
+- **Azure Synapse Analytics**
+
+---
+
+## Where Cloud Data Warehouses fit architecturally
+
+```mermaid
+Operational Databases
+↓
+ETL / ELT Pipelines
+↓
+Cloud Data Warehouse
+↓
+Dashboards / Analytics / BI / Data Science
+```
+
+
+- Sits **downstream** of operational systems
+- Supports **aggregated analytics**, reporting, and historical queries
+- Provides **scalable, managed infrastructure** for analytics workloads without requiring manual cluster management

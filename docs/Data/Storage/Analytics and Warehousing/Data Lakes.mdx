@@ -1,0 +1,156 @@
+---
+title: "Data Lakes"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Definition
+
+:::tip Definition
+A **Data Lake** is a centralized repository that allows storage of **structured, semi-structured, and unstructured data
+at any scale**, keeping it in raw form until needed.
+
+**Examples:**
+- Raw logs from applications or IoT devices
+- JSON, Avro, or Parquet event streams
+- Large files such as videos, images, or backups
+:::
+
+---
+
+## Benefit / What problem does it solve?
+
+Data lakes enable organizations to:
+
+- **Store diverse data types** in one unified system
+- **Decouple storage from compute**, allowing flexible analysis
+- Support **data science, analytics, and ML workflows**
+- Handle **large-scale, high-volume ingestion** cost-effectively
+
+---
+
+## When to Use
+
+**Use a Data Lake when:**
+
+- You need to store **raw or semi-structured data** at scale
+- Multiple teams need access to the **same raw data**
+- You plan to perform **analytics, machine learning, or ad-hoc querying**
+- Flexibility in **schema-on-read** is beneficial
+
+**Typical examples:**
+
+- Centralized log storage for analytics
+- Historical data for ML pipelines
+- Consolidating data from multiple operational systems
+
+---
+
+## When Not to Use
+
+**Avoid Data Lakes when:**
+
+- You need **transactional guarantees** or strict ACID compliance
+- Data access is primarily **key-based, low-latency queries**
+- You need **highly structured, relational data with frequent updates**
+- The workload is mainly **operational databases or real-time processing**
+
+---
+
+## Key Terminology & Definitions
+
+- **Raw Zone / Landing Zone** – Initial storage area for unprocessed data
+- **Cleansed / Curated Zone** – Processed and structured data ready for analysis
+- **Schema-on-read** – Schema is applied when querying the data, not when storing it
+- **Object Storage** – Storage layer used by most data lakes (e.g., S3, GCS, ADLS)
+- **Data Partitioning** – Organizing files for faster queries (by date, region, etc.)
+- **ETL / ELT Pipelines** – Processes that transform and load data for analytics
+
+---
+
+## Data Lake Variants
+
+<Tabs>
+<TabItem value="cloud" label="Cloud Data Lake">
+
+- Built on scalable object storage in the cloud
+- Can integrate with analytics engines (e.g., Athena, BigQuery, Spark)
+- Examples: AWS S3 + Athena, GCP Cloud Storage + BigQuery
+
+</TabItem>
+<TabItem value="onprem" label="On-Premises Data Lake">
+
+- Built on distributed file systems (HDFS, Ceph, MinIO)
+- Requires cluster management and storage planning
+- Examples: Hadoop HDFS, CephFS for enterprise data
+
+</TabItem>
+<TabItem value="lakehouse" label="Lakehouse Architecture">
+
+- Combines **data lake flexibility** with **data warehouse management**
+- Supports ACID transactions and BI workloads on top of raw data
+- Examples: Databricks Delta Lake, Apache Iceberg, Apache Hudi
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="raw-ingest" label="Raw Ingestion">
+
+- Ingest data as-is into the landing zone
+- Responsibility: Data ingestion pipelines (Kafka, Flume, etc.)
+- Focus: High throughput and minimal transformation
+
+</TabItem>
+<TabItem value="curation" label="Data Curation & Transformation">
+
+- Transform, clean, and structure data for analytics
+- Responsibility: ETL/ELT pipelines, data engineers
+- Focus: Analytical usability and query performance
+
+</TabItem>
+<TabItem value="partitioning" label="Partitioning & Indexing">
+
+- Organize files logically for efficient access
+- Responsibility: Storage and data engineers
+- Focus: Query efficiency and cost optimization
+
+</TabItem>
+<TabItem value="governance" label="Governance & Security">
+
+- Apply access controls, auditing, and metadata tracking
+- Responsibility: Data platform or governance teams
+- Focus: Compliance, security, and discoverability
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Query-based, batch or streaming
+- **Operations / Interfaces:** SQL engines (Hive, Athena, BigQuery), Spark jobs, API/SDK
+- **Interaction model:** Schema-on-read; you define queries when consuming data, not when storing it
+
+---
+
+## What Do Results Normally Look Like
+
+- Tables or views over raw and curated files
+- Analytics-ready datasets in CSV, Parquet, ORC, or Avro formats
+- Aggregated metrics, ML features, or dashboards
+
+---
+
+### Diagram (simplified architecture)
+
+```mermaid
+Source Systems --> Ingestion Pipeline --> Data Lake (Raw)
+Data Lake (Raw) --> ETL/ELT --> Curated Data Zone
+Curated Data Zone --> Analytics / ML / BI Tools
