@@ -1,0 +1,355 @@
+---
+title: "Terminal"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Keyboard Actions (Non-executable)
+- Ctrl + C # Interrupt running process
+- Ctrl + Z # Suspend process (send to background)
+- Ctrl + D # End-of-file / Exit shell
+- Ctrl + R # Reverse search command history
+- Ctrl + L # Clear terminal screen (like clear)
+- Ctrl + A # Move cursor to beginning of line
+- Ctrl + E # Move cursor to end of line
+- Ctrl + U # Delete from cursor to start of line
+- Ctrl + K # Delete from cursor to end of line
+- Ctrl + W # Delete word before cursor
+- Ctrl + Y # Paste text deleted by Ctrl+U / Ctrl+K / Ctrl+W
+- Ctrl + T # Swap the last two characters before cursor
+- Alt + B # Move backward one word
+- Alt + F # Move forward one word
+- Alt + D # Delete the word after the cursor
+- Ctrl + _ # Undo previous edit in the shell
+- Tab # Auto-complete files, directories, commands
+- !! # Repeat last command
+- !n # Repeat command from history at line n
+- !string # Repeat last command starting with string
+:::
+
+```shell
+//list all connectors on this port
+curl -X GET kfk-conn-svc:8083/connectors
+
+//check the status of a specific connector
+curl -X GET kfk-conn-svc:8083/connectors/jdbc-name-of-connector1/status
+curl -X GET kfk-conn-svc:8083/connectors/jdbc-name-of-connector2/status
+```
+
+
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+```shell
+# ==================================================
+# Navigation & Context (Executable Commands)
+# ==================================================
+
+/           # Root directory
+.           # Current directory
+..          # Parent directory
+~           # Home directory
+
+pwd         # Print working directory
+ls          # List directory contents
+ls -l       # Long listing format
+ls -a       # Include hidden files
+ls -la      # Long listing including hidden files
+ls -lh      # Human-readable file sizes
+ls -R       # Recursive listing
+ls -t       # Sort by modification time
+ls -S       # Sort by file size
+tree        # Display directory tree (if installed)
+
+cd          # Change to home directory
+cd /path    # Change directory
+cd ..       # Move up one directory
+cd -        # Switch to previous directory
+
+# --------------------------------------------------
+# Help & Discovery
+# --------------------------------------------------
+
+man command     # Manual page for a command
+command -h     # Command help (if supported)
+which command  # Path to executable
+
+# --------------------------------------------------
+# File & Directory Management
+# --------------------------------------------------
+
+mkdir dir               # Create directory
+mkdir -p a/b/c          # Create nested directories
+touch file.txt          # Create empty file
+cp src dest             # Copy file
+cp -r src dest          # Copy directory recursively
+mv src dest             # Move or rename
+rm file.txt             # Delete file
+rm -r dir               # Delete directory recursively
+rm -i file.txt          # Prompt before delete
+
+# --------------------------------------------------
+# File Inspection
+# --------------------------------------------------
+
+cat file.txt            # Output file contents
+less file.txt           # Paged file viewer
+more file.txt           # Basic pager
+head file.txt           # First 10 lines
+head -n 5 file.txt      # First 5 lines
+tail file.txt           # Last 10 lines
+tail -n 5 file.txt      # Last 5 lines
+tail -f file.txt        # Follow file (logs)
+
+# --------------------------------------------------
+# Search & Pattern Matching
+# --------------------------------------------------
+
+grep "text" file.txt        # Search text in file
+grep -i "text" file.txt     # Case-insensitive search
+grep -r "text" .            # Recursive search
+grep -v "text" file.txt     # Invert match
+grep -w "text" file.txt     # Whole-word match
+grep -c "text" file.txt     # Count matches
+
+find . -name file.txt       # Find file by name
+find . -type f              # Find files only
+find . -type d              # Find directories only
+find . -size +10k           # Files larger than 10KB
+find . -mtime -2            # Modified in last 2 days
+find . -exec rm {} \;       # Execute command on results
+
+# --------------------------------------------------
+# Pipes & Redirection
+# --------------------------------------------------
+
+command1 | command2         # Pipe output
+command > file.txt          # Redirect stdout
+command >> file.txt         # Append stdout
+command 2>&1                # Redirect stderr to stdout
+
+# --------------------------------------------------
+# Text Processing
+# --------------------------------------------------
+
+wc file.txt                 # Line, word, byte count
+wc -l file.txt              # Line count
+wc -w file.txt              # Word count
+wc -c file.txt              # Byte count
+sort file.txt               # Sort lines
+sort -r file.txt            # Reverse sort
+uniq file.txt               # Remove adjacent duplicates
+uniq -d file.txt            # Show duplicates only
+cut -c1-5 file.txt          # Character range
+tr a-z A-Z                  # Translate characters
+cmp file1 file2             # Binary file comparison
+diff file1 file2            # Line-by-line diff
+
+# --------------------------------------------------
+# Permissions & Ownership
+# --------------------------------------------------
+
+chmod 755 file              # Set permissions
+chmod -R 600 dir            # Recursive permissions
+chmod u+x file              # User executable
+chmod g-w file              # Remove group write
+chmod o-r file              # Remove other read
+chown user:group file       # Change ownership
+ls -ld dir                  # Show directory permissions
+
+# --------------------------------------------------
+# Processes & Jobs
+# --------------------------------------------------
+
+ps                          # Process snapshot
+ps -f                       # Full process listing
+ps aux                      # All processes
+top                         # Real-time process view
+jobs -l                     # Background jobs
+
+kill PID                    # Terminate process
+kill -19 PID                # Pause process
+kill -18 PID                # Resume process
+
+fg %jobid                   # Bring job to foreground
+bg %jobid                   # Resume job in background
+
+# --------------------------------------------------
+# Disk & System Information
+# --------------------------------------------------
+
+df -h                       # Disk space usage
+du -sh dir                  # Directory size
+uname                        # System info
+uptime                        # System uptime
+hostname                      # Host name
+env                           # Environment variables
+printenv                       # Environment variables
+
+# --------------------------------------------------
+# Networking
+# --------------------------------------------------
+
+ping host                   # Test connectivity
+curl -O url                 # Download file
+ssh user@host               # SSH connection
+scp file user@host:/path    # Secure copy
+traceroute host             # Network path
+ifconfig                    # Network interfaces
+arp -a                      # ARP table
+
+# --------------------------------------------------
+# Archives & Compression
+# --------------------------------------------------
+
+tar -cvf archive.tar dir    # Create tar archive
+tar -xvf archive.tar        # Extract tar archive
+gzip file                   # Compress
+gunzip file.gz              # Decompress
+
+# --------------------------------------------------
+# History & Session Control
+# --------------------------------------------------
+
+history                     # Command history
+history 20                  # Last 20 commands
+!!                          # Repeat last command
+!prefix                     # Run last command starting with prefix
+clear                       # Clear terminal
+
+
+# --------------------------------------------------
+# Search
+# --------------------------------------------------
+
+/searchString      # search forward for a string
+?searchString      # search backward for a string
+/word              # highlight a particular word
+
+# --------------------------------------------------
+# User Commands
+# --------------------------------------------------
+
+who                 # list users currently logged in
+finger              # display detailed info about users
+users               # display logged-in users in one line
+id                  # show current user's UID, GID, and group memberships
+
+# --------------------------------------------------
+# System Commands
+# --------------------------------------------------
+
+du                  # disk usage of files/folders
+hostname            # display system hostname
+
+# --------------------------------------------------
+# Additional Useful Utilities
+# --------------------------------------------------
+
+which               # display path to executable for a command
+basename            # strip directory path and return filename
+dirname             # strip filename and return directory path
+readlink -f         # display canonical absolute path of file
+sleep 5             # pause execution for 5 seconds (can be any number)
+
+# --------------------------------------------------
+# Display / Sorting / Comparison
+# --------------------------------------------------
+
+clear               # clear terminal screen
+echo "text"         # print text or variable values to terminal
+sort filename       # sort lines of a file alphabetically
+uniq filename       # remove duplicate consecutive lines
+diff file1 file2    # compare two files line by line
+cmp file1 file2     # compare two files byte by byte
+
+# --------------------------------------------------
+# Filters / Text Transformation
+# --------------------------------------------------
+
+cut -c1-5 filename  # extract specific character positions or fields
+tr 'a-z' 'A-Z'      # translate characters, e.g., lowercase to uppercase
+```
+
+
+</TabItem>
+<TabItem value="playbook" label="Playbook">
+
+
+```shell
+# ==================================================
+# Vi / Universal UNIX Editor Commands
+# ==================================================
+
+# --------------------------------------------------
+# Opening Files
+# --------------------------------------------------
+
+vi filename           # Open or create file
+vi -R filename        # Open file read-only
+view filename         # Open existing file read-only
+
+# --------------------------------------------------
+# Vi Modes
+# --------------------------------------------------
+
+# Command mode: interpret keystrokes as instructions
+# Insert/Input mode: characters typed are inserted
+# Press ESC to return to command mode
+
+# --------------------------------------------------
+# Entering Insert / Append Modes
+# --------------------------------------------------
+
+i     # insert before cursor
+I     # insert at beginning of line
+a     # append after cursor
+A     # append at end of line
+o     # new line below cursor (enter insert mode)
+O     # new line above cursor (enter insert mode)
+@     # input mode (macro execution)
+R     # enter replace/overtype mode
+
+# --------------------------------------------------
+# Navigation in Command Mode
+# --------------------------------------------------
+
+:#       # go to line # (example :8 to go to line 8)
+gg       # move to top of file
+G        # move to end of file
+4gg      # move to line 4
+^        # beginning of current line
+$        # end of current line
+
+# --------------------------------------------------
+# Deleting / Changing Text
+# --------------------------------------------------
+
+x        # delete current character
+nx       # delete n characters
+dd       # delete current line
+ndd      # delete n lines
+dw       # delete current word
+ndw      # delete n words
+D        # delete from cursor to end of line
+r        # replace a single character
+.        # repeat last command
+
+# --------------------------------------------------
+# Undo / Save / Quit
+# --------------------------------------------------
+
+u        # undo last change
+U        # undo all changes on current line
+ZZ       # save and exit
+:w       # write buffer to file
+:wq      # write and quit
+:x       # write and quit
+:q       # quit if no changes
+:q!      # quit without saving
+```
+
+</TabItem>
+</Tabs>

@@ -1,0 +1,312 @@
+---
+title: "dbt Runbook"
+---
+
+
+:::tip dbt Runbook
+Focuses on **analytics engineering concepts, transformation workflows, and delivery risks** needed to understand data models, estimates, and team responsibilities.
+:::
+
+---
+
+## Overview
+
+dbt is a **transformation framework** that enables teams to build, test, and document analytics models **inside the data warehouse** using SQL + configuration.
+
+It sits between:
+
+* Raw / ingested data
+* Analytics-ready tables used by BI, ML, and downstream consumers
+
+As a TA, your role is to understand:
+
+* Where dbt fits in the data lifecycle
+* What work dbt teams actually do (and don’t do)
+* Why analytics transformations take time
+* Where hidden complexity and coupling exist
+
+---
+
+## Core dbt Concepts (Foundational)
+
+### Models
+
+**What it is:**
+A **SQL select statement** that materialises into a table or view in the warehouse.
+
+**Key idea:**
+Each model represents **one transformation step**.
+
+**TA red flags:**
+
+* Overloaded “mega models”
+* Unclear ownership of models
+
+---
+
+### Materialisations
+
+**What it is:**
+How a model is physically stored.
+
+**Common types:**
+
+* view
+* table
+* incremental
+* ephemeral
+
+**Why engineers care:**
+
+* Performance vs cost trade-offs
+* Incremental models reduce recompute time
+
+**TA questions:**
+
+* How often does this rebuild?
+* Full refresh required?
+
+---
+
+### Sources
+
+**What it is:**
+Definitions of **upstream raw tables** not managed by dbt.
+
+**Why it matters:**
+
+* Establishes contract between ingestion and transformation
+* Enables freshness and volume checks
+
+**TA red flags:**
+
+* No source definitions
+* No freshness expectations
+
+---
+
+## Dependency Management (DAG Thinking)
+
+### The DAG (Directed Acyclic Graph)
+
+**What it is:**
+A graph of model dependencies built from `ref()` calls.
+
+**Why engineers care:**
+
+* Controls execution order
+* Enables partial builds
+
+**TA insight:**
+The DAG **is the system architecture** of analytics.
+
+---
+
+### ref() and source()
+
+**Key concepts:**
+
+* `ref()` creates dependency on another dbt model
+* `source()` references raw data
+
+**TA red flags:**
+
+* Hard-coded schema.table names
+* Bypassing the DAG
+
+---
+
+## Testing & Data Quality
+
+### Tests
+
+**What they are:**
+Assertions applied to models and columns.
+
+**Common tests:**
+
+* not_null
+* unique
+* accepted_values
+* relationships
+
+**Why engineers care:**
+
+* Early detection of upstream issues
+* Contract enforcement
+
+**TA questions:**
+
+* What happens when a test fails?
+* Blocking vs non-blocking tests?
+
+---
+
+### Freshness
+
+**What it is:**
+Checks whether source data arrived on time.
+
+**TA red flags:**
+
+* Silent pipeline delays
+* No SLA visibility
+
+---
+
+## Documentation & Lineage
+
+### dbt Docs
+
+**What it provides:**
+
+* Model-level documentation
+* Column descriptions
+* Lineage graphs
+
+**TA insight:**
+If dbt docs are missing, **knowledge is tribal**.
+
+---
+
+### Exposure
+
+**What it is:**
+A way to declare **downstream consumers** (dashboards, ML models).
+
+**Why it matters:**
+
+* Impact analysis
+* Change management
+
+---
+
+## Environments & Deployment
+
+### Environments
+
+**Typical setup:**
+
+* dev
+* staging
+* prod
+
+**Hidden work:**
+
+* Schema isolation
+* Permissions
+* CI/CD integration
+
+**TA red flags:**
+
+* Manual prod runs
+* Shared schemas across environments
+
+---
+
+### CI / CD
+
+**Common patterns:**
+
+* Run tests on pull requests
+* Slim CI builds
+* Deferred builds
+
+**TA questions:**
+
+* What blocks a release?
+* How long do builds take?
+
+---
+
+## Performance & Cost Considerations
+
+### Warehouse Impact
+
+**Reality:**
+dbt pushes compute to the warehouse.
+
+**Cost drivers:**
+
+* Full refreshes
+* Poorly scoped incremental models
+* Inefficient SQL
+
+**TA insight:**
+Slow dbt builds often mean **expensive warehouses**.
+
+---
+
+## Ownership & Team Boundaries
+
+### Analytics Engineering Role
+
+**dbt teams typically own:**
+
+* Business logic
+* Metrics definitions
+* Semantic layer (if used)
+
+**They do not usually own:**
+
+* Ingestion
+* Raw data correctness
+
+**TA red flags:**
+
+* Blurry ownership between data engineering and analytics
+
+---
+
+## When dbt Is a Good Fit
+
+**Use dbt when:**
+
+* You have a SQL-capable warehouse
+* Transformations are business-focused
+* Data quality and documentation matter
+
+**Typical examples:**
+
+* Analytics marts
+* Feature tables
+* Reporting layers
+
+---
+
+## When dbt Is a Bad Fit
+
+**Avoid dbt when:**
+
+* Transformations are streaming-only
+* Heavy non-SQL logic is required
+* Sub-second latency is needed
+
+---
+
+## TA Sanity Checklist
+
+* Are transformation responsibilities clear?
+* Is the DAG understandable?
+* Are tests meaningful and enforced?
+* Are environments isolated?
+* Is cost impact understood?
+
+---
+
+## Tooling & Interaction
+
+**Primary language:**
+
+* SQL + YAML
+
+**Execution:**
+
+* CLI
+* CI pipelines
+* Orchestrators (Airflow, Dagster, Prefect)
+
+**Interaction model:**
+
+* Batch transformations
+* Warehouse-native execution

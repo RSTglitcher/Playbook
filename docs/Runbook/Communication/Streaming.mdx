@@ -1,0 +1,274 @@
+---
+title: "Streaming Platforms Runbook"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Platform / Topic Runbook
+Focuses on **event streams, retention, replay, and consumer behaviour** needed to understand engineering designs, estimates, and platform constraints.
+:::
+
+---
+
+## Overview
+
+Streaming Platforms are **log-based messaging systems** designed for **high-throughput event streams** with **retention and replay**.
+
+They are commonly used for:
+
+* Event-driven architectures
+* Data pipelines and ingestion
+* Real-time analytics
+* Decoupling producers and consumers
+
+As a TA, your role is to understand:
+
+* How events are retained and replayed
+* How consumers scale and recover
+* Where ordering, duplication, and data loss risks exist
+* Why “just adding a consumer” is rarely trivial
+
+---
+
+## TA Checklist (Quick Review)
+
+* [ ] Retention and replay requirements defined
+* [ ] Partitioning / ordering strategy understood
+* [ ] Consumer failure and recovery model agreed
+* [ ] Throughput assumptions validated
+* [ ] Cost risks from retention and fan-out understood
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts
+
+### Event Streams vs Queues
+
+**What it is:**
+A stream is an **append-only log of events** that multiple consumers can read independently.
+
+**Why engineers care:**
+
+* Consumers can replay history
+* Ordering is preserved within partitions
+* Producers are decoupled from consumers
+
+**TA red flags:**
+
+* Treating streams like task queues
+* Assuming messages “disappear” after consumption
+* No agreement on replay behaviour
+
+---
+
+### Partitions & Ordering
+
+**What it is:**
+Streams are split into **partitions** to scale throughput. Ordering is only guaranteed **within a partition**.
+
+**Why engineers care:**
+
+* Partition keys determine ordering guarantees
+* Poor partitioning causes hot spots or reordering
+
+**TA red flags:**
+
+* “We need global ordering”
+* No defined partition key
+* Late discovery of ordering constraints
+
+---
+
+### Retention & Replay
+
+**What it is:**
+Events are retained for a configured time (or size) and can be replayed by consumers.
+
+**Why engineers care:**
+
+* Enables recovery and reprocessing
+* Drives storage and cost decisions
+
+**TA red flags:**
+
+* Retention discussed late
+* Replay required but not designed
+* Retention assumed to be infinite
+
+---
+
+## Streaming Platform Landscape
+
+| Platform | Type | Key Characteristics | Typical Use |
+|--------|------|---------------------|-------------|
+| Apache Kafka | Native streaming | Persistent log, partitions, offsets | Core streaming backbone |
+| Google Pub/Sub | Managed pub/sub (stream-capable) | Retention + seek, auto-scale | Event ingestion, GCP-native |
+| AWS Kinesis | Managed streaming | Shards, retention, replay | AWS-native streaming |
+| Azure Event Hubs | Managed streaming | Kafka-compatible, partitions | Azure-native streaming |
+
+> TA note: Pub/Sub behaves like streaming **only when retention + replay are used intentionally**.
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Event Retention
+
+**What it actually is:**
+
+* Kafka: log segments on disk
+* Pub/Sub: retained messages per subscription
+* Kinesis/Event Hubs: time-based retention
+
+**Engineering setup includes:**
+
+* Retention duration
+* Storage quotas
+* Backlog monitoring
+
+**TA questions:**
+
+* How long must events be replayable?
+* Who pays for retention growth?
+* What happens when limits are hit?
+
+---
+
+## Databases / State Management
+
+### Consumer State (Offsets / Cursors)
+
+**What it is:**
+
+* Kafka: consumer offsets
+* Pub/Sub: ack state per subscription
+* Kinesis: shard iterators
+
+**Design reality:**
+
+* Consumer state defines “where you are” in the stream
+* Losing state causes reprocessing or data loss
+
+**TA red flags:**
+
+* Assuming stateless consumers
+* No recovery strategy documented
+* Offset resets done manually
+
+---
+
+## Compute & Workloads
+
+### Consumer Applications
+
+**Key constraints:**
+
+* Throughput bound by partitions
+* Horizontal scaling tied to partition count
+* Backpressure must be handled explicitly
+
+**TA questions:**
+
+* How many consumers can run in parallel?
+* What happens if consumers fall behind?
+* Is reprocessing acceptable?
+
+---
+
+## Messaging & Integration
+
+### Producer → Stream → Consumer
+
+**What it is:**
+
+* Event-driven, asynchronous integration
+* Fan-out to multiple consumers
+
+**Engineering setup includes:**
+
+* Retry behaviour
+* Idempotency
+* Dead-letter handling (where supported)
+
+**TA red flags:**
+
+* No duplicate-handling strategy
+* Assumed exactly-once semantics
+* Retry loops without backoff
+
+---
+
+## Observability
+
+### Monitoring & Lag
+
+**Covers:**
+
+* Consumer lag
+* Throughput (events/sec)
+* Error rates
+
+**TA red flags:**
+
+* No lag alerts
+* No visibility into backlog growth
+* “It’s async so it’s fine” thinking
+
+---
+
+## Networking (Often Hidden Work)
+
+### Connectivity & Access
+
+**Why it matters:**
+
+* Producers and consumers often cross networks
+* Managed services still require IAM and firewall setup
+
+**TA indicators of complexity:**
+
+* Private endpoints
+* Cross-cloud or hybrid connectivity
+* On-prem producers or consumers
+
+---
+
+## Cost & Limits
+
+**Platform realities:**
+
+* Cost scales with throughput and retention
+* Fan-out multiplies consumption cost
+* Storage grows silently
+
+**TA role:**
+
+* Identify unbounded streams
+* Challenge “we’ll just keep everything”
+* Ensure estimates include replay scenarios
+
+
+</TabItem> <TabItem value="playbook" label="Playbook">
+
+```bash
+# Kafka
+kafka-topics.sh --list --bootstrap-server BROKER
+kafka-consumer-groups.sh --list --bootstrap-server BROKER
+
+# Google Pub/Sub
+gcloud pubsub topics list
+gcloud pubsub subscriptions list
+
+# AWS Kinesis
+aws kinesis list-streams
+
+# Azure Event Hubs
+az eventhubs eventhub list
+```
+
+</TabItem>
+</Tabs>

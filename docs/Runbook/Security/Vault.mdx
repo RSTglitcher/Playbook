@@ -1,0 +1,230 @@
+---
+title: "Vault Runbook"
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+:::tip Platform / Topic Runbook
+Focuses on **core services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::
+
+---
+
+## Overview
+
+Vault is a **secrets management and data protection platform** used to securely store, access, and manage secrets, credentials, and sensitive data.
+
+As a TA, your role is to understand:
+
+* What engineers must configure (authentication methods, secrets engines, policies)
+* Which components interact (Vault server, storage backend, clients)
+* Where complexity and risk live (access policies, secret rotation, key management)
+* Why estimates include “platform work” (initial setup, high availability, disaster recovery)
+
+## TA Checklist (Quick Review)
+
+* [ ] Vault server HA and failover configured
+* [ ] Authentication methods and policies validated
+* [ ] Secrets engines properly mounted
+* [ ] Observability configured
+* [ ] Cost and operational overhead understood
+* [ ] Common failure modes considered
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts (Foundational)
+
+### Secrets Management
+
+**What it is:**
+Centralized storage for credentials, API keys, certificates, and other sensitive data.
+
+**Why engineers care:**
+* Reduces secret sprawl
+* Enables auditability and rotation
+* Improves operational security
+
+**TA red flags:**
+* Hardcoded secrets in code
+* Missing access policies
+* Unrotated or expired secrets
+
+---
+
+### Authentication & Policies
+
+**What it is:**
+Mechanisms for identifying users or applications (token, LDAP, AWS IAM, Kubernetes service account) and defining fine-grained permissions.
+
+**Why engineers care:**
+* Ensures least privilege access
+* Supports automation with ephemeral credentials
+* Protects sensitive secrets
+
+**TA red flags:**
+* Overly broad policies
+* Inconsistent authentication backends
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Storage Backends
+
+**What it actually is:**
+Vault requires a storage backend to persist secrets (e.g., Consul, Raft, AWS S3, GCS, MySQL).
+
+**Engineering setup includes:**
+* High availability configuration
+* Encryption at rest
+* Backup and restore procedures
+
+**TA questions:**
+* Which storage backend is used?
+* Is HA configured for failover?
+* Are backups tested and encrypted?
+
+---
+
+## Databases / State Management
+
+### Secret Engines
+
+**What it is:**
+Components responsible for managing specific types of secrets (e.g., KV store, AWS IAM credentials, database credentials, PKI certificates).
+
+**Design reality:**
+* Secrets engines can be mounted at multiple paths
+* Dynamic secrets automatically generate credentials
+* TTL and lease management affect usability
+
+**TA red flags:**
+* Secret engine misconfiguration
+* Expired or leaked dynamic secrets
+* Missing rotation policies
+
+---
+
+## Compute & Workloads
+
+### Vault Clients
+
+**Key constraints:**
+* Requires TLS/SSL communication
+* Clients must authenticate before requesting secrets
+* Some operations require unseal and initialization
+
+**TA questions:**
+* Are service accounts properly configured?
+* Is token renewal automated?
+* Are dynamic secrets integrated with workloads?
+
+---
+
+## Messaging & Integration
+
+### Integration Points
+
+**What it is:**
+Vault integrates with applications, CI/CD pipelines, Kubernetes, cloud providers, and infrastructure tools.
+
+**Engineering setup includes:**
+* Authentication backends (K8s, AppRole, LDAP, etc.)
+* Secret leases and rotation
+* Audit logging
+
+</TabItem>
+
+<TabItem value="playbook" label="Playbook">
+
+## Common CLI / Operational Commands
+
+```shell
+# Initialize Vault (only once per cluster)
+vault operator init
+
+# Unseal Vault (requires keys)
+vault operator unseal
+
+# Authenticate using a token
+vault login <token>
+
+# Check Vault status
+vault status
+
+# List secrets engines
+vault secrets list
+
+# Mount a new secrets engine
+vault secrets enable -path=myapp kv-v2
+
+# Read a secret
+vault kv get secret/myapp/config
+
+# Write a secret
+vault kv put secret/myapp/config username='appuser' password='p@ssw0rd'
+
+# Generate dynamic database credentials
+vault read database/creds/my-role
+
+# List authentication backends
+vault auth list
+
+# Configure a new authentication backend
+vault auth enable approle
+
+# Revoke a token
+vault token revoke <token>
+
+# Rotate a secret
+vault kv put -mount=secret/myapp/config password='newpassword'
+
+# Backup / Restore
+vault operator raft snapshot save snapshot.db
+vault operator raft snapshot restore snapshot.db
+
+# ----------------------------
+# Common Maintenance / Checks
+# ----------------------------
+
+# Check Vault status
+vault status
+
+# Ensure unseal keys and root tokens are securely stored
+vault operator init -check
+
+# List all mounted secrets engines
+vault secrets list
+
+# Audit policies and roles
+vault policy list
+vault read auth/approle/role/myrole
+
+# Read and write test secret
+vault kv put secret/test key='value'
+vault kv get secret/test
+
+# Rotate secrets
+vault kv put secret/myapp/config password='newpassword'
+
+# Backup Vault data
+vault operator raft snapshot save snapshot.db
+
+# Restore from backup
+vault operator raft snapshot restore snapshot.db
+
+# Verify authentication methods
+export VAULT_ADDR=XXXXX
+vault auth list
+vault login -method=ldap username=rso20
+vault read secret/location/path
+```
+
+</TabItem>
+</Tabs>

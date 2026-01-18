@@ -2,6 +2,10 @@
 title: "GCP Runbook"
 ---
 
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::tip GCP Runbook
 An **engineering-aware reference** for Technical Analysts working with Google Cloud Platform (GCP).
 
@@ -26,7 +30,9 @@ As a TA, your goal is not to configure GCP — but to understand:
 - Why certain services are chosen
 - Where complexity, cost, and risk appear
 
----
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
 
 ## Core GCP Concepts (Foundational)
 
@@ -275,24 +281,53 @@ This is where **Firestore and Bigtable** belong — and they solve *very differe
 - Alert ownership?
 - SLOs defined?
 
----
+</TabItem>
+<TabItem value="playbook" label="Playbook">
 
+
+```shell
+// ==========================================
+// Google Cloud CLI (gcloud, bq, gsutil, kubectl)
+// Structured Command Reference
+// ==========================================
+
+
+// ------------------------------------------
 // Install Google Cloud CLI
+// Goal: Install and verify gcloud locally
+// ------------------------------------------
+
+// Install Google Cloud SDK (macOS)
 brew install --cask google-cloud-sdk
 
-// Verify gcloud installation
+// Verify installation
 gcloud version
 
-// Authenticate to Google Cloud (interactive user login)
+
+// ------------------------------------------
+// Initialise & Authenticate
+// Goal: Authenticate user and application credentials
+// ------------------------------------------
+
+// Initialise gcloud (sets defaults interactively)
+gcloud init
+
+// Interactive user login
 gcloud auth login
 
-// Authenticate application-default credentials (used by SDKs, Terraform, BigQuery)
+// Application Default Credentials (used by SDKs, Terraform, BigQuery)
 gcloud auth application-default login
 
 // List authenticated accounts
 gcloud auth list
 
-// List all accessible GCP projects
+
+// ------------------------------------------
+// Project Configuration
+// Goal: View and set active GCP project
+// ------------------------------------------
+
+// List accessible projects
 gcloud projects list
 
 // Set active project
@@ -301,36 +336,54 @@ gcloud config set project PROJECT_ID
 // Check current active project
 gcloud config get-value project
 
+// View IAM policy bindings for a project
+gcloud projects get-iam-policy PROJECT_ID
+
+
+// ------------------------------------------
+// IAM & Service Accounts
+// Goal: Inspect identity and access configuration
+// ------------------------------------------
+
+// List service accounts in the project
+gcloud iam service-accounts list
+
+// Inspect IAM policy for a specific service account
+gcloud iam service-accounts get-iam-policy SERVICE_ACCOUNT_EMAIL
+
+
+// ------------------------------------------
+// APIs & Services
+// Goal: Inspect enabled APIs
+// ------------------------------------------
+
 // List enabled APIs for the active project
 gcloud services list
 
-// List all BigQuery datasets in the active project
-bq ls
 
-// List tables in a specific dataset
-bq ls DATASET_NAME
+// ------------------------------------------
+// Kubernetes (GKE) Setup
+// Goal: Install kubectl and authenticate to clusters
+// ------------------------------------------
 
-// Show table metadata (schema, partitioning, clustering)
-bq show PROJECT_ID:DATASET.TABLE
+// Install kubectl via gcloud
+gcloud components install kubectl
 
-// Show dataset metadata including labels and location
-bq show --format=prettyjson PROJECT_ID:DATASET
-
-// Check partitioning and clustering details for a table
-bq show --format=prettyjson PROJECT_ID:DATASET.TABLE | jq '.timePartitioning, .clustering'
-
-// List all Cloud Storage buckets
-gsutil ls
-
-// Inspect bucket configuration (location, lifecycle, retention)
-gsutil ls -L gs://bucket-name
+// List GKE clusters
+gcloud container clusters list
 
 // Authenticate kubectl against a GKE cluster
 gcloud container clusters get-credentials CLUSTER_NAME \
   --region REGION \
   --project PROJECT_ID
 
-// List Kubernetes namespaces
+
+// ------------------------------------------
+// Kubernetes Operations
+// Goal: Inspect cluster resources
+// ------------------------------------------
+
+// List namespaces
 kubectl get namespaces
 
 // List pods in a namespace
@@ -339,20 +392,50 @@ kubectl get pods -n NAMESPACE
 // Describe a deployment (status, replicas, events)
 kubectl describe deployment DEPLOYMENT_NAME -n NAMESPACE
 
-// List persistent volumes
+// List persistent volumes (cluster-wide)
 kubectl get pv
 
 // List persistent volume claims in a namespace
 kubectl get pvc -n NAMESPACE
 
-// List service accounts in the project
-gcloud iam service-accounts list
 
-// View IAM policy bindings for the project
-gcloud projects get-iam-policy PROJECT_ID
+// ------------------------------------------
+// BigQuery
+// Goal: Inspect datasets, tables, and metadata
+// ------------------------------------------
 
-// Inspect IAM policy for a specific service account
-gcloud iam service-accounts get-iam-policy SERVICE_ACCOUNT_EMAIL
+// List all BigQuery datasets in active project
+bq ls
+
+// List tables in a dataset
+bq ls DATASET_NAME
+
+// Show table metadata (schema, partitioning, clustering)
+bq show PROJECT_ID:DATASET.TABLE
+
+// Show dataset metadata (labels, location)
+bq show --format=prettyjson PROJECT_ID:DATASET
+
+// Inspect partitioning and clustering details
+bq show --format=prettyjson PROJECT_ID:DATASET.TABLE | jq '.timePartitioning, .clustering'
+
+
+// ------------------------------------------
+// Cloud Storage
+// Goal: Inspect buckets and configuration
+// ------------------------------------------
+
+// List all Cloud Storage buckets
+gsutil ls
+
+// Inspect bucket configuration (location, lifecycle, retention)
+gsutil ls -L gs://bucket-name
+
+
+// ------------------------------------------
+// Pub/Sub
+// Goal: Inspect messaging infrastructure
+// ------------------------------------------
 
 // List Pub/Sub topics
 gcloud pubsub topics list
@@ -363,11 +446,23 @@ gcloud pubsub topics describe TOPIC_NAME
 // List Pub/Sub subscriptions
 gcloud pubsub subscriptions list
 
-// Read recent logs (example: compute instances)
+
+// ------------------------------------------
+// Logging & Monitoring
+// Goal: Inspect logs and alerting configuration
+// ------------------------------------------
+
+// Read recent logs (example: Compute Engine instances)
 gcloud logging read "resource.type=gce_instance" --limit 10
 
-// List monitoring alert policies
+// List monitoring alert policies (alpha)
 gcloud alpha monitoring policies list
+
+
+// ------------------------------------------
+// Sanity Checks / Diagnostics
+// Goal: Quick verification of system state
+// ------------------------------------------
 
 // Sanity check: does the dataset exist?
 bq ls
@@ -375,8 +470,13 @@ bq ls
 // Sanity check: is the table partitioned?
 bq show PROJECT_ID:DATASET.TABLE
 
-// Sanity check: is the namespace real?
+// Sanity check: does the namespace exist?
 kubectl get namespaces
 
-// Sanity check: is storage actually attached?
+// Sanity check: is storage attached?
 kubectl get pvc -n NAMESPACE
+
+```
+
+</TabItem>
+</Tabs>
