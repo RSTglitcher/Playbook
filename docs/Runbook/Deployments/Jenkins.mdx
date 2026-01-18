@@ -1,0 +1,319 @@
+---
+title: "Jenkins Platform Runbook"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Jenkins Platform Runbook
+An **engineering-aware reference** for Technical Analysts working with Jenkins-based CI/CD platforms.
+
+Focuses on **core services, setup steps, and terminology** needed to understand delivery pipelines, estimates, operational risk, and platform constraints.
+:::
+
+---
+
+## Overview
+
+Jenkins is a **continuous integration / continuous delivery (CI/CD) automation server** used to build, test, and deploy software.
+
+As a TA, your role is to understand:
+
+* What engineers must configure beyond “just pipelines”
+* Which components Jenkins depends on
+* Where delivery risk and operational cost live
+* Why estimates often include “CI/CD work”
+
+Jenkins is powerful but **not opinionated by default**, meaning teams must design, secure, and operate it correctly.
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts (Foundational)
+
+### Jobs & Pipelines
+
+**What it is:**  
+A **pipeline** defines the steps Jenkins executes (build, test, deploy). Pipelines are often written as code (`Jenkinsfile`).
+
+**Why engineers care:**
+
+* Enables repeatable builds and deployments
+* Version-controlled delivery logic
+* Supports complex workflows and approvals
+
+**TA red flags:**
+
+* Pipelines defined only in the UI (not in code)
+* Large, monolithic pipelines doing too much
+* No separation between build, test, and deploy
+
+---
+
+### Jenkinsfile
+
+**What it is:**  
+A text file (usually in Git) describing pipeline stages and steps.
+
+**Why engineers care:**
+
+* Enables review, versioning, and rollback
+* Makes CI/CD part of the software lifecycle
+
+**TA red flags:**
+
+* Jenkinsfile copied between repos without standardisation
+* Environment-specific logic hardcoded
+* Secrets embedded directly in the file
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Workspace & Build Artifacts
+
+**What it actually is:**
+
+* Temporary workspace on Jenkins agents
+* Optional storage for build outputs (artifacts)
+
+**Engineering setup includes:**
+
+* Disk allocation on agents
+* Artifact retention policies
+* Cleanup of old builds
+
+**TA questions:**
+
+* How long are artifacts retained?
+* Where are build outputs stored long-term?
+* What happens when disks fill up?
+
+---
+
+## Databases / State Management
+
+### Jenkins Internal State
+
+**What it is:**
+
+* File-based state (job configs, build history, credentials)
+* Often stored on local disk or shared storage
+
+**Design reality:**
+
+* Jenkins is **stateful**
+* Backups and recovery must be planned explicitly
+
+**TA red flags:**
+
+* No backup strategy
+* Single-node Jenkins with no recovery plan
+* Assumption that Jenkins is “stateless like the cloud”
+
+---
+
+## Compute & Workloads
+
+### Build Agents (Nodes)
+
+**Key constraints:**
+
+* Limited CPU, memory, and disk
+* Tools must be preinstalled or provisioned dynamically
+* Jobs compete for agent capacity
+
+**TA questions:**
+
+* Are agents static VMs, containers, or ephemeral?
+* What happens when all agents are busy?
+* Are builds queued during peak times?
+
+---
+
+## Messaging & Integration
+
+### SCM, Artifact Repos, Deployment Targets
+
+**What it is:**
+
+* Integrates with Git, Docker registries, cloud platforms, APIs
+* Uses webhooks, polling, and credentials
+
+**Engineering setup includes:**
+
+* Webhook configuration
+* Credential management
+* Retry and failure behaviour
+
+**TA red flags:**
+
+* Hardcoded credentials
+* No retry or timeout strategy
+* Manual triggers replacing automation
+
+---
+
+## Observability
+
+### Monitoring / Logging
+
+**Covers:**
+
+* Build logs
+* Job success/failure metrics
+* Agent health
+
+**TA red flags:**
+
+* No alerts on failed pipelines
+* Logs retained indefinitely (or not at all)
+* No visibility into queue length or agent saturation
+
+---
+
+## Networking (Often Hidden Work)
+
+### Jenkins Connectivity
+
+**Why it matters:**
+
+* Jenkins must reach source control, registries, environments
+* Often crosses network boundaries
+
+**TA indicators of complexity:**
+
+* Private Git repositories
+* On-prem ↔ cloud connectivity
+* Firewalls blocking agents or webhooks
+
+---
+
+## Cost & Limits
+
+**Platform realities:**
+
+* Cost driven by:
+    * Agent infrastructure
+    * Storage for artifacts and logs
+* Jenkins itself is free, but **operations are not**
+
+**TA role:**
+
+* Identify unbounded build growth
+* Question “always-on” agents
+* Validate assumptions around parallel builds
+
+---
+
+</TabItem>
+<TabItem value="playbook" label="Playbook">
+
+```shell
+# Check Jenkins service status (example)
+systemctl status jenkins
+
+# List running Docker agents (if container-based)
+docker ps
+
+# Verify Java version (Jenkins dependency)
+java -version
+
+# Disk usage check (common failure mode)
+df -h
+
+# ----------------------------
+# Jenkins sanity & availability
+# ----------------------------
+
+# Check Jenkins service status (Linux systemd)
+systemctl status jenkins
+
+# Check if Jenkins is listening on the expected port (default 8080)
+ss -ltnp | grep 8080
+# or
+netstat -ltnp | grep 8080
+
+# Simple health check (HTTP 200 expected)
+curl -I http://localhost:8080/login
+
+
+# ----------------------------
+# Jenkins process & resources
+# ----------------------------
+
+# Find Jenkins process and JVM details
+ps aux | grep jenkins
+
+# Check Java version Jenkins is running on
+java -version
+
+# Check memory usage of the Jenkins process
+jps -lvm
+jstat -gcutil $(pgrep -f jenkins) 1s 5
+
+# Check disk usage (common Jenkins failure mode)
+df -h
+du -sh /var/lib/jenkins/*
+
+
+# ----------------------------
+# Plugins & configuration
+# ----------------------------
+
+# List installed plugins (if Jenkins CLI is available)
+java -jar jenkins-cli.jar -s http://localhost:8080 list-plugins
+
+# Check Jenkins version
+java -jar jenkins-cli.jar -s http://localhost:8080 version
+
+
+# ----------------------------
+# Jobs, queues, and agents
+# ----------------------------
+
+# Check build queue length (via REST API)
+curl -s http://localhost:8080/queue/api/json | jq '.items | length'
+
+# List connected agents (nodes)
+curl -s http://localhost:8080/computer/api/json | jq '.computer[].displayName'
+
+# Check agent online/offline status
+curl -s http://localhost:8080/computer/api/json | jq '.computer[] | {name: .displayName, offline: .offline}'
+
+
+# ----------------------------
+# Build health & failures
+# ----------------------------
+
+# List recent builds for a job
+curl -s http://localhost:8080/job/JOB_NAME/api/json | jq '.builds[:5]'
+
+# Check last build result
+curl -s http://localhost:8080/job/JOB_NAME/lastBuild/api/json | jq '.result'
+
+
+# ----------------------------
+# Credentials & permissions (high-level)
+# ----------------------------
+
+# Verify who you are authenticated as (API token required)
+curl -u user:API_TOKEN http://localhost:8080/whoAmI/api/json | jq '.authenticated'
+
+
+# ----------------------------
+# Logs & troubleshooting
+# ----------------------------
+
+# Jenkins main log (path may vary)
+tail -f /var/log/jenkins/jenkins.log
+
+# Agent logs (example)
+docker logs jenkins-agent-name
+
+```
+
+</TabItem>
+</Tabs>

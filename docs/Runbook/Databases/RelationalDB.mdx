@@ -1,0 +1,342 @@
+---
+title: "Relational Databases Runbook"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Platform / Topic Runbook
+An **engineering-aware reference** for Technical Analysts working with relational databases (RDBMS).
+
+Focuses on **core services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::
+
+---
+
+## Overview
+
+Relational databases (RDBMS) are **structured databases that store data in tables with defined schemas**. They are commonly used for transactional workloads, reporting, and analytics.
+
+Popular RDBMS platforms include:
+
+* **MySQL** – widely used open-source RDBMS, optimized for web apps and general workloads
+* **PostgreSQL** – advanced open-source RDBMS with strong compliance, JSON support, and extensibility
+* **MariaDB** – community-driven fork of MySQL with additional storage engines and features
+* **Microsoft SQL Server / Oracle / others** – enterprise-focused RDBMS
+
+As a TA, your role is to understand:
+
+* What engineers must configure (schemas, users, replication)
+* Which components interact (applications, caching, backups)
+* Where complexity and risk live (scaling, replication, failover)
+* Why estimates include “database work”
+
+## RDBMS Comparison
+
+| Feature / DB        | MySQL                  | PostgreSQL                  | MariaDB                | SQL Server / Oracle         |
+|--------------------|----------------------|----------------------------|----------------------|---------------------------|
+| ACID Transactions   | Yes (InnoDB)         | Yes                        | Yes (InnoDB)         | Yes                       |
+| JSON / Document     | Basic support         | Advanced (JSONB)           | Basic support        | Limited (JSON in recent)  |
+| Stored Procedures   | Yes                  | Yes                        | Yes                  | Yes                       |
+| Partitioning        | Limited              | Advanced                    | Limited              | Advanced                  |
+| Replication         | Master-Slave, Group  | Streaming, Logical          | Master-Slave, Group  | AlwaysOn / Streams        |
+| High Availability   | Galera Cluster        | Patroni / Replication      | Galera Cluster       | Failover Clustering       |
+| Index Types          | B-Tree, Fulltext      | B-Tree, GIN, GiST          | B-Tree, Fulltext     | B-Tree, Hash, Fulltext    |
+| Extensibility        | Limited               | High                        | Moderate             | Limited                   |
+| Licensing            | GPL                   | PostgreSQL License          | GPL                  | Commercial / Proprietary  |
+
+---
+
+## TA Checklist (Quick Review)
+
+* [ ] Schemas and tables properly designed
+* [ ] Users and permissions scoped correctly
+* [ ] Backup/restore strategy in place
+* [ ] Replication or clustering configured as needed
+* [ ] Monitoring and alerting configured
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts (Foundational)
+
+### SQL Engine
+
+**What it is:**
+The component that parses, optimizes, and executes queries.
+
+**Why engineers care:**
+
+* Query performance and index usage
+* Transaction isolation and concurrency
+
+**TA red flags:**
+
+* Missing indexes on large tables
+* Inefficient queries causing slowdowns
+
+---
+
+### Storage Engine
+
+**What it is:**
+Sub-system that manages how tables are physically stored (InnoDB, MyISAM, etc.)
+
+**Why engineers care:**
+
+* Impacts performance, recovery, and replication
+* ACID guarantees and constraints depend on the engine
+
+**TA red flags:**
+
+* Mixing storage engines without a plan
+* Engine limitations causing transactional issues
+
+---
+
+### Replication & High Availability
+
+**What it is:**
+Copying data between servers to provide redundancy and scale reads.
+
+**Why engineers care:**
+
+* Ensures uptime and durability
+* Enables horizontal scaling for read-heavy workloads
+
+**TA red flags:**
+
+* Replication lag affecting consistency
+* Single points of failure
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Schema / Tables
+
+**What it actually is:**
+
+* Structured storage of rows and columns with indexes
+
+**Engineering setup includes:**
+
+* Column types, primary/foreign keys
+* Indexing strategies
+* Partitioning / sharding
+
+**TA questions:**
+
+* Expected table growth?
+* Regulatory or compliance needs?
+* Who owns schema changes?
+
+---
+
+### Backups & Snapshots
+
+**What it is:**
+
+* Point-in-time or periodic backup mechanism
+
+**Design reality:**
+
+* Physical vs logical backups
+* Retention policies and storage cost
+
+**TA red flags:**
+
+* Missing backup automation
+* Unverified restore procedures
+
+---
+
+## Compute & Workloads
+
+### Query Execution & Connection Pooling
+
+**Key constraints:**
+
+* Max connections and concurrent queries
+* Transaction isolation levels
+* CPU/memory usage per query
+
+**TA questions:**
+
+* Are connection pools configured?
+* Any long-running or resource-intensive queries?
+
+---
+
+## Messaging & Integration
+
+### Change Data Capture / Binlogs
+
+**What it is:**
+
+* Logs of database changes used for replication or downstream pipelines
+
+**Engineering setup includes:**
+
+* Enabling binary logs or WAL
+* Configuring replication users
+* Log retention
+
+---
+
+## Observability
+
+### Monitoring / Logging
+
+**Covers:**
+
+* Query logs, slow queries
+* Error logs
+* Replication status metrics
+
+**TA red flags:**
+
+* Missing slow query logging
+* Replication lag unmonitored
+* No disk/connection alerts
+
+---
+
+## Networking (Often Hidden Work)
+
+### Database Networking
+
+**Why it matters:**
+
+* Security boundaries
+* TLS/SSL and private subnets
+
+**TA indicators of complexity:**
+
+* Cross-region replication
+* Multi-tenant access
+
+---
+
+## Cost & Limits
+
+**Platform realities:**
+
+* Storage quotas
+* CPU/memory constraints
+* Backup retention costs
+
+**TA role:**
+
+* Validate assumptions about scaling costs
+* Identify hotspots for unbounded usage
+
+---
+
+## Common CLI / Operational Commands
+
+Pre-requisites:
+- Hostname
+- Port
+- Username
+- Password
+
+```shell
+# ----------------------------
+# Connect via Cluster
+# ----------------------------
+
+# Authenticate to GKE cluster
+gcloud --project=PROJECT_ID container clusters get-credentials CLUSTER_NAME --location REGION
+
+# Switch kubectl context
+kubectx CONTEXT_NAME
+
+# Forward MySQL service port to local machine
+kubectl port-forward services/mysql-service port:port
+
+# Forward Postgres service port to local machine
+kubectl port-forward services/postgres-service port:port
+
+# If you have issues, use
+gcloud --project=XX-XX-XX container clusters get-credentials XX-XX --location XXX-XXXX
+
+
+# ----------------------------
+# Connect to the Database
+# ----------------------------
+mysql -u USER -p -h HOST   # MySQL / MariaDB
+psql -U USER -h HOST -d DATABASE  # PostgreSQL
+
+# Show databases
+SHOW DATABASES;      # MySQL / MariaDB
+\l                   # PostgreSQL
+
+# Switch database
+USE DATABASE_NAME;   # MySQL / MariaDB
+\c DATABASE_NAME     # PostgreSQL
+
+# Show tables
+SHOW TABLES;         # MySQL / MariaDB
+\dt                  # PostgreSQL
+
+# Describe table
+DESCRIBE TABLE_NAME; # MySQL / MariaDB
+\d TABLE             # PostgreSQL
+
+# ----------------------------
+# Backup and Restore
+# ----------------------------
+mysqldump -u USER -p DATABASE_NAME > backup.sql
+mysql -u USER -p DATABASE_NAME < backup.sql
+pg_dump -U USER -h HOST DATABASE > backup.sql
+psql -U USER -h HOST DATABASE < backup.sql
+
+# ----------------------------
+# Quick Database Sanity Checks
+# ----------------------------
+
+# Connect to the database
+mysql -u USER -p -h HOST
+psql -U USER -h HOST -d DATABASE
+
+# List databases
+SHOW DATABASES;
+\l
+
+# Switch to specific database
+USE DATABASE_NAME;
+\c DATABASE_NAME
+
+# List tables
+SHOW TABLES;
+\dt
+
+# Describe table
+DESCRIBE TABLE_NAME;
+\d TABLE
+
+# Monitor current queries and locks
+SHOW PROCESSLIST;
+SELECT * FROM pg_stat_activity;
+
+# ----------------------------
+# Backup & Restore
+# ----------------------------
+mysqldump -u USER -p DATABASE_NAME > backup.sql
+mysql -u USER -p DATABASE_NAME < backup.sql
+pg_dump -U USER -h HOST DATABASE > backup.sql
+psql -U USER -h HOST DATABASE < backup.sql
+
+# ----------------------------
+# Replication Checks
+# ----------------------------
+SHOW SLAVE STATUS\G
+SELECT * FROM pg_stat_replication;
+
+```
+
+</TabItem>
+</Tabs>

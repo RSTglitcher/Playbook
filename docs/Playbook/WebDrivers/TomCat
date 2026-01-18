@@ -1,0 +1,131 @@
+Login.jsp – Java Server Page
+
+Get is the simplest, but the worst one as the username and password are published in the url – perfect for hackers.
+Post instead of Get fixes this issue.
+
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+request scope:
+
+Server (Java Code)        Client(Web Page)
+Request comes in and response goes back. You are then forgotten.
+
+Session scope:
+
+Server (Java Code)        Client(Web Page)
+                
+					SessionID
+Request comes in and response goes back. You will be remembered.
+
+
+Commercial World – There can be thousands of servers running at the same time.
+
+HTTP is Stateless – doesn’t remember what happened once request has been served with a response.
+
+Importance of Session Attribute.
+Name of User – can explore using the UserDAO. Keep it small, but useful enough to get more info from dataset if needed.
+
+This file contains some brief instructions on various tasks for this week:
+
+- downloading tomcat web server
+- listing the servers you have available
+- adding a new server
+- Starting a server
+- Running a web application
+- changing the port number on a server
+
+
+- viewing data connections
+- converting a project to JPA
+
+
+1. Download Tomcat.
+
+Download Tomcat from this location:
+Tomcat: https://tomcat.apache.org/download-80.cgi#8.5.51
+
+Unzip it to a convenient location, e.g the Desktop.
+
+
+2. List the Servers available:
+
+Click Windows-> Show View-> Other
+Type Server and "Servers" will be shown. Again you only need one.
+
+3. Create a new Web server
+
+Make sure you have downloaded Tomcat and unzipped it!!!!(step 2 above)
+
+The first time you list your servers(step 3), the list of servers shows no servers: there will be a link that says "no servers..."
+Click this link
+A window appears.
+Expand the Apache section and select Apache 8.5
+Press Add
+A window called "New Server environment window" is displayed
+
+a. The Name window will remain.
+b. The Tomcat installation directory is blank.
+Click Browse and locate the folder where you unzipped the Tomcat file. Make sure you browse to the directory which contains the .exe files
+When you have run step b and selected the installation folder you will never have to do that again
+c. For the JRE, select the other option(that is, NOT Workbench Default JRE)
+Press Finish
+
+
+4. Starting a server
+
+To run a web application you must make sure ONE server is running.
+In the list of web servers(step 3), choose the server you want to run, right click and choose "Start Server"
+When it displays "Server Started" it has started successfully.
+
+5. Running a web application
+
+You can now run the application by right clicking on the application and clicking Run-> Run on Server
+It will display the servers available.
+Choose the server you want and press Finish
+
+
+6. Changing the port number
+
+We will all use the same port number, 8088
+
+To change the port number go to the Servers tab(step 3 above)
+Double click on the server
+In the properties change the port for HTTP/1.1 to 8088
+DO NOT CHANGE the Admin port. Leave it as 8005!!!
+Press CTRL+S to save the new port number and restart the server
+
+
+JPA
+
+1. viewing data connections in Eclipse
+
+Click Windows-> Show View-> Other
+Type Data and "Data Source Explorer" will be shown. Select this and press Ok.
+Your data connections will be shown.
+If you need to check if one is working(you only need one) then right click on it and press "ping"
+
+
+2. Converting a project to JPA
+
+Right click on the project and click Properties
+Click on Project Facets->Convert to Faceted Form
+Click on JPA, 2.1
+Click Further configuration available
+Under platform click Eclipselink 2.5
+Under type click "Disable Library configuration"
+Under Connection select the connection you set up previously in Data access week
+Click the link called "Connect"
+Press Ok
+Locate the persistence.xml file under "JPA Context"
+Click the "Connection" tab, the 2nd tab
+For transaction type, select Resource Local
+Click the link "Populate from connection"
+Select the connection which displays
+Press CTRL+S to save the changes
+Now we will add the entities.....
+Click on the General tab, the 1st tab. Click Add. Add one of your entities. Repeat this for each entity class. DO not add the DAO classes.
+Press CTRL+S to save the changes.
+Click the source tab, the 8th tab just to check the connection details and entities. Its best not to change code in this tab but its useful to check things.
+
+
+

@@ -1,0 +1,395 @@
+---
+title: "Kubernetes Runbook"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Platform / Topic Runbook
+An **engineering-aware reference** for Technical Analysts working with K9s.
+
+Focuses on **core services, setup steps, and terminology** needed to understand Kubernetes cluster management and debugging.
+:::
+
+---
+
+## Overview
+
+K9s is a **terminal-based UI for managing Kubernetes clusters** that helps engineers monitor, inspect, and interact with cluster resources efficiently.
+
+As a TA, your role is to understand:
+
+* What engineers must configure
+* How K9s interacts with Kubernetes clusters via kubectl
+* Where complexity and risk live (namespaces, pods, nodes)
+* Why estimates may include “cluster debugging or monitoring” time
+
+## TA Checklist (Quick Review)
+
+* [ ] Correct kubeconfig / cluster context
+* [ ] Permissions scoped to namespaces of interest
+* [ ] Observability of pod and node metrics
+* [ ] Awareness of potential pod restarts or evictions
+* [ ] Failure modes (e.g., pods crashlooping, node unready) understood
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts (Foundational)
+
+### K9s CLI
+
+**What it is:**
+A terminal UI to navigate, view, and manage Kubernetes resources interactively.
+
+**Why engineers care:**
+
+* Reduces time inspecting pods, nodes, and events
+* Offers shortcuts for common operations like logs, exec, and scaling
+
+**TA red flags:**
+
+* Misconfigured kubeconfig → cannot see pods
+* Permissions not scoped → cannot manage resources
+
+---
+
+### Kubernetes API Integration
+
+**What it is:**
+K9s communicates with the cluster via **kubectl and the Kubernetes API**.
+
+**Why engineers care:**
+
+* All operations reflect live cluster state
+* Proper API permissions are needed for resource inspection and actions
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Persistent Volume Claims (PVCs)
+
+**What it actually is:**
+
+* References storage volumes in Kubernetes
+* Critical for stateful workloads
+
+**Engineering setup includes:**
+
+* Node-affinity and storage class
+* Volume claim templates for Deployments / StatefulSets
+
+**TA questions:**
+
+* Are PVCs bound correctly?
+* Are pods failing due to storage limits?
+
+---
+
+## Databases / State Management
+
+### StatefulSets
+
+**What it is:**
+
+* Kubernetes workload with persistent state
+* Typically paired with PVCs
+
+**Design reality:**
+
+* Pod identity and storage persistence critical
+* Scaling can require careful ordering
+
+**TA red flags:**
+
+* Pods stuck in `Pending` due to volume claim failures
+* Misconfigured storage class
+
+---
+
+## Compute & Workloads
+
+### Pods & Deployments
+
+**Key constraints:**
+
+* Pod lifecycle tied to Deployment / StatefulSet
+* Resource limits (CPU, memory)
+* Restart policies
+
+**TA questions:**
+
+* Are pods restarting or evicted?
+* Are resource requests/limits realistic?
+
+---
+
+## Messaging & Integration
+
+### Cluster Events & Logs
+
+**What it is:**
+
+* Kubernetes events, pod logs, and container stdout/stderr
+
+**Engineering setup includes:**
+
+* Event monitoring (`kubectl get events`)
+* Pod log streaming
+* Health checks (readiness / liveness)
+
+---
+
+## Observability
+
+### Node & Pod Metrics
+
+**Covers:**
+
+* CPU / memory usage via `kubectl top` or K9s metrics view
+* Pod restart counts
+* Node status (Ready/NotReady)
+
+**TA red flags:**
+
+* High pod restarts → potential crashloops
+* Unhealthy nodes impacting workloads
+* Missing metrics collection → blindspots in cluster health
+
+---
+
+## Networking (Often Hidden Work)
+
+### Service & Ingress Observability
+
+**Why it matters:**
+
+* Service health and endpoints are critical
+* Ingress rules define external access
+
+**TA indicators of complexity:**
+
+* Multiple network policies
+* Pods with restricted egress/ingress
+* Misconfigured load balancers
+
+---
+
+## Cost & Limits
+
+**Platform realities:**
+
+* Cluster size and node types affect cost
+* Persistent storage volumes may incur charges
+
+**TA role:**
+
+* Identify excessive pod replicas
+* Track long-running debug pods
+* Validate resource limits match cluster cost estimates
+
+---
+
+</TabItem>
+<TabItem value="playbook" label="Playbook">
+
+
+```bash
+# ----------------------------
+# KUBECTL SYNTAX
+# ----------------------------
+kubectl [command] [TYPE] [NAME] [flags]
+
+# ----------------------------
+# Apply YAML files
+# ----------------------------
+kubectl apply -f [filename]
+
+# ----------------------------
+# Installation Aliases
+# ----------------------------
+alias k8s="kubectl"
+alias k8scontexts="kubectl config get-contexts"
+
+# ----------------------------
+# Configurations
+# ----------------------------
+kubectl config get-contexts   # List available contexts
+kubectl config use-context CONTEXT_NAME  # Switch context
+
+# ----------------------------
+# Debugging Workspace
+# ----------------------------
+kubectl get namespaces
+kubectl get pods
+kubectl get nodes
+kubectl get pods -n NAMESPACE
+kubectl describe pod POD_NAME -n NAMESPACE
+kubectl logs <pod-name> -n <namespace>
+
+# ----------------------------
+# Cluster Health & Nodes
+# ----------------------------
+kubectl cluster-info
+kubectl get nodes
+kubectl describe node NODE_NAME
+kubectl get nodes -o custom-columns=NAME:.metadata.name,CPU:.status.capacity.cpu,MEM:.status.capacity.memory
+kubectl get nodes --field-selector=status.conditions[type=Ready]
+kubectl describe node NODE_NAME | grep -i capacity -A 10
+kubectl logs kubelet-NODE_NAME -n kube-system
+kubectl get componentstatus
+kubectl get pods -n kube-system
+
+# ----------------------------
+# Pod Health & Status, Restart Count, Evictions
+# ----------------------------
+kubectl get pods
+kubectl get pods -n NAMESPACE
+kubectl describe pod POD_NAME -n NAMESPACE
+kubectl logs POD_NAME -n NAMESPACE
+kubectl logs -f POD_NAME -n NAMESPACE
+kubectl top pod POD_NAME -n NAMESPACE
+kubectl get events --field-selector involvedObject.name=POD_NAME -n NAMESPACE
+kubectl delete pod POD_NAME -n NAMESPACE
+kubectl describe pod POD_NAME -n NAMESPACE | grep -A 2 "Readiness"
+kubectl describe pod POD_NAME -n NAMESPACE | grep -A 2 "Liveness"
+kubectl get pods --sort-by='.status.containerStatuses[0].restartCount'
+kubectl get pods --sort-by='.status.containerStatuses[0].restartCount' -n NAMESPACE
+kubectl describe pod POD_NAME -n NAMESPACE | grep "Restart Count"
+kubectl get pods -o custom-columns="POD:metadata.name,RESTARTS:.status.containerStatuses[0].restartCount"
+kubectl get events --field-selector=involvedObject.name=POD_NAME,involvedObject.kind=Pod -n NAMESPACE
+kubectl get events --field-selector=involvedObject.kind=Pod --sort-by='.metadata.creationTimestamp'
+
+# ----------------------------
+# CPU & Memory Usage
+# ----------------------------
+kubectl top nodes
+kubectl top pods
+kubectl top pods -n NAMESPACE
+kubectl top pod POD_NAME -n NAMESPACE
+kubectl top pod --all-namespaces
+kubectl top pod POD_NAME --containers -n NAMESPACE
+kubectl top pod POD_NAME --containers=CONTAINER_NAME -n NAMESPACE
+
+# ----------------------------
+# Storage Usage: Persistent Volume Claims
+# ----------------------------
+kubectl get pv
+kubectl describe pv PV_NAME
+kubectl get pvc
+kubectl get pvc -n NAMESPACE
+kubectl describe pvc PVC_NAME -n NAMESPACE
+kubectl get storageclasses
+kubectl describe storageclass STORAGE_CLASS_NAME
+kubectl get pv --sort-by=.spec.capacity.storage
+kubectl get pvc --sort-by=.status.capacity.storage -n NAMESPACE
+kubectl get events --field-selector=involvedObject.kind=PersistentVolumeClaim -n NAMESPACE
+
+# ----------------------------
+# Node Scaling & Autoscaling
+# ----------------------------
+kubectl get nodes
+kubectl describe node NODE_NAME
+kubectl get hpa --all-namespaces
+kubectl get cluster-autoscaler --namespace kube-system
+kubectl get events --field-selector=involvedObject.kind=HorizontalPodAutoscaler -A
+kubectl top nodes
+kubectl top pods --all-namespaces
+kubectl logs -n kube-system cluster-autoscaler-POD_NAME
+kubectl describe hpa HPA_NAME -n NAMESPACE
+kubectl get nodes -o custom-columns=NAME:.metadata.name,CONDITIONS:.status.conditions[*].type
+
+# ----------------------------
+# API Server Latency
+# ----------------------------
+kubectl get componentstatuses
+kubectl exec -it -n kube-system kube-apiserver-POD_NAME -- /bin/sh
+curl -k https://localhost:6443/metrics
+kubectl logs -n kube-system kube-apiserver-POD_NAME
+curl -k -v https://localhost:6443/healthz
+kubectl get events --field-selector=involvedObject.name=kube-apiserver-POD_NAME -n kube-system
+kubectl top pods -n kube-system kube-apiserver-POD_NAME
+
+# ----------------------------
+# Events & Logs
+# ----------------------------
+kubectl get events --all-namespaces
+kubectl get events -n NAMESPACE
+kubectl describe RESOURCE_TYPE RESOURCE_NAME -n NAMESPACE
+kubectl logs POD_NAME -n NAMESPACE
+kubectl logs POD_NAME -c CONTAINER_NAME -n NAMESPACE
+kubectl logs -f POD_NAME -n NAMESPACE
+kubectl logs --previous POD_NAME -c CONTAINER_NAME -n NAMESPACE
+kubectl exec -it POD_NAME -c CONTAINER_NAME -n NAMESPACE -- /bin/sh
+
+# ----------------------------
+# Deployments & Replicas
+# ----------------------------
+kubectl get deployments
+kubectl get deployments -n NAMESPACE
+kubectl describe deployment DEPLOYMENT_NAME -n NAMESPACE
+kubectl get replicasets -n NAMESPACE --selector=app=DEPLOYMENT_NAME
+kubectl get events --field-selector=involvedObject.name=DEPLOYMENT_NAME,involvedObject.kind=Deployment -n NAMESPACE
+
+# ----------------------------
+# Load Balancing
+# ----------------------------
+kubectl get services
+kubectl get services -n NAMESPACE
+kubectl describe service SERVICE_NAME -n NAMESPACE
+kubectl get endpoints SERVICE_NAME -n NAMESPACE
+kubectl get events --field-selector=involvedObject.name=SERVICE_NAME,involvedObject.kind=Service -n NAMESPACE
+
+# ----------------------------
+# Network Traffic
+# ----------------------------
+kubectl get networkpolicies --all-namespaces
+kubectl get ingress --all-namespaces
+kubectl exec -it POD_NAME -n NAMESPACE -- traceroute DESTINATION_IP
+kubectl exec -it POD_NAME -n NAMESPACE -- tcpdump -i eth0
+kubectl port-forward POD_NAME LOCAL_PORT:REMOTE_PORT -n NAMESPACE
+
+# ----------------------------
+# Ingress & Egress Traffic
+# ----------------------------
+kubectl get ingress
+kubectl get ingress -n NAMESPACE
+kubectl describe ingress INGRESS_NAME -n NAMESPACE
+
+# ----------------------------
+# K9s Commands
+# ----------------------------
+k9s
+k9s -cpod
+k9s -n NAMESPACE
+
+# Resource Management
+?      # List shortcuts
+A      # Select all
+E      # Activate command line
+F      # Filter mode
+R      # Refresh resource
+S      # Save resource
+W      # Open new tab
+
+# Navigation
+0       # View all pods
+/       # Start search
+:       # Change viewing panel
+:ctx    # Switch context
+
+# Pod & Container Operations
+l  # logs
+s  # shell access
+e  # edit
+d  # delete
+
+# Sorting
+Shift + M  # sort by memory
+```
+
+</TabItem>
+</Tabs>

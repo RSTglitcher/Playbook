@@ -1,0 +1,529 @@
+---
+title: "Git Runbook"
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Git Runbook
+An **engineering-aware reference** for Technical Analysts working with **Git-based version control systems** (GitHub, GitLab, Bitbucket).
+
+Focuses on **collaboration workflows, change control, and delivery risks** needed to understand engineering practices, estimates, and failure modes.
+:::
+
+## Overview
+
+Git is a **distributed version control system** used to track changes to code, configuration, and documentation over time.
+
+It underpins:
+
+* Day-to-day developer collaboration
+* Release management
+* Auditability and rollback
+
+As a TA, your role is to understand:
+
+* How teams collaborate safely on shared codebases
+* Where delivery friction and risk appear
+* Why "small changes" still incur overhead
+* How workflow choices affect speed and quality
+
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Git Concepts (Foundational)
+
+### Repository (Repo)
+
+**What it is:**
+A versioned container for source code and related files.
+
+**Key idea:**
+Every clone is a **full copy** of history.
+
+**TA red flags:**
+
+* Monorepo vs many small repos without rationale
+* Unclear ownership of repos
+
+---
+
+### Commits
+
+**What it is:**
+A snapshot of changes with metadata (author, timestamp, message).
+
+**Why engineers care:**
+
+* Enables traceability
+* Supports rollback
+
+**TA insight:**
+Frequent, small commits reduce risk.
+
+---
+
+### Branches
+
+**What it is:**
+Independent lines of development.
+
+**Common types:**
+
+* main / trunk
+* feature branches
+* release branches
+
+**TA red flags:**
+
+* Long-lived feature branches
+* Manual merging into main
+
+---
+
+## Collaboration & Workflow
+
+### Pull Requests / Merge Requests
+
+**What it is:**
+A formal request to merge changes into another branch.
+
+**Why it matters:**
+
+* Code review
+* Automated checks
+* Shared understanding
+
+**TA questions:**
+
+* Who approves?
+* What blocks a merge?
+
+---
+
+### Code Review
+
+**Purpose:**
+
+* Catch defects early
+* Share knowledge
+* Enforce standards
+
+**TA red flags:**
+
+* Rubber-stamp reviews
+* Single reviewer bottlenecks
+
+---
+
+## Branching Strategies
+
+### Common Strategies
+
+* **Trunk-based development** – small, frequent merges to main
+* **Git Flow** – long-lived branches for releases
+* **Release branching** – controlled stabilization periods
+
+**TA insight:**
+Branching strategy directly impacts **delivery speed and risk**.
+
+---
+
+## Merging & Conflict Resolution
+
+### Merge Conflicts
+
+**What it is:**
+Conflicting changes to the same lines of code.
+
+**Why it matters:**
+
+* Cost increases over time
+* Indicates parallel work collisions
+
+**TA red flags:**
+
+* Large, infrequent merges
+* Fear of rebasing or resolving conflicts
+
+---
+
+## Versioning & Releases
+
+### Tags
+
+**What it is:**
+Named pointers to specific commits.
+
+**Use cases:**
+
+* Releases
+* Hotfix references
+
+---
+
+### Semantic Versioning (Often Paired with Git)
+
+**Pattern:**
+MAJOR.MINOR.PATCH
+
+**TA insight:**
+Versioning communicates **change impact**, not just chronology.
+
+---
+
+## Automation & CI/CD Integration
+
+### Git in Pipelines
+
+**Common triggers:**
+
+* On commit
+* On pull request
+* On merge to main
+
+**Hidden work:**
+
+* Test execution time
+* Build failures blocking merges
+
+**TA red flags:**
+
+* No automated checks
+* Manual deployments from laptops
+
+---
+
+## Access Control & Governance
+
+### Permissions
+
+**Typical roles:**
+
+* Read
+* Write
+* Admin
+
+**TA red flags:**
+
+* Everyone has admin
+* No branch protection rules
+
+---
+
+### Protected Branches
+
+**What it does:**
+Prevents direct pushes to critical branches.
+
+**Why engineers care:**
+
+* Enforces review and testing
+
+---
+
+## Failure Modes & Recovery
+
+### Rollback
+
+**What it looks like:**
+
+* Revert commit
+* Roll back deployment to tagged version
+
+**TA insight:**
+Git enables rollback, but **process discipline determines speed**.
+
+---
+
+## When Git Is a Good Fit
+
+**Use Git when:**
+
+* Multiple contributors work in parallel
+* Change history matters
+* Automation is required
+
+**Typical examples:**
+
+* Application code
+* Infrastructure as code
+* Documentation
+
+---
+
+## When Git Is Misused
+
+**Problems arise when:**
+
+* Binary files dominate
+* Large generated files are committed
+* Git is used as a deployment mechanism
+
+---
+
+## TA Sanity Checklist
+
+* Is there a clear branching strategy?
+* Are reviews enforced?
+* Are CI checks blocking bad merges?
+* Is rollback straightforward?
+* Is repo ownership clear?
+
+---
+
+## Tooling & Interaction
+
+**Core commands:**
+
+* clone, commit, push, pull
+* branch, merge, rebase
+
+**Platforms:**
+
+* GitHub
+* GitLab
+* Bitbucket
+
+**Interaction model:**
+
+* Developer-driven
+* Automation-driven via CI/CD
+
+
+</TabItem>
+<TabItem value="playbook" label="Playbook">
+
+```shell
+
+// ==========================================
+// Git Command Reference (Structured)
+// ==========================================
+
+
+// ------------------------------------------
+// Set up Credentials
+// Goal: Configure your identity so Git can track authorship
+// ------------------------------------------
+
+// Set global username
+git config --global user.name "Name McName"
+
+// Set global email
+git config --global user.email "email@email.com"
+
+// Set default text editor
+git config --global core.editor "/usr/bin/vim"
+
+
+// Troubleshooting
+// If you see: remote: invalid username or password
+// -> Go to your Credential Manager
+
+// If you do not have permission to access the branch:
+// -> The repo may be private
+// -> Checkout the correct remote branch
+git checkout nameofyourremotebranch
+// -> Ask the owner to add you as a contributor
+
+
+// ------------------------------------------
+// Install Git
+// Goal: Install and verify Git on your system
+// ------------------------------------------
+
+// Install git (YUM-based systems)
+yum install git
+
+// Check installed version
+git --version
+
+// View Git manual
+man git
+
+
+// ------------------------------------------
+// Initialise Repository
+// Goal: Create a new Git repository
+// ------------------------------------------
+
+// Initialise a standard repository
+git init name-this-repo
+
+// Initialise a bare repository (used as a shared remote)
+git init --bare name-this-larger-repository.git
+// Note: Bare repos contain no working directory, only Git metadata
+
+// Create and switch to a new branch
+git checkout -b branch-name
+// Remote branch is created when pushed
+
+
+// ------------------------------------------
+// Add Files
+// Goal: Stage files for commit
+// ------------------------------------------
+
+// Add everything
+git add *
+
+// Add a specific file
+git add file-name
+
+// Add an empty folder placeholder
+git add src/.keep
+
+
+// ------------------------------------------
+// Commit Changes
+// Goal: Record a snapshot of staged changes
+// ------------------------------------------
+
+// Commit with message
+git commit -m "comment describing the change you have made"
+
+// Commit using editor (e.g. Vim)
+git commit
+
+// View commit message file
+cat .git/COMMIT_EDITMSG
+
+// View commit history
+git log
+
+// Skip staging area and commit tracked files
+git commit -a -m "bring changelog back"
+
+// Note:
+// Git stores commits as SHA1 hashes
+// First 2 characters become directory names under .git/objects/
+
+
+// ------------------------------------------
+// Push Changes
+// Goal: Send commits to a remote repository
+// ------------------------------------------
+
+// Push and set upstream branch
+git push --set-upstream remote-name branch-name
+// Enables argument-less git pull and push
+
+
+// ------------------------------------------
+// Remove Files
+// Goal: Delete files from Git tracking
+// ------------------------------------------
+
+// Remove file
+git rm src/.keep
+
+// Force remove
+git rm -f sec/.keep
+
+// Remove from index but keep locally
+git rm --cached CHANGELOG.md
+
+
+// ------------------------------------------
+// Ignore Files
+// Goal: Prevent files from being tracked
+// ------------------------------------------
+
+// Create build directory
+mkdir build
+
+// Add gitignore file
+git add .gitignore
+
+// Check repository status
+git status
+
+// Commit gitignore
+git commit -m "adding a .gitignore file"
+
+// Ignore all files in build directory
+echo "build/*" >> .gitignore
+
+// Commit updated ignore rules
+git commit -a -m "updated gitignore file to exclude build directory"
+
+
+// ------------------------------------------
+// Status Checks
+// Goal: Understand repository state
+// ------------------------------------------
+
+// Full status
+git status
+
+// Short status
+git status -s
+
+// Verbose status
+git status -v
+
+// Status indicators:
+// A  = Added
+// M  = Modified (unstaged)
+// D  = Deleted
+// ?? = Untracked
+
+
+// ------------------------------------------
+// Compile and Build Workflow Example
+// Goal: Build code and commit results
+// ------------------------------------------
+
+// Compile project
+g++ -o build/project-name src/file-name.txt
+
+// List build artifacts
+ls build/
+
+// Run compiled binary
+build/project-name
+
+// Check repo status
+git status
+
+// Edit changelog
+vim ChangeLOG.md
+// Files ending with ~ are editor backups
+
+// Ignore backup files
+echo "*~" >> .gitignore
+
+// Commit changelog and ignore rules
+git commit -a -m "updated changelog and ignore other backup versions"
+
+// Check which files are ignored
+git check-ignore *~
+
+
+// ------------------------------------------
+// Rebase and Push
+// Goal: Clean up commit history before pushing
+// ------------------------------------------
+
+// Check status
+git status
+
+// Review commit history
+git log
+
+// Continue rebase after resolving conflicts
+git rebase --continue
+
+// Interactive rebase against master
+git rebase -i origin/master
+
+// Force push safely after rebase
+git push --force-with-lease origin remoteBranchName
+```
+
+
+</TabItem>
+</Tabs>
+

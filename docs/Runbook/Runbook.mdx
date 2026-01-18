@@ -1,0 +1,215 @@
+---
+title: "Tool Platform Runbook"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+:::tip Platform / Topic Runbook
+Platform's/Topic's **core services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::
+
+---
+
+## Overview
+
+Platform / Technology is a **cloud platform / framework / system type** used to primary purpose.
+
+As a TA, your role is to understand:
+
+* What engineers must configure
+* Which components interact
+* Where complexity and risk live
+* Why estimates include “platform work”
+
+## TA Checklist (Quick Review)
+
+* [ ] Environments clearly separated
+* [ ] Permissions scoped correctly
+* [ ] Observability configured
+* [ ] Cost risks understood
+* [ ] Failure modes discussed
+
+---
+
+<Tabs>
+<TabItem value="runbook" label="Runbook">
+
+## Core Concepts (Foundational)
+
+### Core Concept 1
+
+**What it is:**
+Concise definition in plain language.
+
+**Why engineers care:**
+
+* Reason 1
+* Reason 2
+
+**TA red flags:**
+
+* Common source of hidden complexity
+* Misconfiguration risks
+
+---
+
+### Core Concept 2
+
+**What it is:**
+Short explanation.
+
+**Why engineers care:**
+
+* Availability, scale, security, or cost implications
+
+---
+
+## Data & Storage (Engineering-Level)
+
+### Service / Component
+
+**What it actually is:**
+
+* Technical reality (not marketing)
+
+**Engineering setup includes:**
+
+* Permissions / access
+* Configuration
+* Lifecycle / retention
+
+**TA questions:**
+
+* Usage patterns?
+* Retention or compliance needs?
+* Who owns failures?
+
+---
+
+## Databases / State Management
+
+### Database / Store
+
+**What it is:**
+
+* Type (OLTP / OLAP / key-value / stream)
+
+**Design reality:**
+
+* How schema or access patterns drive design
+
+**TA red flags:**
+
+* Incorrect usage assumptions
+* Scale or consistency mismatches
+
+---
+
+## Compute & Workloads
+
+### Compute Model
+
+**Key constraints:**
+
+* Runtime limits
+* State management
+* Scaling model
+
+**TA questions:**
+
+* Is execution predictable?
+* Where does state live?
+
+---
+
+## Messaging & Integration
+
+### Messaging / Integration Service
+
+**What it is:**
+
+* Point-to-point / pub-sub / event-driven
+
+**Engineering setup includes:**
+
+* Retry behaviour
+* Failure handling
+* Permissions
+
+---
+
+## Observability
+
+### Monitoring / Logging
+
+**Covers:**
+
+* Logs
+* Metrics
+* Alerts
+
+**TA red flags:**
+
+* No alerts
+* No retention policy
+
+---
+
+## Networking (Often Hidden Work)
+
+### Networking Component
+
+**Why it matters:**
+
+* Security boundaries
+* Connectivity
+
+**TA indicators of complexity:**
+
+* Private networking
+* Cross-system connectivity
+
+---
+
+## Cost & Limits
+
+**Platform realities:**
+
+* Quotas
+* Pricing model
+* Scaling costs
+
+**TA role:**
+
+* Identify unbounded usage
+* Validate assumptions behind estimates
+
+---
+
+
+</TabItem>
+<TabItem value="playbook" label="Playbook">
+
+```shell
+# ----------------------------
+# Type of commands e.g. Login, Authentication & Identity
+# ----------------------------
+command
+
+
+# ----------------------------
+# Core resources
+# ----------------------------
+command
+
+
+# ----------------------------
+# Sanity Checks
+# ----------------------------
+
+```
+
+</TabItem>
+</Tabs>
