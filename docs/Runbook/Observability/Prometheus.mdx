@@ -1,0 +1,115 @@
+---
+title: "Prometheus"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Prometheus
+Prometheus is an **open-source monitoring and alerting platform** designed for **collecting time-series metrics** from applications and infrastructure. It supports powerful queries, dashboards (often via Grafana), and automated alerting.
+:::
+
+---
+
+## When to use
+
+* Collect metrics from microservices, infrastructure, or applications
+* Alerting based on thresholds, anomalies, or SLA violations
+* Investigating performance, trends, or failures
+* Integrating with Grafana or other visualization tools
+
+**Do NOT use this tool when:**
+
+* You only need simple logging (use ELK / CloudWatch / similar)
+* High-throughput event streaming is required (use Kafka / PubSub / etc.)
+
+---
+
+## TA Skills Checklist
+
+- Review metrics coverage and alerting rules
+- Validate scrape intervals and targets
+- Check data retention and storage policies
+- Understand dashboards and dependencies
+- Spot anomalies or misconfigurations
+
+---
+
+## Requirements
+
+<Tabs>
+
+<TabItem value="pre-requisites" label="Pre-Requisites">
+
+| Action | Requirements |
+|--------|-------------|
+| Install / Setup | Prometheus server deployed (self-hosted or SaaS) |
+| Access & Login | Web UI accessible; optional API token for scripted access |
+| Metrics Source | Target endpoints expose `/metrics` |
+| Integrations | Grafana or other visualization tools configured |
+
+</TabItem>
+
+<TabItem value="capabilities" label="TA Skills">
+
+```shell
+--------------
+How to use Prometheus as a TA
+--------------
+
+# Log in to Prometheus web UI
+# Review configured scrape targets: https://<prometheus-url>/targets
+# Check target status (up/down), scrape intervals, and last scrape times
+# Navigate alerting rules: https://<prometheus-url>/rules
+# Inspect active and pending alerts
+# Review metrics coverage for key services or infrastructure
+# Validate retention settings, storage usage, and performance
+# Optionally query metrics using Prometheus Query Language (PromQL)
+# Example: CPU usage per pod
+#   sum(rate(container_cpu_usage_seconds_total{namespace="default"}[5m])) by (pod)
+# Check for missing metrics or anomalies
+# Confirm that alerting routes integrate with notification channels (Slack, PagerDuty, etc.)
+# Use API to export targets or alerts:
+#   curl http://<prometheus-url>/api/v1/targets
+#   curl http://<prometheus-url>/api/v1/rules
+```
+</TabItem> <TabItem value="execution" label="SWE Skills">
+
+--------------
+Common ways engineers use Prometheus
+--------------
+
+```shell
+# Add new scrape target
+#   Edit prometheus.yml or use service discovery
+# Reload configuration without downtime:
+#   curl -X POST http://<prometheus-url>/-/reload
+# Query metrics using PromQL in UI or via API
+# Example: Memory usage per node
+#   node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes
+# Create alert rules for specific thresholds
+# Integrate with Grafana dashboards
+# Troubleshoot performance:
+#   Check `/metrics` endpoint response times
+#   Inspect Prometheus logs for scrape failures
+# Manage retention or storage:
+#   Configure `storage.tsdb.retention.time` and disk size
+```
+
+</TabItem> </Tabs>
+
+---
+
+:::danger Failure Scenarios
+Symptoms of issues with Prometheus and how to triage:
+:::
+
+| Symptom                 | TLDR of Root Cause                               | What to Check                           | Action to Propose                               |
+|-------------------------|-------------------------------------------------|----------------------------------------|------------------------------------------------|
+| Targets down            | Network issues, endpoint unavailable           | `/targets` page, service logs           | Restart target / fix network                  |
+| Alerts not firing        | Misconfigured alert rules or channel           | `/rules` page, alertmanager config      | Correct rules or notification config          |
+| Slow queries             | High cardinality metrics or complex queries    | Query performance, dashboard complexity | Optimize queries, reduce cardinality, shard metrics |
+| Data missing             | Metrics not scraped or retention exceeded      | Scrape intervals, TSDB storage          | Fix endpoint, increase retention, validate scrape |
+| Prometheus server down   | Pod / service crash, out-of-memory             | Server logs, pod status                  | Restart pod, allocate more resources          |
+
+
