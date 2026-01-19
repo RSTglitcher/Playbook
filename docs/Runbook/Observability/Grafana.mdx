@@ -1,0 +1,105 @@
+---
+title: "Grafana"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Grafana
+Grafana is an **open-source visualization and analytics platform**. It is primarily used to **create dashboards, query metrics, and visualize time-series data** from sources like Prometheus, Loki, or InfluxDB, helping engineers and TAs monitor systems and detect anomalies.
+:::
+
+---
+
+## When to use
+
+* You need a visual interface to monitor metrics from multiple sources
+* You want to create dashboards for observability and alerting
+* You need to correlate data across services and time-series
+
+**Do NOT use this tool when:**
+
+* You only need raw log aggregation without visualization (consider Loki or Elasticsearch)
+* Lightweight metrics queries without dashboards suffice
+
+---
+
+## TA Skills Checklist
+
+- Understanding of data sources (Prometheus, Loki, InfluxDB, etc.)
+- Ability to read dashboards and detect anomalies
+- Knowledge of access control, API keys, and SSO
+- Awareness of alerting rules and thresholds
+
+---
+
+## Requirements
+
+<Tabs>
+
+<TabItem value="pre-requisites" label="Pre-Requisites">
+
+| Action | Requirements |
+|--------|-------------|
+| Set-up | Grafana server installed or SaaS account provisioned |
+| Access & Login | User account with appropriate role (Viewer/Editor/Admin) |
+| API | API key if interacting with dashboards programmatically |
+| Other tool-specific actions | Configure data sources (Prometheus, Loki, InfluxDB, etc.) |
+
+</TabItem>
+
+<TabItem value="capabilities" label="TA Skills">
+
+```shell
+# ----------------------------
+# Grafana TA Actions (executable / actionable)
+# ----------------------------
+
+# Log in to Grafana via web UI or CLI
+# Navigate dashboards to understand metrics, panels, and visualizations
+# Drill-down on panels to investigate anomalies or trends
+# Review alert rules, thresholds, and notification channels
+# Check which data sources are configured and their scrape intervals
+# Validate dashboard ownership, folders, and access permissions
+# Audit panel queries for efficiency, correctness, and relevance
+# Confirm alerts are firing correctly and delivered to intended recipients
+# Spot missing metrics, unusual trends, or misconfigured panels
+
+```
+
+</TabItem> <TabItem value="execution" label="SWE Skills">
+
+--------------
+Common ways engineers use Grafana
+--------------
+
+```shell
+# Add or configure data sources
+# Create and update dashboards with queries and visualizations
+# Define alerting rules based on metrics thresholds
+# Export dashboards or JSON configuration for version control
+# Integrate with notification channels (Slack, PagerDuty, email)
+# Use Grafana API for automated dashboard provisioning
+# Apply user role management and permissions
+# Check Grafana version --> grafana-server --version
+# List installed plugins -->  grafana-cli plugins list
+# Install plugin -->  grafana-cli plugins install <plugin-id>
+# Reset admin password -->  grafana-cli admin reset-admin-password <pw>
+# API access:  curl -H "Authorization: Bearer <API_TOKEN>" https://<grafana-url>/api/dashboards/home
+# API access:  curl -H "Authorization: Bearer <API_TOKEN>" https://<grafana-url>/api/datasources
+```
+</TabItem> </Tabs>
+
+---
+
+:::danger Failure Scenarios
+Symptoms of issues with Grafana and how to triage them:
+:::
+
+| Symptom           | TLDR of Root Cause                             | What to Check                                      | Action to Propose                          |
+|------------------|-----------------------------------------------|--------------------------------------------------|-------------------------------------------|
+| UI not loading     | Grafana server down or network issue         | Server logs, pod status (if K8s), firewall      | Restart server/pod, check network         |
+| Dashboards empty   | Data source misconfigured or unavailable     | Verify data source connection, scrape intervals | Reconfigure source, validate credentials  |
+| Alerts not firing  | Alert rules misconfigured or notifications blocked | Check alert rule evaluation, notification channels | Correct rules or channel settings         |
+| Slow performance   | High cardinality metrics or overloaded server | Query performance, dashboard complexity         | Optimize queries, limit panels, scale server |
+| Access denied      | User role or API key issue                    | Check role, API key validity                     | Adjust roles, regenerate API key          |

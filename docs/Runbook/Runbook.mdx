@@ -1,215 +1,82 @@
 ---
-title: "Tool Platform Runbook"
+title: "Tool Name"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-
-:::tip Platform / Topic Runbook
-Platform's/Topic's **core services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::tip Tool Name
+Short, professional definition of **what this tool is**, its primary purpose, and the kind of problems it solves.
 :::
 
 ---
 
-## Overview
+## When to use
 
-Platform / Technology is a **cloud platform / framework / system type** used to primary purpose.
+* Situation 1 (clear trigger)
+* Situation 2
+* Situation 3
 
-As a TA, your role is to understand:
+**Do NOT use this tool when:**
 
-* What engineers must configure
-* Which components interact
-* Where complexity and risk live
-* Why estimates include “platform work”
-
-## TA Checklist (Quick Review)
-
-* [ ] Environments clearly separated
-* [ ] Permissions scoped correctly
-* [ ] Observability configured
-* [ ] Cost risks understood
-* [ ] Failure modes discussed
+* Anti-pattern or misuse
+* Cheaper / simpler alternative applies
 
 ---
+
+## TA Skills Checklist
+
+- Recommended actions to interact with the tool
+- Recommended actions for requirements
+
+---
+
+## Requirements
 
 <Tabs>
-<TabItem value="runbook" label="Runbook">
 
-## Core Concepts (Foundational)
-
-### Core Concept 1
-
-**What it is:**
-Concise definition in plain language.
-
-**Why engineers care:**
-
-* Reason 1
-* Reason 2
-
-**TA red flags:**
-
-* Common source of hidden complexity
-* Misconfiguration risks
-
----
-
-### Core Concept 2
-
-**What it is:**
-Short explanation.
-
-**Why engineers care:**
-
-* Availability, scale, security, or cost implications
-
----
-
-## Data & Storage (Engineering-Level)
-
-### Service / Component
-
-**What it actually is:**
-
-* Technical reality (not marketing)
-
-**Engineering setup includes:**
-
-* Permissions / access
-* Configuration
-* Lifecycle / retention
-
-**TA questions:**
-
-* Usage patterns?
-* Retention or compliance needs?
-* Who owns failures?
-
----
-
-## Databases / State Management
-
-### Database / Store
-
-**What it is:**
-
-* Type (OLTP / OLAP / key-value / stream)
-
-**Design reality:**
-
-* How schema or access patterns drive design
-
-**TA red flags:**
-
-* Incorrect usage assumptions
-* Scale or consistency mismatches
-
----
-
-## Compute & Workloads
-
-### Compute Model
-
-**Key constraints:**
-
-* Runtime limits
-* State management
-* Scaling model
-
-**TA questions:**
-
-* Is execution predictable?
-* Where does state live?
-
----
-
-## Messaging & Integration
-
-### Messaging / Integration Service
-
-**What it is:**
-
-* Point-to-point / pub-sub / event-driven
-
-**Engineering setup includes:**
-
-* Retry behaviour
-* Failure handling
-* Permissions
-
----
-
-## Observability
-
-### Monitoring / Logging
-
-**Covers:**
-
-* Logs
-* Metrics
-* Alerts
-
-**TA red flags:**
-
-* No alerts
-* No retention policy
-
----
-
-## Networking (Often Hidden Work)
-
-### Networking Component
-
-**Why it matters:**
-
-* Security boundaries
-* Connectivity
-
-**TA indicators of complexity:**
-
-* Private networking
-* Cross-system connectivity
-
----
-
-## Cost & Limits
-
-**Platform realities:**
-
-* Quotas
-* Pricing model
-* Scaling costs
-
-**TA role:**
-
-* Identify unbounded usage
-* Validate assumptions behind estimates
-
----
-
+<TabItem value="pre-requisites" label="Pre-Requisites">
+
+|Action|Requirements|
+|------|------------|
+|Set-up||
+|Access & Login||
+|API||
+|Other tool specific actions||
 
 </TabItem>
-<TabItem value="playbook" label="Playbook">
+<TabItem value="capabilities" label="TA Skills">
 
 ```shell
-# ----------------------------
-# Type of commands e.g. Login, Authentication & Identity
-# ----------------------------
-command
+--------------
+How to use the tool/platform as TA
+--------------
+
+```
+
+</TabItem>
+<TabItem value="execution" label="SWE Skills">
+
+```shell
+--------------
+Common ways engineers use the tool/platform
+--------------
 
 
-# ----------------------------
-# Core resources
-# ----------------------------
-command
-
-
-# ----------------------------
-# Sanity Checks
-# ----------------------------
 
 ```
 
 </TabItem>
 </Tabs>
+
+---
+
+## Triage
+
+:::danger
+Symptoms of issues with this platform and how to triage this:
+:::
+
+| Symptom | TLDR of Root Cause | What to Check |Action to Propose|
+|--------|-------------|---------------|---------|
+

@@ -1,0 +1,145 @@
+---
+title: "Regex"
+sidebar_position: 2
+---
+
+:::tip Regular Expressions
+Regular Expressions (Regex) define **patterns** used to search, match, extract, validate, and transform text.
+
+They are used across **CLI tools, programming languages, configuration files, and observability pipelines**.
+:::
+
+Regular Expressions define patterns to search, match, and manipulate text strings.
+
+Use Cases:
+- Text search & filtering
+- Data validation
+- Data extraction
+- Text replacement & formatting
+- Log analysis
+- URL routing & rewriting
+- Parsing
+- Refactoring
+- Security
+- Automated text filtering
+- Cleaning
+- Data masking
+
+---
+
+### Examples
+
+```shell
+Social Security Number:
+^\d{3}-\d{2}-\d{4}$
+
+Email (simple):
+\b\w+@\w+\.\w+\b
+
+Email (strict):
+^[a-zA-Z0-9._]*[a-zA-Z0-9]+[._]*@[a-zA-Z0-9._]*[a-zA-Z0-9]+[._]*\.[a-zA-Z]+
+
+Colours:
+(red|blue|green)
+
+IPv4 Address:
+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
+```
+
+### Common Regex Functions
+
+```shell
+.match     -> Match
+.search    -> Search
+.replace   -> Replace
+```
+
+### Characters
+
+```shell
+.    -> Any single character except newline
+\d   -> Digit (0-9)
+\w   -> Word character (a-z, A-Z, 0-9, _)
+\s   -> Whitespace
+\S   -> Non-whitespace
+\    -> Escape special character
+```
+
+### Quantifiers
+
+```shell
+{n}     -> Exactly n occurrences
+{n,}    -> At least n occurrences
+{n,m}   -> Between n and m occurrences
++       -> One or more
+++      -> One or more (greedy)
++?      -> One or more (lazy)
+*       -> Zero or more
+**      -> Zero or more (greedy)
+*?      -> Zero or more (lazy)
+?       -> Zero or one
+^       -> Start of line
+$       -> End of line
+.*      -> Any number of characters
+[^]     -> Any character NOT in range
+```
+
+### Specific Patterns
+
+```shell
+(abc)        -> Exact sequence
+(a|b)        -> a OR b
+[^abc]       -> Not a, b, or c
+[a-z]        -> Lowercase letters
+[A-Z]        -> Uppercase letters
+(?i)         -> Case-insensitive mode
+(?s)         -> Single-line mode
+(?m)         -> Multi-line mode
+(?x)         -> Free-spacing / comment mode
+[aeiou]      -> Any vowel
+[^XYZ]       -> Any character except X, Y, Z
+[a-z0-9]     -> Character range
+()           -> Capturing group
+[]           -> Character class
+[^]          -> Negated character class
+```
+
+### Modifiers
+
+```shell
+i   -> Case insensitive
+g   -> Global matching
+m   -> Multi-line matching
+-w  -> Match whole word
+-v  -> Invert match
+-n  -> Line number
+-c  -> Count matches
+-B  -> Before context
+-A  -> After context
+-C  -> Context (before + after)
+```
+
+### Extended Regex
+
+```shell
+#EGREP
+!         -> NOT
+||        -> OR
+-o        -> Shell OR
+&&        -> AND
+-a        -> Shell AND
+*         -> Match 0 or more
+?         -> Match 1 character
+[]        -> Range
+{}        -> Lists / counts
+[a-e]     -> Match a through e
+[!0-9]    -> Anything except digits
+^         -> Start of line
+$         -> End of line
+.         -> Single character
+[^]       -> Any character not in range
+.*        -> Any number of characters
+\         -> Escape meta character
++         -> One or more occurrences
+(a|b)     -> Match a or b
+```
