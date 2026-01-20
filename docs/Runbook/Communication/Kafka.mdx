@@ -1,0 +1,117 @@
+---
+title: "Kafka"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Kafka
+Apache Kafka is a **distributed streaming platform** used for building real-time data pipelines and event-driven applications. It provides high-throughput, fault-tolerant, and scalable messaging capabilities.
+:::
+
+---
+
+## When to use
+
+* Streaming data between systems in real-time
+* Event-driven architecture for decoupled services
+* High-throughput logging or telemetry ingestion
+
+**Do NOT use this tool when:**
+
+* Low-latency request-response messaging is needed
+* Data volume is low and a simple queue suffices
+
+---
+
+## TA Skills Checklist
+
+- Understand Kafka topics, partitions, and replication
+- Know cluster setup, brokers, and zookeeper interaction
+- Validate producer/consumer configurations
+- Check monitoring, alerting, and retention policies
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|---------------------------------|
+| Install / Setup        | Kafka cluster deployed, brokers running, Zookeeper (if applicable) |
+| Access & Login         | Client credentials, SASL/SSL configs, ACLs verified |
+| API / CLI Tools        | Kafka CLI tools (`kafka-topics.sh`, `kafka-console-producer.sh`, `kafka-console-consumer.sh`) available |
+| Other tool-specific actions | Monitoring tools (Prometheus, Grafana), retention policies, topic naming conventions |
+
+---
+
+## Business As Usual
+
+<Tabs>
+<TabItem value="capabilities" label="TA Skills">
+
+```shell
+--------------
+How to use Kafka as a TA
+--------------
+
+# List topics
+kafka-topics.sh --bootstrap-server <broker>:9092 --list
+
+# Check topic configuration and partitions
+kafka-topics.sh --describe --topic <topic> --bootstrap-server <broker>:9092
+
+# Inspect consumer groups
+kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --list
+kafka-consumer-groups.sh --describe --group <group>
+
+# Monitor cluster health
+# Validate broker logs, partition distribution, under-replicated partitions
+
+# Check retention policies and message sizes for critical topics
+
+# Verify ACLs and access for producers and consumers
+
+```
+</TabItem> <TabItem value="execution" label="SWE Skills">
+
+```shell
+--------------
+Common ways engineers use Kafka
+--------------
+
+# Produce messages to a topic
+kafka-console-producer.sh --broker-list <broker>:9092 --topic <topic>
+
+# Consume messages from a topic
+kafka-console-consumer.sh --bootstrap-server <broker>:9092 --topic <topic> --from-beginning
+
+# Create new topics
+kafka-topics.sh --create --topic <topic> --bootstrap-server <broker>:9092 --partitions 3 --replication-factor 2
+
+# Delete topics
+kafka-topics.sh --delete --topic <topic> --bootstrap-server <broker>:9092
+
+# Manage consumer groups
+kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --group <group> --reset-offsets --to-earliest --execute
+
+# Monitor lag and cluster health via CLI or JMX metrics
+```
+</TabItem> </Tabs>
+
+---
+
+## Triage
+
+:::danger
+Symptoms of issues with Kafka and how to triage this:
+:::
+
+| Symptom               | TLDR of Root Cause                           | What to Check                                           | Action to Propose |
+|-----------------------|---------------------------------------------|--------------------------------------------------------|-----------------|
+| Brokers down          | Node failure, network issue, JVM crash      | Broker logs, cluster status, Zookeeper (if used)       | Restart broker, check network, rebalance partitions |
+| Consumer lag          | Consumers slow or blocked                    | Consumer group status, offsets, broker metrics        | Increase consumer instances, optimize processing   |
+| Topic unavailable     | Topic deleted or misconfigured              | Topic list, ACLs, broker logs                          | Recreate topic, adjust ACLs                        |
+| Messages not delivered| Retention expired, partition unavailable    | Partition status, producer logs                        | Adjust retention, fix partition availability       |
+| High latency          | Network bottleneck, overloaded broker       | Broker metrics, replication lag                        | Scale brokers, optimize network                    |
+| Data loss             | Under-replicated partitions, misconfigured | Cluster replication status, topic configuration       | Increase replication factor, fix config           |
+

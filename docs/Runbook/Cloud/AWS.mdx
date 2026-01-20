@@ -1,396 +1,206 @@
 ---
-title: "AWS Runbook"
+title: "AWS Cloud Platform"
 ---
 
-:::tip AWS Runbook
-An **engineering-aware reference** for Technical Analysts working with Amazon Web Services (AWS).
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Focuses on **core AWS services, setup steps, and terminology** needed to understand engineering designs, estimates, and platform constraints.
+:::tip AWS Cloud Platform
+AWS provides a broad suite of **cloud services** including compute, storage, database, messaging, and analytics. This runbook focuses on key data and messaging services commonly used by engineers and monitored by TAs: ElastiCache, DynamoDB, Keyspaces, SQS, and SNS.
 :::
 
 ---
 
-## Overview
+## When to use
 
-AWS is a **modular cloud platform** offering infrastructure, managed services, and data systems.
+* Use AWS when building cloud-native applications requiring managed services.
+* Use DynamoDB / Keyspaces for low-latency, highly available databases.
+* Use ElastiCache for caching and fast in-memory operations.
+* Use SQS / SNS for decoupled, event-driven architectures.
 
-As a TA, your role is to understand:
-- What engineers must configure
-- Which services interact
-- Where complexity and risk live
-- Why estimates include “platform work”
+**Do NOT use AWS services when:**
 
----
-
-## Core AWS Concepts (Foundational)
-
-### AWS Accounts
-**What it is:**
-A **hard isolation boundary** for resources, IAM, and billing.
-
-**Why engineers care:**
-- Stronger isolation than GCP projects
-- Often multiple accounts per environment (dev / prod)
-
-**TA red flags:**
-- Cross-account access → IAM + trust policies
-- New account → networking + logging + guardrails
+* On-premises or lower-cost alternatives suffice.
+* You need extremely low-level control over infrastructure not exposed by managed services.
 
 ---
 
-### Regions & Availability Zones
-**What it is:**
-- Region = geographic area
-- AZ = isolated data centre within region
+## TA Skills Checklist
 
-**Why engineers care:**
-- High availability designs require multiple AZs
-- Some services are regional, some global
+- Identify service usage and data flow between AWS services.
+- Validate IAM roles, policies, and access control.
+- Observe metrics, alerting, and scaling considerations.
+- Verify integration with dashboards, pipelines, and notifications.
 
 ---
 
-### IAM (Identity & Access Management)
+## Pre-Requisites
 
-**Key concepts:**
-- **User** (human)
-- **Role** (assumed identity)
-- **Policy** (JSON permissions)
-- **Trust policy** (who can assume a role)
-
-**Important difference from GCP:**
-- IAM is **global**
-- Roles are assumed, not assigned
-
-**TA red flags:**
-- Overuse of `AdministratorAccess`
-- Missing trust relationships
-- Cross-account role assumptions
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|----------------------------------|
+| AWS Account            | Project/account access with billing enabled |
+| CLI Tools              | `awscli` installed and configured (`aws configure`) |
+| IAM Roles & Policies   | Permissions for DynamoDB, Keyspaces, ElastiCache, SQS, SNS |
+| Networking             | VPC, subnets, security groups, route tables |
+| Service Setup          | Ensure tables, clusters, caches, queues, topics exist for inspection |
 
 ---
 
-### Service Roles (Critical Concept)
+## Business As Usual
 
-**What it is:**
-AWS services often require a **role to act on your behalf**.
+<Tabs>
+<TabItem value="elasticache" label="ElastiCache">
 
-**Examples:**
-- Lambda execution role
-- ECS task role
-- Glue job role
+<Tabs>
+<TabItem value="elasticacheTA" label="TA Skills">
 
-**TA insight:**
-If a service “can’t access” something, it’s almost always a role issue.
+```shell
+# List clusters and nodes
+aws elasticache describe-cache-clusters --show-cache-node-info
 
----
+# Check cluster status
+aws elasticache describe-cache-clusters --query 'CacheClusters[*].[CacheClusterId,CacheClusterStatus]'
 
-## Data & Storage (Engineering-Level)
+# Inspect replication group
+aws elasticache describe-replication-groups
 
-### S3 (Object Storage)
+# Validate security groups and IAM roles
+aws ec2 describe-security-groups --group-ids <sg-id>
+```
 
-**What it actually is:**
-- Globally scalable object storage
-- Buckets are regional
-- Objects are immutable
+</TabItem> <TabItem value="swe-ec" label="SWE Skills">
 
-**Engineering setup includes:**
-- Bucket policy
-- IAM permissions
-- Encryption (default or custom)
-- Lifecycle rules
+```shell
+# Connect to Redis cluster
+redis-cli -h <primary-endpoint> -p <port>
 
-**TA questions:**
-- Raw vs curated data?
-- Retention requirements?
-- Who can delete?
+# Inspect cache usage
+INFO all
 
----
+# Flush cache (use with caution)
+FLUSHALL
+```
+</TabItem>
+</Tabs>
 
-### Redshift (Data Warehouse)
+</TabItem> <TabItem value="dynamodb" label="DynamoDB">
 
-**What it is:**
-- OLAP data warehouse
-- Cluster-based or serverless
-- Columnar storage
 
-**Engineering considerations:**
-- Node types / scaling
-- Distribution keys
-- Sort keys
+<Tabs>
+<TabItem value="elasticacheTA" label="TA Skills">
 
-**TA red flags:**
-- Treating it like a transactional DB
-- Underestimating schema design effort
-
----
-
-## NoSQL & High-Scale Datastores
-
-### DynamoDB
-
-**What it is:**
-- Fully managed key-value / document database
-- Partition key (+ optional sort key)
-- Single-digit millisecond latency
-
-**Design reality:**
-- Schema is defined by **access patterns**
-- No joins
-- Limited transactions
-
-**TA questions:**
-- What are the access patterns?
-- Hot partitions?
-- Read vs write capacity?
-
----
-
-### Amazon Keyspaces (Apache Cassandra)
-
-**What it is:**
-A **managed Apache Cassandra service** using:
-- Cassandra Query Language (CQL)
-- Keyspaces
-- Tables with partition + clustering keys
-
-**What “keyspace” means:**
-- A **namespace** in Cassandra
-- Roughly equivalent to:
-  - BigQuery dataset
-  - Database schema
-
-**Why teams use it:**
-- Massive write throughput
-- Time-series or event data
-- Multi-region replication
-
-**Trade-offs:**
-- Eventual consistency
-- Query-driven schema
-- Limited querying flexibility
-
-**TA red flags:**
-- Expecting ad-hoc queries
-- Missing TTL strategy
-- Poor partition key design
-
----
-
-## Compute & Workloads
-
-### ECS / EKS (Containers)
-
-**Concepts you must understand:**
-- Task definitions
-- Services
-- Execution roles vs task roles
-
-**TA red flags:**
-- State stored in containers
-- Missing persistent storage plan
-
----
-
-### Lambda (Serverless)
-
-**Key constraints:**
-- Cold starts
-- Timeout limits
-- Stateless by design
-
-**TA questions:**
-- Is execution time predictable?
-- Is state externalised?
-
----
-
-## Messaging & Integration
-
-### SQS / SNS
-
-**What they are:**
-- SQS: queue (point-to-point)
-- SNS: pub/sub
-
-**Engineering setup includes:**
-- Dead-letter queues
-- Visibility timeouts
-- IAM permissions
-
----
-
-## Observability
-
-### CloudWatch
-
-**Covers:**
-- Logs
-- Metrics
-- Alarms
-
-**TA red flags:**
-- No alarms
-- No log retention strategy
-
----
-
-## Networking (Often Hidden Work)
-
-### VPC
-
-**Why it matters:**
-- Private access
-- Security boundaries
-- Connectivity to managed services
-
-**TA indicators of complexity:**
-- Private endpoints
-- VPC peering
-- No public internet access
-
----
-
-## Cost & Limits
-
-**AWS realities:**
-- Service quotas
-- Per-request costs
-- Data transfer costs
-
-**TA role:**
-- Ask how often jobs run
-- Identify unbounded workloads
-
----
-
-// Install AWS CLI v2 (macOS)
-brew install awscli
-
-// Verify AWS CLI installation
-aws --version
-
-// Configure AWS credentials (access keys or SSO)
-aws configure
-
-// Authenticate using AWS SSO (common in enterprises)
-aws sso login
-
-// List configured AWS profiles
-aws configure list-profiles
-
-// Show identity of the currently authenticated user/role
-aws sts get-caller-identity
-
-// List available AWS regions
-aws ec2 describe-regions --query "Regions[].RegionName"
-
-// Set default region for the current profile
-aws configure set region eu-west-1
-
-// List all S3 buckets (account-wide)
-aws s3 ls
-
-// List objects in a specific S3 bucket
-aws s3 ls s3://bucket-name/
-
-// Inspect bucket configuration (encryption, versioning, lifecycle)
-aws s3api get-bucket-encryption --bucket bucket-name
-aws s3api get-bucket-versioning --bucket bucket-name
-aws s3api get-bucket-lifecycle-configuration --bucket bucket-name
-
-// List Redshift clusters
-aws redshift describe-clusters
-
-// Describe a specific Redshift cluster
-aws redshift describe-clusters \
-  --cluster-identifier CLUSTER_ID
-
-// List Redshift databases (requires SQL access via psql/jdbc, not CLI-native)
-// Engineers often use:
-// psql -h redshift-endpoint -U user -d database
-
-// List DynamoDB tables
+```shell
+# List tables
 aws dynamodb list-tables
 
-// Describe a DynamoDB table (keys, throughput, indexes)
-aws dynamodb describe-table \
-  --table-name TABLE_NAME
+# Describe table
+aws dynamodb describe-table --table-name <table-name>
 
-// List DynamoDB Global Secondary Indexes (from table description)
-// Look under: GlobalSecondaryIndexes
+# Check table capacity and indexes
+aws dynamodb describe-table --table-name <table-name> --query 'Table.{Name:TableName,RCU:ProvisionedThroughput.ReadCapacityUnits,Indexes:GlobalSecondaryIndexes}'
+```
 
-// List Amazon Keyspaces (Cassandra-compatible) keyspaces
+</TabItem> <TabItem value="swe-ec" label="SWE Skills">
+```shell
+# Put an item
+aws dynamodb put-item --table-name <table-name> --item '{"PK": {"S": "123"}, "Value": {"S": "abc"}}'
+
+# Query items
+aws dynamodb query --table-name <table-name> --key-condition-expression "PK = :v1" --expression-attribute-values '{":v1":{"S":"123"}}'
+
+# Scan table (use sparingly)
+aws dynamodb scan --table-name <table-name>
+
+```
+
+</TabItem>
+</Tabs>
+
+</TabItem> <TabItem value="keyspaces" label="Keyspaces">
+
+<Tabs>
+<TabItem value="elasticacheTA" label="TA Skills">
+
+```shell
+# List keyspaces
 aws keyspaces list-keyspaces
 
-// Describe a Keyspaces keyspace
-aws keyspaces get-keyspace \
-  --keyspace-name KEYSPACE_NAME
+# Describe keyspace
+aws keyspaces describe-keyspace --keyspace-name <name>
 
-// List tables in a Keyspaces keyspace
-aws keyspaces list-tables \
-  --keyspace-name KEYSPACE_NAME
+# Check table status
+aws keyspaces list-tables --keyspace-name <name>
+```
 
-// Describe a Keyspaces table (schema, throughput)
-aws keyspaces get-table \
-  --keyspace-name KEYSPACE_NAME \
-  --table-name TABLE_NAME
+</TabItem> <TabItem value="swe-ec" label="SWE Skills">
+```shell
+# CQLSH access to table
+cqlsh <host> 9142 -u <user> -p <password> --ssl
 
-// Note: Keyspaces uses CQL, not SQL
-// Engineers will connect via cqlsh or application drivers
+# Query data
+SELECT * FROM keyspace.table LIMIT 10;
 
-// List EKS clusters
-aws eks list-clusters
+# Create/alter table
+CREATE TABLE keyspace.table (id uuid PRIMARY KEY, value text);
 
-// Update kubeconfig for an EKS cluster
-aws eks update-kubeconfig \
-  --region REGION \
-  --name CLUSTER_NAME
+```
 
-// Verify current Kubernetes context
-kubectl config current-context
+</TabItem>
+</Tabs>
 
-// List Kubernetes namespaces
-kubectl get namespaces
+</TabItem><TabItem value="messaging" label="SQS/SNS">
 
-// List pods in a namespace
-kubectl get pods -n NAMESPACE
+<Tabs>
+<TabItem value="elasticacheTA" label="TA Skills">
 
-// Describe a deployment (events, rollout status)
-kubectl describe deployment DEPLOYMENT_NAME -n NAMESPACE
+```shell
+# List queues
+aws sqs list-queues
 
-// List persistent volumes
-kubectl get pv
+# Describe queue
+aws sqs get-queue-attributes --queue-url <url> --attribute-names All
 
-// List persistent volume claims in a namespace
-kubectl get pvc -n NAMESPACE
+# List topics
+aws sns list-topics
 
-// List IAM roles
-aws iam list-roles
+# Inspect topic subscriptions
+aws sns list-subscriptions-by-topic --topic-arn <arn>
+```
 
-// Get IAM role policy attachments
-aws iam list-attached-role-policies \
-  --role-name ROLE_NAME
+</TabItem> <TabItem value="swe-ec" label="SWE Skills">
+```shell
+# Send message to SQS
+aws sqs send-message --queue-url <url> --message-body "Hello World"
 
-// Inspect inline policies for a role
-aws iam list-role-policies \
-  --role-name ROLE_NAME
+# Receive messages
+aws sqs receive-message --queue-url <url> --max-number-of-messages 10
 
-// List CloudWatch log groups
-aws logs describe-log-groups
+# Publish to SNS
+aws sns publish --topic-arn <arn> --message "Alert message"
 
-// Tail logs from a specific log group
-aws logs tail LOG_GROUP_NAME --follow
+```
 
-// List CloudWatch alarms
-aws cloudwatch describe-alarms
+</TabItem>
+</Tabs>
 
-// Sanity check: am I in the right account?
-aws sts get-caller-identity
 
-// Sanity check: does the table exist?
-aws dynamodb describe-table --table-name TABLE_NAME
+</TabItem>
+</Tabs>
 
-// Sanity check: does the keyspace exist?
-aws keyspaces list-keyspaces
+---
 
-// Sanity check: is the Kubernetes namespace real?
-kubectl get namespaces
+## Triage
+
+:::danger
+Symptoms of issues with AWS data and messaging services and how to triage:
+:::
+
+| Symptom                     | TLDR of Root Cause                                   | What to Check                                               | Action to Propose |
+|------------------------------|----------------------------------------------------|-------------------------------------------------------------|-----------------|
+| ElastiCache cluster down      | Node crash, network issue, or scaling limit       | Cluster status, node events, VPC connectivity              | Restart node/cluster, check limits |
+| DynamoDB table unavailable    | Provisioned throughput exceeded or table deleted  | Table status, CloudWatch metrics                             | Scale table, recreate if missing  |
+| Keyspaces not reachable       | VPC/Security issue or endpoint misconfigured     | Describe keyspace, network configuration                    | Fix network/security, restart endpoints |
+| SQS messages delayed/lost     | Consumer down or misconfigured queue             | Queue attributes, CloudWatch metrics                        | Restart consumer, check permissions |
+| SNS notifications not sent    | Topic misconfigured, IAM or throttling           | Topic subscriptions, CloudWatch metrics                     | Correct config, adjust IAM, retry |
+| IAM access denied             | Missing permissions                               | IAM roles and policies                                      | Grant required roles |
+| API quota exceeded            | Too many requests                                  | Service quotas, CloudWatch logs                              | Request increase or throttle usage |
