@@ -1,201 +1,54 @@
 ---
-title: "Kubernetes Runbook"
+title: "Kubernetes"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip Platform / Topic Runbook
-An **engineering-aware reference** for Technical Analysts working with K9s.
-
-Focuses on **core services, setup steps, and terminology** needed to understand Kubernetes cluster management and debugging.
+:::tip Kubernetes
+Kubernetes (K8s) is a **container orchestration platform** that automates deployment, scaling, and management of containerized applications. It is widely used to run microservices architectures, manage distributed workloads, and enable declarative infrastructure management.
 :::
 
 ---
 
-## Overview
+## When to use
 
-K9s is a **terminal-based UI for managing Kubernetes clusters** that helps engineers monitor, inspect, and interact with cluster resources efficiently.
+* Deploy, scale, and manage containerized applications across clusters
+* Require high availability, service discovery, or automated rolling updates
+* Need declarative configuration for infrastructure
 
-As a TA, your role is to understand:
+**Do NOT use this tool when:**
 
-* What engineers must configure
-* How K9s interacts with Kubernetes clusters via kubectl
-* Where complexity and risk live (namespaces, pods, nodes)
-* Why estimates may include “cluster debugging or monitoring” time
-
-## TA Checklist (Quick Review)
-
-* [ ] Correct kubeconfig / cluster context
-* [ ] Permissions scoped to namespaces of interest
-* [ ] Observability of pod and node metrics
-* [ ] Awareness of potential pod restarts or evictions
-* [ ] Failure modes (e.g., pods crashlooping, node unready) understood
+* Only running a few containers on a single host
+* Simple orchestration via Docker Compose suffices
+* Complex cluster management is unnecessary
 
 ---
 
-<Tabs>
-<TabItem value="runbook" label="Runbook">
+## TA Skills Checklist
 
-## Core Concepts (Foundational)
-
-### K9s CLI
-
-**What it is:**
-A terminal UI to navigate, view, and manage Kubernetes resources interactively.
-
-**Why engineers care:**
-
-* Reduces time inspecting pods, nodes, and events
-* Offers shortcuts for common operations like logs, exec, and scaling
-
-**TA red flags:**
-
-* Misconfigured kubeconfig → cannot see pods
-* Permissions not scoped → cannot manage resources
+- Understand cluster architecture and ownership of resources
+- Verify PersistentVolume and ConfigMap usage
+- Observe workload health, scaling, and alerts
+- Identify security or network boundaries
 
 ---
 
-### Kubernetes API Integration
+## Pre-Requisites
 
-**What it is:**
-K9s communicates with the cluster via **kubectl and the Kubernetes API**.
-
-**Why engineers care:**
-
-* All operations reflect live cluster state
-* Proper API permissions are needed for resource inspection and actions
-
----
-
-## Data & Storage (Engineering-Level)
-
-### Persistent Volume Claims (PVCs)
-
-**What it actually is:**
-
-* References storage volumes in Kubernetes
-* Critical for stateful workloads
-
-**Engineering setup includes:**
-
-* Node-affinity and storage class
-* Volume claim templates for Deployments / StatefulSets
-
-**TA questions:**
-
-* Are PVCs bound correctly?
-* Are pods failing due to storage limits?
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|----------------------------------|
+| Cluster Access         | kubeconfig, RBAC permissions, context name |
+| CLI Tools              | `kubectl` installed and configured |
+| Persistent Storage     | PV/PVCs provisioned and available |
+| ConfigMaps / Secrets   | Defined and accessible for workloads |
+| Node/Cluster Info      | Cluster size, node count, roles, and autoscaling config |
+| Networking             | CNI plugin used, service IP ranges, ingress rules |
+| Observability          | Prometheus/Grafana integration, logging enabled |
 
 ---
 
-## Databases / State Management
-
-### StatefulSets
-
-**What it is:**
-
-* Kubernetes workload with persistent state
-* Typically paired with PVCs
-
-**Design reality:**
-
-* Pod identity and storage persistence critical
-* Scaling can require careful ordering
-
-**TA red flags:**
-
-* Pods stuck in `Pending` due to volume claim failures
-* Misconfigured storage class
-
----
-
-## Compute & Workloads
-
-### Pods & Deployments
-
-**Key constraints:**
-
-* Pod lifecycle tied to Deployment / StatefulSet
-* Resource limits (CPU, memory)
-* Restart policies
-
-**TA questions:**
-
-* Are pods restarting or evicted?
-* Are resource requests/limits realistic?
-
----
-
-## Messaging & Integration
-
-### Cluster Events & Logs
-
-**What it is:**
-
-* Kubernetes events, pod logs, and container stdout/stderr
-
-**Engineering setup includes:**
-
-* Event monitoring (`kubectl get events`)
-* Pod log streaming
-* Health checks (readiness / liveness)
-
----
-
-## Observability
-
-### Node & Pod Metrics
-
-**Covers:**
-
-* CPU / memory usage via `kubectl top` or K9s metrics view
-* Pod restart counts
-* Node status (Ready/NotReady)
-
-**TA red flags:**
-
-* High pod restarts → potential crashloops
-* Unhealthy nodes impacting workloads
-* Missing metrics collection → blindspots in cluster health
-
----
-
-## Networking (Often Hidden Work)
-
-### Service & Ingress Observability
-
-**Why it matters:**
-
-* Service health and endpoints are critical
-* Ingress rules define external access
-
-**TA indicators of complexity:**
-
-* Multiple network policies
-* Pods with restricted egress/ingress
-* Misconfigured load balancers
-
----
-
-## Cost & Limits
-
-**Platform realities:**
-
-* Cluster size and node types affect cost
-* Persistent storage volumes may incur charges
-
-**TA role:**
-
-* Identify excessive pod replicas
-* Track long-running debug pods
-* Validate resource limits match cluster cost estimates
-
----
-
-</TabItem>
-<TabItem value="playbook" label="Playbook">
-
+## Business as Usual
 
 ```bash
 # ----------------------------
@@ -391,5 +244,20 @@ d  # delete
 Shift + M  # sort by memory
 ```
 
-</TabItem>
-</Tabs>
+---
+
+## Triage
+
+:::danger
+Symptoms of issues with Kubernetes clusters and how to triage:
+:::
+
+| Symptom                   | TLDR of Root Cause                        | What to Check                                   | Action to Propose |
+|----------------------------|------------------------------------------|-------------------------------------------------|-----------------|
+| Pod CrashLoopBackOff       | Container misconfiguration or crash      | `kubectl describe pod <name>`, logs            | Fix container image or config, restart pod |
+| Node Not Ready             | Node down or network issue               | `kubectl get nodes`, node events               | Investigate node health, restart node or kubelet |
+| Deployment Not Scaling     | HPA misconfigured or resource limits     | `kubectl describe hpa`, metrics                | Adjust HPA or resource requests/limits |
+| PersistentVolume Pending   | PV not bound or storage issue            | `kubectl get pv,pvc`, events                   | Provision storage, bind PVC to PV |
+| Service Unreachable        | Networking or service misconfigured      | `kubectl get svc`, endpoints, network policies | Fix service or ingress config |
+| API Server Unresponsive    | Overloaded control plane or auth issue   | `kubectl cluster-info`, API server logs       | Scale control plane, validate RBAC |
+| ConfigMap/Secret Missing   | Resource deleted or misconfigured        | `kubectl get configmap/secret`                | Restore or recreate resource |

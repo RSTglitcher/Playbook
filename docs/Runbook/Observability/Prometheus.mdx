@@ -35,28 +35,28 @@ Prometheus is an **open-source monitoring and alerting platform** designed for *
 
 ---
 
-## Requirements
+## Pre-Requisites
+
+| Action / Area             | What TA Needs to Gather / Confirm |
+|----------------------------|----------------------------------|
+| Server / Deployment        | Is Prometheus self-hosted or SaaS? Server URL, pod/service details if K8s, owner of deployment |
+| Access & Login             | Web UI access URL, user roles, API tokens if scripts are used, authentication/SSO methods |
+| Metrics Targets            | List of targets/endpoints scraped (`/metrics`), owners, scrape intervals, relabeling rules |
+| Alerting Rules             | Configured alert rules, notification channels (email, Slack, PagerDuty), responsible engineer for alerts |
+| Integrations / Dashboards  | Connected visualization tools (Grafana), dashboard ownership, panel description and metrics used |
+| Retention / Storage        | TSDB retention period, storage backend, shard / replication info, who monitors disk usage |
+| Observability & Monitoring | Internal Prometheus metrics, logging enabled, audit/alert logs, who reviews alerts for failures |
+| Environment / Network      | Access restrictions (VPN/firewall), scrape network connectivity, service availability SLAs |
+
+
+---
+
+## Business As Usual
 
 <Tabs>
-
-<TabItem value="pre-requisites" label="Pre-Requisites">
-
-| Action | Requirements |
-|--------|-------------|
-| Install / Setup | Prometheus server deployed (self-hosted or SaaS) |
-| Access & Login | Web UI accessible; optional API token for scripted access |
-| Metrics Source | Target endpoints expose `/metrics` |
-| Integrations | Grafana or other visualization tools configured |
-
-</TabItem>
-
 <TabItem value="capabilities" label="TA Skills">
 
 ```shell
---------------
-How to use Prometheus as a TA
---------------
-
 # Log in to Prometheus web UI
 # Review configured scrape targets: https://<prometheus-url>/targets
 # Check target status (up/down), scrape intervals, and last scrape times
@@ -74,10 +74,6 @@ How to use Prometheus as a TA
 #   curl http://<prometheus-url>/api/v1/rules
 ```
 </TabItem> <TabItem value="execution" label="SWE Skills">
-
---------------
-Common ways engineers use Prometheus
---------------
 
 ```shell
 # Add new scrape target

@@ -1,312 +1,108 @@
 ---
-title: "dbt Runbook"
+title: "dbt"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-:::tip dbt Runbook
-Focuses on **analytics engineering concepts, transformation workflows, and delivery risks** needed to understand data models, estimates, and team responsibilities.
+:::tip dbt
+dbt (data build tool) is a **data transformation tool** that enables analysts and engineers to transform raw data into a clean, analysis-ready format in the data warehouse. It solves problems related to **modular SQL, testing, version control, and reproducibility** of transformations.
 :::
 
 ---
 
-## Overview
+## When to use
 
-dbt is a **transformation framework** that enables teams to build, test, and document analytics models **inside the data warehouse** using SQL + configuration.
+* You need to maintain a **transformational layer** in your data warehouse with versioned, tested SQL.
+* You want **modular and reusable SQL pipelines**.
+* You need **testing, documentation, and lineage** for analytics tables.
 
-It sits between:
+**Do NOT use this tool when:**
 
-* Raw / ingested data
-* Analytics-ready tables used by BI, ML, and downstream consumers
-
-As a TA, your role is to understand:
-
-* Where dbt fits in the data lifecycle
-* What work dbt teams actually do (and don’t do)
-* Why analytics transformations take time
-* Where hidden complexity and coupling exist
+* You need **EL or ingestion** workflows (use Airflow, Fivetran, etc.).
+* Simple queries or ad-hoc transformations suffice.
 
 ---
 
-## Core dbt Concepts (Foundational)
+## TA Skills Checklist
 
-### Models
-
-**What it is:**
-A **SQL select statement** that materialises into a table or view in the warehouse.
-
-**Key idea:**
-Each model represents **one transformation step**.
-
-**TA red flags:**
-
-* Overloaded “mega models”
-* Unclear ownership of models
+- Understand the dbt project structure, models, and sources.
+- Validate tests and data quality checks.
+- Review DAGs and dependencies for impact assessment.
+- Ensure access control and environment separation.
+- Identify potential performance or scaling issues.
 
 ---
 
-### Materialisations
+## Pre-Requisites
 
-**What it is:**
-How a model is physically stored.
-
-**Common types:**
-
-* view
-* table
-* incremental
-* ephemeral
-
-**Why engineers care:**
-
-* Performance vs cost trade-offs
-* Incremental models reduce recompute time
-
-**TA questions:**
-
-* How often does this rebuild?
-* Full refresh required?
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|---------------------------------|
+| Set-up                 | dbt installed locally / CI runners configured |
+| Access & Login         | Warehouse credentials, environment variables, dbt Cloud account (if applicable) |
+| API                    | dbt Cloud API token if interacting programmatically |
+| Other tool-specific actions | Warehouse connectivity, Git repository containing dbt project, CI/CD setup |
 
 ---
 
-### Sources
+## Business As Usual
 
-**What it is:**
-Definitions of **upstream raw tables** not managed by dbt.
+<Tabs>
+<TabItem value="capabilities" label="TA Skills">
 
-**Why it matters:**
+```shell
+--------------
+How to use dbt as TA
+--------------
 
-* Establishes contract between ingestion and transformation
-* Enables freshness and volume checks
+# Review dbt models, sources, and tests
+# Examine DAG (directed acyclic graph) to understand model dependencies
+# Validate test coverage and quality (e.g., uniqueness, not null)
+# Check source freshness and warehouse refresh schedule
+# Review pull requests or CI logs for failed runs
+# Inspect documentation generated via `dbt docs generate` and `dbt docs serve`
+```
+</TabItem> <TabItem value="execution" label="SWE Skills">
 
-**TA red flags:**
+```shell
+--------------
+Common ways engineers use dbt
+--------------
 
-* No source definitions
-* No freshness expectations
+# Run dbt models in development
+dbt run
 
----
+# Test dbt models
+dbt test
 
-## Dependency Management (DAG Thinking)
+# Compile SQL without execution
+dbt compile
 
-### The DAG (Directed Acyclic Graph)
+# Generate and serve documentation
+dbt docs generate
+dbt docs serve
 
-**What it is:**
-A graph of model dependencies built from `ref()` calls.
+# Run models incrementally
+dbt run --models +model_name
 
-**Why engineers care:**
-
-* Controls execution order
-* Enables partial builds
-
-**TA insight:**
-The DAG **is the system architecture** of analytics.
-
----
-
-### ref() and source()
-
-**Key concepts:**
-
-* `ref()` creates dependency on another dbt model
-* `source()` references raw data
-
-**TA red flags:**
-
-* Hard-coded schema.table names
-* Bypassing the DAG
-
----
-
-## Testing & Data Quality
-
-### Tests
-
-**What they are:**
-Assertions applied to models and columns.
-
-**Common tests:**
-
-* not_null
-* unique
-* accepted_values
-* relationships
-
-**Why engineers care:**
-
-* Early detection of upstream issues
-* Contract enforcement
-
-**TA questions:**
-
-* What happens when a test fails?
-* Blocking vs non-blocking tests?
+# Run only selected models
+dbt run --models tag:finance
+```
+</TabItem> </Tabs>
 
 ---
 
-### Freshness
-
-**What it is:**
-Checks whether source data arrived on time.
-
-**TA red flags:**
-
-* Silent pipeline delays
-* No SLA visibility
-
----
-
-## Documentation & Lineage
-
-### dbt Docs
-
-**What it provides:**
-
-* Model-level documentation
-* Column descriptions
-* Lineage graphs
-
-**TA insight:**
-If dbt docs are missing, **knowledge is tribal**.
-
----
-
-### Exposure
-
-**What it is:**
-A way to declare **downstream consumers** (dashboards, ML models).
-
-**Why it matters:**
-
-* Impact analysis
-* Change management
-
----
-
-## Environments & Deployment
-
-### Environments
-
-**Typical setup:**
-
-* dev
-* staging
-* prod
-
-**Hidden work:**
-
-* Schema isolation
-* Permissions
-* CI/CD integration
-
-**TA red flags:**
-
-* Manual prod runs
-* Shared schemas across environments
-
----
-
-### CI / CD
-
-**Common patterns:**
-
-* Run tests on pull requests
-* Slim CI builds
-* Deferred builds
-
-**TA questions:**
-
-* What blocks a release?
-* How long do builds take?
-
----
-
-## Performance & Cost Considerations
-
-### Warehouse Impact
-
-**Reality:**
-dbt pushes compute to the warehouse.
-
-**Cost drivers:**
-
-* Full refreshes
-* Poorly scoped incremental models
-* Inefficient SQL
-
-**TA insight:**
-Slow dbt builds often mean **expensive warehouses**.
-
----
-
-## Ownership & Team Boundaries
-
-### Analytics Engineering Role
-
-**dbt teams typically own:**
-
-* Business logic
-* Metrics definitions
-* Semantic layer (if used)
-
-**They do not usually own:**
-
-* Ingestion
-* Raw data correctness
-
-**TA red flags:**
-
-* Blurry ownership between data engineering and analytics
-
----
-
-## When dbt Is a Good Fit
-
-**Use dbt when:**
-
-* You have a SQL-capable warehouse
-* Transformations are business-focused
-* Data quality and documentation matter
-
-**Typical examples:**
-
-* Analytics marts
-* Feature tables
-* Reporting layers
-
----
-
-## When dbt Is a Bad Fit
-
-**Avoid dbt when:**
-
-* Transformations are streaming-only
-* Heavy non-SQL logic is required
-* Sub-second latency is needed
-
----
-
-## TA Sanity Checklist
-
-* Are transformation responsibilities clear?
-* Is the DAG understandable?
-* Are tests meaningful and enforced?
-* Are environments isolated?
-* Is cost impact understood?
-
----
-
-## Tooling & Interaction
-
-**Primary language:**
-
-* SQL + YAML
-
-**Execution:**
-
-* CLI
-* CI pipelines
-* Orchestrators (Airflow, Dagster, Prefect)
-
-**Interaction model:**
-
-* Batch transformations
-* Warehouse-native execution
+## Triage
+
+:::danger
+Symptoms of issues with dbt and how to triage this:
+:::
+
+| Symptom                   | TLDR of Root Cause                  | What to Check                                  | Action to Propose |
+|----------------------------|-----------------------------------|-----------------------------------------------|-----------------|
+| Models failing             | SQL errors, missing tables, broken references | dbt run logs, warehouse schema | Fix SQL, update references, rerun |
+| Tests failing              | Data quality or constraints violated | dbt test output, model source data | Correct data or model logic, rerun tests |
+| DAG dependency broken      | Model dependency misconfigured or deleted | dbt graph, DAG visualization | Update dependencies, verify DAG, rerun |
+| Documentation not updating | dbt docs generate not run or failed | dbt docs logs, artifacts | Regenerate docs and serve |
+| CI/CD pipeline failing     | Git issues, environment misconfig | CI logs, dbt profiles | Fix CI config, validate environment |
+| Slow runs / warehouse overload | Large incremental loads, high cardinality | dbt run timing, warehouse performance | Optimize queries, shard incremental runs, adjust warehouse size |

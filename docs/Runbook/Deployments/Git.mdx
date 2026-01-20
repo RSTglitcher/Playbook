@@ -33,27 +33,25 @@ A **distributed version control system** used to track changes in source code, c
 
 ---
 
-## Requirements
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|----------------------------------|
+| Repository Access      | Correct repository URL, branch structure, repo owner/maintainers, access permissions (read/write), protected branches |
+| Authentication         | Method in use (SSH key, HTTPS token, OAuth), token/key validity, rotation policy, who manages credentials |
+| Branching / Workflow   | Branch naming conventions, mainline strategy (e.g., GitFlow, trunk-based), pull request process, code review requirements |
+| Commit / PR Policies   | Any commit message or PR template rules, pre-commit hooks, CI/CD enforcement, reviewers required |
+| Optional Tooling       | GUI clients or IDE integrations used by team (e.g., SourceTree, GitKraken, VS Code Git) |
+
+
+---
+
+## Business As Usual
 
 <Tabs>
-
-<TabItem value="pre-requisites" label="Pre-Requisites">
-
-| Action | Requirements |
-|--------|-------------|
-| Install Git | Git installed locally (`brew install git` / `apt install git`) |
-| Access & Login | SSH key or HTTPS credentials configured for remote repo |
-| Repository clone | Correct repository URL and access permissions |
-| Optional tooling | GUI clients (e.g., SourceTree, GitKraken) if desired |
-
-</TabItem>
-
 <TabItem value="capabilities" label="TA Skills">
 
 ```shell
---------------
-How to use Git as a TA
---------------
 
 # Check repository structure
 git clone <repo_url>                 # Clone repository locally
@@ -75,11 +73,9 @@ git fetch                              # Update remote refs
 git status                             # Check working directory state
 ```
 
-</TabItem> <TabItem value="execution" label="SWE Skills">
+</TabItem>
+<TabItem value="execution" label="SWE Skills">
 
---------------
-Common ways engineers use Git
---------------
 
 ```shell
 # Branching and workflow
@@ -105,7 +101,8 @@ git tag -a v1.0 -m "Release v1.0"      # Create annotated tag
 git push origin v1.0                    # Push tag to remote
 ```
 
-</TabItem> </Tabs>
+</TabItem>
+</Tabs>
 
 ---
 

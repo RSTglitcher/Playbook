@@ -33,28 +33,28 @@ Grafana is an **open-source visualization and analytics platform**. It is primar
 
 ---
 
-## Requirements
+## Pre-Requisites
+
+| Action / Area             | What TA Needs to Gather / Confirm |
+|----------------------------|----------------------------------|
+| Server / SaaS Setup        | Is Grafana self-hosted or SaaS? Server URL or account link, provisioning status, who owns the instance |
+| Access & Login             | Users, roles (Viewer / Editor / Admin), group memberships, SSO or local auth enabled, account owner |
+| API Access                 | API keys issued, expiration / rotation policies, scopes assigned |
+| Data Sources Configuration | Which data sources are connected (Prometheus, Loki, InfluxDB, etc.), owner of each datasource, scrape intervals, permissions |
+| Dashboards / Panels        | Key dashboards to review, who owns them, documentation / description of panels, tagging or folder structure |
+| Alerts & Notifications     | Configured alert rules, channels (email, Slack, PagerDuty), ownership of alerts, escalation policies |
+| Observability & Metrics    | Are internal metrics logged? Are audit logs enabled? Retention periods and owners |
+| Environment / Network      | URL access restrictions (VPN / firewall), load balancer, reverse proxy setup, service availability SLAs |
+
+
+---
+
+## Business As Usual
 
 <Tabs>
-
-<TabItem value="pre-requisites" label="Pre-Requisites">
-
-| Action | Requirements |
-|--------|-------------|
-| Set-up | Grafana server installed or SaaS account provisioned |
-| Access & Login | User account with appropriate role (Viewer/Editor/Admin) |
-| API | API key if interacting with dashboards programmatically |
-| Other tool-specific actions | Configure data sources (Prometheus, Loki, InfluxDB, etc.) |
-
-</TabItem>
-
 <TabItem value="capabilities" label="TA Skills">
 
 ```shell
-# ----------------------------
-# Grafana TA Actions (executable / actionable)
-# ----------------------------
-
 # Log in to Grafana via web UI or CLI
 # Navigate dashboards to understand metrics, panels, and visualizations
 # Drill-down on panels to investigate anomalies or trends
@@ -68,10 +68,6 @@ Grafana is an **open-source visualization and analytics platform**. It is primar
 ```
 
 </TabItem> <TabItem value="execution" label="SWE Skills">
-
---------------
-Common ways engineers use Grafana
---------------
 
 ```shell
 # Add or configure data sources
