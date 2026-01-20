@@ -1,116 +1,191 @@
 ---
-title: "Monitoring & Observability"
+title: Metrics
 ---
 
-## Prometheus
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Timeseries 
-- Querying
-- Analysis
+:::tip Definition
+Software Engineering Metrics are quantitative signals used to measure, observe, and improve the health, performance, reliability, and delivery effectiveness of software systems and teams.
 
-Metrics & System Health
+**Examples:**
+- Service latency and error rates
+- Deployment frequency and lead time
+- Resource utilization and saturation
+:::
 
-- Monitoring Infrastructure
-- Services
-- Applications
+It is primarily concerned with **making software systems and delivery processes observable, comparable, and improvable** through measurable data.
 
-## Grafana
+Typical examples include:
+- Monitoring production system health and reliability
+- Tracking delivery performance and engineering efficiency
+- Detecting regressions, incidents, and capacity risks
 
-Visualisation & Analytics - multiple data sources: Track & Understand system behaviour
+---
 
-- Different data types
-- Time-series metrics
-- Logs
-- Structured Information
+## Benefit / What problem does it solve?
 
-### Tools
+Using Software Engineering Metrics enables:
 
-<details>
-<summary>Prometheus</summary>
+- Objective visibility into system behavior and engineering performance
+- Early detection of incidents, bottlenecks, and degradation
+- Data-driven decision making for reliability, scalability, and delivery improvements
 
-#### [Prometheus](https://prometheus.io/)
+---
 
-An open-source monitoring and alerting toolkit designed for reliability and scalability in modern, cloud-native environments.
-It is a useful tool to collect, store, and query time-series data to represent platform performance, application health, and infrastructure.
+## When to Use
 
-- Real-Time Monitoring
-- Flexibility for Customised Monitoring
-- Integration with other tools in the Cloud-Native Ecosystem
-- Community & Ecosystem: Open-source Community & diverse range of exporters, integrations, and extensions
+**Use Software Engineering Metrics when:**
 
-**Use Prometheus to collect data on:**
+- You operate production systems that require reliability and uptime guarantees
+- You need to understand system performance trends over time
+- You want to improve engineering outcomes using measurable signals
 
-1. System behaviour & performance
-    - Instrumentation
-    - Scalability (Monitoring large & distributed systems)
-    - PromQL - query & aggregate metrics for custom alerts & dashboards
-2. Target Specific metrics:
-    - Time-series based
-    - Alerting: Rule triggers metric thresholds & conditions
+**Typical examples:**
 
-#### Prometheus Alert Manager
+- Monitoring microservices running on Kubernetes
+- Tracking SLOs and error budgets for critical services
+- Measuring deployment frequency and incident recovery time
 
-[Prometheus Alert Manager](https://prometheus.io/docs/alerting/latest/alertmanager/) is an open-source alerting and notification management tool.
-It acts as an intermediary between alert-generating systems and notification channels (e.g. Slack). This tool ensure alerts are routed, deduplicated and
-sent to the appropriate recipients based on predefined rules and configurations.
+---
+
+## When Not to Use
+
+**Avoid Software Engineering Metrics when:**
+
+- Metrics are collected without clear ownership or decision-making intent
+- Vanity metrics replace outcome-focused signals
+- Qualitative feedback is more appropriate than quantitative measurement
+
+---
+
+## Key Terminology & Definitions
+
+- **Metric** – A numeric measurement collected over time (e.g. request latency)
+- **Time Series** – A sequence of metric values indexed by time
+- **Label / Dimension** – Key-value metadata used to slice and filter metrics
+- **SLI (Service Level Indicator)** – A quantitative measure of service performance
+- **SLO (Service Level Objective)** – A target value or range for an SLI
+- **Error Budget** – The allowable amount of unreliability within an SLO
+
+---
+
+## Variants / Types
+
+```mermaid
+flowchart LR
+    A[Application / Service] -->|Expose /metrics endpoint<br/>or use OpenTelemetry SDKs| B[Metrics Endpoint]
+
+    B -->|Scrape (Pull Model)| C[Prometheus Collector]
+
+    C -->|Write Time-Series Data| D[Prometheus TSDB]
+
+    D -->|Query (PromQL)| E[Grafana]
+
+    E -->|Dashboards & Visualisations| F[Engineers / Operators]
+```
+
+<Tabs>
+<TabItem value="prometheus" label="Prometheus (Metrics Collection & Query)">
+
+- **Key characteristics**
+  - Pull-based metrics collection using exporters
+  - Strong time-series data model with labels
+  - Powerful query language (PromQL)
+- **Example tools**
+  - Prometheus, Alertmanager, exporters (node, kube-state, app exporters)
+- **Primary purpose / benefit**
+  - Reliable, scalable collection and querying of system and application metrics
+
+</TabItem>
+
+<TabItem value="grafana" label="Grafana (Visualization & Dashboards)">
+
+- **Key characteristics**
+  - Visualization-first, data-source agnostic
+  - Supports metrics, logs, and traces
+  - Strong dashboarding and alerting UX
+- **Example tools**
+  - Grafana, Grafana Alerting, Grafana OnCall
+- **Primary purpose / benefit**
+  - Human-friendly exploration, dashboards, and operational visibility
+
+</TabItem>
+
+<TabItem value="otel" label="OpenTelemetry (Instrumentation Standard)">
+
+- **Key characteristics**
+  - Vendor-neutral instrumentation APIs and SDKs
+  - Unified model for metrics, logs, and traces
+  - Push-based collection via collectors
+- **Example tools**
+  - OpenTelemetry SDKs, OpenTelemetry Collector
+- **Primary purpose / benefit**
+  - Consistent, portable instrumentation across services and platforms
+
+</TabItem>
+
+<TabItem value="saas" label="Managed Metrics Platforms (SaaS)">
+
+- **Key characteristics**
+  - Hosted, opinionated metric pipelines
+  - Reduced operational overhead
+  - Integrated alerting and visualization
+- **Example tools**
+  - Datadog, New Relic, Dynatrace, CloudWatch
+- **Primary purpose / benefit**
+  - Fast time-to-value without managing metric infrastructure
+
+</TabItem>
+</Tabs>
 
 
-#### Prometheus Push Gateway
+---
 
-[Prometheus Push Gateway](https://prometheus.io/docs/practices/pushing/) serves as a bridge between ephemeral and batch jobs/services that cannot be directly scraped.
-It allows short-lived tasks to use HTTP Post push their metrics to Prometheus for data monitoring.
+## Key Strategies
 
-- Job or Service Short-Lived Nature
-- Batch Job Monitoring
-- Ephemeral/ Dynamic Targets
-- Decoupling Metrics Collection
-- Testing & Development
+<Tabs>
+<TabItem value="golden" label="Golden Signals Strategy">
 
-</details>
+- **Step or approach**
+  - Track latency, traffic, errors, and saturation
+- **Responsibility**
+  - Platform, SRE, or infrastructure teams
+- **Focus / goal**
+  - Fast detection of user-impacting issues
 
-<details>
-<summary>Grafana</summary>
+</TabItem>
 
-#### [Grafana](https://grafana.com/products/cloud/?src=ggl-s&mdm=cpc&camp=b-grafana-exac-emea&cnt=118483912276&trm=grafana&device=c&gclid=CjwKCAjw3oqoBhAjEiwA_UaLti00SaSIPaWFsEY1FFSUPn_MBfG4N9pEyfFaYVPp7T3ZSk82F-uheRoCuBAQAvD_BwE)
+<TabItem value="slo" label="SLO-Driven Strategy">
 
-An open-source platform for monitoring and observability that specializes in data visualisation and dashboarding. Given it can connect to a variety of data sources including time-series databases, it is commonly paired with Prometheus
-to visually represent the data collected.
+- **Step or approach**
+  - Define SLIs, set SLOs, and manage error budgets
+- **Responsibility**
+  - Shared between engineering, SRE, and product
+- **Focus / goal**
+  - Balance reliability with delivery velocity
 
-- Insightful charts
-- Graphs
-- Alerts
+</TabItem>
+</Tabs>
 
-**Use Grafana to observe:**
-1. Current Statuses
-    - Use dashboards/graphs/tables/gauges/heatmaps to represent Prometheus data (Metrics / Logs / Events)
-2. Data Behaviour
-    - Detailed behaviour over time. Perform comparative analysis. - What would we like to compare?
-3. Changing data/requirements
-    - Templating for GUI boards?
+---
 
-- Review Grafana Dashboards
-    - Dashboard Name + Desc
-    - Specific Application / System /Service Monitored
-    - Data Sources
-    - Filters/Variables
-- Visual Guide
-    - Screenshots for usage
-    - Walkthrough video
-    - What features are associated with an alert?
+## How to Interact With It
 
-</details>
+- **Access pattern:** Query-based (PromQL), dashboard-driven, alert-driven
+- **Operations / Interfaces:** HTTP APIs, query languages, UIs, exporters, SDKs
+- **Interaction model:**
+  - Metrics scraped or pushed from services
+  - Visualized via dashboards
+  - Evaluated via alerting rules
 
-<details>
-<summary>Kiali</summary>
+---
 
-#### Kiali
+## What Do Results Normally Look Like
 
-An open-source graphical user interface (GUI) and service mesh observability tool and management platform designed specifically for microservices-based applications
-running in Kubernetes or OpenShift environments.
+- Time-series graphs (latency, throughput, error rates)
+- Aggregated KPIs and SLO compliance views
+- Alerts and notifications triggered by thresholds or burn rates
 
-It provides insights, visualization, and control over the complex interactions and dependencies between microservices, making it easier to manage and troubleshoot distributed systems.
-
-</details>
-
-
-
+**Notes:**
+Metrics require careful interpretation — aggregation, cardinality, and context matter. Metrics should always be paired with ownership and an explicit action model.
