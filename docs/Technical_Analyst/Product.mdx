@@ -1,0 +1,112 @@
+---
+title: "Data Products"
+sidebar_position: 6
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+**Data Products** are structured, consumable outputs derived from data that provide measurable value to the business.
+For Technical Analysts and Data Leaders, understanding how to manage, centralise, and operationalise data products is critical for enabling analytics, AI/ML, and decision-making at scale.
+:::
+
+---
+
+## Why Data Products Matter
+
+- Transform raw data into **actionable insights**
+- Ensure **data quality, consistency, and accessibility**
+- Support **analytics, AI/ML, and operational decision-making**
+- Reduce technical debt through **structured governance and processes**
+
+A TA’s role is to **steer, influence, and validate** data product strategy, not just build pipelines.
+
+---
+
+<Tabs>
+<TabItem value="principles" label="Principles of Data Product Management">
+
+### Core Principles
+
+1. **Data as a Product** – Treat datasets like software products: discoverable, reliable, documented, versioned.
+2. **Centralisation vs Access** – Balance between consolidating data and providing self-service access.
+3. **Quality & Governance** – Establish policies for security, validation, and compliance.
+4. **Sustainability** – Plan for evolving systems, scaling, and long-term maintenance.
+5. **Pragmatism over Novelty** – Focus on clear business impact, not always the latest tech.
+6. **Evergreening** – Continuously refresh data, documentation, and processes.
+
+**TA signal:**
+A well-managed data product reduces friction for engineers and enables faster, reliable business insights.
+
+</TabItem>
+
+<TabItem value="challenges" label="Challenges & Observations">
+
+### Key Challenges
+
+- Data growth outpaces quality and governance
+- Siloed datasets block analytics and AI projects
+- Legacy systems introduce hidden complexity
+- Resource allocation often prioritises building pipelines over analysis
+- Multi-year projects risk irrelevance without iterative value delivery
+
+**TA insight:**
+Focus on **visibility and communication** to identify friction points and emergent problems early.
+
+</TabItem>
+
+<TabItem value="strategies" label="Key Strategies">
+
+### Strategies for Successful Data Products
+
+- **Centralise Data** – Establish a single source of truth across all systems (on-prem, SaaS, ERP)
+- **Automate Integration** – Use tools (Fivetran, DBT) to reduce manual ETL work
+- **Enable Self-Service Analytics** – Provide accessible datasets for analysts and engineers
+- **Governance & Security** – Apply access controls and cataloging at platform level
+- **Iterative Delivery** – Focus on delivering usable data quickly; refine continuously
+- **Scenario Planning** – Model usage patterns, edge cases, and operational constraints
+
+**TA signal:**
+These strategies allow TAs to focus on **analysis and insight generation** rather than infrastructure plumbing.
+
+</TabItem>
+
+<TabItem value="operations" label="Operational Considerations">
+
+### Data Product Lifecycle
+
+1. **Source Identification** – Understand where data originates and the business context
+2. **Integration & Transformation** – Automate ingestion and standardise formats
+3. **Storage & Centralisation** – Consolidate into scalable platforms (BigQuery, Snowflake, SAP)
+4. **Accessibility** – Catalog and expose datasets with discoverability and proper permissions
+5. **Consumption & Feedback** – Ensure analysts, engineers, and stakeholders can leverage the data
+6. **Maintenance & Refresh** – Keep schemas, quality checks, and documentation evergreen
+
+### Tools & Examples
+
+- **Integration:** Fivetran, custom ETL pipelines
+- **Transformation:** DBT, SQL-based models
+- **Storage:** Data warehouses, lakehouses
+- **Catalog & Governance:** Data catalogs, access control platforms
+
+**TA insight:**
+TAs evaluate **effectiveness, efficiency, and business impact** at each stage of the data product lifecycle.
+
+</TabItem>
+
+<TabItem value="communication" label="TA Focus & Communication">
+
+- Articulate **data value and limitations** to stakeholders
+- Highlight **technical debt risks** and remediation strategies
+- Translate **business requirements into actionable data workflows**
+- Ensure **trust, transparency, and relevance** in multi-year projects
+- Make the invisible visible: clarify processes, flows, and dependencies
+
+**TA tip:**
+Communication is as important as technical correctness — a TA bridges business intent and engineering execution.
+
+</TabItem>
+</Tabs>
+
+

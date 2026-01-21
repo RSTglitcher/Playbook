@@ -1,0 +1,201 @@
+---
+title: "Memory Management"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+**Memory Management** is how an operating system and runtime allocate, use, and reclaim memory to ensure applications run efficiently, safely, and at scale.
+For a Technical Analyst, memory management explains performance behaviour, failure modes, and the real differences between runtimes, VMs, and containers.
+:::
+
+---
+
+## What Problem Does Memory Management Address?
+
+Applications must:
+
+- Store data temporarily while executing
+- Share limited physical memory safely
+- Avoid corrupting or leaking memory
+- Perform efficiently under load
+
+Memory management exists to:
+- Abstract physical memory
+- Control allocation and deallocation
+- Balance performance, safety, and simplicity
+
+---
+
+## Memory Size Fundamentals
+
+| Unit | Size |
+|-----|------|
+| Bit | 1 |
+| Byte | 8 bits |
+| Kilobyte (KB) | 1024 bytes |
+| Megabyte (MB) | 1024 KB |
+| Gigabyte (GB) | 1024 MB |
+
+**TA note:**
+Memory constraints directly affect latency, throughput, and cost—especially in cloud environments.
+
+---
+
+## Core Memory Areas
+
+<Tabs>
+<TabItem value="stack" label="Stack">
+
+### What It Is
+A **structured, automatically managed** memory region used for:
+- Function calls
+- Local variables
+- Primitive values
+- Object references
+
+### How It Works
+- Memory allocated at function entry
+- Freed automatically at function exit
+- Follows **LIFO** (Last In, First Out)
+
+### Characteristics
+- Fast allocation and deallocation
+- Fixed size per thread
+- No cross-referencing between frames
+
+### When to Use / Interact
+- Default for local variables
+- Short-lived data
+- Predictable lifecycles
+
+### Failure Mode
+- Stack overflow (deep recursion, large local objects)
+
+**TA signal:**
+Crashes with recursion-heavy workloads or large local allocations.
+
+</TabItem>
+
+<TabItem value="heap" label="Heap">
+
+### What It Is
+A **dynamically managed** memory region used for:
+- Objects
+- Arrays
+- Complex data structures
+
+### How It Works
+- Memory allocated and freed at runtime
+- Objects may reference each other freely
+- Lifetime not tied to function scope
+
+### Characteristics
+- Flexible size and lifecycle
+- Slower than stack
+- Requires explicit management or GC
+
+### When to Use / Interact
+- Data with unknown or long lifetimes
+- Shared objects
+- Dynamic data structures
+
+### Failure Mode
+- Memory leaks
+- Fragmentation
+- Out-of-memory errors
+
+**TA signal:**
+Gradual memory growth, GC pressure, or sudden OOM failures.
+
+</TabItem>
+
+<TabItem value="gc" label="Garbage Collection">
+
+### What It Is
+**Automatic heap memory management** used by runtimes such as:
+- Java
+- JVM languages
+- .NET
+- JavaScript
+
+### How It Works
+- Tracks object references
+- Identifies unreachable objects
+- Frees memory automatically
+
+### Core Concepts
+- **Tracing**: build an object reference graph
+- **Stop-The-World (STW)** pauses
+- **Generational GC**:
+  - Young generation
+  - Old/Tenured generation
+  - (Historically) Permanent/Metaspace
+
+### Optimisations
+- Concurrent GC threads
+- Incremental collection
+- Object promotion based on survival
+
+### Trade-offs
+- Safer memory management
+- Runtime overhead
+- Latency spikes during GC pauses
+
+**TA signal:**
+Latency jitter, pause times, memory tuning discussions.
+
+</TabItem>
+</Tabs>
+
+---
+
+## Compiler vs Runtime Responsibility
+
+| Aspect | Stack | Heap | Garbage Collector |
+|------|------|------|-------------------|
+| Allocation | Compile-time known | Runtime | Runtime |
+| Lifecycle | Deterministic | Dynamic | Automatic |
+| Performance | Very fast | Slower | Variable |
+| Safety | High | Medium | High |
+| Control | Compiler-managed | Programmer/runtime | Runtime |
+
+---
+
+## Evolution of Memory Management in Modern Platforms
+
+### Traditional Applications
+- One OS
+- One runtime
+- Direct memory ownership
+
+### Virtual Machines
+- Guest OS manages memory
+- Hypervisor abstracts physical RAM
+- Memory overcommit and ballooning
+
+### Containers
+- Shared host kernel
+- Memory limits enforced via cgroups
+- OOM killer can terminate processes
+
+### Managed & Serverless Platforms
+- Memory abstracted away
+- Cost often tied to allocated memory
+- Less visibility, fewer tuning options
+
+**TA insight:**
+Containers do **not** isolate memory like VMs—they rely on kernel enforcement.
+
+---
+
+## Practical Signals for a TA
+
+Consider memory management when you see:
+- Performance degradation over time
+- Sudden crashes without clear errors
+- GC tuning discussions
+- Memory limits being hit in Kubernetes
+- Cost increases tied to memory allocation

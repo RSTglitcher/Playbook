@@ -1,0 +1,207 @@
+---
+title: Application Programming Interface
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+An **API (Application Programming Interface)** defines a structured contract that allows software systems to communicate
+with each other in a controlled, predictable way.
+:::
+
+It is primarily concerned with enabling **integration, data exchange, and capability reuse** between independent systems.
+
+Typical examples include:
+- A frontend calling a backend service to fetch data
+- One internal service invoking another service’s business logic
+- External partners integrating with a platform via published endpoints
+
+---
+
+## Benefit / What problem does it solve?
+
+Using APIs enables:
+
+- Decoupling of systems so they can evolve independently
+- Reuse of functionality without duplicating logic
+- Safe, governed access to data and capabilities
+
+---
+
+## When to Use
+
+**Use APIs when:**
+
+- Multiple systems need to share data or functionality
+- You want to expose capabilities without exposing internals
+- Teams need to develop and deploy independently
+
+**Typical examples:**
+
+- Web or mobile applications calling backend services
+- Microservices communicating with each other
+- Third-party integrations with external consumers
+
+---
+
+## When Not to Use
+
+**Avoid APIs when:**
+
+- Components are tightly coupled and deployed together
+- Communication is purely internal and performance-critical (e.g. in-process calls)
+- The overhead of versioning, security, and governance outweighs the benefit
+
+---
+
+## Key Terminology & Definitions
+
+- **Endpoint** – A specific URL or address that represents an API operation
+- **Request / Response** – The input sent to an API and the output it returns
+- **Contract** – The agreed structure, behaviour, and constraints of an API
+- **Versioning** – Managing changes to an API without breaking consumers
+- **Authentication / Authorization** – Verifying identity and controlling access
+
+---
+
+## Variants / Types
+
+<Tabs>
+<TabItem value="rest" label="REST APIs">
+
+- Resource-oriented, stateless interactions
+- Commonly use HTTP verbs (GET, POST, PUT, DELETE)
+- Primary purpose: simple, scalable web integration
+
+**REQUST**
+```http
+GET /api/v1/orders/12345 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <token>
+Accept: application/json
+```
+
+**RESPONSE**
+```json
+{
+  "orderId": "12345",
+  "status": "SHIPPED",
+  "total": 89.99,
+  "items": [
+    { "sku": "ABC-1", "quantity": 1 },
+    { "sku": "XYZ-9", "quantity": 2 }
+  ]
+}
+
+```
+
+</TabItem>
+<TabItem value="graphql" label="GraphQL APIs">
+
+- Client defines the shape of the data it needs
+- Single endpoint with flexible queries
+- Primary purpose: reduce over-fetching and under-fetching
+
+**REQUST**
+```graphql
+query GetOrder($id: ID!) {
+  order(id: $id) {
+    orderId
+    status
+    total
+    items {
+      sku
+      quantity
+    }
+  }
+}
+```
+**RESPONSE**
+```json
+{
+  "data": {
+    "order": {
+      "orderId": "12345",
+      "status": "SHIPPED",
+      "total": 89.99,
+      "items": [
+        { "sku": "ABC-1", "quantity": 1 },
+        { "sku": "XYZ-9", "quantity": 2 }
+      ]
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="rpc" label="RPC / gRPC APIs">
+
+- Function-style calls with strongly typed contracts
+- Often use binary protocols
+- Primary purpose: high-performance service-to-service communication
+
+**REQUST**
+```gRPC
+service OrderService {
+  rpc GetOrder (GetOrderRequest) returns (OrderResponse);
+}
+
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message OrderResponse {
+  string order_id = 1;
+  string status = 2;
+  double total = 3;
+}
+```
+
+**RESPONSE**
+```plaintext
+OrderService.GetOrder(order_id="12345")
+```
+
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="design-first" label="Design-First">
+
+- Define the API contract before implementation
+- Shared responsibility across teams
+- Focus on consistency, clarity, and consumer needs
+
+</TabItem>
+<TabItem value="security-governance" label="Security & Governance">
+
+- Apply authentication, authorization, and rate limits
+- Platform or enablement team responsibility
+- Focus on safe, compliant access at scale
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Request/response, event-driven, streaming
+- **Operations / Interfaces:** HTTP endpoints, schemas, SDKs, CLI tools
+- **Interaction model:** Direct calls, via client libraries, through API gateways
+
+---
+
+## What Do Results Normally Look Like
+
+- Structured data (e.g. JSON, XML, Protobuf)
+- Status codes or error objects indicating success or failure
+- Metadata such as headers, pagination, or rate-limit info
+
+**Notes:** Consumers must interpret results according to the published contract and version; breaking changes should be avoided or carefully versioned.

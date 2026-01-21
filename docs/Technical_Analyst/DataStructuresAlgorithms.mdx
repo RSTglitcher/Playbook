@@ -1,87 +1,201 @@
 ---
 title: "Data Structures & Algorithms"
-sidebar_position: 1
+sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+**Data Structures and Algorithms** define how data is organised, accessed, and transformed.
+For a Technical Analyst, they explain performance characteristics, scalability limits, and why certain design choices behave the way they do.
+:::
+
+---
+
+## Why This Matters for a Technical Analyst
+
+Understanding data structures helps a TA:
+
+- Predict performance and scalability issues
+- Interpret Big-O discussions without reading code
+- Identify inefficient data access patterns
+- Ask better questions during design and incident reviews
+
+A TA does **not** need to memorise syntax—but must understand **behaviour and trade-offs**.
+
+---
 
 <Tabs>
 <TabItem value="structure" label="Data Structures">
 
 ## Data Types
 
-| Primitive                                                      | Reference                                                                    |
-|----------------------------------------------------------------|------------------------------------------------------------------------------|
-| Pre-defined by programming languages                           | Defined by programmer                                                        |
-| Size / Type / No additional Methods                            | Refers to objects (which are in memory locations for storage.)               |
-| Casting: Assigns a value of one primitive data type to another | Wrapper: Convert primitive data into objects. Uppercase of primitive values. |
-| Widening (Auto)                                                | Character myObject = 9;                                                      |
-| Narrowing (Manual)                                             |                                                                              |
+### Primitive vs Reference Types
 
-| Data Type    | Example                 | Description                                                                 |
-|--------------|-------------------------|-----------------------------------------------------------------------------|
-| double       |                         |                                                                             |
-| float        | float                   |                                                                             |
-| long         |                         |                                                                             |
-| integer      | float(input("first: ")) |                                                                             |
-| short        |                         |                                                                             |
-| byte         |                         |                                                                             |
-| boolean      | bool                    |                                                                             |
-| string       | string                  | Immutable - Whenever you change a string, you create a new object in memory |
-| lists        | (make,a,list)           | Mutable -   Can change the order of items in a list or reassign an items    |
-| tuples       | (make,a,tuple)          | Immutable - Cannot be changed once created                                  |
-| dictionaries | key,value               | Mutable -  But their keys must be immutable                                 |
+| Category | Description | TA Relevance |
+|--------|-------------|--------------|
+| **Primitive** | Fixed-size values directly representing data (e.g. numbers, booleans) | Fast, predictable memory usage |
+| **Reference** | Pointers to objects stored elsewhere in memory | Flexibility, but memory and lifecycle complexity |
 
+**Key distinction:**
+Primitives represent *values*; references represent *locations*.
 
-## Collections
+---
 
-Collection(DataType) name = new Collection
+## Common Data Types
 
-| Map Type       | Collection                 | Description                                                                                                 | Ordered   | Duplicates    | Sorted |
-|----------------|----------------------------|-------------------------------------------------------------------------------------------------------------|-----------|---------------|--------|
-| Map            | Tree Map                   | Map sorted by natural order                                                                                 | Ordered   | Allowed       | Y      |
-|                | Hash Map                   | Key location on map depends upon hash code. Access items by an index of another type                        | Unordered | Allowed       | N      |
-|                | LinkedHash Map             | Maintains insertion order. Slower than HashMap for inserting/removing, but faster iterations                | Ordered   | Allowed       | N      |
-|                | Hashtable                  | Synchronized version of HashMap                                                                             | Unordered | Allowed       | N      |
-| Queue          | PriorityQueue              | FIFO - can only access ends of the list                                                                     | Ordered   | Allowed       | Y      |
-| List, Queue    | LinkedList                 | Resizable list of containers linked to each other                                                           | Ordered   | Allowed       | N      |
-| List           | ArrayList                  | Resizable array list. Flexible contents.                                                                    | Ordered   | Allowed       | N      |
-| Set            | HashSet (Key,Value)        | Prevents duplicates in collection. Can find elements in collection quickly. Unreliable structure.           | Unordered | Not Allowed   | N      |
-|                | LinkedHash Set (Key,Value) | Fast - O(n) notation, representation of speed that a technique is. How many things are happening at a time. | Ordered   | Not Allowed   | N      |
-|                | TreeSet                    | Sorted naturally, prevents duplicates.                                                                      | Ordered   | Not Allowed   | Y      |
-| Array          |                            | Fixed length data structure. Primitive + Objects                                                            | Unordered |               |        |
+```shell
+| Type | Characteristics | Notes |
+|-----|----------------|-------|
+| Integer / Long | Whole numbers | Overflow and size matter |
+| Float / Double | Decimal numbers | Precision errors possible |
+| Boolean | True / False | Often used in conditionals |
+| String | Immutable sequence of characters | Changes create new objects |
+| List / Array | Ordered collection | Indexed access |
+| Tuple | Ordered, immutable collection | Safer for fixed structures |
+| Dictionary / Map | Key–value pairs | Fast lookup by key |
+| Set | Unique values only | Prevents duplicates |
+```
 
-## Comparison and Logical Operators
+**TA signal:**
+Immutability improves safety but increases memory usage.
 
-| Data Type                       | Description                                |
-|---------------------------------|--------------------------------------------|
-| >                               | more than                                  |
-| >=                              | more than or equal to                      |
-| backwards arrow                 | less than                                  |
-| backwards arrow with underscore | less than or equal to                      |
-| ==                              | equals                                     |
-| !=                              | not equal to                               |
-| OR                              | at least one of the arguments must be true |
-| AND                             | both arguments are true                    |
-| NOT                             | inverses any value that you give it        |
+---
+
+## Core Collections (Behavioural View)
+
+| Structure | Ordered | Duplicates | Lookup Speed | Typical Use Case |
+|---------|--------|------------|--------------|------------------|
+| Array | Yes | Yes | Fast by index | Fixed-size data |
+| List | Yes | Yes | Slower search | Dynamic collections |
+| Set | No | No | Fast membership checks | Uniqueness enforcement |
+| Map / Dictionary | No | Keys unique | Fast by key | Key-based access |
+| Queue | Yes | Yes | FIFO | Task scheduling |
+| Stack | Yes | Yes | LIFO | Call stacks, undo |
+
+**TA takeaway:**
+Choosing the wrong structure often causes performance problems—not bad algorithms.
+
+---
+
+## Data Structures & Performance (Big-O Intuition)
+
+```shell
+| Operation | Array/List | Set | Map |
+|---------|------------|-----|-----|
+| Lookup | O(n) | O(1) | O(1) |
+| Insert | O(n) | O(1) | O(1) |
+| Delete | O(n) | O(1) | O(1) |
+```
+
+*(Average case; implementation matters)*
+
+**TA focus:**
+Performance problems often come from repeated linear scans.
 
 </TabItem>
-<TabItem value="uml" label="UML">
 
-| Name         | Schematic Diagram Notation | Notes                                                                     |
-|--------------|----------------------------|---------------------------------------------------------------------------|
-| +            | Public                     | Visibility Indicators: Visible to all classes                             |
-| #            | Protected                  | Visibility Indicators: All packages in the same package as the class      |
-| -            | Private                    | Visibility Indicators: All packages in the same package as the class      |
-| Interface    | Dotted Line with Arrowhead | Triangular tip pointing from the derived class to the base class          |
-| Abstract     |                            | Cannot be instantiated. Can contain instance/static members               |
-| Aggregator   | Diamond                    | Aggregate is a clear diamond. Composite Aggregate is a black diamond      |
-| Associations |                            |                                                                           |
-| Dependencies |                            |                                                                           |
-| Static       | Underlined                 | Variables/Methods: Belongs to a class, rather than an instance of a class |
+<TabItem value="algorithms" label="Algorithms">
 
+## What Is an Algorithm?
 
+An **algorithm** is a step-by-step procedure for transforming input into output.
+
+For a TA, algorithms matter because they define:
+- Time complexity
+- Space usage
+- Failure behaviour at scale
+
+---
+
+## Common Algorithm Categories
+
+```shell
+| Category | Purpose | Example |
+|--------|--------|---------|
+| Searching | Find data | Linear search, binary search |
+| Sorting | Order data | Quick sort, merge sort |
+| Traversal | Visit elements | Tree/graph traversal |
+| Aggregation | Reduce data | Sum, count, group |
+| Filtering | Select data | Predicate-based filtering |
+```
+
+---
+
+## Algorithmic Trade-offs
+
+- Speed vs memory usage
+- Simplicity vs optimisation
+- Pre-computation vs runtime cost
+- Accuracy vs approximation
+
+**TA signal:**
+Algorithms optimised for small datasets often fail at scale.
+
+</TabItem>
+
+<TabItem value="logic" label="Conditionals & Logic">
+
+## Conditional Operators
+
+```shell
+
+| Operator | Meaning |
+|--------|--------|
+| > | Greater than |
+| >= | Greater than or equal |
+| < | Less than |
+| <= | Less than or equal |
+| == | Equal |
+| != | Not equal |
+| AND | All conditions true |
+| OR | Any condition true |
+| NOT | Negates condition |
+```
+
+---
+
+## Why This Matters
+
+- Branching logic affects performance
+- Deep conditional trees reduce readability
+- Poorly structured conditionals hide bugs
+
+**TA signal:**
+Complex conditionals often indicate missing abstractions.
+
+</TabItem>
+
+<TabItem value="uml" label="UML & Structure">
+
+## UML Visibility & Relationships
+
+```shell
+| Symbol | Meaning | Purpose |
+|------|--------|--------|
+| + | Public | Exposed to all |
+| # | Protected | Accessible to subclasses |
+| - | Private | Internal only |
+| Interface | Dotted line | Contract definition |
+| Abstract | Italic / marked | Cannot be instantiated |
+| Aggregation | White diamond | Loose ownership |
+| Composition | Black diamond | Strong ownership |
+| Static | Underlined | Class-level member |
+```
+
+---
+
+## Why UML Still Matters
+
+For TAs, UML:
+- Provides a shared visual language
+- Helps reason about ownership and coupling
+- Is useful for reviews and documentation
+
+**TA focus:**
+UML clarifies *intent*, not implementation.
 
 </TabItem>
 </Tabs>
+

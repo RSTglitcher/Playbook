@@ -1,0 +1,163 @@
+---
+title: Design Patterns
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+**Design Patterns** are proven, reusable approaches to solving common software design problems, providing shared language and structure without prescribing specific implementations.
+:::
+
+---
+
+## What Problem Does This Concept Address?
+
+As systems grow:
+
+- Similar design problems appear repeatedly
+- Ad-hoc solutions increase inconsistency and technical debt
+- Knowledge becomes trapped in individual teams or codebases
+
+Design patterns exist to:
+
+- Capture proven solutions to recurring problems
+- Provide a shared vocabulary across teams
+- Improve maintainability, readability, and adaptability of systems
+
+---
+
+## Core Principles
+
+- **Separation of Concerns** – Isolate responsibilities to reduce coupling
+- **Abstraction** – Depend on interfaces, not concrete implementations
+- **Encapsulation** – Hide internal complexity behind stable contracts
+- **Composability** – Build complex behaviour from simple components
+- **Change Tolerance** – Localise the impact of future change
+
+---
+
+## Why This Matters for a Technical Analyst
+
+For a TA, design patterns:
+
+- Explain *why* systems are structured the way they are
+- Help identify intended extensibility and constraints
+- Provide early warning signs of over-engineering or misuse
+- Enable clearer conversations with engineers without diving into code
+
+A TA does not need to memorise patterns, but **must recognise them and their implications**.
+
+---
+
+## Major Categories of Design Patterns
+
+<Tabs>
+<TabItem value="creational" label="Creational Patterns">
+
+Focus on **how objects or components are created**.
+
+- Abstract creation logic
+- Control lifecycle and dependencies
+- Reduce tight coupling to concrete implementations
+
+**Common examples:**
+- Factory
+- Builder
+- Singleton
+
+**Typical use cases:**
+- Complex object construction
+- Environment-specific implementations
+- Dependency management
+
+</TabItem>
+
+<TabItem value="structural" label="Structural Patterns">
+
+Focus on **how components are composed**.
+
+- Organise relationships between parts
+- Adapt incompatible interfaces
+- Simplify complex subsystems
+
+**Common examples:**
+- Adapter
+- Facade
+- Decorator
+- Proxy
+
+**Typical use cases:**
+- Integrating legacy systems
+- Layering APIs
+- Adding behaviour without modification
+
+</TabItem>
+
+<TabItem value="behavioral" label="Behavioral Patterns">
+
+Focus on **how components interact**.
+
+- Control communication flow
+- Encapsulate algorithms or workflows
+- Reduce tight coupling between collaborators
+
+**Common examples:**
+- Observer
+- Strategy
+- Command
+- Chain of Responsibility
+
+**Typical use cases:**
+- Event-driven systems
+- Pluggable business logic
+- Workflow orchestration
+
+</TabItem>
+</Tabs>
+
+---
+
+## Practical Signals to Look For
+
+**As a TA, consider design patterns when you see:**
+
+- Repeated logic across services or components
+- Conditional-heavy code paths controlling behaviour
+- Tight coupling that blocks change
+- Rapidly growing complexity around a single responsibility
+- Requirements for extensibility or customisation
+
+---
+
+## Key Trade-offs & Tensions
+
+- Simplicity vs flexibility
+- Explicitness vs abstraction
+- Reuse vs over-generalisation
+- Performance vs indirection
+- Pattern reuse vs domain clarity
+
+Patterns solve problems—but they also **introduce structure that must be maintained**.
+
+---
+
+## Questions a TA Should Ask
+
+- “What problem is this pattern solving?”
+- “Is this pattern driven by real requirements or anticipated ones?”
+- “What change does this design make easy—and what does it make hard?”
+- “Is the pattern visible and understandable to new team members?”
+
+
+---
+
+## How This Shows Up in Real Systems
+
+- **Microservices** – Strategy, Adapter, Facade patterns
+- **Frameworks** – Template Method, Inversion of Control
+- **Event-driven platforms** – Observer, Command
+- **APIs** – Facade and Proxy patterns
+- **Data pipelines** – Chain of Responsibility
+
