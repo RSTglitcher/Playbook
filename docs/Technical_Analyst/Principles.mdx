@@ -1,0 +1,233 @@
+---
+title: "Principles"
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+Engineering Principles are foundational guidelines that shape how software and data systems are designed, evolved, and operated.
+
+Some principles are cross-cutting (apply everywhere), while others are domain-specific.  
+A Technical Analyst must understand *both the principle and the context in which it applies*.
+:::
+
+---
+
+## Why Principles Matter for a Technical Analyst
+
+Principles help TAs:
+
+- Evaluate designs without relying on specific tools
+- Understand *why* trade-offs were made
+- Ask better questions during reviews and incidents
+- Avoid applying “best practices” blindly across domains
+
+> Principles guide decisions — they are not absolute rules.
+
+---
+
+## Cross-Cutting Engineering Principles
+
+These principles apply across Software Engineering, Data Engineering, and Platform work, but manifest differently depending on context.
+
+<Tabs>
+<TabItem value="dry" label="DRY">
+
+### Don’t Repeat Yourself (DRY)
+A system should have a single source of truth for *logic, rules, or knowledge*.
+
+**In Software Engineering**
+- Strongly enforced
+- Reduces bugs and inconsistent behaviour
+- Duplication usually indicates poor abstraction
+
+Good DRY target: business logic, algorithms, rules
+
+### In Data Engineering
+- Applied selectively
+- Logic should be DRY, data often should not be
+- Duplication may be intentional for:
+  - Performance
+  - Historical accuracy
+  - Auditability
+  - Isolation
+
+TA rule of thumb:  
+👉 *DRY the logic, duplicate the facts when needed.*
+
+</TabItem>
+
+<TabItem value="kiss" label="KISS">
+
+### Keep It Simple, Stupid (KISS)
+Prefer the simplest solution that meets the requirements.
+
+**SWE perspective**
+- Avoid unnecessary abstractions
+- Reduce cognitive load
+- Improve maintainability
+
+**Data perspective**
+- Prefer understandable pipelines over clever ones
+- Make transformations explicit
+- Optimise only when scale or cost demands it
+
+TA signal:  
+Complexity added “just in case” rather than to solve a real problem.
+
+</TabItem>
+<TabItem value="separation" label="Separation of Concerns">
+
+Different responsibilities should be isolated.
+
+- Logic vs data
+- Ingestion vs transformation
+- Control plane vs data plane
+
+Why it matters:
+- Enables independent evolution
+- Improves ownership clarity
+- Reduces blast radius
+
+</TabItem>
+</Tabs>
+
+---
+
+## Software Engineering Principles
+
+<Tabs>
+<TabItem value="solid" label="SOLID">
+
+The SOLID principles focus on building software that is resilient to change.
+
+### Single Responsibility Principle (SRP)
+A component should have one reason to change.
+
+### Open/Closed Principle (OCP)
+Open for extension, closed for modification.
+
+### Liskov Substitution Principle (LSP)
+Subtypes must honour base type contracts.
+
+### Interface Segregation Principle (ISP)
+Small, focused interfaces are better than large ones.
+
+### Dependency Inversion Principle (DIP)
+Depend on abstractions, not implementations.
+
+TA signal:  
+SOLID violations often show up as brittle systems or painful change.
+
+</TabItem>
+
+<TabItem value="oop" label="4 Pillars of OOP">
+
+### Inheritance
+Reuse behaviour via parent–child relationships.
+
+### Encapsulation
+Hide internal state; expose controlled interfaces.
+
+### Abstraction
+Expose essentials, hide details.
+
+### Polymorphism
+Treat different implementations uniformly.
+
+TA caution:  
+Inheritance increases coupling — composition is often safer.
+
+</TabItem>
+
+<TabItem value="fp" label="Functional Programming Principles">
+
+### Function Composition
+Build behaviour from small, reusable functions.
+
+### Immutability
+Avoid shared mutable state.
+
+### Pure Functions
+Predictable behaviour, easy testing.
+
+### Higher-Order Functions
+Functions as first-class values.
+
+TA signal:  
+Common in data processing, concurrency-heavy systems, and pipelines.
+
+</TabItem>
+</Tabs>
+
+---
+
+## Data Engineering Principles
+
+<Tabs>
+<TabItem value="acid" label="ACID">
+
+Principles for transactional consistency.
+
+### Atomicity
+### Consistency
+### Isolation
+### Durability
+
+Typical use: OLTP systems, financial workflows  
+Trade-off: Scalability and latency
+
+</TabItem>
+
+<TabItem value="base" label="BASE">
+
+Principles for large-scale distributed systems.
+
+### Basically Available
+### Soft State
+### Eventually Consistent
+
+Typical use: Distributed data stores  
+Trade-off: Immediate consistency
+
+</TabItem>
+
+<TabItem value="idempotency" label="Idempotency">
+
+### Retries
+
+Operations can be safely retried.
+
+- Critical for distributed pipelines
+- Supports at-least-once delivery
+- Reduces failure impact
+
+</TabItem>
+
+<TabItem value="schema" label="Schema Management">
+
+### Read & Write
+
+- Schema-on-write → stronger guarantees
+- Schema-on-read → more flexibility
+
+TA focus:  
+Governance vs agility trade-offs.
+
+</TabItem>
+
+<TabItem value="lineage" label="Lineage & Immutability">
+
+### Traceability
+
+- Data should be traceable end-to-end
+- Raw data should not change
+- Transformations should be reproducible
+
+TA signal:  
+Essential for debugging, compliance, and trust.
+
+</TabItem>
+</Tabs>

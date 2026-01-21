@@ -1,0 +1,212 @@
+---
+title: OS Architecture
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+**Operating System (OS) Architecture** describes how an operating system is structured into layers and components that manage hardware resources and provide safe, efficient abstractions for applications.
+:::
+
+---
+
+## What Problem Does This Concept Address?
+
+Without an operating system:
+
+- Applications would need to manage hardware directly
+- Resource sharing (CPU, memory, disk, network) would be unsafe and inefficient
+- Isolation, security, and multitasking would be extremely difficult
+
+OS Architecture exists to:
+
+- Abstract hardware complexity
+- Manage contention for shared resources
+- Provide isolation, stability, and security
+- Enable scalable execution of many workloads on the same machine
+
+---
+
+## Core Principles
+
+- **Abstraction** – Hide hardware details behind stable interfaces
+- **Isolation** – Prevent one process or workload from impacting others
+- **Resource Management** – Fair and efficient allocation of CPU, memory, I/O
+- **Privilege Separation** – Restrict what code can directly access hardware
+- **Portability** – Allow applications to run across different hardware
+
+---
+
+## Why This Matters for a Technical Analyst
+
+For a TA, OS Architecture explains:
+
+- Why containers are not the same as virtual machines
+- Where performance, latency, and security boundaries actually live
+- What failures are *application-level* vs *OS-level* vs *infrastructure-level*
+- Which layer to inspect when diagnosing behaviour or risk
+
+Understanding OS Architecture helps TAs:
+
+- Ask better design and operational questions
+- Avoid incorrect assumptions about isolation or scalability
+- Map modern platforms (Kubernetes, VMs, serverless) to their true foundations
+
+---
+
+## Major OS Components (Holistic View)
+
+### Hardware
+
+- Physical CPU, memory, disks, network interfaces
+- Executes instructions and performs I/O
+
+**When you interact with it:**
+Almost never directly (except in low-level tuning or hardware diagnostics)
+
+---
+
+### Kernel
+
+The **core of the operating system** running in privileged mode.
+
+Responsible for:
+- Process scheduling
+- Memory management
+- Device drivers
+- Filesystems
+- Networking
+
+**When you interact with it:**
+- Indirectly via system calls
+- When tuning performance, security, or resource limits
+- When debugging low-level failures
+
+---
+
+### System Calls (Syscalls)
+
+The controlled interface between **user space** and the **kernel**.
+
+Examples:
+- Read/write files
+- Allocate memory
+- Create processes
+- Open network connections
+
+**When you interact with it:**
+- Implicitly through programming languages, runtimes, and libraries
+
+---
+
+### User Space
+
+Where applications run with restricted privileges.
+
+Includes:
+- Application processes
+- Language runtimes (JVM, Python, Node.js)
+- Shared libraries (glibc, OpenSSL)
+
+**When you interact with it:**
+- Most of the time
+- During application development, debugging, and performance analysis
+
+---
+
+### Filesystems & Storage Layer
+
+Manages:
+- Persistent data storage
+- File permissions
+- Mount points and volumes
+
+**When you interact with it:**
+- Managing data persistence
+- Debugging disk usage or I/O issues
+- Designing stateful vs stateless systems
+
+---
+
+### Networking Stack
+
+Provides:
+- TCP/IP
+- Sockets
+- Firewall rules
+- Routing
+
+**When you interact with it:**
+- Diagnosing connectivity issues
+- Designing service communication
+- Securing traffic flows
+
+---
+
+## Evolution of OS Architecture for Modern Platforms
+
+<Tabs>
+<TabItem value="traditional" label="Traditional OS">
+
+- One OS per physical machine
+- Applications installed directly on the OS
+- Limited isolation between apps
+
+**Implications:**
+- Simple mental model
+- Poor multi-tenant isolation
+- Difficult to scale efficiently
+
+</TabItem>
+<TabItem value="vms" label="Virtual Machines">
+
+- Hypervisor sits below the OS
+- Each VM runs its own full OS + kernel
+- Strong isolation boundaries
+
+**Implications:**
+- Excellent security and isolation
+- Higher overhead (duplicate kernels)
+- Slower startup times
+
+</TabItem>
+<TabItem value="containers" label="Containers">
+
+- Single shared kernel
+- Isolation via namespaces and cgroups
+- Processes packaged with dependencies
+
+**Implications:**
+- Lightweight and fast
+- Weaker isolation than VMs
+- Kernel becomes a shared dependency
+
+</TabItem>
+<TabItem value="serverless" label="Serverless / Sandboxed Runtimes">
+
+- OS abstracted almost entirely away
+- Often built on containers + VMs
+- Strong platform control
+
+**Implications:**
+- Minimal operational responsibility
+- Limited visibility and control
+- Strong dependency on provider behaviour
+
+</TabItem>
+</Tabs>
+
+---
+
+## Practical Signals to Look For
+
+**As a TA, think about OS Architecture when you see:**
+
+- Performance issues that don’t correlate with application logic
+- Memory or CPU limits being hit unexpectedly
+- Confusion between container and VM isolation guarantees
+- Disk, network, or syscall-level bottlenecks
+- Security concerns related to shared infrastructure
+
