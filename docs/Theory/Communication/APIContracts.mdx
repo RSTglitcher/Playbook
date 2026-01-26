@@ -1,0 +1,148 @@
+---
+title: OpenAPI
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**OpenAPI** is a standard specification for describing HTTP APIs as a machine-readable contract. It defines *what an API exposes*, *how it is called*, and *what it returns*, independent of how the API is implemented.
+:::
+
+OpenAPI is primarily concerned with **clear communication and shared understanding** between API producers and consumers, rather than runtime behaviour.
+
+Typical examples include:
+
+* Defining REST APIs for internal platform use
+* Publishing interactive API documentation to Backstage
+* Validating API contracts in CI/CD pipelines
+
+---
+
+## Benefit / What problem does it solve?
+
+Using **OpenAPI** enables:
+
+* A shared, versioned contract between API providers and consumers
+* Consistent, auto-generated API documentation
+* Reduced ambiguity and reliance on tribal knowledge
+* Tooling automation such as validation, mocking, and client generation
+
+
+## Relationship to APIs (REST, GraphQL, SOAP)
+
+OpenAPI is **not an API style** like REST or GraphQL.
+
+Instead, it operates at a different layer:
+
+* **API styles** (REST, GraphQL, SOAP, gRPC) define *how systems communicate at runtime*
+* **OpenAPI** defines *how an HTTP API is described, documented, and agreed upon*
+
+In practice:
+
+* OpenAPI most commonly **describes REST-style HTTP APIs**
+* It does **not replace REST** — it documents it
+* GraphQL APIs are typically self-describing and do **not** use OpenAPI
+* SOAP APIs historically used **WSDL**, which plays a similar role to OpenAPI
+
+For a Technical Analyst, this distinction is important:
+
+> OpenAPI explains *what an API looks like and how to use it*, not *how the API is implemented internally*.
+
+---
+
+## When to Use
+
+**Use OpenAPI when:**
+
+* You are exposing an HTTP API to other teams or services
+* API consumers need clear, reliable documentation
+* API behaviour must be validated automatically
+* APIs are part of a shared platform or product ecosystem
+
+**Typical examples:**
+
+* Publishing API definitions to Backstage
+* Validating request/response schemas in CI
+* Generating client SDKs
+
+---
+
+## When Not to Use
+
+**Avoid OpenAPI when:**
+
+* The interface is not HTTP-based
+* The API is short-lived and strictly private
+* A simple README or inline documentation is sufficient
+* The API is GraphQL-first (where schema introspection is native)
+
+---
+
+## Key Terminology & Definitions
+
+* **Specification** – A formal, versioned description of an API
+* **Contract** – The agreed behaviour between API provider and consumer
+* **Path** – An API endpoint (e.g. `/orders/{id}`)
+* **Operation** – An HTTP method on a path (GET, POST, etc.)
+* **Schema** – A structured definition of request or response data
+
+---
+
+## Variants / Types
+
+<Tabs>
+<TabItem value="designfirst" label="Design-first">
+
+* Specification written before implementation
+* API design reviewed early for consistency and usability
+* Strong consumer focus
+
+</TabItem>
+<TabItem value="codefirst" label="Code-first">
+
+* Specification generated from existing code
+* Faster initial adoption
+* Higher risk of leaking implementation details
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="contractdriven" label="Contract-driven">
+
+* Treat OpenAPI as a source of truth
+* Enforce validation in CI/CD pipelines
+* Align teams around agreed API behaviour
+
+</TabItem>
+<TabItem value="documentation" label="Documentation-first">
+
+* Focus on discoverability and clarity
+* Publish specifications to portals like Backstage
+* Optimise developer experience
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+* **Access pattern:** Declarative YAML or JSON files
+* **Operations / Interfaces:** HTTP methods, schemas, security definitions
+* **Interaction model:** Authored manually, generated from code, and validated by tooling
+
+---
+
+## What Do Results Normally Look Like
+
+* Interactive API documentation
+* Machine-readable API specification files
+* Validation errors or warnings during CI/CD execution
+
+**Notes:** OpenAPI defines *expected behaviour*, not runtime guarantees. Specs must be kept in sync with deployed APIs to remain trustworthy.

@@ -1,0 +1,142 @@
+---
+# title: "Vault"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Vault
+**HashiCorp Vault** is a secrets management and data protection platform. It securely stores, distributes, and controls access to tokens, passwords, certificates, and encryption keys. Vault solves problems around secret sprawl, access auditing, and dynamic credential generation.
+:::
+
+```mermaid
+Vault
+├── Secrets Management
+│   ├── KV Engine
+│   ├── Database Engine
+│   ├── PKI Engine
+│   └── Transit Engine
+├── TA Skills
+│   ├── Review & Validate Access
+│   ├── Monitor Secrets Usage
+│   ├── Audit & Policy Checks
+│   └── Failure Analysis
+└── SWE Skills
+    ├── Dynamic Secrets
+    ├── Certificates
+    ├── Encryption / Decryption
+    └── CI/CD Integration
+```
+
+---
+
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Vault as a TA
+--------------
+
+# Login and validate Vault
+vault login <token>
+vault status
+vault auth list
+vault secrets list
+
+# Inspect secrets and policies
+vault read <path>
+vault policy list
+vault audit list
+vault token lookup
+
+# Monitor usage and validate setup
+vault kv list <path>
+vault read <path>
+vault token revoke <token>
+vault operator unseal -status
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Vault**
+
+* Identify secrets engines needed (KV, database, PKI, transit)
+* Determine teams, owners, and access policies for each engine
+* Define secrets lifecycle expectations (rotation, expiry, revocation)
+* Gather details of applications or services that will consume secrets
+* Understand audit, compliance, and reporting requirements
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service            | What TA Needs to Gather / Confirm                             |
+| --------------------------- | ------------------------------------------------------------- |
+| Set-up                      | Vault cluster provisioned (self-hosted or SaaS)               |
+| Access & Login              | Vault token or AppRole credentials                            |
+| API                         | Enable Vault API access if programmatic use is needed         |
+| Other tool specific actions | Required secrets engines enabled (KV, database, PKI, transit) |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Vault
+--------------
+
+# Dynamic database credentials
+vault read database/creds/<role>
+
+# PKI certificates
+vault write pki/issue/<role> common_name="example.com"
+
+# Encrypt/decrypt data
+vault write transit/encrypt/<key> plaintext=$(base64 <<< "sensitive data")
+vault write transit/decrypt/<key> ciphertext=<ciphertext>
+
+# Rotate secrets
+vault lease revoke <lease_id>
+
+# CI/CD integration
+export VAULT_TOKEN=<token>
+vault kv get secret/<app>/<env>
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Map which secrets each application/service requires and which engine to use
+* Plan access policies, roles, and namespaces for teams
+* Define lifecycle and rotation strategies for each secret
+* Integrate secrets retrieval into CI/CD pipelines
+* Ensure observability: logging, alerting, and audit trails
+* Document TA handover: provide spec of secrets engines, policies, and intended use for engineering teams
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                       | TLDR of Root Cause                         | What to Check                      | Action to Propose                               |
+| ----------------------------- | ------------------------------------------ | ---------------------------------- | ----------------------------------------------- |
+| Vault sealed / unresponsive   | Vault not unsealed or service down         | `vault status`, pod/service logs   | Unseal Vault, restart service                   |
+| Authentication fails          | Token expired, AppRole misconfigured       | Check token TTL, role policies     | Renew token, fix AppRole configuration          |
+| Secrets not accessible        | Policy misconfigured or path disabled      | `vault policy read <name>`         | Adjust policies, enable required secrets engine |
+| Dynamic secrets not generated | Database or external service misconfigured | Engine configuration, lease status | Fix secrets engine, regenerate credentials      |
+| High latency or slow reads    | Vault overloaded or network issues         | Check server metrics, networ       |                                                 |

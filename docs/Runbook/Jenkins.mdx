@@ -1,0 +1,127 @@
+---
+title: "Jenkins"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Jenkins
+**Jenkins** is an open-source automation server used to **build, test, and deploy software**.
+It supports continuous integration (CI) and continuous delivery (CD) pipelines and integrates with a wide range of plugins to automate repetitive engineering tasks.
+:::
+
+
+```mermaid
+Jenkins
+├── CI/CD Pipelines
+│   ├── Build
+│   ├── Test
+│   ├── Deploy
+│   └── Notifications
+├── TA Skills
+│   ├── Review pipeline ownership
+│   ├── Validate triggers and notifications
+│   ├── Audit access control
+│   └── Monitor job queue and logs
+└── SWE Skills
+    ├── Configure Jenkinsfile
+    ├── Manage build agents
+    ├── Install/manage plugins
+    └── Integrate with SCM, artifact repo, deployment targets
+````
+
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Jenkins as a TA
+--------------
+
+# Verify Jenkins server is running
+# Check key pipelines and last build results
+# Review pipeline configurations (ownership, triggers, notifications)
+# Inspect console logs for failed builds or failed steps
+# Identify integrations (SCM, artifact repository, deployment targets)
+# Validate access control for users and service accounts
+# Monitor job queue for stuck or delayed builds
+# Ensure observability (metrics, alerts, notifications) are functional
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Jenkins**
+
+* Identify which teams/pipelines require TA oversight
+* Determine critical pipelines, build agents, and notification channels
+* Gather information on SCM repositories, artifact repositories, and deployment targets
+* Confirm access levels for the TA (roles, API tokens, service accounts)
+* Identify audit or compliance requirements (pipeline history, logs retention)
+* Establish what handover information engineers need: credentials, pipeline ownership, and plugin dependencies
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| Set-up                 | Jenkins server type (self-hosted or SaaS), cluster/pod info if containerized, responsible engineer/owner |
+| Access & Login         | User roles (Viewer/Editor/Admin), authentication method (LDAP, SSO, local accounts)                      |
+| API                    | API token availability if scripts or automation access is needed                                         |
+| Pipeline Configuration | Existing pipeline definitions, names, owners, notifications setup                                        |
+| Plugins / Integrations | Installed plugins, source control (Git, SVN), artifact repositories, deployment environments             |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Jenkins
+--------------
+
+# Trigger builds manually or via SCM hooks
+# Configure new pipelines using Jenkinsfile (Declarative or Scripted)
+# Configure build agents/nodes for distributed execution
+# Install and manage plugins for integrations (Git, Slack, Docker, Kubernetes)
+# Access console output/logs for builds
+# Set up notifications for build failures or successes
+# Schedule periodic or parameterized jobs
+# Integrate with artifact repositories, test suites, and deployment pipelines
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Map existing pipelines, build agents, and plugin usage
+* Document pipeline dependencies, notifications, and integration points
+* Define engineering handover: credentials, plugin versions, SCM connections, artifact paths
+* Include monitoring/alerting touchpoints for failed builds or stuck jobs
+* Establish rollback or remediation steps for critical pipelines
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                | TLDR of Root Cause                                       | What to Check                                  | Action to Propose                                            |
+| ---------------------- | -------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| Server down            | Jenkins service stopped or container/pod crashed         | Service/pod status, logs                       | Restart service/pod, check memory/CPU                        |
+| Pipeline fails         | Broken steps, missing credentials, or environment issues | Console output, pipeline config, credentials   | Fix pipeline steps, update credentials, validate environment |
+| Jobs stuck             | Build queue backlog or blocked agents                    | Queue status, agent availability               | Free up agents, restart stuck jobs                           |
+| Plugins failing        | Incompatible or outdated plugin                          | Plugin manager, version compatibility          | Update/fix plugin, verify dependencies                       |
+| Access issues          | User roles or authentication misconfigured               | User roles, SSO/LDAP settings                  | Adjust permissions, troubleshoot auth                        |
+| Notifications not sent | Misconfigured notifications or credentials               | Job notifications config, Slack/email settings | Correct notification settings or credentials                 |
