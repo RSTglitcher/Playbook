@@ -1,0 +1,161 @@
+---
+title: API Specifications
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip OpenAPI
+**OpenAPI** is a standard API contract specification used to formally define HTTP APIs so they can be validated, documented, published, and consumed consistently across teams and tooling.
+:::
+
+
+```mermaid
+OpenAPI
+├── API Contract Specification
+│   ├── Paths & Operations
+│   ├── Schemas
+│   ├── Security Definitions
+│   ├── Components & Reuse
+│   └── Versioning & Lifecycle
+├── TA Skills
+│   ├── Review & Validate
+│   ├── Consumer Support
+│   ├── Governance Checks
+│   └── Documentation Publishing
+└── SWE Skills
+    ├── Authoring Specs
+    ├── Validation & CI
+    ├── Publishing
+    └── Client & Mock Generation
+```
+
+---
+
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Tangible guidance for TAs using OpenAPI
+--------------
+
+# Review Paths & Operations
+- Open the OpenAPI YAML/JSON in the repo.
+- For each endpoint, check HTTP method correctness.
+- Ensure path parameters match API behaviour.
+- Confirm operation names are meaningful and match business action.
+
+# Validate Schemas
+- Run schema validator: `swagger-cli validate spec.yaml`
+- Confirm all required fields are present.
+- Check data types are correct and enums defined.
+
+# Consumer Questions
+- Confirm spec answers:
+  - Authentication method (`securitySchemes`)
+  - Error responses and status codes
+  - Pagination, filtering, sorting parameters
+- Note gaps and raise with API owner if missing.
+
+# Governance & Versioning
+- Verify `info.version` exists and follows semantic versioning.
+- Confirm `contact` identifies owning team.
+- Check for deprecation notices on old paths.
+- Ensure spec is in canonical repo and referenced in Backstage.
+
+# Documentation Publishing
+- Confirm spec renders correctly in Backstage.
+- Run automated doc generation dry run if available.
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to gather requirements for OpenAPI**
+
+* Identify the APIs to document and their current state
+* Determine ownership and team contacts
+* Verify API endpoints, authentication mechanisms, request/response data
+* Gather consumer expectations: completeness, usability, documentation
+* Understand integration with Backstage or other internal portals
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service            | What TA Needs to Gather / Confirm                  |
+| --------------------------- | -------------------------------------------------- |
+| Set-up                      | Location of OpenAPI spec (repo, service, artifact) |
+| Access & Login              | Read access to repo and Backstage                  |
+| API                         | Target API base URL and environments               |
+| Other tool specific actions | Knowledge of validation, linting, or CI checks     |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Tangible guidance for engineers using OpenAPI
+--------------
+
+# Authoring Specs
+- Design-first: create YAML manually and validate.
+- Code-first: generate spec from code annotations; confirm coverage.
+
+# Validation & CI
+- Add schema validation to CI: `npx swagger-cli validate spec.yaml`
+- Enforce lint rules: `npx spectral lint spec.yaml`
+
+# Publishing
+- Commit spec to repo branch.
+- Run automation to publish to Backstage; verify rendered docs.
+- Tag releases for semantic versioning.
+
+# Client & Mock Generation
+- Use `openapi-generator` for SDKs or mock servers.
+- Test generated clients against all operations.
+- Update tests if API changes.
+```
+
+</TabItem>
+<TabItem value="example" label="Examples">
+
+**What OpenAPI looks like in practice**
+
+* Spec URL: `https://git.internal.company.com/api-specs/orders.yaml`
+* CI lint job:
+
+  ```shell
+  npx spectral lint orders.yaml
+  ```
+* Backstage docs verification: open portal, find API, confirm paths match spec
+* Validation command:
+
+  ```shell
+  npx swagger-cli validate orders.yaml
+  ```
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                              | TLDR of Root Cause                | What to Check                                   | Action to Propose                             |
+| ------------------------------------ | --------------------------------- | ----------------------------------------------- | --------------------------------------------- |
+| Consumers report incorrect behaviour | Spec drift from implementation    | Compare spec to live API responses              | Update spec or raise defect with API team     |
+| Backstage docs missing or broken     | Invalid or unreachable spec       | Check spec URL, format, and publishing pipeline | Fix spec location or validation errors        |
+| CI pipeline failing                  | Schema or lint validation errors  | Review validation output                        | Correct schema or relax non-critical rules    |
+| Breaking changes reported            | Poor versioning or change control | Check version fields and change history         | Introduce versioning and deprecation guidance |
+| Security confusion                   | Incomplete security definitions   | Review auth schemes in spec                     | Clarify and standardise security sections     |

@@ -1,0 +1,135 @@
+---
+## title: "Prometheus"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Prometheus
+**Prometheus** is an open-source monitoring and alerting platform designed for collecting time-series metrics from applications and infrastructure. It enables querying, visualization (often via Grafana), and automated alerting.
+:::
+
+---
+
+## Technical Skills
+
+```mermaid
+Prometheus
+├── Metrics Collection
+│   ├── Scrape Targets
+│   ├── Exporters
+│   ├── Service Discovery
+│   └── TSDB Storage
+├── TA Skills
+│   ├── Review Metrics & Alerts
+│   ├── Validate Scrape & Retention
+│   ├── Inspect Dashboards & Dependencies
+│   └── Monitor for Anomalies
+└── SWE Skills
+    ├── Add / Configure Targets
+    ├── Create Alert Rules
+    ├── Query Metrics (PromQL)
+    └── Integrate Dashboards / CI
+```
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Prometheus as a TA
+--------------
+
+# Access Prometheus Web UI
+# Review scrape targets: https://<prometheus-url>/targets
+# Check target status, scrape intervals, last scrape times
+# Navigate alerting rules: https://<prometheus-url>/rules
+# Inspect active and pending alerts
+# Validate metrics coverage for key services
+# Verify retention settings and storage usage
+# Query sample metrics using PromQL, e.g., CPU usage per pod:
+#   sum(rate(container_cpu_usage_seconds_total{namespace="default"}[5m])) by (pod)
+# Confirm alerting routes integrate with Slack, PagerDuty, etc.
+# Export targets or rules via API:
+#   curl http://<prometheus-url>/api/v1/targets
+#   curl http://<prometheus-url>/api/v1/rules
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Prometheus**
+
+* Identify key services, applications, and infrastructure to monitor
+* Determine required metrics, scrape intervals, and retention periods
+* Understand alerting and SLA expectations
+* Identify responsible owners for each metric / target
+* Confirm visualization or reporting needs (Grafana dashboards, panels, panels owners)
+* Document network and authentication requirements (VPN, firewall, API tokens)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service           | What TA Needs to Gather / Confirm                                                 |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| Set-up                     | Is Prometheus self-hosted or SaaS? Server URL, K8s pod/service details, owner     |
+| Access & Login             | Web UI access, user roles, API tokens if scripts used, authentication methods     |
+| Metrics Targets            | List of scrape targets, owners, intervals, relabeling rules                       |
+| Alerting Rules             | Configured alert rules, notification channels, responsible engineer               |
+| Integrations / Dashboards  | Connected visualization tools, dashboard ownership, panels description            |
+| Retention / Storage        | TSDB retention period, storage backend, shard / replication info, disk monitoring |
+| Observability & Monitoring | Internal metrics, logging, audit/alert logs, who reviews alerts                   |
+| Environment / Network      | Access restrictions, scrape network connectivity, SLA for service availability    |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Prometheus
+--------------
+
+# Add or modify scrape targets in prometheus.yml or via service discovery
+# Reload configuration without downtime: curl -X POST http://<prometheus-url>/-/reload
+# Query metrics using PromQL via UI or API, e.g., memory usage:
+#   node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes
+# Create or update alert rules for thresholds
+# Integrate with Grafana dashboards
+# Troubleshoot performance: inspect /metrics endpoints and Prometheus logs
+# Manage retention and storage: configure storage.tsdb.retention.time and disk size
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Map which services, applications, and infrastructure components require monitoring
+* Define metrics and scrape intervals per target
+* Establish alerting thresholds and notification channels
+* Document expected retention, storage, and scaling considerations
+* Integrate Prometheus into CI/CD pipelines for automated monitoring
+* Provide TA handover: list of scrape targets, alert rules, dashboards, owners, and intended use
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                | TLDR of Root Cause                        | What to Check                           | Action to Propose                                   |
+| ---------------------- | ----------------------------------------- | --------------------------------------- | --------------------------------------------------- |
+| Targets down           | Network issues, endpoint unavailable      | /targets page, service logs             | Restart target or fix network                       |
+| Alerts not firing      | Misconfigured alert rules or channel      | /rules page, alertmanager config        | Correct rules or notification config                |
+| Slow queries           | High cardinality metrics, complex queries | Query performance, dashboard complexity | Optimize queries, reduce cardinality, shard metrics |
+| Data missing           | Metrics not scraped or retention exceeded | Scrape intervals, TSDB storage          | Fix endpoint, increase retention, validate scrape   |
+| Prometheus server down | Pod/service crash, out-of-memory          | Server logs, pod status                 | Restart pod, allocate                               |

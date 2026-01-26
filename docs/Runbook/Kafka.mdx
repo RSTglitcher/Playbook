@@ -1,0 +1,144 @@
+---
+# title: "Kafka"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Kafka
+**Apache Kafka** is a distributed streaming platform used for building real-time data pipelines and event-driven applications. It provides high-throughput, fault-tolerant, and scalable messaging capabilities.
+:::
+
+
+```mermaid
+Kafka
+├── Messaging & Streaming
+│   ├── Topics & Partitions
+│   ├── Brokers & Clusters
+│   ├── Consumer Groups
+│   └── Retention & Replication
+├── TA Skills
+│   ├── Review Topics & Configs
+│   ├── Validate Consumers & Producers
+│   ├── Monitor Cluster Health
+│   └── Check Retention & ACLs
+└── SWE Skills
+    ├── Produce/Consume Messages
+    ├── Create/Delete Topics
+    ├── Manage Consumer Groups
+    └── Monitor & Scale Cluster
+```
+
+---
+
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Kafka as a TA
+--------------
+
+# List topics
+kafka-topics.sh --bootstrap-server <broker>:9092 --list
+
+# Check topic configuration and partitions
+kafka-topics.sh --describe --topic <topic> --bootstrap-server <broker>:9092
+
+# Inspect consumer groups
+kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --list
+kafka-consumer-groups.sh --describe --group <group>
+
+# Monitor cluster health
+# Validate broker logs, partition distribution, under-replicated partitions
+
+# Check retention policies and message sizes for critical topics
+
+# Verify ACLs and access for producers and consumers
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Kafka**
+
+* Identify key topics and their expected message volume and throughput
+* Determine which services will produce or consume messages
+* Confirm cluster setup, broker count, replication factor, partitions
+* Review monitoring, alerting, and retention policies
+* Gather ownership of topics, consumer groups, and access controls
+* Determine network and authentication requirements (SASL/SSL, ACLs)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service            | What TA Needs to Gather / Confirm                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Install / Setup             | Kafka cluster deployed, brokers running, Zookeeper (if applicable)                                      |
+| Access & Login              | Client credentials, SASL/SSL configs, ACLs verified                                                     |
+| API / CLI Tools             | Kafka CLI tools (`kafka-topics.sh`, `kafka-console-producer.sh`, `kafka-console-consumer.sh`) available |
+| Other tool-specific actions | Monitoring tools (Prometheus, Grafana), retention policies, topic naming conventions                    |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Kafka
+--------------
+
+# Produce messages to a topic
+kafka-console-producer.sh --broker-list <broker>:9092 --topic <topic>
+
+# Consume messages from a topic
+kafka-console-consumer.sh --bootstrap-server <broker>:9092 --topic <topic> --from-beginning
+
+# Create new topics
+kafka-topics.sh --create --topic <topic> --bootstrap-server <broker>:9092 --partitions 3 --replication-factor 2
+
+# Delete topics
+kafka-topics.sh --delete --topic <topic> --bootstrap-server <broker>:9092
+
+# Manage consumer groups
+kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --group <group> --reset-offsets --to-earliest --execute
+
+# Monitor lag and cluster health via CLI or JMX metrics
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Map which topics and partitions are required per application/service
+* Define producer and consumer configurations including throughput expectations
+* Establish cluster sizing: brokers, replication factor, partition count
+* Implement monitoring, alerting, and retention policies
+* Integrate Kafka with CI/CD pipelines if required
+* Provide TA handover: documented topics, ACLs, consumer groups, monitoring dashboards, and intended usage
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                | TLDR of Root Cause                         | What to Check                                  | Action to Propose                                   |
+| ---------------------- | ------------------------------------------ | ---------------------------------------------- | --------------------------------------------------- |
+| Brokers down           | Node failure, network issue, JVM crash     | Broker logs, cluster status, Zookeeper         | Restart broker, check network, rebalance partitions |
+| Consumer lag           | Consumers slow or blocked                  | Consumer group status, offsets, broker metrics | Increase consumer instances, optimize processing    |
+| Topic unavailable      | Topic deleted or misconfigured             | Topic list, ACLs, broker logs                  | Recreate topic, adjust ACLs                         |
+| Messages not delivered | Retention expired, partition unavailable   | Partition status, producer logs                | Adjust retention, fix partition availability        |
+| High latency           | Network bottleneck, overloaded broker      | Broker metrics, replication lag                | Scale brokers, optimize network                     |
+| Data loss              | Under-replicated partitions, misconfigured | Cluster replication status, topic configu      |                                                     |

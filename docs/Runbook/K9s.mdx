@@ -9,46 +9,32 @@ import TabItem from '@theme/TabItem';
 Kubernetes (K8s) is a **container orchestration platform** that automates deployment, scaling, and management of containerized applications. It is widely used to run microservices architectures, manage distributed workloads, and enable declarative infrastructure management.
 :::
 
----
-
-## When to use
-
-* Deploy, scale, and manage containerized applications across clusters
-* Require high availability, service discovery, or automated rolling updates
-* Need declarative configuration for infrastructure
-
-**Do NOT use this tool when:**
-
-* Only running a few containers on a single host
-* Simple orchestration via Docker Compose suffices
-* Complex cluster management is unnecessary
-
----
-
-## TA Skills Checklist
-
-- Understand cluster architecture and ownership of resources
-- Verify PersistentVolume and ConfigMap usage
-- Observe workload health, scaling, and alerts
-- Identify security or network boundaries
+```mermaid
+K9s
+├── Cluster Navigation
+│ ├── Namespaces
+│ ├── Pods
+│ ├── Deployments & StatefulSets
+│ ├── Services & Ingress
+│ └── ConfigMaps & Secrets
+├── TA Skills
+│ ├── Review cluster state
+│ ├── Validate workloads & storage
+│ ├── Inspect logs & events
+│ └── Observe autoscaling & network
+└── SWE Skills
+├── Deploy/Manage workloads
+├── Debug & inspect pods
+├── Scale & rollout workloads
+└── Network & connectivity checks
+```
 
 ---
 
-## Pre-Requisites
+## Technical Skills
 
-| Action / Service       | What TA Needs to Gather / Confirm |
-|------------------------|----------------------------------|
-| Cluster Access         | kubeconfig, RBAC permissions, context name |
-| CLI Tools              | `kubectl` installed and configured |
-| Persistent Storage     | PV/PVCs provisioned and available |
-| ConfigMaps / Secrets   | Defined and accessible for workloads |
-| Node/Cluster Info      | Cluster size, node count, roles, and autoscaling config |
-| Networking             | CNI plugin used, service IP ranges, ingress rules |
-| Observability          | Prometheus/Grafana integration, logging enabled |
-
----
-
-## Business as Usual
+<Tabs>
+<TabItem value="skill" label="Skill">
 
 ```shell
 # ----------------------------
@@ -78,10 +64,6 @@ d      # delete
 # Sorting
 Shift + M  # sort by memory
 ```
-
-<Tabs>
-
-<TabItem value="ta" label="TA Skills">
 
 ```shell
 # ----------------------------
@@ -152,7 +134,45 @@ curl -k https://localhost:6443/healthz
 curl -k https://localhost:6443/metrics
 
 ```
-</TabItem> <TabItem value="swe" label="SWE Skills">
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with K9s**
+
+* How to formulate requirements when working with K9s
+* Determine clusters and contexts to monitor
+* Identify which namespaces and workloads need visibility
+* Define what logs, metrics, and events are required for monitoring
+* Confirm which RBAC permissions are needed for TA access
+* Establish workflows for investigating incidents and performing triage
+
+
+</TabItem>
+</Tabs>
+
+
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|----------------------------------|
+| Cluster Access         | kubeconfig, RBAC permissions, context name |
+| CLI Tools              | `kubectl` installed and configured |
+| Persistent Storage     | PV/PVCs provisioned and available |
+| ConfigMaps / Secrets   | Defined and accessible for workloads |
+| Node/Cluster Info      | Cluster size, node count, roles, and autoscaling config |
+| Networking             | CNI plugin used, service IP ranges, ingress rules |
+| Observability          | Prometheus/Grafana integration, logging enabled |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skills">
 
 ```shell
 
@@ -220,7 +240,18 @@ kubectl get events --field-selector=involvedObject.kind=Pod -n NAMESPACE
 kubectl get events --field-selector=involvedObject.kind=Deployment -n NAMESPACE
 
 ```
-</TabItem> </Tabs>
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+* How to formulate a plan for development
+* Determine which workloads, namespaces, and clusters require management via K9s
+* Document workflows for deployment, debugging, and scaling
+* Define alerting or monitoring touchpoints to integrate K9s usage
+* Provide TA handover: access levels, namespaces, and intended workflows for troubleshooting
+* Establish best practices for using K9s with CI/CD and cluster operations
+
+</TabItem>
+</Tabs>
 
 ---
 

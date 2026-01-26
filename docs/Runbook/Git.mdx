@@ -1,0 +1,166 @@
+---
+title: "Git"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Git
+**Git** is a distributed version control system used to track changes in source code, collaborate across teams, manage branches, and coordinate deployments.
+It solves problems related to source code history, collaboration, and version management.
+:::
+
+---
+## Technical Skills
+
+```mermaid
+Git
+├── Repositories
+│   ├── Clone
+│   ├── Remote configuration
+│   └── Forks
+├── Branching Strategies
+│   ├── Feature branches
+│   ├── GitFlow
+│   ├── Trunk-based development
+│   └── Release branches
+├── TA Skills
+│   ├── Inspect history & diffs
+│   ├── Validate workflows
+│   └── Identify risks/conflicts
+└── SWE Skills
+    ├── Commit & push
+    ├── Merge/rebase
+    ├── Tagging & releases
+    └── Conflict resolution
+````
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Git as a TA
+--------------
+
+# Clone repository and inspect structure
+git clone <repo_url>
+cd <repo_name>
+
+# Explore branches and commit history
+git branch -a
+git log --oneline --graph
+git show <commit_hash>
+
+# Compare changes
+git diff <commit1> <commit2>
+
+# Inspect remotes
+git remote -v
+
+# Validate workflows and recent changes
+git fetch
+git status
+
+# Review forks for contributions
+git remote show origin
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Git**
+
+* Gather repository URLs, branch structures, and ownership
+* Determine branching strategy (GitFlow, trunk-based, release branches)
+* Identify CI/CD integration points and PR policies
+* Collect commit/PR templates and required reviewers
+* Validate authentication methods (SSH, HTTPS tokens) and rotation policies
+* Establish what TAs need to provide engineers for merges, releases, or audits
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service     | What TA Needs to Gather / Confirm                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| Repository Access    | Repo URL, branch structure, owners/maintainers, read/write permissions, protected branches |
+| Authentication       | SSH keys, HTTPS tokens, OAuth, token/key validity and rotation, credential owner           |
+| Branching / Workflow | Naming conventions, mainline strategy, pull request process, code review requirements      |
+| Commit / PR Policies | Commit message/PR templates, pre-commit hooks, CI/CD enforcement, required reviewers       |
+| Optional Tooling     | IDE or GUI clients used (VS Code Git, SourceTree, GitKraken)                               |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Git
+--------------
+
+# Branching and workflow
+git checkout -b feature-branch
+git add .
+git commit -m "Description of changes"
+git push origin feature-branch
+
+# Collaboration
+git pull origin main
+git merge feature-branch
+git rebase main
+
+# Forking workflow
+# Fork repo to own namespace
+# Clone fork and add upstream remote
+git remote add upstream <original_repo_url>
+git fetch upstream
+git merge upstream/main
+
+# Resolve conflicts
+git status
+git diff
+# Edit files to resolve conflicts
+git add <file>
+git commit
+
+# Tagging and releases
+git tag -a v1.0 -m "Release v1.0"
+git push origin v1.0
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Identify which branches, forks, or tags are relevant for work
+* Document repository ownership and access for each branch
+* Establish merge/rebase strategy and release cadence
+* Define what TAs need to provide for branch merges, release verification, or CI/CD handover
+* Include guidance for handling conflicts and code reviews
+* Track compliance or audit requirements (commit history, PR approvals)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                     | TLDR of Root Cause                             | What to Check                                  | Action to Propose                          |
+| --------------------------- | ---------------------------------------------- | ---------------------------------------------- | ------------------------------------------ |
+| Cannot clone repository     | Wrong URL, network issue, or permission denied | Repository URL, network connectivity, SSH keys | Correct URL, check network, validate keys  |
+| Merge conflicts             | Concurrent edits to same files                 | `git status`, diff conflicting files           | Resolve conflicts manually, commit changes |
+| Push rejected               | Remote branch protected, missing commits       | Remote branch policy, `git log`                | Pull latest changes, rebase or merge       |
+| Detached HEAD               | Checked out commit instead of branch           | `git status`                                   | Checkout correct branch                    |
+| Untracked or missing files  | Files ignored, deleted, or not added           | `git status`, `.gitignore`                     | Add missing files, adjust `.gitignore`     |
+| Commit not showing remotely | Local changes not pushed                       | `git status`, `git log`                        | Push changes to remote                     |
+| Authentication fails        | SSH key or token expired/misconfigured         | `ssh -T git@host`, token validity              | Update SSH key or token                    |
+| Slow operations             | Large repo, large files, network latency       | Repo size, network performance                 | Shallow clone, optimize repo, use LFS      |

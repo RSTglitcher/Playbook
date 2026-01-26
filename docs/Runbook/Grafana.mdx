@@ -1,0 +1,138 @@
+---
+title: "Grafana"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Grafana
+**Grafana** is an open-source **visualization and analytics platform**.
+It is primarily used to **create dashboards, query metrics, and visualize time-series data** from sources like Prometheus, Loki, or InfluxDB, helping engineers and TAs monitor systems and detect anomalies.
+:::
+
+
+```mermaid
+Grafana
+├── Dashboards
+│   ├── Panels
+│   ├── Folders
+│   └── Queries
+├── Data Sources
+│   ├── Prometheus
+│   ├── Loki
+│   └── InfluxDB
+├── TA Skills
+│   ├── Review dashboards
+│   ├── Inspect alerts & notifications
+│   └── Audit access control & API keys
+└── SWE Skills
+    ├── Add/update data sources
+    ├── Create/modify dashboards
+    ├── Configure alerting rules
+    └── Automate via Grafana API
+````
+---
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use Grafana as a TA
+--------------
+
+# Log in via web UI or CLI
+# Review dashboards and panel layouts
+# Drill down into panels to investigate anomalies or trends
+# Review alert rules, thresholds, and notification channels
+# Check data sources and their scrape intervals
+# Validate dashboard ownership, folder structure, and access permissions
+# Audit panel queries for efficiency and correctness
+# Confirm alerts are firing and delivered to recipients
+# Identify missing metrics or misconfigured panels
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Grafana**
+
+* Identify which dashboards or visualizations are critical to monitor
+* Gather details on data sources, their owners, and scrape intervals
+* Determine alerting and notification requirements
+* Confirm user access roles and API key requirements
+* Establish what TAs need to provide to engineers for dashboard or alert maintenance
+* Validate compliance or audit requirements (log retention, dashboards history)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service        | What TA Needs to Gather / Confirm                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| Server / SaaS Setup     | Self-hosted or SaaS instance, URL/account link, provisioning status, instance owner        |
+| Access & Login          | Users, roles (Viewer/Editor/Admin), group memberships, SSO/local auth enabled              |
+| API Access              | API keys issued, expiration/rotation policies, scopes assigned                             |
+| Data Sources Config     | Connected sources (Prometheus, Loki, InfluxDB, etc.), owner, scrape intervals, permissions |
+| Dashboards / Panels     | Key dashboards, owners, panel documentation, folder/tagging structure                      |
+| Alerts & Notifications  | Configured alert rules, channels (Slack, PagerDuty, email), escalation policies, owners    |
+| Observability & Metrics | Internal metrics, audit logs, retention periods and owners                                 |
+| Environment / Network   | URL access restrictions (VPN/firewall), reverse proxy/load balancer, SLAs                  |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use Grafana
+--------------
+
+# Add or configure data sources
+# Create/update dashboards and panels
+# Define and update alerting rules
+# Export dashboards/JSON for version control
+# Integrate with notification channels (Slack, PagerDuty, email)
+# Apply user role management and permissions
+# Verify Grafana version --> grafana-server --version
+# List installed plugins --> grafana-cli plugins list
+# Install plugins --> grafana-cli plugins install <plugin-id>
+# Reset admin password --> grafana-cli admin reset-admin-password <pw>
+# Use API for automation:
+#   curl -H "Authorization: Bearer <API_TOKEN>" https://<grafana-url>/api/dashboards/home
+#   curl -H "Authorization: Bearer <API_TOKEN>" https://<grafana-url>/api/datasources
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Map all critical dashboards and data sources
+* Document ownership of dashboards, panels, and alert rules
+* Define engineering handover: API keys, access roles, folder structure
+* Include monitoring and alerting touchpoints for system issues
+* Specify rollback or remediation steps for misconfigured dashboards or failed alerts
+* Ensure compliance requirements are met (audit logs, retention, history)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom           | TLDR of Root Cause                                 | What to Check                                      | Action to Propose                            |
+| ----------------- | -------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| UI not loading    | Grafana server down or network issue               | Server logs, pod status (if K8s), firewall         | Restart server/pod, check network            |
+| Dashboards empty  | Data source misconfigured or unavailable           | Verify data source connection, scrape intervals    | Reconfigure source, validate credentials     |
+| Alerts not firing | Alert rules misconfigured or notifications blocked | Check alert rule evaluation, notification channels | Correct rules or channel settings            |
+| Slow performance  | High cardinality metrics or overloaded server      | Query performance, dashboard complexity            | Optimize queries, limit panels, scale server |
+| Access denied     | User role or API key issue                         | Check role, API key validity                       | Adjust roles, regenerate API key             |

@@ -1,0 +1,136 @@
+---
+title: "dbt"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip dbt
+dbt (data build tool) is a **data transformation tool** that enables analysts and engineers to transform raw data into a clean, analysis-ready format in the data warehouse.
+It solves problems related to **modular SQL, testing, version control, and reproducibility** of transformations.
+:::
+
+---
+## Technical Skills
+
+```mermaid
+dbt
+├── Project Structure
+│   ├── Models
+│   ├── Sources
+│   ├── Seeds
+│   └── Macros
+├── TA Skills
+│   ├── Inspect DAG & dependencies
+│   ├── Validate tests & data quality
+│   └── Assess impact of changes
+└── SWE Skills
+    ├── Run models
+    ├── Test & validate transformations
+    ├── Incremental runs
+    └── Documentation generation
+````
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use dbt as TA
+--------------
+
+# Review project structure, models, and sources
+# Examine DAG (directed acyclic graph) to understand model dependencies
+# Validate test coverage and data quality checks (uniqueness, not null)
+# Check source freshness and warehouse refresh schedule
+# Review pull requests or CI logs for failed runs
+# Inspect documentation generated via dbt
+dbt docs generate
+dbt docs serve
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with dbt**
+
+* Gather warehouse credentials and environment variables
+* Identify which models, sources, and tests are in scope
+* Collect DAG dependencies and assess downstream impact
+* Validate access control for environments (dev, staging, prod)
+* Determine CI/CD integration requirements (e.g., Git hooks, dbt Cloud jobs)
+* Establish what TAs need to provide engineers for troubleshooting, release verification, and handover
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service            | What TA Needs to Gather / Confirm                                               |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| Set-up                      | dbt installed locally / CI runners configured                                   |
+| Access & Login              | Warehouse credentials, environment variables, dbt Cloud account (if applicable) |
+| API                         | dbt Cloud API token if interacting programmatically                             |
+| Other tool-specific actions | Warehouse connectivity, Git repository containing dbt project, CI/CD setup      |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use dbt
+--------------
+
+# Run dbt models in development
+dbt run
+
+# Test dbt models
+dbt test
+
+# Compile SQL without execution
+dbt compile
+
+# Generate and serve documentation
+dbt docs generate
+dbt docs serve
+
+# Run models incrementally
+dbt run --models +model_name
+
+# Run only selected models
+dbt run --models tag:finance
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+* Identify which models, sources, and tags are relevant for work
+* Document DAG dependencies and their owners
+* Establish test coverage requirements for models and transformations
+* Define what TAs need to provide for model validation, release, or CI/CD handover
+* Track performance and warehouse resource usage for incremental runs
+* Include guidance for handling broken tests, failing runs, and documentation updates
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom                        | TLDR of Root Cause                            | What to Check                         | Action to Propose                                               |
+| ------------------------------ | --------------------------------------------- | ------------------------------------- | --------------------------------------------------------------- |
+| Models failing                 | SQL errors, missing tables, broken references | dbt run logs, warehouse schema        | Fix SQL, update references, rerun                               |
+| Tests failing                  | Data quality or constraints violated          | dbt test output, model source data    | Correct data or model logic, rerun tests                        |
+| DAG dependency broken          | Model dependency misconfigured or deleted     | dbt graph, DAG visualization          | Update dependencies, verify DAG, rerun                          |
+| Documentation not updating     | dbt docs generate not run or failed           | dbt docs logs, artifacts              | Regenerate docs and serve                                       |
+| CI/CD pipeline failing         | Git issues, environment misconfig             | CI logs, dbt profiles                 | Fix CI config, validate environment                             |
+| Slow runs / warehouse overload | Large incremental loads, high cardinality     | dbt run timing, warehouse performance | Optimize queries, shard incremental runs, adjust warehouse size |

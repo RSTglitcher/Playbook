@@ -1,0 +1,186 @@
+
+title: "Google Cloud Platform"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Google Cloud Platform (GCP)
+GCP is a **cloud platform** providing a wide range of services for computing, storage, analytics, and messaging. Key services include **BigQuery**, **Pub/Sub**, **BigTable**, **Cloud Storage**, **Compute Engine**, and more.
+:::
+
+```mermaid
+GCP
+├── Data Services
+│ ├── BigQuery
+│ ├── BigTable
+│ └── Cloud Storage
+├── Messaging Services
+│ └── Pub/Sub
+├── TA Skills
+│ ├── Inspect datasets, tables, topics, subscriptions
+│ ├── Validate IAM roles and access
+│ ├── Check scaling, quotas, and metrics
+│ └── Verify network/security config
+└── SWE Skills
+├── Run queries and load/export data
+├── Insert/query/update BigTable via `cbt`
+├── Publish/subscription to Pub/Sub
+└── Provision or modify resources (datasets, tables, topics)
+```
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|----------------------------------|
+| GCP Account & Project  | Project name/ID, billing status, organization/folder context, project owner |
+| Service Accounts       | Names of service accounts in use, roles/permissions granted, key management practices, expiration/rotation policies |
+| IAM Roles & Permissions| What roles are assigned to users and service accounts, are roles scoped appropriately, any custom roles to be aware of |
+| APIs & Enabled Services| Which APIs are enabled per project (BigQuery, Pub/Sub, BigTable, Cloud Storage, Secret Manager, etc.) |
+| BigQuery               | Dataset names, table schemas, partitioning/clustering setup, ownership, access patterns |
+| Pub/Sub                | Topics and subscriptions, consumer details, retention policies, dead-letter queues, alerting configuration |
+| BigTable               | Table names, column families, cluster configuration, node count/scaling rules, ownership |
+| Networking / Connectivity | VPCs, private endpoints, VPNs, firewall rules, network owners |
+| Logging & Observability | Cloud Logging / Monitoring enabled for services, dashboards, alerting thresholds, responsible teams |
+| Secrets & Credentials  | Secret Manager locations, access policies, rotation schedules |
+| Environment Variables  | Required env vars for SDKs or scripts (e.g., GOOGLE_PROJECT, GOOGLE_APPLICATION_CREDENTIALS) |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="bigquery" label="BigQuery">
+
+<Tabs>
+<TabItem value="ta-bq" label="TA Skills">
+
+```shell
+# List datasets in project
+bq ls
+
+# Inspect table metadata
+bq show PROJECT_ID:DATASET.TABLE
+
+# Check query jobs and costs
+bq ls -j --max_results=10
+
+# Validate dataset ownership and labels
+bq show --format=prettyjson PROJECT_ID:DATASET
+````
+
+</TabItem>
+<TabItem value="swe-bq" label="SWE Skills">
+
+```shell
+# Run a query
+bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM dataset.table'
+
+# Export data to Cloud Storage
+bq extract --destination_format CSV dataset.table gs://bucket/file.csv
+
+# Load data from Cloud Storage
+bq load --source_format CSV dataset.table gs://bucket/file.csv schema.json
+```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="pubsub" label="Pub/Sub">
+
+<Tabs>
+<TabItem value="ta-ps" label="TA Skills">
+
+```shell
+# List topics
+gcloud pubsub topics list
+
+# List subscriptions
+gcloud pubsub subscriptions list
+
+# Inspect topic and subscription configuration
+gcloud pubsub topics describe TOPIC_NAME
+gcloud pubsub subscriptions describe SUBSCRIPTION_NAME
+
+# Check IAM policies and retry/backlog settings
+gcloud pubsub subscriptions get-iam-policy SUBSCRIPTION_NAME
+```
+
+</TabItem>
+<TabItem value="swe-ps" label="SWE Skills">
+
+```shell
+# Publish message
+gcloud pubsub topics publish TOPIC_NAME --message "Hello World"
+
+# Pull messages from subscription
+gcloud pubsub subscriptions pull SUBSCRIPTION_NAME --limit=10 --auto-ack
+
+# Create topic/subscription
+gcloud pubsub topics create TOPIC_NAME
+gcloud pubsub subscriptions create SUBSCRIPTION_NAME --topic TOPIC_NAME
+
+# Delete topic/subscription
+gcloud pubsub topics delete TOPIC_NAME
+gcloud pubsub subscriptions delete SUBSCRIPTION_NAME
+```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="bigtable" label="BigTable">
+
+<Tabs>
+<TabItem value="ta-bt" label="TA Skills">
+
+```shell
+# List BigTable instances
+gcloud bigtable instances list
+
+# Inspect tables and clusters
+gcloud bigtable tables list --instance INSTANCE_NAME
+
+# Review IAM permissions for instance
+gcloud bigtable instances get-iam-policy INSTANCE_NAME
+
+# Check replication and performance metrics
+```
+
+</TabItem>
+<TabItem value="swe-bt" label="SWE Skills">
+
+```shell
+# Create a BigTable instance
+gcloud bigtable instances create INSTANCE_NAME --cluster=CLUSTER_NAME --cluster-zone=ZONE --display-name="Display Name" --instance-type=PRODUCTION
+
+# Create table
+gcloud bigtable tables create TABLE_NAME --instance INSTANCE_NAME
+
+# Insert data using cbt
+cbt set TABLE_NAME ROW_KEY COLUMN_FAMILY:QUALIFIER VALUE
+
+# Read data
+cbt lookup TABLE_NAME ROW_KEY
+```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom              | TLDR of Root Cause                          | What to Check                           | Action to Propose                          |
+| -------------------- | ------------------------------------------- | --------------------------------------- | ------------------------------------------ |
+| BigQuery query fails | SQL error or insufficient permissions       | Query syntax, dataset access            | Fix query, adjust IAM                      |
+| Pub/Sub message lost | Subscription misconfigured or consumer down | Subscription config, consumer logs      | Reconfigure subscription, restart consumer |
+| BigTable slow reads  | Hotspot or overloaded cluster               | Table splits, cluster size              | Reshard table, scale cluster               |
+| IAM access denied    | Missing roles or policies                   | `gcloud iam` policies, project bindings | Adjust IAM roles, grant permissions        |
+| API quota exceeded   | Too many requests                           | Quotas, logs                            | Request quota increase, throttle requests  |
