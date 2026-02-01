@@ -1,0 +1,157 @@
+---
+title: "Search & Indexing"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Search & Indexing concepts focus on **making large volumes of data discoverable, filterable, and explorable in near real time**.
+Unlike traditional databases or warehouses, search systems are optimised for **read-heavy, query-driven access patterns** such as text search, filtering, relevance ranking, and aggregation.
+
+These systems are commonly used to power:
+- Application search experiences
+- Log and event exploration
+- Operational dashboards
+- Monitoring, alerting, and observability workflows
+
+---
+
+## Core Search & Indexing Concepts
+
+### Indexing
+The process of transforming raw data into a structure optimised for fast retrieval.
+
+- Data is **pre-processed** at write time
+- Fields are tokenised, normalised, and stored in index structures
+- Write cost is traded for fast, flexible reads
+
+### Inverted Index
+A fundamental structure in search engines.
+
+- Maps **terms → documents**
+- Enables fast full-text search
+- Supports relevance scoring and ranking
+
+### Documents vs Rows
+Search systems store data as **documents**, not relational rows.
+
+- Semi-structured (JSON-like)
+- Schema-flexible
+- Optimised for retrieval, not joins
+
+### Query Types
+Search platforms support multiple query styles:
+- Full-text search
+- Structured filtering
+- Faceting and aggregations
+- Fuzzy matching and relevance scoring
+
+---
+
+## Search vs Databases vs Warehouses
+
+<details>
+<summary>Search vs Transactional Databases</summary>
+
+Why they are different:
+
+| Databases (OLTP) | Search & Indexing |
+|------------------|-------------------|
+| Strong consistency | Near-real-time consistency |
+| Normalised schemas | Denormalised documents |
+| Joins supported | Joins discouraged or limited |
+| Optimised for writes | Optimised for reads |
+
+</details>
+
+<details>
+<summary>Search vs Analytics / Warehousing</summary>
+
+Why search engines are not warehouses:
+
+| Warehouses | Search & Indexing |
+|-----------|-------------------|
+| Historical analysis | Operational querying |
+| Large batch queries | Low-latency queries |
+| BI & reporting | User-facing search |
+| SQL-based | DSL / JSON queries |
+
+</details>
+
+---
+
+## Common Use Cases
+
+- Free-text search across application data
+- Filtering and sorting large datasets
+- Log, trace, and metric exploration
+- Real-time operational analytics
+- Powering autocomplete and suggestions
+
+---
+
+## Architecture Characteristics
+
+- Distributed by default
+- Horizontally scalable
+- Data is partitioned (sharded)
+- Replication used for availability and performance
+- Eventual or near-real-time consistency
+
+---
+
+## How Search Systems Are Commonly Used
+
+<Tabs>
+<TabItem value="application" label="Application Search">
+
+Search engines embedded into applications to:
+- Search users, products, documents
+- Filter and sort results dynamically
+- Provide fast, user-facing responses
+
+</TabItem>
+
+<TabItem value="observability" label="Logs & Observability">
+
+Used as the backend for:
+- Log aggregation
+- Trace exploration
+- Alerting and dashboards
+
+</TabItem>
+
+<TabItem value="analytics" label="Operational Analytics">
+
+Supports:
+- Aggregations over recent data
+- Near-real-time metrics
+- Ad-hoc exploration (not long-term BI)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Where This Fits in the Theory Model
+
+Search & Indexing sits at the intersection of:
+
+- **Application Storage** – because it stores and serves data at runtime
+- **Performance & Scalability** – due to sharding, replication, and read optimisation
+- **Observability & Monitoring** – because logs and metrics rely heavily on search engines
+
+It is **not a replacement** for:
+- Relational databases
+- Data warehouses
+- Message brokers
+
+---
+
+## What Comes Next
+
+From here, specific technologies build on these concepts, such as:
+- Elasticsearch / OpenSearch
+- Search clusters and index lifecycle management
+- Relevance tuning and query optimisation
+- Operational concerns like scaling, failure modes, and cost control
