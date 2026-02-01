@@ -1,6 +1,6 @@
 ---
 title: "Principles"
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
@@ -162,8 +162,6 @@ Common in data processing, concurrency-heavy systems, and pipelines.
 </TabItem>
 </Tabs>
 
----
-
 ## Data Engineering Principles
 
 <Tabs>
@@ -172,12 +170,19 @@ Common in data processing, concurrency-heavy systems, and pipelines.
 Principles for transactional consistency.
 
 ### Atomicity
-### Consistency
-### Isolation
-### Durability
+A transaction is treated as a single, indivisible unit: it either completes fully or has no effect at all.
 
-Typical use: OLTP systems, financial workflows  
-Trade-off: Scalability and latency
+### Consistency
+Every transaction moves the database from one valid state to another, enforcing all rules, constraints, and invariants.
+
+### Isolation
+Concurrent transactions behave as if they were executed sequentially, preventing interference or partial visibility of intermediate states.
+
+### Durability
+Once a transaction is committed, its results persist even in the event of crashes, power loss, or system failures.
+
+**Typical use:** OLTP systems, financial workflows
+**Trade-off:** Scalability and latency
 
 </TabItem>
 
@@ -186,34 +191,37 @@ Trade-off: Scalability and latency
 Principles for large-scale distributed systems.
 
 ### Basically Available
-### Soft State
-### Eventually Consistent
+The system guarantees availability even under partial failures, though responses may be degraded or stale.
 
-Typical use: Distributed data stores  
-Trade-off: Immediate consistency
+### Soft State
+The system’s state may change over time without new input because of asynchronous replication or background processes.
+
+### Eventually Consistent
+Given enough time without new updates, all replicas converge to the same state.
+
+**Typical use:** Distributed data stores
+**Trade-off:** Immediate consistency
 
 </TabItem>
 
 <TabItem value="idempotency" label="Idempotency">
 
 ### Retries
-
-Operations can be safely retried.
+An operation can be executed multiple times with the same effect as executing it once, ensuring safe retries in unreliable or distributed environments.
 
 - Critical for distributed pipelines
 - Supports at-least-once delivery
 - Reduces failure impact
 
 </TabItem>
-
-<TabItem value="schema" label="Schema Management">
+ <TabItem value="schema" label="Schema Management">
 
 ### Read & Write
 
-- Schema-on-write → stronger guarantees
-- Schema-on-read → more flexibility
+- **Schema-on-write** → Data must conform before being stored; ensures quality, consistency, and strong governance.
+- **Schema-on-read** → Structure is applied when data is consumed; maximises flexibility and supports diverse use cases.
 
-TA focus:  
+**TA focus:**
 Governance vs agility trade-offs.
 
 </TabItem>
@@ -222,12 +230,14 @@ Governance vs agility trade-offs.
 
 ### Traceability
 
-- Data should be traceable end-to-end
-- Raw data should not change
-- Transformations should be reproducible
+- Data should be traceable end-to-end across ingestion, transformation, and consumption.
+- Raw data should remain immutable to preserve auditability and reproducibility.
+- Transformations should be deterministic and well-documented.
 
-TA signal:  
+**TA signal:**
 Essential for debugging, compliance, and trust.
 
 </TabItem>
+
 </Tabs>
+

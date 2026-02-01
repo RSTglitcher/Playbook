@@ -1,0 +1,228 @@
+---
+title: "ElasticSearch"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**ElasticSearch** is a **distributed search, analytics, and vector database engine** built on Apache Lucene.
+It indexes, searches, stores, and analyses large volumes of structured and unstructured data in near real-time.
+:::
+
+It is primarily concerned with **searching, filtering, aggregating, ranking, and analysing data efficiently at scale**.
+
+Typical examples include:
+- Full-text search across documents or logs
+- Log and event analytics (observability use cases)
+- Fast filtering and faceted navigation for applications
+- Product catalogue search with fast, relevant, up‑to‑date results
+- Vector similarity search for semantic or AI-driven use cases
+
+```mermaid
+[ Application Layer ]
+        |
+        v
+[ REST API / Client SDKs ]
+        |
+        v
+[ Elasticsearch Cluster ]
+   ├── Nodes
+   │     ├── Master-eligible nodes
+   │     ├── Data nodes
+   │     ├── Ingest nodes
+   │     └── Coordinating nodes
+   ├── Indices
+   │     ├── Shards (primary)
+   │     └── Replicas
+   └── Storage (Lucene segments)
+        |
+        v
+[ Kibana (visualisation & dashboards) ]
+
+```
+
+
+---
+
+## Benefit / What problem does it solve?
+
+Using ElasticSearch enables:
+
+- Fast, scalable **full-text search** across large datasets
+- Near real-time indexing and querying
+- Flexible schema design (schema‑on‑write or schema‑on‑read)
+- Ability to store **structured and unstructured** JSON documents
+- Aggregations and metrics without complex joins
+- Horizontal scalability and fault tolerance
+- Integration with **Kibana** for visualisation and analytics
+
+---
+
+## When to use
+
+Use ElasticSearch when:
+
+* You need **fast text search** with relevance scoring
+* You need **filtering and aggregation** over large datasets
+* You are analysing logs, events, metrics, or documents
+* You need near real-time indexing and querying
+* You want to store JSON documents with or without a predefined schema
+* You need vector search or semantic similarity
+
+**Do NOT use this tool when:**
+
+* Strong relational integrity and joins are required (use RDBMS)
+* Simple key-value lookups suffice
+* Data volume is small and static
+* ACID transactions are a hard requirement
+
+---
+
+## TA Skills Checklist
+
+- Identify **what data is being indexed and why**
+- Validate index design against query patterns
+- Understand shard and replica configuration
+- Review mappings for correctness and evolution risks
+- Assess query complexity and performance impact
+- Identify governance risks (PII, retention, access)
+- Confirm whether schema is defined or dynamic and assess risks
+- Ensure indexing strategy supports real-time requirements
+
+---
+
+## Key Terminology & Definitions
+
+- **Document** – The smallest unit of information stored in Elasticsearch.
+  A JSON object containing multiple fields (key–value pairs).
+
+- **Index** – A logical collection of documents with a shared schema or purpose.
+  Similar to a table in relational databases.
+
+- **Shard** – A physical partition of an index.
+
+- **Replica** – A copy of a shard for fault tolerance and read scaling.
+
+- **Inverted Index** – Data structure enabling fast full-text search.
+
+- **Mapping** – Schema definition for fields and data types.
+
+- **Analyzer** – Controls how text is tokenised and normalised.
+
+- **Query vs Filter** – Queries score relevance; filters match exactly.
+
+- **Vector Database Capability** – Supports storing and querying vector embeddings for semantic search.
+
+---
+
+## Variants / Types
+
+<Tabs>
+<TabItem value="search" label="Search Engine">
+
+- Optimised for full-text queries
+- Uses inverted indexes and relevance scoring
+- Supports fuzzy matching, stemming, synonyms
+- Primary use: user-facing search (e.g., product catalogues)
+
+</TabItem>
+
+<TabItem value="analytics" label="Analytics Engine">
+
+- Aggregations over large datasets
+- Time-based indexing patterns
+- Common in observability stacks
+- Primary use: metrics, logs, dashboards (via Kibana)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="indexing" label="Index Design Strategy">
+
+- Design indexes around query patterns
+- Control shard count early (hard to change later)
+- Use mappings deliberately (avoid dynamic chaos)
+- Balance write vs read performance
+- Consider schema flexibility (defined vs dynamic)
+
+</TabItem>
+
+<TabItem value="querying" label="Query Strategy">
+
+- Prefer filters for exact matching
+- Use queries when relevance matters
+- Limit wildcard and regex usage
+- Profile slow queries early
+- Use vector queries for semantic search where appropriate
+
+</TabItem>
+</Tabs>
+
+---
+
+## How to Interact With It
+
+- **Access pattern:** Query-based
+- **Operations / Interfaces:** REST API, JSON DSL, SDKs
+- **Interaction model:** Applications, pipelines, dashboards
+- **Common APIs:** `_search`, `_bulk`, `_index`, `_mapping`, `_cat`
+- **Data ingestion:** Applications send JSON payloads directly to the cluster
+
+---
+
+## What Do Results Normally Look Like
+
+- Ranked search hits with relevance scores
+- Aggregation buckets and metrics
+- Time-series results for observability
+- Partial matches and fuzzy results
+- Vector similarity scores (if using vector search)
+
+**Notes:**
+Results are JSON-based and often nested. Interpretation depends on query type (match vs filter vs aggregation). Relevance scores are contextual rather than absolute.
+
+## Cheat Sheet
+
+### Core Concepts
+- **Document** → JSON record (smallest unit of data)
+- **Index** → Collection of documents (like a table)
+- **Shard** → Physical partition of an index
+- **Replica** → Copy of a shard for resilience
+- **Mapping** → Schema definition for fields
+- **Analyzer** → Controls tokenisation and text processing
+- **Cluster** → Group of nodes working together
+
+### Common REST Endpoints
+- `GET /_search` → Query an index
+- `POST /index/_doc` → Index a document
+- `POST /_bulk` → Bulk indexing
+- `GET /_cat/indices` → List indices
+- `GET /index/_mapping` → View mapping
+- `DELETE /index` → Delete an index
+
+### Query Types
+- **match** → Full-text search
+- **term** → Exact match
+- **bool** → Combine must/should/filter
+- **range** → Numeric/date ranges
+- **aggregations** → Metrics, buckets, histograms
+
+### Indexing Tips
+- Choose shard count early
+- Avoid dynamic mappings unless necessary
+- Use keyword fields for exact matches
+- Use text fields for full-text search
+- Use templates for consistent index creation
+
+### Performance Tips
+- Prefer filters (cached) over queries when relevance isn’t needed
+- Avoid leading wildcards
+- Use pagination carefully (`search_after` > `from/size`)
+- Profile slow queries with `/_profile`

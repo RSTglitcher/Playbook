@@ -7,146 +7,334 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Concept Overview
-**Data Structures and Algorithms** define how data is organised, accessed, and transformed.
-For a Technical Analyst, they explain performance characteristics, scalability limits, and why certain design choices behave the way they do.
+**Data Structures and Algorithms** describe how data is organised, accessed, and transformed.
+
+For a Technical Analyst, they explain:
+- Why systems behave the way they do  
+- Where performance bottlenecks come from  
+- How to reason about scalability without reading code  
 :::
 
 ---
 
-## Why This Matters for a Technical Analyst
+# Why This Matters for a Technical Analyst
 
-Understanding data structures helps a TA:
+A TA uses data‑structure knowledge to:
 
-- Predict performance and scalability issues
-- Interpret Big-O discussions without reading code
-- Identify inefficient data access patterns
-- Ask better questions during design and incident reviews
+- Predict performance issues before they appear  
+- Spot inefficient access patterns in designs  
+- Understand Big‑O discussions at a behavioural level  
+- Ask sharper questions during reviews and incidents  
 
-A TA does **not** need to memorise syntax—but must understand **behaviour and trade-offs**.
+You don’t need implementation detail — you need **intuition, trade‑offs, and system impact**.
+
+---
+
+# Pattern Recognition for Data Structures
+
+A TA should recognise **problem shapes** and map them to the right structure:
+
+| Problem Shape | Likely Structure |
+|---------------|------------------|
+| Need fast lookup by key | Map / Dictionary |
+| Need uniqueness | Set |
+| Need ordering | List / Array |
+| Need FIFO | Queue |
+| Need LIFO | Stack |
+| Need hierarchical relationships | Tree |
+| Need network/relationship modelling | Graph |
+| Need sorted data with fast inserts | Balanced tree / Heap |
 
 ---
 
 <Tabs>
-<TabItem value="structure" label="Data Structures">
 
-## Data Types
+<TabItem value="structures" label="Data Structures">
 
-### Primitive vs Reference Types
+# Core Mental Models
 
-| Category | Description | TA Relevance |
-|--------|-------------|--------------|
-| **Primitive** | Fixed-size values directly representing data (e.g. numbers, booleans) | Fast, predictable memory usage |
-| **Reference** | Pointers to objects stored elsewhere in memory | Flexibility, but memory and lifecycle complexity |
+## 1. Primitive vs Reference Types
 
-**Key distinction:**
-Primitives represent *values*; references represent *locations*.
-
----
-
-## Common Data Types
-
-```shell
-| Type | Characteristics | Notes |
-|-----|----------------|-------|
-| Integer / Long | Whole numbers | Overflow and size matter |
-| Float / Double | Decimal numbers | Precision errors possible |
-| Boolean | True / False | Often used in conditionals |
-| String | Immutable sequence of characters | Changes create new objects |
-| List / Array | Ordered collection | Indexed access |
-| Tuple | Ordered, immutable collection | Safer for fixed structures |
-| Dictionary / Map | Key–value pairs | Fast lookup by key |
-| Set | Unique values only | Prevents duplicates |
+### Diagram
+```
+Primitive:  [ 42 ]
+Reference:  [ ptr ] --> [ Object in Heap ]
 ```
 
-**TA signal:**
-Immutability improves safety but increases memory usage.
+| Category | Behaviour | TA Insight |
+|---------|-----------|------------|
+| **Primitive** | Stored directly, fixed size | Predictable memory, fast operations |
+| **Reference** | Pointer to heap object | Flexibility but GC/heap overhead |
+
+**TA takeaway:**  
+Reference-heavy designs increase GC pressure and memory churn.
 
 ---
 
-## Core Collections (Behavioural View)
+# 2. Collections (Behavioural View)
 
-| Structure | Ordered | Duplicates | Lookup Speed | Typical Use Case |
-|---------|--------|------------|--------------|------------------|
-| Array | Yes | Yes | Fast by index | Fixed-size data |
-| List | Yes | Yes | Slower search | Dynamic collections |
-| Set | No | No | Fast membership checks | Uniqueness enforcement |
-| Map / Dictionary | No | Keys unique | Fast by key | Key-based access |
-| Queue | Yes | Yes | FIFO | Task scheduling |
-| Stack | Yes | Yes | LIFO | Call stacks, undo |
+## Arrays / Lists
 
-**TA takeaway:**
-Choosing the wrong structure often causes performance problems—not bad algorithms.
+### Diagram
+```
+Index → 0  1  2  3
+        [A][B][C][D]
+```
+
+**Strengths:**  
+- Fast indexed access  
+- Good for sequential scans  
+
+**Weaknesses:**  
+- Inserts/deletes are expensive  
+- Resizing can be costly  
+
+**Use When:**  
+- Order matters  
+- Data size is predictable  
 
 ---
 
-## Data Structures & Performance (Big-O Intuition)
+## Sets
 
-```shell
+### Diagram
+```
+{ A, B, C }   // No duplicates
+```
+
+**Strengths:**  
+- Fast membership checks  
+- Enforces uniqueness  
+
+**Weaknesses:**  
+- No ordering  
+- Hashing overhead  
+
+**Use When:**  
+- Deduplication  
+- Fast “contains?” checks  
+
+---
+
+## Maps / Dictionaries
+
+### Diagram
+```
+Key → Value
+A   → 1
+B   → 2
+```
+
+**Strengths:**  
+- O(1) average lookup  
+- Natural modelling for keyed data  
+
+**Weaknesses:**  
+- Hash collisions degrade performance  
+- Memory overhead  
+
+**Use When:**  
+- Fast lookup by identifier  
+- Caching, indexing, metadata  
+
+---
+
+## Queues (FIFO)
+
+### Diagram
+```
+Front → [A][B][C] → Back
+```
+
+**Use When:**  
+- Task scheduling  
+- Message processing  
+- Pipelines  
+
+---
+
+## Stacks (LIFO)
+
+### Diagram
+```
+Top → [C]
+       [B]
+       [A]
+```
+
+**Use When:**  
+- Undo operations  
+- Expression evaluation  
+- Depth-first traversal  
+
+---
+
+# 3. Trees & Graphs (TA-Level Intuition)
+
+## Trees
+
+### Diagram
+```
+      A
+     / \
+    B   C
+```
+
+**Use When:**  
+- Hierarchical data  
+- Indexing (B‑trees)  
+- Searching (binary search trees)  
+
+**TA signal:**  
+Tree depth affects lookup time.
+
+---
+
+## Graphs
+
+### Diagram
+```
+A — B — C
+ \     /
+   D
+```
+
+**Use When:**  
+- Networks  
+- Dependencies  
+- Relationships  
+
+**TA signal:**  
+Cycles and connectivity affect traversal cost.
+
+---
+
+# 4. Big‑O Intuition (TA Edition)
+
+You don’t need formulas — you need **shapes**.
+
 | Operation | Array/List | Set | Map |
-|---------|------------|-----|-----|
+|-----------|------------|-----|-----|
 | Lookup | O(n) | O(1) | O(1) |
 | Insert | O(n) | O(1) | O(1) |
 | Delete | O(n) | O(1) | O(1) |
-```
 
-*(Average case; implementation matters)*
-
-**TA focus:**
-Performance problems often come from repeated linear scans.
+**TA takeaway:**  
+Repeated linear scans (O(n)) are the root cause of many performance issues.
 
 </TabItem>
 
 <TabItem value="algorithms" label="Algorithms">
 
-## What Is an Algorithm?
+# Algorithm Mental Models
 
-An **algorithm** is a step-by-step procedure for transforming input into output.
+## What an Algorithm Really Is
+A **procedure** for transforming input → output with predictable cost.
 
 For a TA, algorithms matter because they define:
-- Time complexity
-- Space usage
-- Failure behaviour at scale
+- Time complexity  
+- Space usage  
+- Behaviour under load  
 
 ---
 
-## Common Algorithm Categories
+# Core Algorithm Categories
 
-```shell
-| Category | Purpose | Example |
-|--------|--------|---------|
-| Searching | Find data | Linear search, binary search |
-| Sorting | Order data | Quick sort, merge sort |
-| Traversal | Visit elements | Tree/graph traversal |
-| Aggregation | Reduce data | Sum, count, group |
-| Filtering | Select data | Predicate-based filtering |
+## Searching
+
+### Diagram
+```
+Linear: A → B → C → D
+Binary:     [mid]
 ```
 
+**TA signal:**  
+Binary search requires sorted data.
+
 ---
 
-## Algorithmic Trade-offs
+## Sorting
 
-- Speed vs memory usage
-- Simplicity vs optimisation
-- Pre-computation vs runtime cost
-- Accuracy vs approximation
+### Diagram
+```
+Unsorted → [C, A, D, B]
+Sorted   → [A, B, C, D]
+```
 
-**TA signal:**
-Algorithms optimised for small datasets often fail at scale.
+**TA signal:**  
+Sorting cost dominates many pipelines.
+
+---
+
+## Traversal (Trees/Graphs)
+
+### Diagram
+```
+DFS: Deep first
+BFS: Level by level
+```
+
+**TA signal:**  
+DFS uses stack; BFS uses queue → memory behaviour differs.
+
+---
+
+## Aggregation
+
+Examples: sum, count, group-by.
+
+**TA signal:**  
+Aggregation cost grows with dataset size; grouping can explode memory.
+
+---
+
+## Filtering
+
+**TA signal:**  
+Filtering early reduces downstream cost (“pushdown predicates”).
+
+---
+
+# Algorithmic Trade-offs
+
+- Speed vs memory  
+- Precomputation vs runtime cost  
+- Accuracy vs approximation  
+- Simplicity vs optimisation  
+
+**TA takeaway:**  
+Algorithms optimised for small datasets often collapse at scale.
 
 </TabItem>
 
 <TabItem value="logic" label="Conditionals & Logic">
 
-## Conditional Operators
+# Conditionals & Branching
+
+## Why It Matters
+- Branching affects CPU prediction  
+- Deep conditional trees reduce readability  
+- Complex logic often hides bugs  
+
+### Diagram
+```
+if → else → else if → else
+```
+
+**TA signal:**  
+Complex conditionals often indicate missing abstractions or unclear domain rules.
+
+---
+
+## Common Operators
 
 ```shell
-
 | Operator | Meaning |
-|--------|--------|
-| > | Greater than |
-| >= | Greater than or equal |
-| < | Less than |
-| <= | Less than or equal |
+|--------|---------|
+| >  | Greater than |
+| >= | Greater or equal |
+| <  | Less than |
+| <= | Less or equal |
 | == | Equal |
 | != | Not equal |
 | AND | All conditions true |
@@ -154,48 +342,40 @@ Algorithms optimised for small datasets often fail at scale.
 | NOT | Negates condition |
 ```
 
----
-
-## Why This Matters
-
-- Branching logic affects performance
-- Deep conditional trees reduce readability
-- Poorly structured conditionals hide bugs
-
-**TA signal:**
-Complex conditionals often indicate missing abstractions.
-
 </TabItem>
 
 <TabItem value="uml" label="UML & Structure">
 
-## UML Visibility & Relationships
+# UML for TAs (Structural Reasoning)
 
-```shell
+## Visibility & Relationships
+
 | Symbol | Meaning | Purpose |
-|------|--------|--------|
+|--------|---------|---------|
 | + | Public | Exposed to all |
-| # | Protected | Accessible to subclasses |
-| - | Private | Internal only |
-| Interface | Dotted line | Contract definition |
-| Abstract | Italic / marked | Cannot be instantiated |
+| # | Protected | Subclasses only |
+| - | Private | Internal |
+| Interface | Dotted line | Contract |
+| Abstract | Italic | Cannot instantiate |
 | Aggregation | White diamond | Loose ownership |
 | Composition | Black diamond | Strong ownership |
-| Static | Underlined | Class-level member |
-```
+| Static | Underlined | Class-level |
 
 ---
 
 ## Why UML Still Matters
 
-For TAs, UML:
-- Provides a shared visual language
-- Helps reason about ownership and coupling
-- Is useful for reviews and documentation
+UML helps a TA:
 
-**TA focus:**
-UML clarifies *intent*, not implementation.
+- Understand ownership  
+- See coupling and dependencies  
+- Communicate structure quickly  
+- Clarify intent without code  
+
+**TA takeaway:**  
+UML is a thinking tool, not a documentation burden.
 
 </TabItem>
+
 </Tabs>
 

@@ -7,138 +7,321 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Concept Overview
-**Conditionals** control the flow of logic in programs and systems.
-For a Technical Analyst, understanding conditionals allows you to:
-- Represent scenarios to engineers clearly
-- Predict execution paths
-- Discuss correctness, failure modes, and edge cases
-- Translate requirements into implementation discussions
+**Conditionals** define how systems make decisions.
+
+For a Technical Analyst, the goal is not to write conditionals, but to **communicate decision rules clearly**, so engineers can implement them correctly and safely.
 :::
 
 ---
 
-## Why Conditionals Matter for a TA
+# Why Conditionals Matter for a TA
 
-Conditionals are everywhere:
+Conditionals drive:
 
-- Feature toggles and configuration
-- Workflow branching
-- Data validation
-- Error handling
+- Feature toggles  
+- Workflow branching  
+- Data validation  
+- Error handling  
+- Retry logic  
+- Access control  
 
-A TA who understands conditionals can **model scenarios without coding**, highlight edge cases, and ask the right questions during reviews or incidents.
+A TA must be able to:
+
+- Describe **decision rules** unambiguously  
+- Highlight **edge cases**  
+- Identify **missing conditions**  
+- Predict **execution paths**  
+- Communicate logic in a way engineers can translate directly into code  
 
 ---
 
-### BOOLEAN
-if test 5 -gt 3
-   then echo $
+# How a TA Communicates Conditional Behaviour
+
+A TA should describe conditional logic using a **structured, implementation‑agnostic format**:
+
+### TA Format: Decision Rule Template
+```
+WHEN <condition>
+AND/OR <additional conditions>
+THEN <expected behaviour>
+ELSE <fallback behaviour>
+```
+
+### Example (TA → Engineer)
+**TA description:**
+```
+WHEN the user is logged in
+AND their subscription is active
+THEN allow access to premium features
+ELSE redirect to the subscription page
+```
+
+**Engineer implementation (example in Bash):**
+```bash
+if [[ $isLoggedIn == true && $subscription == "active" ]]; then
+    enable_premium_features
+else
+    redirect_to_subscription
 fi
-
-### IF
-
-```
-   if ______
-   then
-      __echo__
-   else
-      __echo__
-   fi
 ```
 
+This pairing is the core of the page.
 
-```
-   if __command1__
-   then
-      __echo__
-   elif __command2__
-   then
-      __echo__
-   else
-      __echo__
-   fi
-```
+---
 
-### CASE
+# Conditional Patterns (TA → Engineer)
 
+<Tabs>
+
+<TabItem value="if" label="IF / ELSE">
+
+## 1. IF / ELSE — Binary Decisions
+
+### TA Pattern
 ```
-   case value in
-      pattern1)
-      code;;
-      pattern2)
-      code;;
-      patternN)
-      code;;
-      *)
-         code;;
-   esac
+WHEN <condition>
+THEN <action>
+ELSE <alternative>
 ```
 
-### FLOW CONTROL - FOR/WHILE/UNTIL
-
+### Example (TA)
 ```
-   for i in 1 2 3 4 5 6 7 8 9 10
-      do
-         echo $i
-      done
+WHEN file size > 10MB
+THEN compress before upload
+ELSE upload directly
 ```
 
-##FOR
-
-```
-   for ((i=1; i<=10; i++))
-      do
-         echo $i
-      done
-```
-
-
-##WHILE
-A while loop executes until the condition becomes false
-Break - terminates the loop
-Continue - terminates the current iteration
-
-```
-   while [$x-lt5]
-      do
-         echo $x
-         ((x++))
-      done
+### Engineer Implementation
+```bash
+if [[ $fileSize -gt 10000000 ]]; then
+    compress "$file"
+else
+    upload "$file"
+fi
 ```
 
+---
+
+## 2. IF / ELIF / ELSE — Multi‑branch Decisions
+
+### TA Pattern
 ```
-   while [True]
-      do
-         echo ' '
-         read -p ' ' pin
-         if [  ]
-            then
-               echo '  '
-         else
-            break
-         fi
-      done
-      echo '    '
+WHEN <condition A>
+THEN <action A>
+WHEN <condition B>
+THEN <action B>
+ELSE <fallback>
 ```
 
-##UNTIL
-An until loop executes until the condition becomes true
-
+### Example (TA)
 ```
-   until [condition]
-      do
-         command
-      done
+WHEN status = "new"
+THEN send welcome email
+
+WHEN status = "active"
+THEN show dashboard
+
+ELSE show onboarding flow
 ```
 
-### FUNCTIONS
-
+### Engineer Implementation
+```bash
+if [[ $status == "new" ]]; then
+    send_welcome
+elif [[ $status == "active" ]]; then
+    show_dashboard
+else
+    show_onboarding
+fi
 ```
-functionName(){
-   code e.g. echo$1
-   code e.g. echo$2
+
+</TabItem>
+
+<TabItem value="case" label="CASE / SWITCH">
+
+# CASE / SWITCH — Category‑Based Decisions
+
+### TA Pattern
+```
+WHEN value is <category1> → do <action1>
+WHEN value is <category2> → do <action2>
+OTHERWISE → <fallback>
+```
+
+### Example (TA)
+```
+WHEN file type = "csv" → parse as table
+WHEN file type = "json" → parse as object
+OTHERWISE → reject file
+```
+
+### Engineer Implementation
+```bash
+case "$fileType" in
+    csv)
+        parse_csv "$file"
+        ;;
+    json)
+        parse_json "$file"
+        ;;
+    *)
+        reject_file "$file"
+        ;;
+esac
+```
+
+</TabItem>
+
+<TabItem value="loops" label="Loops (FOR / WHILE / UNTIL)">
+
+# Loops — Repeated Conditional Behaviour
+
+Loops are conditional logic that repeats until a rule changes.
+
+---
+
+## 1. FOR — Known Iteration Count
+
+### TA Pattern
+```
+FOR EACH <item> IN <collection>
+DO <action>
+```
+
+### Example (TA)
+```
+FOR EACH user in the list
+DO send reminder email
+```
+
+### Engineer Implementation
+```bash
+for user in "${users[@]}"; do
+    send_reminder "$user"
+done
+```
+
+---
+
+## 2. WHILE — Repeat WHILE condition is true
+
+### TA Pattern
+```
+WHILE <condition is true>
+DO <action>
+STOP WHEN <condition becomes false>
+```
+
+### Example (TA)
+```
+WHILE retries < 3
+DO attempt connection
+STOP WHEN connection succeeds
+```
+
+### Engineer Implementation
+```bash
+while [[ $retries -lt 3 ]]; do
+    attempt_connection && break
+    ((retries++))
+done
+```
+
+---
+
+## 3. UNTIL — Repeat UNTIL condition becomes true
+
+### TA Pattern
+```
+REPEAT <action>
+UNTIL <condition becomes true>
+```
+
+### Example (TA)
+```
+REPEAT check queue size
+UNTIL queue size = 0
+```
+
+### Engineer Implementation
+```bash
+until [[ $(queue_size) -eq 0 ]]; do
+    check_queue
+done
+```
+
+</TabItem>
+
+<TabItem value="functions" label="Functions">
+
+# Functions — Encapsulating Conditional Logic
+
+A TA often describes **rules**, and engineers encapsulate them into functions.
+
+### TA Pattern
+```
+DEFINE function <name>:
+    WHEN <condition>
+    THEN <action>
+    ELSE <fallback>
+```
+
+### Example (TA)
+```
+DEFINE function validate_pin:
+    WHEN pin length = 4 AND all digits
+    THEN accept
+    ELSE reject
+```
+
+### Engineer Implementation
+```bash
+validate_pin() {
+    local pin="$1"
+    if [[ ${#pin} -eq 4 && $pin =~ ^[0-9]+$ ]]; then
+        echo "valid"
+    else
+        echo "invalid"
+    fi
 }
-functionName Parameter1 Parameter2
 
-echo 'My name is' $(functionName)
+validate_pin "1234"
 ```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# TA Checklist for Communicating Conditionals
+
+A TA should ensure:
+
+- All conditions are explicit  
+- No ambiguous terms (“usually”, “sometimes”, “if appropriate”)  
+- Edge cases are listed  
+- Fallback behaviour is defined  
+- Order of evaluation is clear  
+- Mutually exclusive vs overlapping conditions are identified  
+- Failure modes are described  
+
+### TA Example
+```
+WHEN payment fails due to network error
+THEN retry up to 3 times
+ELSE IF payment fails due to card decline
+THEN notify user
+ELSE escalate to support
+```
+
+---
+
+# Summary
+
+This page now gives you:
+
+- A **TA‑first way** to express conditional logic  
+- **Paired engineering templates** for translation  
+- Clear patterns for IF, CASE, loops, and functions  
+- A reusable structure for design reviews and incident analysis  

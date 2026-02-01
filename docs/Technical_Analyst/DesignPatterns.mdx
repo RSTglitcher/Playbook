@@ -1,163 +1,336 @@
 ---
-title: Design Patterns
-sidebar_position: 4
+title: "Design Patterns"
+sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
-:::tip Concept Overview
-**Design Patterns** are proven, reusable approaches to solving common software design problems, providing shared language and structure without prescribing specific implementations.
-:::
+A fast, decision‑oriented reference for recognising and applying common design patterns.  
+Each pattern includes: **intent → when to use → diagram → trade-offs → TA lens → examples**.
 
 ---
 
-## What Problem Does This Concept Address?
+## 🧭 Pattern Decision Map
 
-As systems grow:
-
-- Similar design problems appear repeatedly
-- Ad-hoc solutions increase inconsistency and technical debt
-- Knowledge becomes trapped in individual teams or codebases
-
-Design patterns exist to:
-
-- Capture proven solutions to recurring problems
-- Provide a shared vocabulary across teams
-- Improve maintainability, readability, and adaptability of systems
-
----
-
-## Core Principles
-
-- **Separation of Concerns** – Isolate responsibilities to reduce coupling
-- **Abstraction** – Depend on interfaces, not concrete implementations
-- **Encapsulation** – Hide internal complexity behind stable contracts
-- **Composability** – Build complex behaviour from simple components
-- **Change Tolerance** – Localise the impact of future change
+| Problem Shape | Consider These Patterns |
+|---------------|-------------------------|
+| Need to swap behaviour | Strategy, State |
+| Need to notify many listeners | Observer, Pub/Sub |
+| Need to simplify a complex API | Facade |
+| Need to adapt incompatible interfaces | Adapter |
+| Need to build complex objects | Builder |
+| Need a single shared instance | Singleton |
+| Need to control object creation | Factory Method |
+| Need to add behaviour dynamically | Decorator |
 
 ---
 
-## Why This Matters for a Technical Analyst
-
-For a TA, design patterns:
-
-- Explain *why* systems are structured the way they are
-- Help identify intended extensibility and constraints
-- Provide early warning signs of over-engineering or misuse
-- Enable clearer conversations with engineers without diving into code
-
-A TA does not need to memorise patterns, but **must recognise them and their implications**.
+# Creational Patterns
 
 ---
 
-## Major Categories of Design Patterns
+## Singleton
 
-<Tabs>
-<TabItem value="creational" label="Creational Patterns">
+**Intent:** Ensure only one instance exists and provide global access.
 
-Focus on **how objects or components are created**.
+**Use When:**  
+- You need a single source of truth  
+- Object creation is expensive  
+- Global coordination is required  
 
-- Abstract creation logic
-- Control lifecycle and dependencies
-- Reduce tight coupling to concrete implementations
+```mermaid
++------------------+
+|   Singleton      |
+|------------------|
+|  getInstance()   |
++------------------+
+        |
+        v
+   [Single Object]
+```
 
-**Common examples:**
-- Factory
-- Builder
-- Singleton
+**Trade-offs:**  
+- ✔ Simple global access  
+- ✔ Prevents duplicate state  
+- ✘ Harder to test  
+- ✘ Hidden dependencies  
 
-**Typical use cases:**
-- Complex object construction
-- Environment-specific implementations
-- Dependency management
+**TA Lens:**  
+Useful when evaluating centralised components (config managers, connection pools).
 
-</TabItem>
-
-<TabItem value="structural" label="Structural Patterns">
-
-Focus on **how components are composed**.
-
-- Organise relationships between parts
-- Adapt incompatible interfaces
-- Simplify complex subsystems
-
-**Common examples:**
-- Adapter
-- Facade
-- Decorator
-- Proxy
-
-**Typical use cases:**
-- Integrating legacy systems
-- Layering APIs
-- Adding behaviour without modification
-
-</TabItem>
-
-<TabItem value="behavioral" label="Behavioral Patterns">
-
-Focus on **how components interact**.
-
-- Control communication flow
-- Encapsulate algorithms or workflows
-- Reduce tight coupling between collaborators
-
-**Common examples:**
-- Observer
-- Strategy
-- Command
-- Chain of Responsibility
-
-**Typical use cases:**
-- Event-driven systems
-- Pluggable business logic
-- Workflow orchestration
-
-</TabItem>
-</Tabs>
+**Examples:**  
+- Database connection manager  
+- Global configuration registry  
 
 ---
 
-## Practical Signals to Look For
+## Factory Method
 
-**As a TA, consider design patterns when you see:**
+**Intent:** Delegate object creation to subclasses.
 
-- Repeated logic across services or components
-- Conditional-heavy code paths controlling behaviour
-- Tight coupling that blocks change
-- Rapidly growing complexity around a single responsibility
-- Requirements for extensibility or customisation
+**Use When:**  
+- Object creation varies by context  
+- You want consistent construction logic  
+- You want to avoid scattered `new` calls  
+
+```mermaid
+Creator
++----------------------+
+| factoryMethod()      |
++----------------------+
+          |
+          v
+   Product (interface)
+      ^          ^
+      |          |
+ ProductA    ProductB
+```
+
+**Trade-offs:**  
+- ✔ Centralised creation logic  
+- ✔ Supports extensibility  
+- ✘ More indirection  
+- ✘ Can be overused  
+
+**TA Lens:**  
+Useful for plugin systems, connectors, and integration points.
+
+**Examples:**  
+- Cloud provider SDKs  
+- Storage client factories  
 
 ---
 
-## Key Trade-offs & Tensions
+## Builder
 
-- Simplicity vs flexibility
-- Explicitness vs abstraction
-- Reuse vs over-generalisation
-- Performance vs indirection
-- Pattern reuse vs domain clarity
+**Intent:** Construct complex objects step-by-step.
 
-Patterns solve problems—but they also **introduce structure that must be maintained**.
+**Use When:**  
+- Objects have many optional parameters  
+- Construction logic is complex  
+- You want readable, fluent creation  
+
+```mermaid
+Director ----> Builder Interface
+                  |
+        ---------------------
+        |         |         |
+   BuilderA   BuilderB   BuilderC
+```
+
+**Trade-offs:**  
+- ✔ Clear construction  
+- ✔ Avoids telescoping constructors  
+- ✘ More classes  
+- ✘ Can be verbose  
+
+**TA Lens:**  
+Useful when evaluating APIs that assemble complex configurations (pipelines, queries).
+
+**Examples:**  
+- SQL query builders  
+- Cloud resource configuration builders  
 
 ---
 
-## Questions a TA Should Ask
-
-- “What problem is this pattern solving?”
-- “Is this pattern driven by real requirements or anticipated ones?”
-- “What change does this design make easy—and what does it make hard?”
-- “Is the pattern visible and understandable to new team members?”
-
+# Structural Patterns
 
 ---
 
-## How This Shows Up in Real Systems
+## Adapter
 
-- **Microservices** – Strategy, Adapter, Facade patterns
-- **Frameworks** – Template Method, Inversion of Control
-- **Event-driven platforms** – Observer, Command
-- **APIs** – Facade and Proxy patterns
-- **Data pipelines** – Chain of Responsibility
+**Intent:** Convert one interface into another expected by the client.
+
+**Use When:**  
+- Two systems don’t naturally fit together  
+- You want to reuse existing components  
+- You need compatibility without rewriting  
+
+```mermaid
+Client ---> Adapter ---> Adaptee
+```
+
+**Trade-offs:**  
+- ✔ Enables reuse  
+- ✔ Decouples systems  
+- ✘ Adds indirection  
+- ✘ Can hide complexity  
+
+**TA Lens:**  
+Useful when integrating legacy systems or mismatched APIs.
+
+**Examples:**  
+- Wrapping a REST API to look like a repository  
+- Converting event formats  
+
+---
+
+## Facade
+
+**Intent:** Provide a simplified interface to a complex subsystem.
+
+**Use When:**  
+- A system has many moving parts  
+- You want to hide complexity  
+- You want a clean entry point  
+
+```mermaid
+        +---------+
+Client ->| Facade |----> Subsystem A
+        +---------+----> Subsystem B
+                     \-> Subsystem C
+```
+
+**Trade-offs:**  
+- ✔ Simplifies usage  
+- ✔ Reduces coupling  
+- ✘ Can become a god-object  
+- ✘ May hide important details  
+
+**TA Lens:**  
+Useful when assessing SDKs, orchestration layers, or platform abstractions.
+
+**Examples:**  
+- Cloud service wrappers  
+- Data platform orchestration APIs  
+
+---
+
+## Decorator
+
+**Intent:** Add behaviour dynamically without modifying the original object.
+
+**Use When:**  
+- You want flexible, runtime composition  
+- You want to avoid subclass explosion  
+- You need optional behaviours  
+
+```mermaid
+Client
+   |
+   v
++-----------+
+| Decorator |----> Component
++-----------+
+       |
+       v
+  [Wrapped Component]
+```
+
+**Trade-offs:**  
+- ✔ Flexible composition  
+- ✔ Avoids deep inheritance  
+- ✘ Can be hard to trace  
+- ✘ Many small objects  
+
+**TA Lens:**  
+Useful when evaluating middleware, pipelines, or request/response wrappers.
+
+**Examples:**  
+- HTTP middleware  
+- Logging wrappers  
+
+---
+
+# Behavioral Patterns
+
+---
+
+## Strategy
+
+**Intent:** Swap algorithms or behaviours at runtime.
+
+**Use When:**  
+- You want interchangeable behaviours  
+- Logic varies by context  
+- You want to avoid giant `if/else` blocks  
+
+```mermaid
++-----------+        +----------------+
+|  Context  |------->|  Strategy      |
+| set(strat)|        |  interface     |
++-----------+        +----------------+
+        |                   ^
+        |                   |
+        v                   |
+   +-----------+     +-------------+
+   | StrategyA |     | StrategyB   |
+   +-----------+     +-------------+
+```
+
+**Trade-offs:**  
+- ✔ Cleaner extensibility  
+- ✔ Behaviour is isolated  
+- ✘ More classes  
+- ✘ Requires clear interfaces  
+
+**TA Lens:**  
+Useful for pluggable components (pricing engines, routing logic).
+
+**Examples:**  
+- Retry strategies  
+- Sorting algorithms  
+
+---
+
+## Observer
+
+**Intent:** Notify multiple subscribers when something changes.
+
+**Use When:**  
+- Many components depend on one source  
+- You need event-driven behaviour  
+- Loose coupling is important  
+
+```mermaid
+   +-----------+
+   | Subject   |
+   |-----------|
+   | notify()  |
+   +-----------+
+        |
+   --------------
+   |     |      |
+   v     v      v
+ObserverA  ObserverB  ObserverC
+```
+
+**Trade-offs:**  
+- ✔ Decoupled communication  
+- ✔ Scales to many listeners  
+- ✘ Harder to trace flows  
+- ✘ Risk of cascading updates  
+
+**TA Lens:**  
+Useful when evaluating event-driven architectures, pub/sub, or reactive flows.
+
+**Examples:**  
+- Pub/Sub systems  
+- UI event listeners  
+
+---
+
+## Command
+
+**Intent:** Encapsulate a request as an object.
+
+**Use When:**  
+- You want undo/redo  
+- You want to queue or log operations  
+- You want to parameterise actions  
+
+```mermaid
+Invoker ---> Command ---> Receiver
+```
+
+**Trade-offs:**  
+- ✔ Decouples sender/receiver  
+- ✔ Enables undo, logging  
+- ✘ More classes  
+- ✘ Can be over-engineered  
+
+**TA Lens:**  
+Useful when evaluating workflow engines, job systems, or task queues.
+
+**Examples:**  
+- Task runners  
+- Workflow steps  
 
