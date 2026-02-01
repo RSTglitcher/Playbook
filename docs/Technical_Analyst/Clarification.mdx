@@ -1,0 +1,102 @@
+---
+title: "Clarification"
+sidebar_position: 9
+---
+
+
+:::tip Concept Overview
+A foundational TA artefact for surfacing, structuring, and stabilising decisions across BAU and project work.
+
+The Decision Surface provides a repeatable structure for:
+ - identifying, framing, and documenting decisions.
+ - supports clarity, reduces drift.
+ - ensures decisions are made by the right people with shared understanding.
+:::
+
+
+## 🧭 When to Use
+- When a conversation reveals ambiguity or competing interpretations.
+- When a team is blocked by unclear ownership or direction.
+- When multiple options exist and trade‑offs must be made.
+- When a decision has been made informally and needs to be stabilised.
+- During requirement analysis to separate *what must be true* from *what must be chosen*.
+
+---
+
+## 🧩Decision Surface Template
+A structured format for framing decisions before they are made.
+
+**1. Decision Statement**
+> - A concise description of the decision to be made.
+
+**2. Context**
+> - Relevant background, constraints, and drivers.
+
+**3. Options**
+> - List of viable options with brief descriptions.
+
+**4. Evaluation Criteria**
+> - Factors used to compare options (e.g., cost, complexity, risk, alignment, effort).
+
+**5. Analysis**
+> - Short comparison of each option against the criteria.
+
+**6. Recommendation (Optional)**
+> - A suggested option with rationale.
+
+**7. Required Inputs**
+> - Information or approvals needed before a decision can be finalised.
+
+**8. Decider & Stakeholders**
+> - **Decider:** The person accountable for making the decision.
+> - **Consulted:** People whose input is required.
+> - **Informed:** People who must know the outcome.
+
+---
+
+## Decision Log Template
+
+| Date | Decision | Decider | Options Considered | Rationale | Notes |
+|------|----------|---------|---------------------|-----------|-------|
+| YYYY‑MM‑DD | Short description | Name | Option A, B, C | Summary of why | Follow‑ups or dependencies |
+
+---
+
+## 🧱 Signals a Decision Surface Is Needed
+- Repeated conversations with no movement.
+- Conflicting interpretations of the same requirement.
+- Stakeholders assuming different outcomes.
+- Work starting without clarity on direction.
+- Emotional or political tension around a choice.
+
+---
+## Example Decision Surface (Generic)
+
+**Decision:** Choose a logging framework for the service.
+
+**Context:** Current logs are inconsistent across services; platform requires structured logs.
+
+**Options:**
+- **Option A:** Library X (lightweight, minimal features)
+- **Option B:** Library Y (rich features, higher learning curve)
+- **Option C:** Keep existing approach
+
+**Evaluation Criteria:**
+- Ease of adoption
+- Compatibility with platform tooling
+- Performance
+- Maintenance cost
+
+**Analysis:**
+- A: Easy to adopt but limited features.
+- B: Best alignment with platform; moderate learning curve.
+- C: No change but fails to meet platform requirements.
+
+**Recommendation:** Option B.
+
+**Decider:** Engineering Lead
+
+**Consulted:** Platform Team, Senior Engineers
+
+**Informed:** QA, DevOps
+
