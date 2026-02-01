@@ -110,15 +110,15 @@ We should use the platform image because that’s what everyone else does.
 ## 🧩 Requirements Presentation Structure
 
 1. **Executive Summary**
-- What you analysed
-- What you found
-- What decisions are needed
+- What you analysed: _I analysed the current workflow, tooling, and constraints across the team._
+- What you found: _I found inconsistencies in environments, duplicated effort in setup, and unclear ownership around several technical decisions._
+- What decisions are needed: _Decisions are needed on which components are fixed, which can vary by team, and which require additional support before adoption._
 
 2. **Project Context**
-- Team
-- Tech stack
-- Constraints
-- Deployment model
+- Team: # engineers across backend, data, and QA; mixed experience levels.
+- Tech stack: Python, Node.js, Docker, GitHub Actions, AWS.
+- Constraints: Security baselines, shared infrastructure, limited migration window, dependency on central platform team.
+- Deployment model: Containerised services deployed via CI/CD to AWS ECS.
 
 3. **Fixed vs Flexible vs Team‑Specific**
 A table like this:
@@ -131,15 +131,30 @@ A table like this:
 
 4. **Requirements List**
 Each requirement in the TA pattern format.
+- Trigger:
+- Action:
+- Outcome:
 
 5. **Adoption Conditions**
 What must be true for the team to adopt the template.
+- Documentation is available for setup, testing, and deployment.
+- Teams can migrate incrementally without blocking current work.
+- Support is available for onboarding and troubleshooting during the transition.
+- Tooling is compatible with existing security and compliance requirements.
 
 6. **Risks & Dependencies**
 What could block adoption.
+- Dependency on platform team for base image updates.
+- Risk of adoption delays if documentation is incomplete.
+- Potential incompatibility with legacy services.
+- Need for alignment with security and DevOps teams.
 
 7. **Next Steps**
 Clear, shared actions — not all assigned to you.
+- Finalise the fixed/flexible/team‑specific decisions with engineering leads.
+- Validate requirements with each team to confirm feasibility.
+- Produce the first draft of the template and run a pilot with one team.
+- Gather feedback and iterate before wider rollout.
 
 ---
 
