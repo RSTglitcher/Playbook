@@ -1,12 +1,12 @@
 ---
-# title: "Kafka"
+title: "Kafka"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Kafka
-**Apache Kafka** is a distributed streaming platform used for building real-time data pipelines and event-driven applications. It provides high-throughput, fault-tolerant, and scalable messaging capabilities.
+**Apache Kafka** is a distributed event streaming platform used to build real‑time data pipelines and event‑driven applications. It provides high‑throughput, fault‑tolerant, scalable messaging using an append‑only log.
 :::
 
 
@@ -51,10 +51,18 @@ kafka-topics.sh --describe --topic <topic> --bootstrap-server <broker>:9092
 kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --list
 kafka-consumer-groups.sh --describe --group <group>
 
-# Monitor cluster health
-# Validate broker logs, partition distribution, under-replicated partitions
+# Check consumer lag (MAE / MCE)
+# MAE = messages after end (consumer behind)
+# MCE = messages consumed end (bytes/messages consumed)
+# High MAE = consumer is falling behind
 
-# Check retention policies and message sizes for critical topics
+# Monitor cluster health
+# - Under-replicated partitions
+# - Offline partitions
+# - Broker availability
+
+# Validate retention policies and message sizes
+# Ensure critical topics have correct retention windows
 
 # Verify ACLs and access for producers and consumers
 ```
@@ -64,26 +72,27 @@ kafka-consumer-groups.sh --describe --group <group>
 
 **How to formulate requirements when working with Kafka**
 
-* Identify key topics and their expected message volume and throughput
-* Determine which services will produce or consume messages
-* Confirm cluster setup, broker count, replication factor, partitions
-* Review monitoring, alerting, and retention policies
-* Gather ownership of topics, consumer groups, and access controls
-* Determine network and authentication requirements (SASL/SSL, ACLs)
+* Identify topics, expected throughput, and message size
+* Determine producers and consumers (and their ownership)
+* Confirm cluster topology (brokers, replication factor, partitions)
+* Define retention policies (time‑based or size‑based)
+* Confirm monitoring and alerting expectations
+* Identify consumer group behaviour (parallelism, ordering needs)
+* Validate authentication and authorization (SASL/SSL, ACLs)
 
 </TabItem>
 </Tabs>
 
 ---
 
-## Pre-Requisites
+## Pre‑Requisites
 
-| Action / Service            | What TA Needs to Gather / Confirm                                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Install / Setup             | Kafka cluster deployed, brokers running, Zookeeper (if applicable)                                      |
-| Access & Login              | Client credentials, SASL/SSL configs, ACLs verified                                                     |
-| API / CLI Tools             | Kafka CLI tools (`kafka-topics.sh`, `kafka-console-producer.sh`, `kafka-console-consumer.sh`) available |
-| Other tool-specific actions | Monitoring tools (Prometheus, Grafana), retention policies, topic naming conventions                    |
+| Action / Service            | What TA Needs to Gather / Confirm                                                                 |
+|-----------------------------|---------------------------------------------------------------------------------------------------|
+| Install / Setup             | Kafka cluster deployed, brokers running, Zookeeper (if applicable)                                |
+| Access & Login              | Client credentials, SASL/SSL configs, ACLs verified                                               |
+| API / CLI Tools             | Kafka CLI tools available (`kafka-topics.sh`, `kafka-console-producer.sh`, etc.)                  |
+| Other tool-specific actions | Monitoring tools (Prometheus, Grafana), retention policies, topic naming conventions              |
 
 ---
 
@@ -116,16 +125,17 @@ kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --group <group> --rese
 ```
 
 </TabItem>
+
 <TabItem value="engineering" label="Engineering">
 
 **How to formulate a plan for development**
 
-* Map which topics and partitions are required per application/service
-* Define producer and consumer configurations including throughput expectations
-* Establish cluster sizing: brokers, replication factor, partition count
+* Map required topics and partitions
+* Define producer/consumer configs and throughput expectations
+* Establish cluster sizing (brokers, replication factor, partitions)
 * Implement monitoring, alerting, and retention policies
-* Integrate Kafka with CI/CD pipelines if required
-* Provide TA handover: documented topics, ACLs, consumer groups, monitoring dashboards, and intended usage
+* Integrate Kafka with CI/CD pipelines
+* Provide TA handover: topics, ACLs, consumer groups, dashboards, usage patterns
 
 </TabItem>
 </Tabs>
@@ -134,11 +144,20 @@ kafka-consumer-groups.sh --bootstrap-server <broker>:9092 --group <group> --rese
 
 ## Triage
 
-| Symptom                | TLDR of Root Cause                         | What to Check                                  | Action to Propose                                   |
-| ---------------------- | ------------------------------------------ | ---------------------------------------------- | --------------------------------------------------- |
-| Brokers down           | Node failure, network issue, JVM crash     | Broker logs, cluster status, Zookeeper         | Restart broker, check network, rebalance partitions |
-| Consumer lag           | Consumers slow or blocked                  | Consumer group status, offsets, broker metrics | Increase consumer instances, optimize processing    |
-| Topic unavailable      | Topic deleted or misconfigured             | Topic list, ACLs, broker logs                  | Recreate topic, adjust ACLs                         |
-| Messages not delivered | Retention expired, partition unavailable   | Partition status, producer logs                | Adjust retention, fix partition availability        |
-| High latency           | Network bottleneck, overloaded broker      | Broker metrics, replication lag                | Scale brokers, optimize network                     |
-| Data loss              | Under-replicated partitions, misconfigured | Cluster replication status, topic configu      |                                                     |
+:::danger
+Symptoms and issues with Kafka and how to triage:
+:::
+
+| Symptom                | TLDR Root Cause                                   | What to Check                                                                 | Action to Propose                                                                 |
+|------------------------|----------------------------------------------------|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| Brokers down           | Node failure, JVM crash, network issue             | Broker logs, cluster status, controller broker, Zookeeper/KRaft               | Restart broker, fix network, rebalance partitions                                 |
+| Consumer lag           | Slow consumers, blocked processing, hot partitions | Consumer group offsets, MAE/MCE metrics, partition skew                       | Add consumers, fix processing bottlenecks, rebalance partitions                    |
+| Topic unavailable      | Topic deleted, ACL issue, misconfiguration         | Topic list, ACLs, broker logs                                                 | Recreate topic, fix ACLs, validate replication factor                              |
+| Messages not delivered | Retention expired, partition offline               | Retention settings, partition status, producer logs                           | Increase retention, fix partition availability, adjust producer retries            |
+| High latency           | Overloaded broker, network bottleneck              | Broker CPU, network throughput, replication lag                               | Scale brokers, optimize network, adjust batching                                   |
+| Data loss              | Under-replicated partitions, misconfigured RF      | Replication factor, ISR list, broker failures                                 | Increase replication factor, restore brokers, enforce min.insync.replicas          |
+| Hot partitions         | Poor partition key, uneven distribution            | Partition message counts, consumer lag per partition                          | Redesign partition key, increase partitions, rebalance                             |
+| Serialization errors   | Schema mismatch, bad producer code                 | Producer logs, consumer deserialization errors                                | Fix schema, enforce schema registry, update clients                                |
+| High disk usage        | Retention too long, segment bloat                  | Topic size, retention settings, segment count                                 | Apply ILM/retention, compact logs, add storage                                     |
+| Slow startup / rebalance | Large state stores, many partitions              | Broker logs, partition count, consumer group rebalance events                 | Reduce partitions, optimize consumer group size, upgrade hardware                  |
+

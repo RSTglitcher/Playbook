@@ -1,0 +1,357 @@
+---
+title: "ElasticSearch"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip ElasticSearch
+ElasticSearch is a **distributed search and analytics engine** built on Apache Lucene. It indexes JSON documents to support **full-text search, filtering, aggregations, and near-real-time analytics** at scale.
+:::
+
+```mermaid
+ElasticSearch
+├── Lucene Core
+│   ├── Inverted Index
+│   ├── Segments
+│   ├── Analyzers & Tokenizers
+│   ├── Scoring (TF-IDF / BM25)
+│   └── Segment Merges
+├── ElasticSearch Abstractions
+│   ├── Index
+│   ├── Shard (Primary / Replica)
+│   ├── Mapping
+│   ├── Query DSL
+│   └── Aggregations
+├── TA Skills
+│   ├── Validate mappings & analyzers
+│   ├── Review shard/replica strategy
+│   ├── Inspect queries & relevance issues
+│   ├── Support consumers & governance
+│   └── Triage performance & data issues
+└── SWE Skills
+    ├── Index & schema design
+    ├── Query optimisation
+    ├── Cluster sizing & scaling
+    ├── Ingestion pipelines
+    └── Upgrade & maintenance
+````
+
+---
+
+## Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use ElasticSearch as a TA
+--------------
+
+# 1. Inspect cluster health
+GET /_cluster/health
+GET /_cat/nodes?v
+GET /_cat/shards?v
+
+# 2. Inspect index configuration
+GET /my-index
+GET /my-index/_settings
+GET /my-index/_mapping
+
+# 3. Validate shard & replica strategy
+# Default: 1 primary shard, 1 replica
+# Check for imbalance or oversharding
+GET /_cat/shards/my-index?v
+
+# 4. Review mappings (schema governance)
+# Look for:
+# - keyword vs text misuse
+# - dynamic mappings gone wrong
+# - missing analyzers
+GET /my-index/_mapping
+
+# 5. Review analyzers & tokenisation
+GET /my-index/_analyze
+{
+  "analyzer": "standard",
+  "text": "Order-ID_123"
+}
+
+# 6. Validate query behaviour
+# Distinguish scoring (query) vs filtering (filter)
+GET /my-index/_search
+{
+  "query": {
+    "bool": {
+      "filter": [{ "term": { "status": "ACTIVE" }}],
+      "must": [{ "match": { "description": "payment failure" }}]
+    }
+  }
+}
+
+# 7. Inspect relevance issues
+# Check score distribution and explain output
+GET /my-index/_search?explain=true
+
+# 8. Review aggregations used by consumers
+# Watch for high-cardinality buckets
+GET /my-index/_search
+{
+  "size": 0,
+  "aggs": {
+    "by_status": {
+      "terms": { "field": "status.keyword" }
+    }
+  }
+}
+
+# 9. Interacting with ElasticSearch via GraphQL (TA Perspective)
+#
+# Some platforms expose ElasticSearch-backed data via GraphQL
+# instead of direct REST access. As a TA, this is typically
+# READ-ONLY metadata inspection and validation.
+
+--------------
+GraphQL interaction model for TAs
+--------------
+
+# Mental model:
+# - Single endpoint
+# - Schema defines everything you can query
+# - You must explicitly request fields
+# - Identifiers are used to pivot deeper
+
+# 1. Connect to GraphQL
+# Preferred: GraphQL Explorer / Web UI
+# - Use schema browser ("Docs")
+# - Rely on autocomplete
+# - Validate structure before execution
+#
+# Alternative: HTTP POST to /graphql
+# Requires auth headers and JSON body:
+# { "query": "<GRAPHQL QUERY>" }
+
+# 2. Start by exploring the schema (DO NOT guess fields)
+# Look for:
+# - Root queries (Query)
+# - Search or list entry points
+# - Entity identifiers (id, urn, key)
+
+# Example schema questions to answer:
+# - What entity types exist?
+# - How are they identified?
+# - Which fields expose indexed/searchable data?
+
+# 3. Begin with a minimal query
+# Never start large — expand iteratively
+
+query {
+  search {
+    results {
+      id
+      name
+    }
+  }
+}
+
+# 4. Pivot using identifiers
+# Once an ID is known, retrieve full metadata
+
+query {
+  entity(id: "example-id") {
+    id
+    name
+    description
+  }
+}
+
+# 5. Traverse relationships (common TA checks)
+# Ownership, lineage, schema, tags, status
+
+query {
+  entity(id: "example-id") {
+    owner {
+      name
+    }
+    upstream {
+      id
+      name
+    }
+  }
+}
+
+# 6. Handle typed entities using fragments
+# Required when schema returns interfaces or unions
+
+query {
+  entity(id: "example-id") {
+    ... on Dataset {
+      schema {
+        fields {
+          name
+          type
+        }
+      }
+    }
+  }
+}
+
+# 7. Typical TA validation patterns via GraphQL
+#
+# - Validate indexed metadata matches expectations
+# - Confirm ownership and governance fields
+# - Inspect schema surfaced from search index
+# - Verify lineage relationships
+# - Spot missing or inconsistent documentation
+
+# 8. What TAs do NOT do with GraphQL
+#
+# - No mutations (writes)
+# - No resolver logic
+# - No schema changes
+# - No performance tuning
+#
+# Focus is inspection, validation, and governance.
+
+# 9. Why this matters for ElasticSearch
+#
+# GraphQL is often layered on top of ElasticSearch to:
+# - Provide typed access
+# - Improve discoverability
+# - Expose metadata safely
+#
+# Understanding GraphQL lets a TA validate
+# ElasticSearch-backed systems without direct index access.
+
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with ElasticSearch**
+
+* Identify **search vs lookup vs analytics** use cases explicitly
+* Confirm **data volume, growth rate, and retention**
+* Define **indexing strategy** (time-based vs static)
+* Capture **relevance expectations** (exact match vs fuzzy)
+* Confirm **query patterns** (filters, free text, aggregations)
+* Gather **SLAs** for latency and freshness
+* Identify **downstream consumers** (dashboards, APIs, alerts)
+* Confirm **security model** (index-level, field-level access)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service            | What TA Needs to Gather / Confirm                                        |
+| --------------------------- | ------------------------------------------------------------------------ |
+| Set-up                      | ElasticSearch distribution (Elastic, OpenSearch), version, hosting model |
+| Access & Login              | Kibana access, API credentials, index permissions                        |
+| API                         | Base URL, auth method (Basic, API key, IAM)                              |
+| Other tool specific actions | Index naming conventions, ILM policies, ingestion pipelines              |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use ElasticSearch
+--------------
+
+# Create index with explicit settings
+PUT /orders-v1
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1
+  }
+}
+
+# Define mappings explicitly (avoid dynamic defaults)
+PUT /orders-v1/_mapping
+{
+  "properties": {
+    "order_id": { "type": "keyword" },
+    "description": { "type": "text", "analyzer": "standard" },
+    "created_at": { "type": "date" }
+  }
+}
+
+# Index a document
+POST /orders-v1/_doc
+{
+  "order_id": "123",
+  "description": "Payment failed due to timeout",
+  "created_at": "2025-01-01T10:00:00Z"
+}
+
+# Run a search query
+GET /orders-v1/_search
+{
+  "query": {
+    "match": { "description": "payment failure" }
+  }
+}
+
+# Monitor segment merges (Lucene internals)
+GET /_nodes/stats/indices/segments
+
+# Force merge (use cautiously)
+POST /orders-v1/_forcemerge?max_num_segments=1
+```
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for ElasticSearch development**
+
+* Choose **shard count up front** (resharding is expensive)
+* Design **mappings intentionally** (text vs keyword is critical)
+* Select **analyzers** based on language and search behaviour
+* Separate **hot vs warm vs cold data** using ILM
+* Avoid high-cardinality aggregations unless justified
+* Load test queries and aggregations early
+* Plan **rolling upgrades** (version compatibility matters)
+
+**What a TA must provide for handover**
+
+* Confirmed use cases and query patterns
+* Expected data growth and retention
+* Relevance expectations and examples
+* Governance constraints (naming, ownership, access)
+* Known risks (cardinality, write-heavy loads)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+| Symptom / Issue | Likely Root Cause | What to Check | Recommended Action |
+|-----------------|------------------|---------------|--------------------|
+| **Slow queries** | Poor mappings, wildcard/regex use, high-cardinality fields | - Query type (match/term/wildcard)  <br/> - Mappings (text vs keyword)  <br/> - `_profile` output  <br/> - Shard count / oversharding | - Redesign mappings  <br/> - Replace wildcards  <br/> - Add filters  <br/> - Reduce shards |
+| **Incorrect / missing results** | Analyzer mismatch or scoring behaviour | - `_analyze` output  <br/> - Field type (keyword vs text)  <br/> - Refresh interval  <br/> - Query vs filter usage | - Fix analyzer  <br/> - Change field type  <br/> - Trigger refresh if needed  <br/> - Adjust query |
+| **Indexing failures (400 errors)** | Mapping conflicts or invalid JSON | - Mapping definitions  <br/> - Dynamic mapping behaviour  <br/> - Ingest pipeline logs | - Fix conflicting field types  <br/> - Disable/limit dynamic mapping  <br/> - Correct JSON |
+| **Cluster yellow state** | Missing replicas or unassigned shards | - `_cluster/health`  <br/> - `_cat/shards`  <br/> - Node availability | - Add nodes  <br/> - Re-enable shard allocation  <br/> - Increase replica count |
+| **Cluster red state** | Node failure or corrupted shard | - Node logs  <br/> - `_cluster/allocation/explain` | - Restore node  <br/> - Reallocate shards  <br/> - Snapshot restore if needed |
+| **High disk usage** | Segment bloat, no ILM, unnecessary fields | - Index size  <br/> - Segment count  <br/> - Mappings (large text fields) | - Apply ILM  <br/> - Force merge (carefully)  <br/> - Remove unused fields |
+| **Write failures** | Shard overload, queue saturation, disk watermark | - Node stats  <br/> - Threadpool queues  <br/> - Disk watermark alerts | - Scale cluster  <br/> - Rebalance shards  <br/> - Increase disk or reduce retention |
+| **Memory pressure / OOM** | Fielddata explosion, large aggregations | - JVM heap usage  <br/> - Fielddata stats  <br/> - Aggregation cardinality | - Convert fields to keyword  <br/> - Limit aggregations  <br/> - Increase heap cautiously |
+| **High latency on aggregations** | High-cardinality fields or large time windows | - Aggregation fields  <br/> - Cardinality  <br/> - Query time range | - Reduce cardinality  <br/> - Pre-aggregate  <br/> - Narrow time windows |
+| **Relevance issues** | Scoring mismatch, analyzer/tokenisation problems | - `explain=true` output  <br/> - Analyzer behaviour  <br/> - Stopwords/stemming | - Adjust analyzers  <br/> - Tune BM25  <br/> - Add synonyms or token filters |
+| **Documents not searchable** | Refresh delay or ingestion failure | - `_refresh` interval  <br/> - Ingest pipeline logs  <br/> - `_cat/indices` | - Trigger manual refresh  <br/> - Fix pipeline  <br/> - Validate routing |
+| **Hot shards / uneven load** | Poor shard strategy or skewed routing | - Shard distribution  <br/> - Routing keys  <br/> - Node CPU usage | - Reindex with better routing  <br/> - Increase shard count  <br/> - Add nodes |
+| **Governance issues** | PII exposure, missing retention, access gaps | - Field-level access  <br/> - ILM policies  <br/> - Audit logs | - Mask PII  <br/> - Apply retention  <br/> - Fix RBAC / index permissions |
+
+
