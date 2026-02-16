@@ -1,0 +1,290 @@
+---
+title: "Communication Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Communication Patterns** describe the structured ways in which software components exchange information.  
+They define *when*, *how*, and *under what guarantees* data moves between services.
+:::
+
+**Major pattern families include:**
+- **APIs** (synchronous request/response)
+- **Messaging** (asynchronous, decoupled)
+- **Event Streams** (ordered, replayable logs)
+- **Protocols** (transport and semantics)
+- **Other communication methods** (files, shared stores, sockets)
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Communication patterns enable:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| Service-to-service interaction | Distributed systems rely on structured communication |
+| Decoupling | Systems evolve independently when communication is well-defined |
+| Reliability | Retries, durability, and delivery guarantees |
+| Scalability | Async patterns absorb load and smooth spikes |
+| Flexibility | Different patterns fit different latency and consistency needs |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+Communication patterns vary along several axes:
+
+### **Synchronous vs Asynchronous**
+- **Synchronous** → request/response, immediate result  
+- **Asynchronous** → messages, events, queues, streams  
+
+### **Push vs Pull**
+- Push → sender initiates delivery  
+- Pull → receiver fetches data  
+
+### **Transport vs Semantics**
+- Transport → TCP, HTTP, WebSockets  
+- Semantics → REST, GraphQL, RPC, event schemas  
+
+### **Point-to-point vs Broadcast**
+- Direct communication  
+- Fan-out to multiple consumers  
+
+### **Durability vs Latency**
+- Durable queues vs low-latency protocols  
+
+---
+
+## 🔬 Behaviour Under Load / Scale
+
+- Synchronous APIs degrade under latency or dependency failures  
+- Messaging systems absorb spikes and smooth traffic  
+- Event streams scale horizontally with partitions  
+- Protocol choice affects throughput, reliability, and ordering  
+- Backpressure and flow control become critical in streaming systems  
+
+**TA insight:**  
+Most communication failures arise from mismatched expectations about latency, delivery guarantees, or ordering — not from the protocol itself.
+
+---
+
+## ⚖️ Trade-offs
+
+| Pattern | Strengths | Weaknesses |
+|---------|-----------|------------|
+| **APIs** | Simple, predictable | Tight coupling, latency-sensitive |
+| **Messaging** | Decoupled, resilient | Harder debugging, eventual consistency |
+| **Event Streams** | High throughput, replay | Requires partitioning strategy |
+| **Protocols** | Control over transport | Requires deeper understanding |
+| **File-based** | Simple, batch-friendly | High latency, no real-time behaviour |
+| **Shared DB** | Easy integration | Strong anti-pattern for microservices |
+
+---
+
+## 🧭 When to Use
+
+### **Use When**
+- Services must coordinate or exchange data  
+- You need predictable request/response behaviour  
+- You need decoupled, resilient async communication  
+- You need high-throughput event processing  
+- You need real-time updates or streaming  
+
+:::warning Avoid When
+- Communication hides domain boundaries  
+- Shared databases replace proper APIs  
+- Latency expectations are unclear  
+- Delivery guarantees are mismatched  
+:::
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates Communication Patterns
+- What guarantees does the pattern provide (ordering, durability, retries)?  
+- What are the latency expectations?  
+- Is the system synchronous or asynchronous?  
+- What happens under failure or backpressure?  
+- Are schemas and contracts well-defined?  
+- Does the communication pattern match the domain need?  
+:::
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Request/Response | Synchronous communication model |
+| Message Queue | Durable, point-to-point async communication |
+| Pub/Sub | Broadcast-style async communication |
+| Event Stream | Ordered, replayable log of events |
+| Protocol | Rules for encoding and transporting data |
+| Backpressure | Mechanism to prevent overload |
+| Contract | Schema or API definition |
+
+---
+
+# 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="apis" label="APIs (Synchronous)">
+
+### Key Characteristics
+- Request/response  
+- Immediate feedback  
+- Coupled to availability and latency  
+
+### Core Patterns
+- **REST** — resource-based, stateless  
+- **GraphQL** — client-driven queries  
+- **RPC / gRPC** — function calls over the network  
+- **Webhooks** — server-to-server callbacks  
+
+### Behaviour
+- Latency-sensitive  
+- Cascading failures if dependencies are slow  
+- Requires retries, timeouts, and circuit breakers  
+
+### Trade-offs
+- Simple mental model  
+- Tight coupling  
+- Harder to scale under load  
+
+### Exceptions (Not Universal)
+- Some RPC systems support streaming  
+- Some APIs allow async callbacks  
+
+</TabItem>
+
+<TabItem value="messaging" label="Messaging (Asynchronous)">
+
+### Key Characteristics
+- Decoupled communication  
+- Durable delivery  
+- Absorbs traffic spikes  
+
+### Core Patterns
+- **Message Queues** — point-to-point work distribution  
+- **Pub/Sub** — broadcast to multiple consumers  
+- **Event Streams** — ordered, replayable logs  
+
+### Behaviour
+- Eventual consistency  
+- High throughput  
+- Requires idempotency and consumer design  
+
+### Trade-offs
+- Resilient and scalable  
+- Harder debugging and tracing  
+
+### Exceptions (Not Universal)
+- Some queues do not guarantee ordering  
+- Some streams do not guarantee exactly-once delivery  
+
+</TabItem>
+
+<TabItem value="protocols" label="Protocols">
+
+### Key Characteristics
+- Define how data is encoded and transported  
+- Influence latency, reliability, and ordering  
+
+### Core Protocols
+- **HTTP/HTTPS** — ubiquitous, request/response  
+- **TCP/UDP** — transport-level primitives  
+- **WebSockets** — bidirectional, real-time  
+- **MQTT / CoAP** — lightweight IoT protocols  
+
+### Behaviour
+- Transport determines reliability  
+- Protocol determines semantics  
+
+### Trade-offs
+- Flexibility vs complexity  
+- Reliability vs latency  
+
+### Exceptions (Not Universal)
+- UDP provides no delivery guarantees  
+- WebSockets require persistent connections  
+
+</TabItem>
+
+<TabItem value="other" label="Other Communication Methods">
+
+### Shared Databases (Anti-Pattern)
+- Tight coupling  
+- Hidden communication  
+- Breaks domain boundaries  
+
+### File-Based Communication
+- Batch-friendly  
+- High latency  
+- Simple integration  
+
+### Pipes & Sockets
+- Low-level, high-performance  
+- Requires careful coordination  
+
+### Exceptions (Not Universal)
+- Some legacy systems rely on shared DBs by necessity  
+- File-based communication is valid for batch ETL  
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+Communication patterns interact with:
+
+- **Storage** → event logs, queues, DBs  
+- **Compute** → consumers, workers, API servers  
+- **Orchestration** → retries, backoff, scheduling  
+- **Observability** → tracing, logs, metrics  
+
+**TA insight:**  
+Communication failures often manifest as latency, retries, or inconsistent state — not as obvious errors.
+
+---
+
+## 💥 Failure Modes
+
+- Cascading failures in synchronous chains  
+- Message duplication  
+- Out-of-order delivery  
+- Backpressure collapse  
+- Dead-letter queues filling  
+- Schema drift between producers and consumers  
+
+---
+
+## 📊 What Results Normally Look Like
+
+| Pattern | Typical Output |
+|---------|----------------|
+| API | JSON/XML/Protobuf responses |
+| Queue | Individual messages |
+| Pub/Sub | Broadcast events |
+| Event Stream | Ordered logs |
+| Protocols | Encoded frames or packets |
+
+---
+
+## 🔗 Related Concepts
+
+- API Contracts  
+- Event Schemas  
+- Distributed Systems  
+- Observability  
+- Backpressure  
+- Idempotency  
+```

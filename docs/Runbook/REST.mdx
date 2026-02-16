@@ -1,0 +1,177 @@
+---
+title: "🔌REST APIs"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip REST APIs
+REST APIs provide a standardized way for systems to communicate over HTTP using resource‑based endpoints. They enable applications to exchange data reliably, integrate services, and expose functionality in a scalable, language‑agnostic manner.
+:::
+
+```mermaid
+REST APIs
+├── Core Concepts
+│   ├── Resources & Endpoints
+│   ├── HTTP Methods (GET, POST, PUT, DELETE)
+│   ├── Status Codes & Error Handling
+│   └── Authentication & Authorization
+├── TA Skills
+│   ├── Review API Specs & Contracts
+│   ├── Validate Request/Response Structures
+│   ├── Check Environment, Auth & Headers
+│   └── Confirm Data Mapping & Edge Cases
+└── SWE Skills
+    ├── Design & Implement Endpoints
+    ├── Handle Routing, Validation & Errors
+    ├── Integrate with Datastores & Services
+    └── Monitor Performance & Logs
+```
+
+---
+
+## 🧩 Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use the tool/platform as TA
+--------------
+
+# Reviewing an API spec
+- Check endpoint structure, parameters, and expected responses
+- Validate status codes and error formats
+
+# Testing endpoints
+curl -X GET https://api.example.com/v1/resource
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"name": "example"}' \
+     https://api.example.com/v1/resource
+
+# Checking authentication
+- Confirm API keys, OAuth tokens, or session headers
+- Validate environment-specific base URLs
+
+# Mapping data flows
+- Trace request → service → datastore → response
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Clarify the purpose of each endpoint and the business workflow it supports
+- Identify required inputs, optional parameters, and validation rules
+- Confirm authentication method and environment differences
+- Understand expected response formats and error handling
+- Capture edge cases, rate limits, and performance expectations
+
+**Examples of use cases**
+
+- Integrating two internal systems
+- Supporting frontend development with backend endpoints
+- Validating data returned from external APIs
+- Documenting API behaviour for cross‑team alignment
+
+**What a TA needs to gather**
+
+- API specification (OpenAPI/Swagger/Postman collection)
+- Authentication details and environment URLs
+- Request/response examples
+- Data mapping rules and transformation logic
+- Error scenarios and fallback expectations
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|-----------------------------------|
+| Set-up                 | API documentation, environment URLs, tools (Postman, curl) |
+| Access & Login         | API keys, OAuth tokens, service accounts, permissions |
+| API                    | Versioning, rate limits, throttling rules |
+| Other tool specific actions | Required headers, CORS rules, network/VPN requirements |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use the tool/platform
+--------------
+
+# Building endpoints
+- Define routes, handlers, and validation logic
+
+# Integrating with services
+- Call downstream APIs or databases
+
+# Error handling
+return res.status(400).json({ error: "Invalid input" });
+
+# Logging & monitoring
+- Track latency, failures, and payload sizes
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+- Define endpoint structure, naming, and versioning
+- Identify validation rules and error handling patterns
+- Plan integration with downstream systems
+- Determine authentication and authorization strategy
+- Establish performance and reliability expectations
+
+**Examples of implementation**
+
+- CRUD endpoints for a new feature
+- API gateway routing and aggregation
+- Middleware for logging, auth, or rate limiting
+- Automated contract tests
+
+**Engineering considerations**
+
+- Idempotency for PUT/PATCH
+- Pagination for large datasets
+- Consistent error formats
+- Backward‑compatible versioning
+- Observability (logs, metrics, tracing)
+
+**What a TA needs to provide for handover**
+
+- Clear business rules for each endpoint
+- Data models and field definitions
+- Edge cases and validation scenarios
+- Dependencies and integration points
+- Acceptance criteria for success
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage this:
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|---------|---------------------|---------------|-------------------|
+| 400 Bad Request | Invalid input or missing fields | Request body, params, validation rules | Fix payload or update validation |
+| 401/403 Errors | Auth failure or missing permissions | Tokens, headers, roles | Refresh token, update permissions |
+| 404 Not Found | Wrong endpoint or version | URL, path params, API version | Correct route or update spec |
+| 429 Too Many Requests | Rate limit exceeded | Rate limit headers | Add retries/backoff |
+| 500 Errors | Server-side failure | Logs, downstream dependencies | Escalate to engineering, check integrations |

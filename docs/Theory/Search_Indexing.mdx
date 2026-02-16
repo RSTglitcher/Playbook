@@ -1,0 +1,324 @@
+---
+title: "Search Patterns"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Search Patterns** describe the recurring strategies, concepts, and problem shapes used to index, retrieve, filter, and rank information efficiently.
+They explain *how search works conceptually*, independent of any specific tool or platform.
+:::
+
+Search is not just “finding text” — it is a discipline combining **information retrieval**, **indexing**, **ranking**, and **query patterns**.
+
+---
+
+## 🎯 What Problem Do Search Patterns Solve?
+
+Search Patterns enable:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Fast retrieval** | Quickly find relevant information across large datasets |
+| **Relevance ranking** | Order results by usefulness, not just matching |
+| **Filtering & faceting** | Support catalogues, dashboards, and analytics |
+| **Scalable indexing** | Handle continuous ingestion of documents or events |
+| **Semantic search** | Retrieve results based on meaning, not keywords |
+
+Search patterns help TAs recognise *which search strategy fits which problem*.
+
+---
+
+## 🧠 Conceptual Model (How Search Works)
+
+Search systems follow a predictable conceptual flow:
+
+### **1. Ingestion Pattern**
+Data enters the system as documents, events, or records.
+
+### **2. Analysis Pattern**
+Text is processed through:
+- tokenisation
+- normalisation
+- stemming
+- stopword removal
+- embedding generation
+
+### **3. Indexing Pattern**
+Data is stored in structures optimised for retrieval:
+- inverted indexes
+- columnar stores
+- vector indexes
+
+### **4. Retrieval Pattern**
+Queries match documents using:
+- keywords
+- filters
+- boolean logic
+- ranges
+- aggregations
+- vector similarity
+
+### **5. Ranking Pattern**
+Results are ordered using:
+- term frequency
+- inverse document frequency
+- BM25‑style scoring
+- hybrid keyword + vector ranking
+
+---
+
+# 🧬 Core Search Patterns
+
+<Tabs>
+
+<TabItem value="fulltext" label="Full‑Text Search Pattern">
+
+### Purpose
+Retrieve documents based on text relevance.
+
+### Characteristics
+- Tokenisation
+- Stemming
+- Relevance scoring
+- Fuzzy matching
+
+### Problem Shapes
+- Searching documents
+- Product search
+- Knowledge bases
+
+### TA Lens
+Use when **meaningful text relevance** is required.
+
+</TabItem>
+
+<TabItem value="filtering" label="Filtering & Faceting Pattern">
+
+### Purpose
+Retrieve documents based on structured fields.
+
+### Characteristics
+- Exact matches
+- Range queries
+- Boolean logic
+- Faceted navigation
+
+### Problem Shapes
+- E‑commerce filters
+- Dashboard drill‑downs
+- Log filtering
+
+### TA Lens
+Use when **precision**, not relevance, matters.
+
+</TabItem>
+
+<TabItem value="analytics" label="Aggregation Pattern">
+
+### Purpose
+Compute metrics and summaries over large datasets.
+
+### Characteristics
+- Bucketing
+- Histograms
+- Counts and metrics
+- Time‑series grouping
+
+### Problem Shapes
+- Observability dashboards
+- Log analytics
+- Reporting
+
+### TA Lens
+Use when you need **summaries**, not documents.
+
+</TabItem>
+
+<TabItem value="vector" label="Vector Search Pattern">
+
+### Purpose
+Retrieve documents based on semantic similarity.
+
+### Characteristics
+- Embeddings
+- Approximate nearest neighbour (ANN) search
+- High‑dimensional vectors
+
+### Problem Shapes
+- Semantic search
+- Recommendations
+- Similarity detection
+
+### TA Lens
+Use when **meaning** matters more than keywords.
+
+</TabItem>
+
+<TabItem value="hybrid" label="Hybrid Search Pattern">
+
+### Purpose
+Combine keyword relevance + semantic similarity.
+
+### Characteristics
+- Weighted scoring
+- Multi‑stage retrieval
+- Reranking
+
+### Problem Shapes
+- AI‑enhanced search
+- Personalised search
+- Complex relevance requirements
+
+### TA Lens
+Use when neither keyword nor vector search alone is sufficient.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Core Concepts in Search Patterns
+
+### **Document Pattern**
+Represent data as structured objects with fields.
+
+### **Field Pattern**
+Store attributes that can be searched, filtered, or aggregated.
+
+### **Analyzer Pattern**
+Define how text is processed before indexing.
+
+### **Inverted Index Pattern**
+Map terms → documents for fast retrieval.
+
+### **Ranking Pattern**
+Score documents based on relevance.
+
+### **Vector Index Pattern**
+Store embeddings for semantic similarity.
+
+### **Partitioning Pattern**
+Split data into shards or segments for scalability.
+
+---
+
+# 🧬 Query Patterns
+
+### **Keyword Query Pattern**
+Match documents containing specific terms.
+
+### **Boolean Query Pattern**
+Combine conditions using AND / OR / NOT.
+
+### **Filter Pattern**
+Match exact values or ranges.
+
+### **Aggregation Pattern**
+Compute metrics or summaries.
+
+### **Vector Similarity Pattern**
+Find nearest neighbours in embedding space.
+
+### **Hybrid Query Pattern**
+Blend keyword + vector retrieval.
+
+---
+
+# 🧭 When to Use Search Patterns
+
+Use search patterns when:
+
+- You need **fast, relevant retrieval**
+- You have **large volumes of documents or logs**
+- You need **faceted filtering**
+- You need **semantic or AI‑driven search**
+- You need **real‑time indexing**
+
+---
+
+# 🚫 When Not to Use
+
+Avoid search patterns when:
+
+- You need ACID transactions
+- You need relational joins
+- Data is small and static
+- You only need key‑value lookups
+- You need strict schema enforcement
+
+---
+
+# 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Document** | Structured object containing fields |
+| **Field** | Attribute inside a document |
+| **Analyzer** | Text processing pipeline |
+| **Inverted Index** | Maps terms to documents |
+| **Embedding** | Vector representation of meaning |
+| **ANN Search** | Approximate nearest neighbour search |
+| **Ranking** | Ordering results by relevance |
+
+---
+
+# 🔌 How to Interact With Search Patterns
+
+**Access Pattern**
+- Query languages
+- DSLs
+- APIs
+- SDKs
+
+**Operations**
+- Index documents
+- Update schemas
+- Run queries
+- Run aggregations
+- Analyse relevance
+
+---
+
+# 📊 What Results Normally Look Like
+
+- Ranked search hits
+- Aggregation buckets
+- Faceted filters
+- Vector similarity scores
+- Highlighted text matches
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Using search systems as primary databases
+- Overusing dynamic schemas
+- Excessive wildcard queries
+- High‑cardinality fields
+- Ignoring relevance tuning
+- Treating vector search as a drop‑in replacement for keyword search
+
+---
+
+# 🏗️ Real‑World Examples
+
+- Product search with filters and relevance ranking
+- Log analytics and dashboards
+- Semantic search using embeddings
+- Autocomplete and suggestions
+- Fraud detection using hybrid search
+- Observability pipelines
+
+---
+
+## 🔗 Related Concepts
+
+- Data Modelling
+- Caching & Indexing
+- Observability Concepts
+- Information Retrieval
+- Vector Similarity

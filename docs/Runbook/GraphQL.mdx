@@ -1,0 +1,205 @@
+---
+title: "🔌GraphQL"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip GraphQL
+GraphQL is a query language and runtime for APIs that allows clients to request exactly the data they need. It enables efficient, strongly‑typed data retrieval across complex systems by exposing a unified schema of types, fields, and resolvers.
+:::
+
+```mermaid
+GraphQL
+├── Core Concepts
+│   ├── Schema, Types & Fields
+│   ├── Queries, Mutations & Subscriptions
+│   ├── Resolvers & Data Sources
+│   └── Strong Typing & Validation
+├── TA Skills
+│   ├── Review Schema & Type Definitions
+│   ├── Validate Query Shapes & Variables
+│   ├── Check Resolver Behaviour & Data Mapping
+│   └── Confirm Auth, Permissions & Edge Cases
+└── SWE Skills
+    ├── Implement Resolvers & Data Fetching
+    ├── Define Types, Inputs & Mutations
+    ├── Integrate with Services & Datastores
+    └── Monitor Performance & N+1 Issues
+```
+
+---
+
+## 🧩 Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use the tool/platform as TA
+--------------
+
+# Exploring the schema
+# (using GraphiQL, Apollo Sandbox, or similar)
+- Inspect types, fields, and relationships
+- Check required vs optional fields
+- Validate arguments and return types
+
+# Running queries
+query GetUser {
+  user(id: "123") {
+    id
+    name
+    email
+  }
+}
+
+# Running mutations
+mutation UpdateUser {
+  updateUser(id: "123", input: { name: "New Name" }) {
+    id
+    name
+  }
+}
+
+# Checking resolver behaviour
+- Confirm which downstream systems each field depends on
+- Validate error shapes and nullability
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Clarify the domain model and how it maps to GraphQL types
+- Identify required fields, optional fields, and validation rules
+- Confirm expected query shapes and nested relationships
+- Understand resolver dependencies and data sources
+- Capture error handling expectations and nullability rules
+- Define performance expectations (depth, complexity, batching)
+
+**Examples of use cases**
+
+- Designing new queries or mutations for a feature
+- Validating schema changes before engineering implementation
+- Supporting frontend teams with data‑shape requirements
+- Mapping business logic to GraphQL types and relationships
+
+**What a TA needs to gather**
+
+- Schema documentation (SDL, introspection, or tooling)
+- Query/mutation examples and expected outputs
+- Data mapping rules and transformation logic
+- Authentication and authorization requirements
+- Edge cases, nullability rules, and error scenarios
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|-----------------------------------|
+| Set-up                 | Access to GraphiQL/Apollo Sandbox, schema files, introspection |
+| Access & Login         | Auth tokens, headers, environment URLs |
+| API                    | Versioning strategy, deprecation rules, complexity limits |
+| Other tool specific actions | Required headers, CORS rules, network/VPN requirements |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use the tool/platform
+--------------
+
+# Defining schema types
+type User {
+  id: ID!
+  name: String!
+  email: String
+}
+
+# Implementing resolvers
+const resolvers = {
+  Query: {
+    user: (_, { id }, { dataSources }) =>
+      dataSources.usersAPI.getUser(id)
+  }
+}
+
+# Handling mutations
+mutation {
+  createUser(input: { name: "Alice" }) {
+    id
+    name
+  }
+}
+
+# Managing performance
+- Use batching (DataLoader)
+- Avoid N+1 queries
+- Add caching layers
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+- Define new types, fields, and input objects
+- Identify resolver logic and downstream dependencies
+- Plan for batching, caching, and avoiding N+1 issues
+- Establish error handling and nullability rules
+- Determine authorization strategy at field or resolver level
+
+**Examples of implementation**
+
+- Adding a new mutation for a feature
+- Extending an existing type with new fields
+- Creating resolvers that aggregate multiple services
+- Implementing subscriptions for real‑time updates
+
+**Engineering considerations**
+
+- Schema evolution and backward compatibility
+- Field‑level authorization
+- Query complexity limits and depth restrictions
+- Resolver performance and caching strategy
+- Consistent error shapes and nullability
+
+**What a TA needs to provide for handover**
+
+- Clear definitions of types, fields, and relationships
+- Business rules for mutations and validation
+- Expected query shapes and nested data requirements
+- Edge cases, nullability expectations, and error scenarios
+- Dependencies and integration points
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage this:
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|---------|---------------------|---------------|-------------------|
+| Slow queries | N+1 issues or deep nested queries | Resolver logs, query depth | Add batching/caching, limit depth |
+| Null fields | Resolver failure or missing data | Downstream services, schema nullability | Fix resolver or update schema |
+| Authorization errors | Missing or invalid tokens | Headers, roles, field-level auth | Refresh token or update permissions |
+| Schema mismatch | Outdated schema or breaking change | SDL, introspection, versioning | Sync schema or update clients |
+| Unexpected errors | Resolver exceptions | Logs, downstream dependencies | Fix resolver logic or escalate |
+

@@ -1,0 +1,178 @@
+---
+title: "🗄️MySQL"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip MySQL
+MySQL is a widely used open‑source relational database management system (RDBMS) designed for structured data storage, querying, and transactional workloads. It powers applications ranging from small internal tools to large‑scale, high‑availability production systems.
+:::
+
+```mermaid
+MySQL
+├── Relational Database Concepts
+│   ├── Tables, Rows & Columns
+│   ├── Primary & Foreign Keys
+│   ├── Indexes & Constraints
+│   └── Joins, Views & Transactions
+├── TA Skills
+│   ├── Review Schema & Relationships
+│   ├── Validate Data Quality & Assumptions
+│   ├── Check Indexing & Query Plans
+│   └── Confirm Access, Environments & Constraints
+└── SWE Skills
+    ├── Design & Modify Schemas
+    ├── Write & Optimize Queries
+    ├── Manage Migrations & Indexes
+    └── Monitor Performance & Replication
+
+```
+
+---
+
+## 🧩 Technical Skills
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+How to use the tool/platform as TA
+--------------
+
+# Connecting to a MySQL instance
+mysql -h <host> -u <user> -p
+
+# Running queries
+SELECT * FROM table_name LIMIT 10;
+
+# Inspecting schema
+SHOW TABLES;
+DESCRIBE table_name;
+
+# Checking indexes
+SHOW INDEX FROM table_name;
+
+# Exporting data
+mysqldump -h <host> -u <user> <database> > backup.sql
+```
+
+</TabItem>
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify the environment (dev/staging/prod) and hosting model (self‑hosted, AWS RDS, Azure MySQL, etc.)
+- Confirm access method: direct connection, SSH tunnel, VPN, bastion host
+- Clarify expected data volume and query patterns
+- Understand table relationships and business logic behind the schema
+- Capture performance expectations (latency, throughput, concurrency)
+- Determine backup, retention, and compliance requirements
+
+**Examples of use cases**
+
+- Validating data assumptions during requirements intake
+- Investigating data quality issues or mismatches
+- Supporting analytics teams with structured extracts
+- Understanding schema dependencies before engineering changes
+
+**What a TA needs to gather**
+
+- Connection details (host, port, credentials, SSL requirements)
+- Target tables, fields, and business definitions
+- Expected outputs, filters, and edge cases
+- Known data constraints (nullability, foreign keys, uniqueness)
+
+</TabItem>
+</Tabs>
+
+---
+
+## Pre-Requisites
+
+| Action / Service       | What TA Needs to Gather / Confirm |
+|------------------------|-----------------------------------|
+| Set-up                 | MySQL client availability, version compatibility |
+| Access & Login         | Credentials, MFA, VPN, IP allowlist, bastion host details |
+| API                    | Whether MySQL will be accessed programmatically; service accounts |
+| Other tool-specific actions | Required drivers (JDBC, Python connectors), SSL certificates |
+
+---
+
+## Engineering
+
+<Tabs>
+<TabItem value="skill" label="Skill">
+
+```shell
+--------------
+Common ways engineers use the tool/platform
+--------------
+
+# Query optimization
+EXPLAIN SELECT ...;
+
+# Schema migrations
+ALTER TABLE table_name ADD COLUMN ...;
+
+# Creating indexes
+CREATE INDEX idx_name ON table_name(column);
+
+# Managing users & permissions
+CREATE USER 'app'@'%' IDENTIFIED BY 'password';
+GRANT SELECT, INSERT ON db.* TO 'app'@'%';
+```
+
+</TabItem>
+<TabItem value="engineering" label="Engineering">
+
+**How to formulate a plan for development**
+
+- Define schema changes and migration strategy
+- Identify indexing needs based on query patterns
+- Plan for connection pooling and retry logic
+- Determine backup, replication, and failover requirements
+- Validate performance with representative datasets
+
+**Examples of implementation**
+
+- Building CRUD services backed by MySQL
+- Designing relational schemas for new features
+- Implementing ETL pipelines that read/write MySQL
+- Integrating MySQL into CI/CD for automated migrations
+
+**Engineering considerations**
+
+- Query performance and indexing strategy
+- Transaction isolation levels
+- Handling large datasets and pagination
+- Replication lag and read/write splitting
+- Storage engine choice (InnoDB vs MyISAM)
+
+**What a TA needs to provide for handover**
+
+- Clear data definitions and business rules
+- Entity relationships and constraints
+- Expected query patterns and edge cases
+- Performance expectations and SLAs
+- Migration requirements and rollout considerations
+
+</TabItem>
+</Tabs>
+
+---
+
+## Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage this:
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|---------|---------------------|---------------|-------------------|
+| Slow queries | Missing indexes or inefficient SQL | EXPLAIN plan, table size, index usage | Add indexes, rewrite query |
+| Locking / deadlocks | High contention or long transactions | SHOW ENGINE INNODB STATUS | Reduce transaction scope, add indexes |
+| Connection failures | Network, credentials, or max connections | Logs, firewall, `max_connections` | Request access, increase limits |
+| Replication lag | Heavy writes or slow replica | Replica status, slow queries | Optimize writes, scale replicas |
+| Data inconsistency | Application logic or missing constraints | Foreign keys, triggers, ETL jobs | Add constraints, fix ETL logic |

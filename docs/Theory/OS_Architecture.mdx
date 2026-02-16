@@ -1,0 +1,274 @@
+---
+title: "OS Architecture"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Operating System (OS) Architecture** describes how an OS organises hardware, kernel functions, and user‑space processes to provide safe, efficient, and portable abstractions for running applications.
+:::
+
+**Typical examples include:**
+- Linux (Ubuntu, Alpine, RHEL)
+- Windows NT architecture
+- BSD variants and derivatives
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Without an OS, applications would need to manage hardware directly — an unsafe, inefficient, and error‑prone model.
+
+OS architecture provides:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Hardware abstraction** | Applications don’t need to understand CPU, memory, or device specifics |
+| **Safe resource sharing** | Multiple processes run without corrupting each other |
+| **Isolation & security** | Prevents workloads from interfering with one another |
+| **Scalable multitasking** | Efficient scheduling of many processes on limited hardware |
+| **Portability** | Applications run across different machines and environments |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+An OS provides structured layers that separate **hardware**, **kernel**, and **user space**.
+
+### **Hardware Layer**
+- CPU, memory, disks, network interfaces  
+- Exposed through controlled abstractions  
+
+### **Kernel Layer**
+- Runs in privileged mode  
+- Manages processes, memory, I/O, and device drivers  
+- Enforces isolation and security boundaries  
+
+### **User Space**
+- Applications, libraries, runtimes  
+- Interact with the kernel via syscalls  
+
+### High‑Level Architecture
+
+```
++---------------------------+
+|        User Space         |
+|  Apps | Runtimes | Tools |
++---------------------------+
+            ↓ syscalls
++---------------------------+
+|          Kernel           |
+| Scheduling | Memory | I/O |
++---------------------------+
+            ↓ drivers
++---------------------------+
+|          Hardware         |
++---------------------------+
+```
+
+---
+
+## 🔬 Behaviour Under Load / Scale
+
+- CPU contention → processes compete for scheduling  
+- Memory pressure → swapping, OOM kills  
+- Disk I/O saturation → latency spikes  
+- Network congestion → packet drops, retransmissions  
+- Kernel limits → file descriptors, threads, sockets  
+
+**TA insight:**  
+Many “application issues” are actually OS‑level symptoms: I/O wait, memory pressure, kernel throttling, or namespace misconfiguration.
+
+---
+
+## 🧭 When to Use
+
+### **Use When**
+- Evaluating performance, latency, or resource‑related issues  
+- Understanding container vs VM vs serverless behaviour  
+- Diagnosing failures below the application layer  
+- Designing systems that rely on OS‑level guarantees (file I/O, networking)  
+
+:::warning Avoid When
+- Treating containers as fully isolated VMs  
+- Assuming OS guarantees behaviour that belongs to the runtime or platform  
+- Over‑optimising kernel parameters without evidence  
+:::
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates OS Architecture
+- Identify whether an issue is **application‑level**, **runtime‑level**, or **OS‑level**  
+- Check for resource contention (CPU, memory, I/O, network)  
+- Understand isolation boundaries: process, container, VM, host  
+- Ask whether a failure relates to syscalls, kernel limits, or user‑space behaviour  
+- Map modern abstractions (Kubernetes, serverless) back to OS fundamentals  
+:::
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Kernel** | Privileged core managing processes, memory, and hardware |
+| **Syscall** | Interface for user‑space to request kernel services |
+| **User Space** | Restricted environment where applications run |
+| **Process** | Executing program with isolated memory and resources |
+| **Thread** | Lightweight execution unit within a process |
+| **Namespace** | Isolation mechanism for containers |
+| **cgroup** | Resource control mechanism for CPU, memory, I/O |
+
+---
+
+# 🧬 Variants / Types of OS Architecture
+
+<Tabs>
+
+<TabItem value="monolithic" label="Monolithic Kernel">
+
+### Key Characteristics
+- Kernel includes drivers, filesystems, networking, and scheduling  
+- High performance, but large trusted codebase  
+
+### Primary Purpose
+General‑purpose computing with strong performance.
+
+### Exceptions (Not Universal)
+- Some monolithic kernels support loadable modules for modularity  
+
+</TabItem>
+
+<TabItem value="microkernel" label="Microkernel">
+
+### Key Characteristics
+- Minimal kernel; most services run in user space  
+- Smaller attack surface, higher modularity  
+
+### Primary Purpose
+High‑reliability systems with strict isolation.
+
+### Exceptions (Not Universal)
+- Some microkernels include limited drivers for performance  
+
+</TabItem>
+
+<TabItem value="hybrid" label="Hybrid Kernel">
+
+### Key Characteristics
+- Microkernel principles with monolithic performance  
+- Flexible architecture  
+
+### Primary Purpose
+Balance between modularity and performance.
+
+### Exceptions (Not Universal)
+- Some hybrid kernels behave more like monolithic kernels in practice  
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Key Strategies
+
+<Tabs>
+
+<TabItem value="resource" label="Resource Strategy">
+
+### Approach
+Understand how CPU, memory, disk, and network are allocated and scheduled.
+
+### Responsibility
+Kernel manages fairness, isolation, and contention.
+
+### Focus
+Identify bottlenecks and ensure predictable performance.
+
+</TabItem>
+
+<TabItem value="isolation" label="Isolation Strategy">
+
+### Approach
+Use processes, permissions, namespaces, and VMs to isolate workloads.
+
+### Responsibility
+Kernel enforces boundaries; platform layers build on top.
+
+### Focus
+Security, multi‑tenancy, and blast‑radius reduction.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔌 How to Interact With It
+
+Applications interact with the OS through:
+
+### **Syscalls**
+- File I/O  
+- Memory allocation  
+- Process creation  
+- Networking (sockets)  
+- Signals and interrupts  
+
+### **Runtimes**
+- JVM, Python, Node.js, Go  
+- Provide higher‑level abstractions over syscalls  
+
+### **Orchestrators**
+- Kubernetes, ECS, Nomad  
+- Schedule workloads onto OS‑managed nodes  
+
+---
+
+## 📊 What Results Normally Look Like
+
+| Result Type | Description |
+|-------------|-------------|
+| **Syscall behaviour** | Success/failure codes, latency, blocking |
+| **Resource metrics** | CPU %, memory usage, I/O wait, network throughput |
+| **Kernel logs** | OOM kills, permission errors, device failures |
+| **Process state** | Running, sleeping, zombie, blocked |
+
+:::note Special Considerations
+Kernel behaviour varies across OS families; containerised environments share the same kernel.
+:::
+
+---
+
+## ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Assuming containers have their own kernel (they don’t)  
+- Treating OS limits (ulimits, cgroups) as application bugs  
+- Confusing VM isolation with container isolation  
+- Ignoring syscall overhead in high‑performance systems  
+- Assuming “serverless” means “no OS” — the OS is simply abstracted away  
+
+---
+
+## 🏗️ Real‑World Examples
+
+- A container hitting memory limits triggers an **OOMKill** from the kernel  
+- High disk I/O wait causes application latency despite low CPU usage  
+- A misconfigured filesystem mount leads to inconsistent persistence  
+- Network namespace issues cause container‑to‑container connectivity failures  
+
+---
+
+## 🔗 Related Concepts
+
+- Virtualisation & Hypervisors  
+- Container Runtime Architecture  
+- Memory Management  
+- Filesystems & Storage  
+- Networking Fundamentals  
+

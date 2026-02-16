@@ -1,0 +1,332 @@
+---
+title: "Problem‑Solving Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Algorithmic Thinking** is the ability to recognise problem shapes and apply reusable strategies — not just code — to solve them efficiently.  
+These patterns form the hidden curriculum behind technical interviews and everyday engineering reasoning.
+:::
+
+This includes:
+
+- Core algorithmic paradigms (two‑pointers, sliding window, recursion, DP)  
+- Classic problem shapes (palindromes, anagrams, cycles, intervals)  
+- Search & traversal patterns (DFS, BFS, binary search)  
+- Mathematical reasoning (modulo, primes, combinatorics)  
+- Optimisation strategies (greedy, divide‑and‑conquer)  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Algorithmic thinking enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Pattern recognition** | Most problems map to known shapes |
+| **Predictable performance** | Avoid brute force and unnecessary work |
+| **Scalable solutions** | Handle large inputs without timeouts |
+| **Clear reasoning** | Understand *why* a solution works |
+| **Interview readiness** | Many questions are variations of the same patterns |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+Most algorithmic problems boil down to:
+
+### **1. A data structure**  
+(list, map, tree, graph, matrix)
+
+### **2. A constraint**  
+(time, memory, ordering, uniqueness)
+
+### **3. A pattern**  
+(two‑pointers, recursion, BFS, etc.)
+
+### **4. A goal**  
+(find, count, optimise, detect, transform)
+
+Once you recognise the pattern, the solution becomes almost mechanical.
+
+---
+
+# 🧬 Core Algorithmic Paradigms
+
+<Tabs>
+
+<TabItem value="twopointers" label="Two‑Pointers">
+
+### Two‑Pointers
+
+Used when scanning or comparing elements in a linear structure.
+
+**Problem Shapes**
+- Palindromes  
+- Sorted array pair sums  
+- Removing duplicates  
+- Merging intervals  
+
+**TA Mental Model**
+```
+left → 0
+right → n-1
+
+WHILE left < right:
+    compare / move pointers
+```
+
+**Why It Works**
+Avoids nested loops → reduces O(n²) to O(n).
+
+</TabItem>
+
+<TabItem value="sliding" label="Sliding Window">
+
+### Sliding Window
+
+Used for contiguous subarrays or substrings.
+
+**Problem Shapes**
+- Longest substring without repeats  
+- Maximum sum subarray  
+- Fixed‑size windows (e.g., 3‑day rolling average)  
+- Variable windows (expand/contract)  
+
+**TA Mental Model**
+```
+expand window →
+shrink window ←
+track best result
+```
+
+**Why It Works**
+Avoids recomputing work for each window.
+
+</TabItem>
+
+<TabItem value="recursion" label="Recursion & Backtracking">
+
+### Recursion
+
+Breaks a problem into smaller versions of itself.
+
+**Problem Shapes**
+- Tree traversal  
+- Divide‑and‑conquer  
+- Permutations & combinations  
+- DFS on graphs  
+
+### Backtracking
+
+Try → explore → undo → try next.
+
+**Problem Shapes**
+- Sudoku  
+- N‑Queens  
+- Pathfinding with constraints  
+
+**TA Mental Model**
+```
+choose → explore → unchoose
+```
+
+</TabItem>
+
+<TabItem value="dp" label="Dynamic Programming">
+
+### Dynamic Programming (DP)
+
+Used when a problem has overlapping subproblems.
+
+**Problem Shapes**
+- Fibonacci  
+- Knapsack  
+- Longest increasing subsequence  
+- Edit distance  
+
+**TA Mental Model**
+```
+subproblem → store → reuse
+```
+
+**Why It Works**
+Avoids recomputing exponential work.
+
+</TabItem>
+
+<TabItem value="search" label="Search & Traversal">
+
+### DFS (Depth‑First Search)
+Explore deeply before backtracking.
+
+### BFS (Breadth‑First Search)
+Explore level by level.
+
+### Binary Search
+Used when the search space is sorted or monotonic.
+
+**Problem Shapes**
+- Shortest path (BFS)  
+- Cycle detection (DFS)  
+- Find boundary conditions (binary search on answer)  
+
+</TabItem>
+
+<TabItem value="greedy" label="Greedy & Optimisation">
+
+### Greedy Algorithms
+
+Make the best local choice at each step.
+
+**Problem Shapes**
+- Interval scheduling  
+- Minimum number of platforms  
+- Coin change (when canonical)  
+
+### Divide‑and‑Conquer
+
+Split → solve → combine.
+
+**Problem Shapes**
+- Merge sort  
+- Quick sort  
+- Closest pair of points  
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Classic Interview Problem Shapes
+
+These appear everywhere — interviews, production systems, data pipelines.
+
+### **1. Palindromes**
+Check symmetry using two‑pointers.
+
+### **2. Anagrams**
+Use frequency maps or sorting.
+
+### **3. Intervals**
+Sort by start time → merge or detect overlap.
+
+### **4. Cycles**
+Use fast/slow pointers (Floyd’s algorithm).
+
+### **5. Prefix Sums**
+Efficient range queries.
+
+### **6. Hashing**
+Detect duplicates, membership, or frequency.
+
+### **7. Graph Connectivity**
+DFS/BFS, union‑find.
+
+### **8. Matrix Traversal**
+Spiral, flood fill, island counting.
+
+### **9. Monotonic Stacks**
+Next greater element, histogram area.
+
+### **10. Heaps**
+Top‑k problems, streaming medians.
+
+---
+
+# 🧠 Mathematical Tools (Lightweight, Practical)
+
+### **Modulo Arithmetic**
+Used for:
+- Rolling hashes  
+- Avoiding overflow  
+- Cyclic behaviour  
+
+### **Prime Checking / Sieve**
+Used for:
+- Hashing  
+- Cryptography  
+- Number theory questions  
+
+### **Combinatorics**
+Used for:
+- Counting paths  
+- Generating subsets  
+- Probability questions  
+
+### **Logarithms**
+Used for:
+- Understanding O(log n)  
+- Binary search  
+- Tree height  
+
+---
+
+# 🧭 TA Lens
+
+:::info How a TA Evaluates Algorithmic Thinking
+- Identify the **problem shape** before thinking about code  
+- Map the shape to a known pattern  
+- Predict performance using Big‑O intuition  
+- Recognise when brute force is unacceptable  
+- Understand memory vs time trade‑offs  
+- Ask whether the solution is optimal or merely correct  
+:::
+
+---
+
+# 🧰 TA Skills Checklist
+
+| Skill Area | What a TA Should Do |
+|------------|----------------------|
+| **Analysis** | Recognise patterns, detect inefficiencies |
+| **Requirements** | Capture constraints (ordering, uniqueness, performance) |
+| **Review** | Validate algorithmic choices, highlight scaling risks |
+
+---
+
+# 📊 What Results Normally Look Like
+
+| Output Type | Description |
+|-------------|-------------|
+| **Pattern identification** | “This is a sliding‑window problem.” |
+| **Complexity intuition** | “This solution is O(n²); can we reduce it?” |
+| **Decision trees** | Mapping conditions to algorithmic paths |
+| **Traversal traces** | How DFS/BFS explored the structure |
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Treating every problem as brute force  
+- Using recursion without understanding stack depth  
+- Misusing hash maps for ordered problems  
+- Overusing DP when greedy suffices  
+- Forgetting edge cases (empty, single, boundaries)  
+- Confusing “sorted input” with “sorted output”  
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A palindrome check becomes a two‑pointer optimisation  
+- A log‑processing pipeline uses sliding windows for rate limiting  
+- A graph traversal detects cycles in dependency resolution  
+- A DP solution optimises pricing or scheduling  
+- A monotonic stack speeds up analytics queries  
+
+---
+
+## 🔗 Related Concepts
+
+- Data Structures & Conditionals  
+- Performance Engineering  
+- System Design  
+- State Machines  
+- Caching & Indexing  
+

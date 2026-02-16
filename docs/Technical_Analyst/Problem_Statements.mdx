@@ -1,0 +1,130 @@
+---
+title: "🎯Problem Statements"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+A **Problem Statement** defines the core issue a system, feature, or workflow is intended to solve.
+For a Technical Analyst, it anchors analysis by clarifying scope, constraints, and desired outcomes before any solutioning begins.
+- Establish a shared understanding of the issue at hand
+- Prevent premature solutioning by focusing on *what* is wrong, not *how* to fix it
+- Provide clarity for engineers, stakeholders, and decision‑makers
+- Ensure alignment between business goals and technical execution
+:::
+
+---
+
+### Principles:
+
+- **Neutrality** – Describe the problem without implying a solution
+- **Specificity** – Clearly define the symptoms, context, and impact
+- **Measurability** – Identify what “resolved” looks like
+- **Scope Awareness** – Avoid expanding beyond the actual issue
+- **Stakeholder Alignment** – Ensure all parties agree on the definition
+
+### Remit:
+
+- Capturing the core issue in clear, concise language
+- Identifying affected systems, users, and workflows
+- Documenting assumptions, constraints, and unknowns
+- Providing context for downstream analysis and design
+- Ensuring the problem is framed in a way that enables objective evaluation
+
+---
+
+## 🧩 Technical Skills
+
+<Tabs>
+<TabItem value="systems" label="Systems & Architecture">
+
+- Identify which components are involved in the problem
+- Map symptoms to system boundaries and dependencies
+- Distinguish between root causes and surface‑level issues
+- Understand how architecture influences problem scope
+
+</TabItem>
+
+<TabItem value="data" label="Data Engineering">
+
+- Recognise data quality, lineage, or transformation issues
+- Understand how data flows contribute to symptoms
+- Identify where inconsistencies or bottlenecks originate
+- Validate assumptions using logs, metrics, and queries
+
+</TabItem>
+
+<TabItem value="software" label="Software Engineering">
+
+- Understand how APIs, services, and modules interact
+- Identify where logic, validation, or error handling may fail
+- Recognise patterns that indicate systemic vs isolated issues
+- Evaluate how design choices influence the problem
+
+</TabItem>
+
+<TabItem value="tools" label="Tools & Analysis">
+
+- Use observability tools to gather evidence (logs, metrics, traces)
+- Review documentation, tickets, and historical incidents
+- Use CLI, SQL, or scripting to validate assumptions
+- Apply structured analysis frameworks to refine the problem
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="approach" label="Analysis Approach">
+
+1. **Clarify the context** – Who is affected? When does it occur?
+2. **Describe the symptoms** – What is happening vs what should happen
+3. **Identify constraints** – Technical, operational, or business limitations
+4. **Separate facts from assumptions** – Validate with evidence
+5. **Define success** – What does “problem resolved” look like
+
+</TabItem>
+
+<TabItem value="scenarios" label="Scenario Analysis">
+
+- Compare expected vs actual behaviour
+- Identify edge cases where the problem manifests
+- Evaluate how the issue scales under load or volume
+- Consider environmental differences (dev, staging, prod)
+
+</TabItem>
+
+<TabItem value="stakeholder" label="Stakeholder Alignment">
+
+- Ensure all parties agree on the problem definition
+- Highlight business impact and urgency
+- Document trade-offs or constraints influencing the framing
+- Provide a neutral, solution‑agnostic summary
+
+</TabItem>
+</Tabs>
+
+---
+
+## Questions a TA Should Ask
+
+- “What is the exact behaviour that is incorrect or unexpected?”
+- “Who is impacted, and how severely?”
+- “When does the issue occur, and under what conditions?”
+- “What assumptions are we making that need validation?”
+- “What does success look like once this problem is resolved?”
+
+---
+
+## Key Outputs of a Problem Statement
+
+- A clear, concise articulation of the issue
+- Defined scope, constraints, and affected components
+- Evidence supporting the problem definition
+- Alignment between stakeholders and engineering
+- A foundation for requirements, design, and technical analysis

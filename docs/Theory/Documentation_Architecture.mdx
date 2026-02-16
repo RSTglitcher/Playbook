@@ -1,0 +1,321 @@
+---
+title: "Documentation Architecture"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Documentation Architecture** describes how technical knowledge is structured, communicated, and maintained across systems, teams, and lifecycles.
+It includes API contracts, system design docs, operational runbooks, onboarding guides, and schema definitions.
+:::
+
+Documentation is not just “writing things down” — it is a **system of shared understanding** that enables teams to build, operate, and evolve software safely.
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Documentation Architecture enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Shared understanding** | Reduces ambiguity and tribal knowledge |
+| **Faster onboarding** | New engineers understand systems quickly |
+| **Operational safety** | Runbooks prevent outages and mistakes |
+| **API reliability** | Contracts ensure consistent behaviour |
+| **Governance & compliance** | Traceability for audits and reviews |
+| **Scalable collaboration** | Teams coordinate without constant meetings |
+
+---
+
+## 🧠 Conceptual Model (How Documentation Works)
+
+Documentation spans **four layers**:
+
+### **1. Product & User Documentation**
+Explains *what the system does*.
+
+### **2. Architecture & Design Documentation**
+Explains *how the system works*.
+
+### **3. API & Contract Documentation**
+Explains *how to interact with the system*.
+
+### **4. Operational Documentation**
+Explains *how to run, debug, and maintain the system*.
+
+Each layer serves a different audience and purpose.
+
+---
+
+# 🧬 Categories of Documentation
+
+<Tabs>
+
+<TabItem value="api" label="API & Contract Documentation">
+
+### Purpose
+Define how systems communicate and what they expect.
+
+---
+
+## OpenAPI (REST API Contracts)
+
+**What It Is**
+A machine‑readable specification describing HTTP APIs.
+
+**Use When**
+- Exposing REST APIs
+- Generating client SDKs
+- Validating request/response schemas
+- Publishing API docs to portals (e.g., Backstage)
+
+**TA Lens**
+OpenAPI describes *what* an API looks like, not *how* it behaves internally.
+
+---
+
+## GraphQL Schema Documentation
+
+GraphQL APIs are self‑describing via introspection.
+
+**Use When**
+- Clients choose their own fields
+- Strong typing is required
+- Schema evolution matters
+
+---
+
+## gRPC / Protobuf Contracts
+
+Binary, schema‑driven API definitions.
+
+**Use When**
+- High‑performance service‑to‑service communication
+- Strong typing and versioning
+- Low latency is critical
+
+---
+
+## SOAP / WSDL (Legacy)
+
+XML‑based contract definitions.
+
+**Use When**
+- Integrating with legacy enterprise systems
+- Strict schema validation is required
+
+</TabItem>
+
+<TabItem value="architecture" label="Architecture & System Documentation">
+
+### Purpose
+Explain how systems are designed, structured, and interact.
+
+---
+
+## Architecture Decision Records (ADRs)
+
+Capture *why* decisions were made.
+
+**Use When**
+- Making long‑term architectural choices
+- Providing historical context
+- Ensuring traceability
+
+---
+
+## System Design Docs
+
+Describe:
+- Components
+- Data flows
+- Dependencies
+- Failure modes
+- Scaling behaviour
+
+**Use When**
+- Designing new systems
+- Reviewing architecture
+- Onboarding new engineers
+
+---
+
+## Sequence Diagrams & Flow Diagrams
+
+Explain runtime behaviour and interactions.
+
+**Use When**
+- Clarifying workflows
+- Explaining request/response cycles
+- Mapping dependencies
+
+</TabItem>
+
+<TabItem value="operational" label="Operational Documentation">
+
+### Purpose
+Enable safe operation, debugging, and maintenance.
+
+---
+
+## Runbooks
+
+Step‑by‑step instructions for handling known scenarios.
+
+**Use When**
+- Responding to alerts
+- Restarting services
+- Handling predictable failures
+
+---
+
+## Playbooks
+
+Higher‑level operational strategies.
+
+**Use When**
+- Incident response
+- Disaster recovery
+- Scaling events
+
+---
+
+## SLO/SLA Documentation
+
+Defines:
+- Availability targets
+- Error budgets
+- Performance expectations
+
+**Use When**
+- Setting reliability standards
+- Aligning teams on expectations
+
+</TabItem>
+
+<TabItem value="product" label="Product & User Documentation">
+
+### Purpose
+Explain what the system does and how to use it.
+
+---
+
+## User Guides
+
+Explain features, workflows, and usage patterns.
+
+## Tutorials & Examples
+
+Walk users through common tasks.
+
+## Release Notes
+
+Communicate changes, deprecations, and migrations.
+
+</TabItem>
+
+<TabItem value="schema" label="Schema & Data Documentation">
+
+### Purpose
+Define the structure, meaning, and constraints of data.
+
+---
+
+## JSON Schema
+
+Validates JSON payloads.
+
+## XSD (XML Schema Definition)
+
+Validates XML documents.
+
+## Avro / Protobuf Schemas
+
+Define binary data structures.
+
+## Data Dictionary
+
+Explains:
+- Field definitions
+- Allowed values
+- Business meaning
+
+**Use When**
+- Working with data pipelines
+- Ensuring semantic consistency
+- Supporting analytics teams
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧭 When to Use Documentation
+
+Use documentation when:
+
+- Knowledge must be shared across teams
+- APIs need clear contracts
+- Systems are complex or long‑lived
+- Operational safety matters
+- Compliance or auditability is required
+- Onboarding new engineers
+
+---
+
+# 🚫 When Not to Use
+
+Avoid documentation when:
+
+- The information is volatile and changes daily
+- A simple comment or README is enough
+- The system is experimental or short‑lived
+- Documentation becomes a substitute for good design
+
+---
+
+# 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Contract** | Agreed behaviour between systems |
+| **Specification** | Formal description of an API or schema |
+| **Runbook** | Step‑by‑step operational instructions |
+| **Playbook** | Strategy for handling classes of incidents |
+| **ADR** | Architecture Decision Record |
+| **Schema** | Structured definition of data |
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Treating documentation as optional
+- Letting documentation drift out of sync with reality
+- Over‑documenting trivial systems
+- Using documentation to justify poor design
+- Writing documentation that only the author understands
+- Mixing business rules with implementation details
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A Backstage portal showing OpenAPI specs for all internal services
+- A runbook describing how to restart a failing Kubernetes Deployment
+- An ADR explaining why the team chose Kafka over RabbitMQ
+- A data dictionary defining metrics for analytics teams
+- A system design doc mapping out microservice interactions
+
+---
+
+## 🔗 Related Concepts
+
+- API Design
+- Data Modelling
+- System Architecture
+- Delivery & Deployment Architecture
+- Configurations & Declarative Systems

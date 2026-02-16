@@ -1,65 +1,134 @@
 ---
-title: "Requirements"
-sidebar_position: 8
+title: "📝Requirements"
+sidebar_position: 2
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Concept Overview
-Requirements are not just statements of need — they are **alignment tools**, **boundary‑setting tools**, and **decision‑making tools**.
-
-For a Technical Analyst, requirements are how you:
-- Make implicit assumptions explicit
-- Anchor conversations in facts
-- Create shared accountability
-- Reduce ambiguity and future conflict
+A **Requirement** is a clear, testable statement that defines what a solution must do, support, or enable.
+For a Technical Analyst, requirements are alignment tools — they reduce ambiguity, set boundaries, and ensure decisions are grounded in real constraints rather than assumptions or preferences.
+- Translate business needs into actionable, testable conditions
+- Establish boundaries for design and implementation
+- Prevent scope creep and misalignment
+- Provide a shared reference point for engineering, stakeholders, and QA
 :::
 
 ---
+### Principles:
 
-# 🧭 The TA Mental Model for Requirements
+- **Clarity** – No ambiguity or interpretation gaps
+- **Testability** – You can verify whether it is met
+- **Neutrality** – No implied solution or emotional framing
+- **Traceability** – Linked to a problem, risk, or constraint
+- **Bounded Scope** – Defines limits, not open‑ended desires
+- **Negotiability** – Explicitly states whether it is fixed or flexible
 
-A requirement is **not** a wish list item.
-It is a **constraint**, **condition**, or **decision rule** that must be met for a solution to be viable.
+### Remit:
 
-**Backbone of the TA Role: Context → Problem → Constraints → Requirements → Acceptance → Decision**
-
----
-
-## 🧩 What Good Requirements Look Like
-
-A good requirement is:
-
-- [x] **Clear** — no ambiguity
-- [x] *Testable** — you can verify if it’s met
-- [x] **Bounded** — it has a scope
-- [x] **Neutral** — no blame, no emotion
-- [x] **Contextualised** — tied to a real constraint
-- [x] **Negotiable or Non‑Negotiable** — explicitly stated
-- [x] **Traceable** — linked to a problem or risk
+- Capturing constraints that shape the solution space
+- Documenting assumptions, dependencies, and non‑negotiables
+- Ensuring requirements reflect real system, business, or operational needs
+- Providing a structured foundation for design, estimation, and acceptance
+- Acting as the connective tissue between **Problem → Requirements → Acceptance**
 
 ---
 
-##  🧱 The TA Requirement Pattern
+## 🧩 Technical Skills
 
-Every requirement you write should follow this structure:
+<Tabs>
+<TabItem value="systems" label="Systems & Architecture">
+
+- Identify architectural constraints that influence requirements
+- Understand system boundaries, interfaces, and dependencies
+- Distinguish between functional and non‑functional requirements
+- Validate feasibility with engineering teams
+
+</TabItem>
+
+<TabItem value="data" label="Data Engineering">
+
+- Define requirements around data quality, lineage, and transformations
+- Understand storage, schema, and pipeline constraints
+- Identify performance, latency, or throughput expectations
+- Ensure requirements reflect real data behaviours
+
+</TabItem>
+
+<TabItem value="software" label="Software Engineering">
+
+- Translate business rules into functional requirements
+- Capture API, integration, and workflow expectations
+- Define error handling, logging, and observability needs
+- Identify non‑functional requirements (scalability, reliability, security)
+
+</TabItem>
+
+<TabItem value="tools" label="Tools & Analysis">
+
+- Use documentation, logs, and metrics to validate assumptions
+- Review existing systems to identify constraints
+- Use structured templates to write consistent requirements
+- Facilitate alignment sessions with stakeholders and engineers
+
+</TabItem>
+</Tabs>
+
+---
+
+## Key Strategies
+
+<Tabs>
+<TabItem value="approach" label="Requirements Approach">
+
+1. **Start with the problem** – Requirements must trace back to a real issue
+2. **Identify constraints** – Technical, operational, regulatory, or business
+3. **Write the requirement** – Clear, testable, and neutral
+4. **Define acceptance criteria** – How we know it’s met
+5. **Validate with stakeholders** – Ensure feasibility and alignment
+
+</TabItem>
+
+<TabItem value="scenarios" label="Scenario Analysis">
+
+- Identify edge cases that influence requirement scope
+- Consider environmental differences (dev/staging/prod)
+- Evaluate performance, concurrency, and scaling needs
+- Model failure modes and operational constraints
+
+</TabItem>
+
+<TabItem value="stakeholder" label="Stakeholder Alignment">
+
+- Ensure all parties agree on what “done” means
+- Highlight trade-offs and constraints early
+- Document negotiable vs non‑negotiable items
+- Provide clear, solution‑agnostic framing
+
+</TabItem>
+</Tabs>
+
+---
+
+## The TA Requirement Pattern
+
+Every requirement should follow this structure:
 
 1. **Context**
-> - Why this requirement exists.
+> Why this requirement exists — the underlying problem or constraint.
 
 2. **Constraint**
-> - What limits the solution space.
+> What limits the solution space (technical, operational, regulatory).
 
 3. **Requirement Statement**
-> - A single sentence, structured as:
-
+> A single sentence, structured as:
 ```
 The solution must <do/enable/support> <behaviour or condition> because <reason>.
 ```
 
 4. **Acceptance Criteria**
-> - How we know the requirement is met.
+> How we verify the requirement is met.
 
 5. **Negotiability**
 > - **Non‑negotiable** (fixed constraint)
@@ -68,7 +137,7 @@ The solution must <do/enable/support> <behaviour or condition> because <reason>.
 
 ---
 
-# 🧩 Example Requirements (Side‑by‑Side)
+## 🧩 Example Requirements (Side‑by‑Side)
 
 <Tabs>
 
@@ -107,18 +176,18 @@ We should use the platform image because that’s what everyone else does.
 
 ---
 
-## 🧩 Requirements Presentation Structure
+## Requirements Presentation Structure
 
 1. **Executive Summary**
-- What you analysed: _I analysed the current workflow, tooling, and constraints across the team._
-- What you found: _I found inconsistencies in environments, duplicated effort in setup, and unclear ownership around several technical decisions._
-- What decisions are needed: _Decisions are needed on which components are fixed, which can vary by team, and which require additional support before adoption._
+- What you analysed
+- What you found
+- What decisions are needed
 
 2. **Project Context**
-- Team: # engineers across backend, data, and QA; mixed experience levels.
-- Tech stack: Python, Node.js, Docker, GitHub Actions, AWS.
-- Constraints: Security baselines, shared infrastructure, limited migration window, dependency on central platform team.
-- Deployment model: Containerised services deployed via CI/CD to AWS ECS.
+- Team composition
+- Tech stack
+- Constraints
+- Deployment model
 
 3. **Fixed vs Flexible vs Team‑Specific**
 A table like this:
@@ -130,51 +199,24 @@ A table like this:
 | Team‑specific | ETL folder structure | Must be supported |
 
 4. **Requirements List**
-Each requirement in the TA pattern format.
-- Trigger:
-- Action:
-- Outcome:
+Each requirement written using the TA pattern.
 
 5. **Adoption Conditions**
-What must be true for the team to adopt the template.
-- Documentation is available for setup, testing, and deployment.
-- Teams can migrate incrementally without blocking current work.
-- Support is available for onboarding and troubleshooting during the transition.
-- Tooling is compatible with existing security and compliance requirements.
+What must be true for the team to adopt the solution.
 
 6. **Risks & Dependencies**
-What could block adoption.
-- Dependency on platform team for base image updates.
-- Risk of adoption delays if documentation is incomplete.
-- Potential incompatibility with legacy services.
-- Need for alignment with security and DevOps teams.
+What could block or delay adoption.
 
 7. **Next Steps**
-Clear, shared actions — not all assigned to you.
-- Finalise the fixed/flexible/team‑specific decisions with engineering leads.
-- Validate requirements with each team to confirm feasibility.
-- Produce the first draft of the template and run a pilot with one team.
-- Gather feedback and iterate before wider rollout.
+Clear, shared actions for alignment and execution.
 
 ---
 
 ## 🛡️ BAU
 
 1. Operate from written requirements
-> - Never rely on verbal agreements.
-
 2. Use the TA requirement pattern to create clarity
-> - It reduces political manoeuvring.
-
 3. Document alignment decisions
-> - This protects you from blame shifting.
-
 4. Set boundaries early
-> - “This is what we agreed. This is what I’m delivering.”
-
-5. Avoid taking on unbounded work
-> - If it’s not in the requirements, it’s not your responsibility.
-
+5. Avoid unbounded work
 6. Protect your energy
-> _ Ensure you have stability to operate as you need
-
