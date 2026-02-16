@@ -1,0 +1,403 @@
+---
+title: "Analytical Storage Systems"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Analytics Architecture** describes the storage models, processing patterns, and system designs used to ingest, organise, and analyse large volumes of data for reporting, BI, and decision‑making.
+:::
+
+**Typical examples include:**
+- Data Warehouses  
+- Data Lakes  
+- Lakehouse platforms  
+- Cloud‑native warehouses  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Using **Analytics Architecture** enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| Efficient analytical queries | Optimised for scans, joins, aggregations |
+| Historical data storage | Supports long‑term trend analysis |
+| Separation of workloads | OLAP workloads don’t impact OLTP systems |
+| Consistent modelling | Fact/dimension schemas improve clarity |
+| Scalability | Distributed compute handles large datasets |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+Analytics systems are built for **read‑heavy, analytical workloads**, not transactional updates.
+
+### Core Components
+- **Storage layer** → files, tables, partitions  
+- **Compute layer** → distributed query engines  
+- **Modelling layer** → facts, dimensions, schemas  
+- **Ingestion layer** → ETL/ELT pipelines  
+- **Consumption layer** → BI tools, dashboards, ML pipelines  
+
+### High‑Level Architecture
+
+```
+        +----------------------+
+        |   Source Systems     |
+        +----------------------+
+                 |
+                 v
+        +----------------------+
+        |     ETL / ELT        |
+        +----------------------+
+                 |
+                 v
+   +-------------------------------+
+   |   Lake / Warehouse / Hybrid   |
+   +-------------------------------+
+        |       |         |
+        v       v         v
+   BI Tools   ML/AI   Ad‑hoc SQL
+```
+
+---
+
+## 🔬 Behaviour Under Load / Scale
+
+- Warehouses scale **horizontally** for large scans  
+- Lakes scale **cheaply** for raw storage  
+- Lakehouses scale **compute and storage independently**  
+- Query cost grows with:
+  - number of joins  
+  - data volume  
+  - cardinality  
+- Performance improves with:
+  - partitioning  
+  - clustering  
+  - materialised views  
+  - columnar formats  
+
+**TA insight:**  
+Most performance issues originate in modelling, not the tool.
+
+---
+
+## ⚖️ Trade-offs
+
+| Architecture | Strengths | Weaknesses |
+|--------------|-----------|------------|
+| **Warehouse** | Fast queries, strong modelling | Expensive, rigid |
+| **Lake** | Cheap, flexible, raw storage | Weak governance, slower queries |
+| **Lakehouse** | ACID + files, unified architecture | More complex to operate |
+| **Cloud Warehouse** | Serverless, elastic, simple | Vendor lock‑in, cost surprises |
+
+---
+
+## 🧭 When to Use
+
+### **Use When**
+- You need analytical queries over large datasets  
+- You need historical or aggregated views  
+- You need consistent modelling for BI  
+- You need scalable compute  
+
+:::warning Avoid When
+- You need high‑frequency transactional writes  
+- You need millisecond‑latency lookups  
+- You need unstructured or schema‑less storage without governance  
+:::
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates Analytics Architecture
+- Identify whether the architecture matches the analytical questions  
+- Check modelling quality (facts, dimensions, grain)  
+- Understand ingestion latency and data freshness  
+- Evaluate cost drivers (scan volume, partitions, clustering)  
+- Surface risks: schema drift, exploding joins, stale data  
+- Map architecture to business processes and ownership  
+:::
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| OLAP | Analytical processing model |
+| Fact table | Stores measurable events |
+| Dimension table | Stores descriptive attributes |
+| ETL/ELT | Data ingestion and transformation |
+| Partitioning | Dividing data for efficient scans |
+| Columnar storage | Format optimised for analytics |
+
+---
+
+# 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="warehouse" label="Data Warehouses">
+
+### Key Characteristics
+- Schema‑on‑write  
+- Fact/dimension modelling  
+- Columnar storage  
+- Distributed compute  
+- Strong governance and metadata  
+
+### Core Concepts
+
+#### Schema Design
+- **Star Schema** → fact + denormalised dimensions  
+- **Snowflake Schema** → normalised dimensions  
+- **Galaxy Schema** → multiple fact tables sharing dimensions  
+
+#### ETL / ELT
+- Extract → Transform → Load  
+- Or Load → Transform (ELT) inside the warehouse  
+
+#### OLAP
+Supports slicing, dicing, rollups, drill‑downs, multidimensional analysis.
+
+#### Aggregation
+Warehouses excel at grouping, summarising, and computing metrics.
+
+### Behaviour
+- Fast joins and aggregations  
+- Predictable performance with partitioning/clustering  
+- Strong consistency guarantees  
+
+### Trade-offs
+- Higher cost  
+- Less flexible for raw/unstructured data  
+- Requires upfront modelling  
+
+### Exceptions (Not Universal)
+- Some warehouses support semi‑structured data, but performance varies  
+- Some systems offer limited ACID support, but not full OLTP guarantees  
+
+</TabItem>
+
+<TabItem value="lake" label="Data Lakes">
+
+### Key Characteristics
+- Schema‑on‑read  
+- Stores structured, semi‑structured, and unstructured data  
+- Built on scalable object storage  
+- Supports batch and streaming ingestion  
+
+### Core Concepts
+
+#### Raw vs Curated Zones
+- **Raw Zone** → unprocessed data  
+- **Curated Zone** → cleaned, structured data  
+
+#### Schema-on-Read
+Schema applied at query time → flexibility but requires governance.
+
+#### Object Storage
+Cheap, durable, large‑file storage (Parquet, ORC, Avro).
+
+#### Partitioning
+Improves performance and reduces scan cost.
+
+### Behaviour
+- Highly flexible ingestion  
+- Low‑cost storage  
+- Performance depends on file layout and metadata  
+
+### Trade-offs
+- Weak governance without additional tooling  
+- Slower queries than warehouses  
+- Harder to enforce quality  
+
+### When to Use
+- Raw or semi‑structured data at scale  
+- ML, experimentation, exploratory analytics  
+- Shared data access across teams  
+
+### Avoid When
+- You need ACID guarantees  
+- You need low‑latency key‑based lookups  
+- You need frequent updates to structured relational data  
+
+### Variants
+- **Cloud Data Lakes** — object storage based  
+- **On‑Prem Data Lakes** — HDFS/Ceph‑based  
+
+### Strategies
+- Raw ingestion  
+- Data curation  
+- Partitioning & indexing  
+- Governance & security  
+
+### Architecture Diagram
+
+```mermaid
+Source Systems --> Ingestion Pipeline --> Data Lake (Raw)
+Data Lake (Raw) --> ETL/ELT --> Curated Data Zone
+Curated Data Zone --> Analytics / ML / BI Tools
+```
+
+### Exceptions (Not Universal)
+- Some lakes support ACID‑like behaviour via add‑on layers  
+- Some lakes enforce schema‑on-write for curated zones  
+
+</TabItem>
+
+<TabItem value="lakehouse" label="Lakehouse Architecture">
+
+### Key Characteristics
+- ACID transactions on top of a data lake  
+- Schema enforcement  
+- Versioned tables / time travel  
+- Supports batch + streaming  
+- Unified storage + compute  
+
+### Core Concepts
+- Transaction logs  
+- Table formats  
+- Schema evolution  
+- Compaction and clustering  
+
+### Behaviour
+- Warehouse‑like performance  
+- Lake‑like flexibility  
+
+### Trade-offs
+- More complex to operate  
+- Requires table formats and metadata layers  
+
+### Variants
+- Delta‑style tables  
+- Iceberg‑style tables  
+- Hudi‑style tables  
+
+### Strategies
+- Unified storage  
+- Transactional tables  
+- Time travel  
+- Partitioning & clustering  
+
+### Exceptions (Not Universal)
+- Not all lakehouse engines support streaming  
+- Not all support full ACID semantics  
+
+</TabItem>
+
+<TabItem value="cloud" label="Cloud Warehouses">
+
+### Key Characteristics
+- Fully managed  
+- Serverless or elastic compute  
+- Automatic scaling  
+- Columnar storage  
+- Separation of compute and storage  
+
+### Core Concepts
+- OLAP vs OLTP distinction  
+- Append‑oriented ingestion  
+- Partitioning and clustering  
+- Relaxed consistency acceptable  
+
+### Behaviour
+- Very fast for large scans  
+- Simple operational model  
+- Cost tied to compute + scanned data  
+
+### Trade-offs
+- Vendor lock‑in  
+- Cost spikes from full scans  
+- Limited control over internals  
+
+### When to Use
+- Large‑scale analytics  
+- Historical trend analysis  
+- BI dashboards  
+- Read‑heavy workloads  
+
+### Avoid When
+- High‑frequency transactional writes  
+- Low‑latency key‑based lookups  
+- OLTP workloads  
+
+### Exceptions (Not Universal)
+- Some cloud warehouses support limited semi‑structured updates  
+- Some support streaming ingestion, others do not  
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+- **Storage** → Parquet, ORC, Delta, Iceberg  
+- **Compute** → distributed SQL engines  
+- **ETL** → orchestration + transformation pipelines  
+- **Messaging** → event ingestion  
+- **BI** → dashboards, reporting  
+
+**TA insight:**  
+Most issues originate upstream (ingestion, modelling), not in the warehouse.
+
+---
+
+## 🔍 How to Investigate Data Sources (TA Mental Model)
+
+### 1. Identify the Data Domain  
+### 2. Understand the Storage Model  
+### 3. Inspect the Schema  
+### 4. Trace the Lineage  
+### 5. Assess Data Quality  
+### 6. Evaluate Query Behaviour  
+### 7. Map to Business Questions  
+### 8. Identify Risks & Constraints  
+
+---
+
+## 💥 Failure Modes
+
+- Slow queries due to poor partitioning  
+- Exploding join cardinality  
+- Stale data from ingestion failures  
+- Schema drift  
+- Cost spikes from full‑table scans  
+
+---
+
+## 📊 What Results Normally Look Like
+
+| Result Type | Description |
+|-------------|-------------|
+| Query plans | Join order, partitions scanned |
+| Aggregations | Summaries, rollups |
+| Materialised views | Precomputed results |
+| Partition pruning | Reduced scan volume |
+
+---
+
+## 🏗️ Real‑World Examples (Conceptual Only)
+
+- Distributed query engines  
+- Columnar storage formats  
+- Transaction logs for ACID tables  
+- Metadata‑driven table formats  
+
+---
+
+## 🔗 Related Concepts
+
+- ETL/ELT  
+- OLAP  
+- Storage Formats  
+- Messaging & Ingestion  
+- Data Modelling  

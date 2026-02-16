@@ -1,0 +1,457 @@
+---
+title: "Design Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Design Patterns** are reusable templates for solving recurring software design problems.  
+For a Technical Analyst, patterns provide a shared vocabulary for reasoning about structure, behaviour, and trade‑offs across systems.
+:::
+
+Design patterns help TAs:
+
+- Recognise structure in unfamiliar systems  
+- Communicate design intent clearly  
+- Identify risks, complexity, and coupling  
+- Evaluate whether a design fits its problem  
+- Support maintainable, extensible architectures  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Design patterns provide:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Shared language** | Improves clarity in design discussions |
+| **Reusable solutions** | Avoids reinventing common structures |
+| **Predictable behaviour** | Patterns encode known trade-offs |
+| **Better reasoning** | Helps TAs analyse unfamiliar systems |
+| **Risk identification** | Reveals coupling, complexity, and anti‑patterns |
+
+Patterns are not rules — they are **tools**. Their value comes from *intent*, not implementation.
+
+---
+
+## 🧠 Conceptual Model (How Patterns Work)
+
+Patterns operate across three dimensions:
+
+### **1. Intent**
+What problem the pattern solves.
+
+### **2. Structure**
+How components relate (composition, inheritance, delegation).
+
+### **3. Behaviour**
+How responsibilities flow between components.
+
+Patterns are not code — they are **mental models** for shaping code.
+
+---
+
+## 🧭 When to Use
+
+### **Use When**
+- A problem resembles a known pattern  
+- You need to communicate design intent  
+- You’re analysing an unfamiliar codebase  
+- You’re evaluating extensibility or maintainability  
+- You’re comparing alternative designs  
+
+:::warning Avoid When
+- Forcing patterns where they don’t fit  
+- Using patterns to justify complexity  
+- Treating patterns as mandatory or “best practice”  
+:::
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates Design Patterns
+- Identify the **problem shape** before naming a pattern  
+- Look for **coupling, cohesion, and responsibility boundaries**  
+- Evaluate whether the pattern simplifies or complicates the design  
+- Check for **anti‑patterns** (God objects, deep inheritance, hidden dependencies)  
+- Map patterns to **runtime behaviour** and **failure modes**  
+:::
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Creational Pattern** | Controls object creation |
+| **Structural Pattern** | Shapes relationships between components |
+| **Behavioural Pattern** | Defines how components interact |
+| **Anti‑Pattern** | A common but harmful design choice |
+| **Composition** | Building behaviour by combining objects |
+| **Delegation** | Passing responsibility to another component |
+
+---
+
+# 🧬 Pattern Families
+
+<Tabs>
+
+<TabItem value="creational" label="Creational Patterns">
+
+### Purpose  
+Manage object creation in a controlled, extensible way.
+
+### Patterns  
+- **Singleton** — one instance, global access  
+- **Factory Method** — delegate creation to subclasses  
+- **Builder** — construct complex objects step‑by‑step  
+
+### TA Interpretation  
+Creational patterns reveal how a system manages **configuration**, **instantiation**, and **resource ownership**.
+
+</TabItem>
+
+<TabItem value="structural" label="Structural Patterns">
+
+### Purpose  
+Define how components are composed or related.
+
+### Patterns  
+- **Adapter** — convert one interface into another  
+- **Facade** — simplify a complex subsystem  
+- **Decorator** — add behaviour dynamically  
+
+### TA Interpretation  
+Structural patterns reveal **coupling**, **abstraction boundaries**, and **integration strategies**.
+
+</TabItem>
+
+<TabItem value="behavioral" label="Behavioral Patterns">
+
+### Purpose  
+Define how components communicate and collaborate.
+
+### Patterns  
+- **Strategy** — interchangeable behaviours  
+- **Observer** — notify many listeners  
+- **Command** — encapsulate requests as objects  
+
+### TA Interpretation  
+Behavioural patterns reveal **runtime dynamics**, **responsibility flow**, and **extensibility**.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧭 Pattern Decision Map
+
+| Problem Shape | Consider These Patterns |
+|---------------|-------------------------|
+| Need to swap behaviour | Strategy, State |
+| Need to notify many listeners | Observer, Pub/Sub |
+| Need to simplify a complex API | Facade |
+| Need to adapt incompatible interfaces | Adapter |
+| Need to build complex objects | Builder |
+| Need a single shared instance | Singleton |
+| Need to control object creation | Factory Method |
+| Need to add behaviour dynamically | Decorator |
+
+---
+
+# ⭐ Pattern Library
+
+Below is a curated, TA‑oriented library of the most useful patterns.
+
+---
+
+# Creational Patterns
+
+---
+
+## Singleton
+
+**Intent:** Ensure only one instance exists and provide global access.
+
+**Use When:**  
+- You need a single source of truth  
+- Object creation is expensive  
+- Global coordination is required  
+
+```mermaid
++------------------+
+|   Singleton      |
+|------------------|
+|  getInstance()   |
++------------------+
+        |
+        v
+   [Single Object]
+```
+
+**Trade-offs:**  
+- ✔ Simple global access  
+- ✔ Prevents duplicate state  
+- ✘ Harder to test  
+- ✘ Hidden dependencies  
+
+**TA Lens:**  
+Useful when evaluating centralised components (config managers, connection pools).
+
+---
+
+## Factory Method
+
+**Intent:** Delegate object creation to subclasses.
+
+**Use When:**  
+- Object creation varies by context  
+- You want consistent construction logic  
+- You want to avoid scattered `new` calls  
+
+```mermaid
+Creator
++----------------------+
+| factoryMethod()      |
++----------------------+
+          |
+          v
+   Product (interface)
+      ^          ^
+      |          |
+ ProductA    ProductB
+```
+
+**Trade-offs:**  
+- ✔ Centralised creation logic  
+- ✔ Supports extensibility  
+- ✘ More indirection  
+- ✘ Can be overused  
+
+**TA Lens:**  
+Useful for plugin systems, connectors, and integration points.
+
+---
+
+## Builder
+
+**Intent:** Construct complex objects step-by-step.
+
+**Use When:**  
+- Objects have many optional parameters  
+- Construction logic is complex  
+- You want readable, fluent creation  
+
+```mermaid
+Director ----> Builder Interface
+                  |
+        ---------------------
+        |         |         |
+   BuilderA   BuilderB   BuilderC
+```
+
+**Trade-offs:**  
+- ✔ Clear construction  
+- ✔ Avoids telescoping constructors  
+- ✘ More classes  
+- ✘ Can be verbose  
+
+**TA Lens:**  
+Useful when evaluating APIs that assemble complex configurations (pipelines, queries).
+
+---
+
+# Structural Patterns
+
+---
+
+## Adapter
+
+**Intent:** Convert one interface into another expected by the client.
+
+**Use When:**  
+- Two systems don’t naturally fit together  
+- You want to reuse existing components  
+- You need compatibility without rewriting  
+
+```mermaid
+Client ---> Adapter ---> Adaptee
+```
+
+**Trade-offs:**  
+- ✔ Enables reuse  
+- ✔ Decouples systems  
+- ✘ Adds indirection  
+- ✘ Can hide complexity  
+
+**TA Lens:**  
+Useful when integrating legacy systems or mismatched APIs.
+
+---
+
+## Facade
+
+**Intent:** Provide a simplified interface to a complex subsystem.
+
+**Use When:**  
+- A system has many moving parts  
+- You want to hide complexity  
+- You want a clean entry point  
+
+```mermaid
+        +---------+
+Client ->| Facade |----> Subsystem A
+        +---------+----> Subsystem B
+                     \-> Subsystem C
+```
+
+**Trade-offs:**  
+- ✔ Simplifies usage  
+- ✔ Reduces coupling  
+- ✘ Can become a god-object  
+- ✘ May hide important details  
+
+**TA Lens:**  
+Useful when assessing SDKs, orchestration layers, or platform abstractions.
+
+---
+
+## Decorator
+
+**Intent:** Add behaviour dynamically without modifying the original object.
+
+**Use When:**  
+- You want flexible, runtime composition  
+- You want to avoid subclass explosion  
+- You need optional behaviours  
+
+```mermaid
+Client
+   |
+   v
++-----------+
+| Decorator |----> Component
++-----------+
+       |
+       v
+  [Wrapped Component]
+```
+
+**Trade-offs:**  
+- ✔ Flexible composition  
+- ✔ Avoids deep inheritance  
+- ✘ Can be hard to trace  
+- ✘ Many small objects  
+
+**TA Lens:**  
+Useful when evaluating middleware, pipelines, or request/response wrappers.
+
+---
+
+# Behavioral Patterns
+
+---
+
+## Strategy
+
+**Intent:** Swap algorithms or behaviours at runtime.
+
+**Use When:**  
+- You want interchangeable behaviours  
+- Logic varies by context  
+- You want to avoid giant `if/else` blocks  
+
+```mermaid
++-----------+        +----------------+
+|  Context  |------->|  Strategy      |
+| set(strat)|        |  interface     |
++-----------+        +----------------+
+        |                   ^
+        |                   |
+        v                   |
+   +-----------+     +-------------+
+   | StrategyA |     | StrategyB   |
+   +-----------+     +-------------+
+```
+
+**Trade-offs:**  
+- ✔ Cleaner extensibility  
+- ✔ Behaviour is isolated  
+- ✘ More classes  
+- ✘ Requires clear interfaces  
+
+**TA Lens:**  
+Useful for pluggable components (pricing engines, routing logic).
+
+---
+
+## Observer
+
+**Intent:** Notify multiple subscribers when something changes.
+
+**Use When:**  
+- Many components depend on one source  
+- You need event-driven behaviour  
+- Loose coupling is important  
+
+```mermaid
+   +-----------+
+   | Subject   |
+   |-----------|
+   | notify()  |
+   +-----------+
+        |
+   --------------
+   |     |      |
+   v     v      v
+ObserverA  ObserverB  ObserverC
+```
+
+**Trade-offs:**  
+- ✔ Decoupled communication  
+- ✔ Scales to many listeners  
+- ✘ Harder to trace flows  
+- ✘ Risk of cascading updates  
+
+**TA Lens:**  
+Useful when evaluating event-driven architectures, pub/sub, or reactive flows.
+
+---
+
+## Command
+
+**Intent:** Encapsulate a request as an object.
+
+**Use When:**  
+- You want undo/redo  
+- You want to queue or log operations  
+- You want to parameterise actions  
+
+```mermaid
+Invoker ---> Command ---> Receiver
+```
+
+**Trade-offs:**  
+- ✔ Decouples sender/receiver  
+- ✔ Enables undo, logging  
+- ✘ More classes  
+- ✘ Can be over-engineered  
+
+**TA Lens:**  
+Useful when evaluating workflow engines, job systems, or task queues.
+
+---
+
+## 🔗 Related Concepts
+
+- Communication Patterns  
+- API Design  
+- Modularity & Cohesion  
+- Coupling & Abstraction  
+- Anti‑Patterns  
+

@@ -1,0 +1,291 @@
+---
+title: "Deployment Architecture"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Delivery & Deployment Architecture** describes how software is built, tested, packaged, released, and deployed across environments.  
+It covers the systems, patterns, and workflows that move code from commit → production safely and predictably.
+:::
+
+This includes:
+
+- Build systems  
+- Test pipelines  
+- Deployment strategies  
+- Release patterns  
+- CI/CD principles  
+- Version control workflows  
+- Orchestration and runtime integration  
+- Observability and rollback mechanisms  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Delivery & deployment architecture enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Reliable releases** | Reduces risk of production failures |
+| **Fast feedback loops** | Developers get rapid validation |
+| **Automation** | Removes manual, error‑prone steps |
+| **Consistency across environments** | “Works on my machine” disappears |
+| **Safe experimentation** | Canary and blue/green reduce blast radius |
+| **Traceability** | Every change is tracked, tested, and auditable |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+Delivery & deployment systems follow a predictable lifecycle:
+
+```
+Commit → Build → Test → Package → Release → Deploy → Verify → Operate
+```
+
+### **Build**
+Compile, lint, package, and prepare artifacts.
+
+### **Test**
+Validate correctness at multiple levels (unit → integration → system → acceptance).
+
+### **Release**
+Produce immutable artifacts and versioned releases.
+
+### **Deploy**
+Roll out changes to environments using controlled strategies.
+
+### **Verify**
+Monitor health, metrics, logs, and user impact.
+
+### **Operate**
+Run, scale, and maintain the system in production.
+
+---
+
+# 🧬 Variants / Types of Delivery Architecture
+
+<Tabs>
+
+<TabItem value="cicd" label="CI/CD Architecture">
+
+### Continuous Integration (CI)
+- Frequent commits to mainline  
+- Automated builds and tests  
+- Fast feedback (~10 minutes ideal)
+- Prevents integration drift  
+
+### Continuous Delivery (CD)
+- Every change is deployable  
+- Automated packaging and release  
+- Staging mirrors production  
+- Artifacts are immutable  
+
+### Continuous Deployment (CDp)
+- Every passing change is automatically deployed  
+- Requires strong test coverage and observability  
+
+### TA Interpretation
+CI/CD is not a tool — it is a **discipline** for reducing risk and increasing delivery velocity.
+
+</TabItem>
+
+<TabItem value="build" label="Build Architecture">
+
+### Key Characteristics
+- Deterministic builds  
+- Reproducible artifacts  
+- Dependency management  
+- Build caching and optimisation  
+
+### Core Concepts
+- Build scripts  
+- Artifact repositories  
+- Versioning  
+- Build isolation  
+
+### TA Interpretation
+Build architecture reveals how a team manages **complexity, reproducibility, and governance**.
+
+</TabItem>
+
+<TabItem value="testing" label="Testing Architecture">
+
+### Testing Layers
+- **Unit tests** — fast, isolated  
+- **Integration tests** — components working together  
+- **System tests** — full application behaviour  
+- **Acceptance tests** — user‑level validation  
+- **Performance tests** — load, stress, soak  
+- **Security tests** — vulnerabilities, misconfigurations  
+
+### Test Environments
+- DEV → SIT → UAT → PRE → PROD  
+Each stage increases scope, realism, and risk.
+
+### TA Interpretation
+Testing architecture reveals **quality gates**, **risk tolerance**, and **release confidence**.
+
+</TabItem>
+
+<TabItem value="deploy" label="Deployment Architecture">
+
+### Deployment Patterns
+
+#### **Rolling Deployment**
+Replace instances gradually.
+- ✔ No downtime  
+- ✘ Harder rollback  
+
+#### **Blue/Green Deployment**
+Two identical environments; switch traffic.
+- ✔ Instant rollback  
+- ✘ Requires double capacity  
+
+#### **Canary Deployment**
+Release to a small subset of users first.
+- ✔ Detect issues early  
+- ✔ Minimal blast radius  
+- ✘ Requires strong observability  
+
+#### **Shadow Deployment**
+New version receives traffic but does not serve responses.
+- ✔ Safe validation  
+- ✘ Requires duplication of traffic  
+
+#### **Recreate Deployment**
+Stop old version, start new version.
+- ✔ Simple  
+- ✘ Downtime  
+
+### TA Interpretation
+Deployment patterns express **risk management strategies**.
+
+</TabItem>
+
+<TabItem value="release" label="Release Management">
+
+### Release Concepts
+- Immutable artifacts  
+- Versioning (semantic or date‑based)  
+- Release notes  
+- Promotion workflows  
+- Feature flags  
+- Freeze windows  
+
+### Release Strategies
+- Trunk‑based development  
+- Gitflow  
+- Release trains  
+- Feature toggles  
+
+### TA Interpretation
+Release management defines **how change flows** through environments.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Cross‑Cutting Capabilities
+
+### **Version Control**
+- Branching strategies  
+- Commit hygiene  
+- Code review workflows  
+
+### **Observability**
+- Logs  
+- Metrics  
+- Traces  
+- Health checks  
+
+### **Rollback Mechanisms**
+- Automated rollback  
+- Manual rollback  
+- Roll‑forward strategies  
+
+### **Security & Compliance**
+- Secrets management  
+- Dependency scanning  
+- Supply chain integrity  
+
+### **Environment Parity**
+- Staging mirrors production  
+- Configuration as code  
+- Infrastructure as code  
+
+---
+
+# 🔍 TA Lens
+
+:::info How a TA Evaluates Delivery & Deployment Architecture
+- Does the pipeline reflect the project’s constraints and domain?  
+- Are builds reproducible and deterministic?  
+- Are tests layered, meaningful, and fast?  
+- Are deployment strategies aligned with risk tolerance?  
+- Is observability strong enough to support canary or blue/green?  
+- Are rollbacks safe, fast, and well‑defined?  
+- Is the team’s workflow supported by the architecture?  
+:::
+
+---
+
+# 🧰 TA Skills Checklist
+
+| Skill Area | What a TA Should Do |
+|------------|----------------------|
+| **Analysis** | Map pipeline stages, identify bottlenecks, evaluate risk |
+| **Requirements** | Capture build, test, and deployment constraints |
+| **Review** | Validate CI/CD design, identify gaps, propose improvements |
+| **Communication** | Explain deployment patterns and trade‑offs clearly |
+
+---
+
+# 📊 What Results Normally Look Like
+
+| Output Type | Description |
+|-------------|-------------|
+| **Pipeline map** | Visualisation of build → test → deploy flow |
+| **Release artifacts** | Versioned, immutable outputs |
+| **Deployment logs** | Evidence of rollout behaviour |
+| **Quality gates** | Test results, coverage, linting |
+| **Observability signals** | Metrics, alerts, health checks |
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Treating CI/CD as a tool rather than a discipline  
+- Over‑reliance on manual steps  
+- No rollback strategy  
+- Flaky tests blocking delivery  
+- Long‑running builds that slow feedback  
+- Deploying without observability  
+- Using production as a test environment  
+
+---
+
+# 🏗️ Real‑World Examples (Conceptual Only)
+
+- A canary deployment catches a memory leak before full rollout  
+- A blue/green switch enables instant rollback during an incident  
+- A flaky integration test blocks releases until fixed  
+- A long build pipeline slows developer productivity  
+- A missing health check causes a rolling deployment to stall  
+
+---
+
+## 🔗 Related Concepts
+
+- Project Architecture  
+- Communication Patterns  
+- Application Storage Systems  
+- Observability  
+- Infrastructure as Code  
+- Release Management  

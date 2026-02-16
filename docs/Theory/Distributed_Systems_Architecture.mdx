@@ -1,0 +1,322 @@
+---
+title: "Distributed System Architecture"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Distributed Systems Concepts** describe the patterns, behaviours, and trade‑offs that emerge when software runs across multiple machines or services instead of a single process.
+They explain *how distributed components coordinate*, *how they fail*, and *how consistency and reliability are maintained*.
+:::
+
+Distributed systems are not defined by tools — they are defined by **constraints**: unreliable networks, partial failures, and the need for coordination across boundaries.
+
+---
+
+## 🎯 What Problem Do Distributed Systems Solve?
+
+Distributed systems enable:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Scalability** | Handle more load by adding more machines |
+| **Fault tolerance** | Survive failures of individual components |
+| **Geographical distribution** | Serve users closer to where they are |
+| **Specialisation** | Break systems into focused services |
+| **Parallelism** | Perform work concurrently |
+
+For a TA, these concepts explain why modern systems behave the way they do — especially under load, failure, or network issues.
+
+---
+
+## 🧠 Conceptual Model (How Distributed Systems Work)
+
+Distributed systems are shaped by three unavoidable realities:
+
+### **1. The network is unreliable**
+Messages can be delayed, duplicated, or lost.
+
+### **2. Time is inconsistent**
+Clocks drift; ordering is not guaranteed.
+
+### **3. Components fail independently**
+A system can be “up” even when parts of it are down.
+
+Everything else — consistency models, retries, replication, coordination — is a response to these constraints.
+
+---
+
+# 🧬 Core Distributed Systems Patterns
+
+<Tabs>
+
+<TabItem value="consistency" label="Consistency Patterns">
+
+### Purpose
+Define how and when data becomes consistent across nodes.
+
+### Concepts
+- Strong consistency
+- Eventual consistency
+- Read‑your‑writes
+- Causal consistency
+
+### Problem Shapes
+- “Why does one service see new data but another doesn’t?”
+- “Why do reads return stale values?”
+
+### TA Lens
+Ask: *“What consistency guarantees does this system provide?”*
+
+</TabItem>
+
+<TabItem value="replication" label="Replication Patterns">
+
+### Purpose
+Maintain multiple copies of data for availability and performance.
+
+### Concepts
+- Synchronous vs asynchronous replication
+- Leader‑follower
+- Multi‑leader
+- Quorum reads/writes
+
+### Problem Shapes
+- Conflicting updates
+- Lagging replicas
+- Failover behaviour
+
+### TA Lens
+Ask: *“How many copies exist, and how are they kept in sync?”*
+
+</TabItem>
+
+<TabItem value="partitioning" label="Partitioning (Sharding) Patterns">
+
+### Purpose
+Split data or workload across nodes.
+
+### Concepts
+- Hash‑based sharding
+- Range‑based sharding
+- Directory‑based sharding
+
+### Problem Shapes
+- Hot partitions
+- Uneven load
+- Rebalancing challenges
+
+### TA Lens
+Ask: *“How is data divided, and what happens when load is uneven?”*
+
+</TabItem>
+
+<TabItem value="coordination" label="Coordination Patterns">
+
+### Purpose
+Ensure distributed components agree on shared state.
+
+### Concepts
+- Leader election
+- Heartbeats
+- Leases
+- Distributed locks
+
+### Problem Shapes
+- Split‑brain scenarios
+- Multiple leaders
+- Lock contention
+
+### TA Lens
+Ask: *“How do components coordinate, and what happens when they disagree?”*
+
+</TabItem>
+
+<TabItem value="failure" label="Failure Handling Patterns">
+
+### Purpose
+Manage partial failures gracefully.
+
+### Concepts
+- Retries
+- Backoff
+- Circuit breakers
+- Timeouts
+- Idempotency
+
+### Problem Shapes
+- Retry storms
+- Cascading failures
+- Slow downstream dependencies
+
+### TA Lens
+Ask: *“How does the system behave when a dependency is slow or unavailable?”*
+
+</TabItem>
+
+<TabItem value="ordering" label="Ordering & Time Patterns">
+
+### Purpose
+Handle inconsistent clocks and message ordering.
+
+### Concepts
+- Logical clocks
+- Vector clocks
+- Lamport timestamps
+- Out‑of‑order events
+
+### Problem Shapes
+- Events processed in the wrong order
+- Conflicting updates
+- Duplicate messages
+
+### TA Lens
+Ask: *“How does the system reason about time and ordering?”*
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Cross‑Cutting Distributed Systems Concepts
+
+### **CAP Trade‑offs**
+A system cannot simultaneously guarantee:
+- Consistency
+- Availability
+- Partition tolerance
+
+Partition tolerance is non‑negotiable → systems choose between consistency and availability during failures.
+
+### **Latency vs Throughput**
+Distributed systems often trade one for the other.
+
+### **Hotspots**
+Uneven load distribution across nodes.
+
+### **Backpressure**
+Systems signalling they cannot handle more load.
+
+### **Eventual Consistency**
+Data converges over time, not instantly.
+
+### **Idempotency**
+Operations can be safely retried without side effects.
+
+### **Concurrency**
+Multiple operations happening at once across nodes.
+
+---
+
+# 🧭 Common Distributed Failure Patterns
+
+### **Network Partitions**
+Nodes cannot communicate reliably.
+
+### **Split‑Brain**
+Two nodes believe they are the leader.
+
+### **Thundering Herd**
+Many clients retry at once, overwhelming a service.
+
+### **Slow Nodes**
+A node is alive but too slow to be useful.
+
+### **Clock Drift**
+Nodes disagree on time.
+
+### **Inconsistent Reads**
+Different nodes return different versions of data.
+
+### **Duplicate Messages**
+Messages delivered more than once.
+
+---
+
+# 🛡️ Distributed System Protection Patterns
+
+### **Quorums**
+Require agreement from a majority of nodes.
+
+### **Leader Election**
+Ensure only one authoritative writer.
+
+### **Timeouts & Retries**
+Handle slow or failed requests safely.
+
+### **Circuit Breakers**
+Stop calling unhealthy services.
+
+### **Bulkheads**
+Isolate failures to prevent cascading collapse.
+
+### **Backoff Strategies**
+Avoid overwhelming struggling services.
+
+### **Checksums & Versioning**
+Detect conflicts and corruption.
+
+---
+
+# 🧭 When to Use Distributed Systems Concepts
+
+Use these concepts when:
+
+- Reviewing microservice interactions
+- Evaluating data storage or replication strategies
+- Investigating latency or inconsistency issues
+- Understanding search, messaging, or analytics systems
+- Working with container orchestration
+- Designing APIs that depend on downstream services
+
+---
+
+# 🚫 When Not to Use
+
+Avoid deep distributed systems reasoning when:
+
+- The system is single‑node or monolithic
+- The problem is clearly local (e.g., code bug, config error)
+- You’re early in design and not discussing scale or availability
+
+Distributed thinking matters most when **systems span multiple machines**.
+
+---
+
+# 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Node** | A machine participating in the system |
+| **Replica** | A copy of data |
+| **Shard** | A partition of data |
+| **Leader** | The authoritative node for writes |
+| **Follower** | A replica receiving updates |
+| **Quorum** | Majority required for agreement |
+| **Partition** | Loss of communication between nodes |
+| **Eventual Consistency** | Data converges over time |
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A search cluster replicating data across nodes
+- A message queue retrying events with backoff
+- A database failing over to a new leader
+- A microservice timing out due to downstream latency
+- A system returning stale data during a partition
+- A distributed lock preventing concurrent writes
+
+---
+
+## 🔗 Related Concepts
+
+- Networking Concepts
+- Containerised Environments
+- Messaging
+- Search Patterns
+- Observability
+- Code Security

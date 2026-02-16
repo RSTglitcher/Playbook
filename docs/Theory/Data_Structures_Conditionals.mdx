@@ -1,0 +1,418 @@
+---
+title: "Data Structures & Conditionals"
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Data Structures & Conditionals** form the foundational mental models for understanding how software organises data and makes decisions.  
+They underpin performance, correctness, and behaviour in every system — from simple scripts to distributed architectures.
+:::
+
+These foundations include:
+
+- Core data structures (lists, sets, maps, queues, stacks)  
+- Hierarchical and relational structures (trees, graphs)  
+- Algorithmic intuition (searching, sorting, traversal)  
+- Conditional logic (branching, boolean logic, control flow)  
+- Performance intuition (Big‑O, scaling behaviour)  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Understanding these foundations enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Predictable performance** | Anticipate latency, bottlenecks, and scaling limits |
+| **Correct behaviour** | Ensure decisions and flows behave as expected |
+| **Efficient data access** | Avoid unnecessary computation or scanning |
+| **Better debugging** | Explain why systems slow down or behave unexpectedly |
+| **Sharper reviews** | Ask meaningful questions without reading code |
+| **Clearer communication** | Shared vocabulary for reasoning about logic and data |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+Software behaviour emerges from two primitives:
+
+### **1. Data Structures**  
+How data is *organised* and *accessed*.
+
+### **2. Conditionals**  
+How decisions are *made* based on that data.
+
+Together, they define:
+
+- What the system *knows*  
+- How it *chooses*  
+- How it *scales*  
+- How it *responds* under load  
+
+---
+
+# 🧬 Part 1 — Data Structures
+
+<Tabs>
+
+<TabItem value="collections" label="Collections">
+
+### Core Collections (TA Mental Models)
+
+#### Arrays / Lists
+
+```
+Index → 0  1  2  3
+        [A][B][C][D]
+```
+
+| Strengths | Weaknesses | Use When |
+|-----------|------------|----------|
+| Fast indexed access | Slow inserts/deletes | Order matters |
+| Good for scans | Resizing cost | Predictable size |
+
+---
+
+#### Sets
+
+```
+{ A, B, C }   // No duplicates
+```
+
+| Strengths | Weaknesses | Use When |
+|-----------|------------|----------|
+| Fast membership checks | No ordering | Deduplication |
+| Enforces uniqueness | Hashing overhead | Fast “contains?” |
+
+---
+
+#### Maps / Dictionaries
+
+```
+Key → Value
+A   → 1
+B   → 2
+```
+
+| Strengths | Weaknesses | Use When |
+|-----------|------------|----------|
+| O(1) lookup | Memory overhead | Fast lookup by key |
+| Natural modelling | Collisions degrade performance | Caching, indexing |
+
+---
+
+#### Queues (FIFO)
+
+```
+Front → [A][B][C] → Back
+```
+
+Use for: task scheduling, message processing, pipelines.
+
+---
+
+#### Stacks (LIFO)
+
+```
+Top → [C]
+       [B]
+       [A]
+```
+
+Use for: undo operations, expression evaluation, DFS.
+
+</TabItem>
+
+<TabItem value="trees" label="Trees & Graphs">
+
+### Trees
+
+```
+      A
+     / \
+    B   C
+```
+
+| Strengths | Weaknesses | Use When |
+|-----------|------------|----------|
+| Hierarchical modelling | Depth affects lookup | Indexing (B‑trees) |
+| Fast search (balanced) | Unbalanced trees degrade | Searching, routing |
+
+---
+
+### Graphs
+
+```
+A — B — C
+ \     /
+   D
+```
+
+| Strengths | Weaknesses | Use When |
+|-----------|------------|----------|
+| Models relationships | Traversal cost varies | Networks, dependencies |
+| Flexible structure | Cycles complicate logic | Social graphs, routing |
+
+</TabItem>
+
+<TabItem value="bigo" label="Big‑O Intuition">
+
+### Big‑O (TA Edition)
+
+You don’t need formulas — you need **shapes**.
+
+| Operation | Array/List | Set | Map |
+|-----------|------------|-----|-----|
+| Lookup | O(n) | O(1) | O(1) |
+| Insert | O(n) | O(1) | O(1) |
+| Delete | O(n) | O(1) | O(1) |
+
+:::note TA Takeaway
+Repeated linear scans (O(n)) are the root cause of many performance issues.
+:::
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧬 Part 2 — Conditionals & Control Flow
+
+<Tabs>
+
+<TabItem value="if" label="IF / ELSE">
+
+### IF / ELSE — Binary Decisions
+
+:::tip Definition
+**Conditionals** define how systems make decisions by evaluating rules, states, and inputs to determine the correct behaviour.
+:::
+
+**TA Pattern**
+```
+WHEN <condition>
+THEN <action>
+ELSE <fallback>
+```
+
+**Example (TA)**
+```
+WHEN file size > 10MB
+THEN compress before upload
+ELSE upload directly
+```
+
+---
+
+### IF / ELIF / ELSE — Multi‑branch Decisions
+
+**TA Pattern**
+```
+WHEN <condition A> → <action A>
+WHEN <condition B> → <action B>
+ELSE → <fallback>
+```
+
+**Example (TA)**
+```
+WHEN status = "new" → send welcome email
+WHEN status = "active" → show dashboard
+ELSE → show onboarding flow
+```
+
+</TabItem>
+
+<TabItem value="case" label="CASE / SWITCH">
+
+### CASE / SWITCH — Category‑Based Decisions
+
+**TA Pattern**
+```
+WHEN value is <category1> → <action1>
+WHEN value is <category2> → <action2>
+OTHERWISE → <fallback>
+```
+
+**Example (TA)**
+```
+WHEN file type = "csv" → parse as table
+WHEN file type = "json" → parse as object
+OTHERWISE → reject file
+```
+
+</TabItem>
+
+<TabItem value="loops" label="Loops">
+
+### Loops — Repeated Conditional Behaviour
+
+#### FOR — Known Iteration Count
+
+**TA Pattern**
+```
+FOR EACH <item> IN <collection>
+DO <action>
+```
+
+#### WHILE — Repeat WHILE condition is true
+
+**TA Pattern**
+```
+WHILE <condition>
+DO <action>
+STOP WHEN <condition becomes false>
+```
+
+#### UNTIL — Repeat UNTIL condition becomes true
+
+**TA Pattern**
+```
+REPEAT <action>
+UNTIL <condition>
+```
+
+</TabItem>
+
+<TabItem value="functions" label="Functions">
+
+### Functions — Encapsulating Conditional Logic
+
+**TA Pattern**
+```
+DEFINE function <name>:
+    WHEN <condition>
+    THEN <action>
+    ELSE <fallback>
+```
+
+Functions allow complex decision logic to be isolated, reused, and tested.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧭 TA Lens
+
+:::info How a TA Evaluates Foundations
+- Identify the **problem shape** and map it to the right structure  
+- Look for repeated linear scans (O(n)) in designs or pipelines  
+- Recognise when ordering, uniqueness, or lookup speed matters  
+- Evaluate branching logic for clarity, correctness, and edge cases  
+- Ensure all conditions are explicit, complete, and non‑contradictory  
+:::
+
+---
+
+# 🧩 Key Strategies
+
+<Tabs>
+
+<TabItem value="strategy1" label="Match Problem Shape">
+
+### Approach
+Identify the behavioural need: lookup, ordering, uniqueness, traversal, branching.
+
+### Responsibility
+TA frames the requirement; engineers choose the implementation.
+
+### Focus
+Fit the structure and logic to the access pattern.
+
+</TabItem>
+
+<TabItem value="strategy2" label="Identify Edge Cases">
+
+### Approach
+List all exceptional or boundary conditions.
+
+### Responsibility
+TA surfaces risks; engineers handle execution.
+
+### Focus
+Prevent undefined behaviour.
+
+</TabItem>
+
+<TabItem value="strategy3" label="Predict Scaling Behaviour">
+
+### Approach
+Use Big‑O intuition and branching complexity to anticipate bottlenecks.
+
+### Responsibility
+TA highlights risks; engineers validate with profiling.
+
+### Focus
+Prevent performance issues before they appear.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🔌 How to Interact With It
+
+**Access Pattern:**  
+Through APIs, libraries, query engines, or language primitives.
+
+**Operations / Interfaces:**  
+- Insert, delete, lookup  
+- Traversal (DFS/BFS)  
+- Sorting, filtering, grouping  
+- Branching, matching, evaluating predicates  
+
+**Interaction Model:**  
+TA describes behaviour; engineers translate into code.
+
+---
+
+# 📊 What Results Normally Look Like
+
+| Result Type | Description |
+|-------------|-------------|
+| **Decision tables** | Structured mapping of conditions to actions |
+| **Flow diagrams** | Visual branching paths |
+| **Performance profiles** | Latency by operation type |
+| **Access patterns** | Sequential vs random access |
+| **Scaling curves** | How performance changes with data size |
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Using lists for repeated lookups instead of maps  
+- Assuming sets/maps are always O(1) (collisions matter)  
+- Sorting unnecessarily or too late in a pipeline  
+- Deeply nested conditionals instead of guards or state machines  
+- Missing fallback behaviour  
+- Overlapping or contradictory rules  
+- Treating Big‑O as exact rather than approximate  
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A Python service slows down due to repeated list scans  
+- A cache hit rate drops because keys aren’t hashed consistently  
+- A graph traversal explodes in cost due to cycles  
+- A branching rule misroutes requests due to missing edge cases  
+- A data pipeline spends 40% of time sorting unnecessarily  
+
+---
+
+## 🔗 Related Concepts
+
+- Memory Management  
+- Algorithmic Complexity  
+- Caching & Indexing  
+- Data Modelling  
+- Performance Engineering  
+- Design Patterns  
+

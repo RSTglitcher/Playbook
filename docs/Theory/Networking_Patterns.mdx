@@ -1,0 +1,323 @@
+---
+title: "Networking Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Networking Concepts** describe the patterns, abstractions, and behaviours that allow systems to communicate reliably across machines, services, and environments.
+They explain *how data moves*, *how services find each other*, and *how failures manifest* in distributed systems.
+:::
+
+Networking is not about cables or routers — it is about **communication patterns**, **latency**, **addressing**, and **failure modes** that shape how software behaves.
+
+---
+
+## 🎯 What Problem Do Networking Concepts Solve?
+
+Networking concepts enable:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Reliable communication** | Services can talk to each other predictably |
+| **Service discovery** | Systems can find the right endpoints dynamically |
+| **Performance awareness** | Understand latency, throughput, and bottlenecks |
+| **Security boundaries** | Control who can talk to whom |
+| **Failure diagnosis** | Recognise network‑driven issues quickly |
+
+For a TA, networking concepts help you reason about **API behaviour**, **distributed systems**, **security**, and **observability**.
+
+---
+
+## 🧠 Conceptual Model (How Networking Works)
+
+Networking can be understood through four fundamental abstractions:
+
+### **1. Addressing**
+How systems identify each other.
+
+### **2. Routing**
+How data finds its way across networks.
+
+### **3. Transport**
+How data is delivered reliably (or unreliably).
+
+### **4. Application Protocols**
+How meaning is structured on top of transport.
+
+These layers explain most system behaviours — and most failures.
+
+---
+
+# 🧬 Core Networking Patterns
+
+<Tabs>
+
+<TabItem value="addressing" label="Addressing Pattern">
+
+### Purpose
+Identify where a service or machine lives.
+
+### Concepts
+- IP addresses
+- Ports
+- Hostnames
+- DNS resolution
+
+### Problem Shapes
+- “Why can’t service A reach service B?”
+- “Why is DNS returning the wrong address?”
+
+### TA Lens
+Ask: *“What address is being used, and how is it resolved?”*
+
+</TabItem>
+
+<TabItem value="routing" label="Routing Pattern">
+
+### Purpose
+Move data between networks or services.
+
+### Concepts
+- Routes
+- Gateways
+- NAT
+- Load balancers
+
+### Problem Shapes
+- Requests reaching the wrong service
+- Traffic not leaving a subnet
+- Load balancing inconsistencies
+
+### TA Lens
+Ask: *“How does traffic get from here to there?”*
+
+</TabItem>
+
+<TabItem value="transport" label="Transport Pattern">
+
+### Purpose
+Define how data is delivered.
+
+### Concepts
+- Connection‑oriented vs connectionless
+- Reliability vs speed
+- Retries, timeouts, backoff
+- Ordering guarantees
+
+### Problem Shapes
+- Slow APIs
+- Connection resets
+- Packet loss
+- Retry storms
+
+### TA Lens
+Ask: *“What delivery guarantees does this communication rely on?”*
+
+</TabItem>
+
+<TabItem value="application" label="Application Protocol Pattern">
+
+### Purpose
+Define how meaning is structured on top of transport.
+
+### Concepts
+- Request/response
+- Streaming
+- Messaging
+- API semantics
+
+### Problem Shapes
+- API timeouts
+- Misinterpreted payloads
+- Version mismatches
+
+### TA Lens
+Ask: *“What protocol shapes the communication behaviour?”*
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Cross‑Cutting Networking Concepts
+
+### **Latency**
+The time it takes for data to travel.
+
+- Affected by distance, congestion, and processing
+- Often the root cause of “slow” systems
+
+### **Throughput**
+How much data can be transferred per second.
+
+- Affects bulk operations, streaming, analytics
+
+### **Bandwidth vs Throughput**
+Bandwidth is capacity; throughput is actual performance.
+
+### **Connection Lifecycle**
+- Open
+- Use
+- Idle
+- Close
+
+Understanding this explains many timeout issues.
+
+### **Statefulness vs Statelessness**
+Stateless systems scale more easily; stateful ones require careful routing.
+
+### **Service Discovery**
+How services find each other dynamically.
+
+### **Network Segmentation**
+Separating networks for security or performance.
+
+---
+
+## ⭐ **Content Delivery Pattern (CDNs)**
+*(New section added)*
+
+### Purpose
+Reduce latency and improve performance by delivering content from locations geographically closer to users.
+
+### Concepts
+- **Edge caching**: storing frequently accessed content near users
+- **Anycast routing**: directing users to the nearest edge node
+- **Request collapsing**: preventing multiple identical upstream requests
+- **TTL & cache expiry**: controlling freshness
+- **Failover routing**: redirecting to alternative nodes when edges fail
+
+### What CDNs Optimise
+- Latency (distance → speed)
+- Bandwidth usage
+- Load on origin servers
+- Resilience during traffic spikes
+- Global user experience consistency
+
+### Problem Shapes
+- “Why is the site fast for some users but slow for others?”
+- “Why is stale content being served?”
+- “Why is the origin under heavy load despite caching?”
+
+### TA Lens
+Ask: *“What content is cached at the edge, and how does it stay fresh?”*
+
+---
+
+# 🧭 Common Networking Failure Patterns
+
+### **DNS Resolution Failures**
+- Wrong hostname
+- Stale DNS cache
+- Misconfigured records
+
+### **Timeouts**
+- Slow downstream services
+- Network congestion
+- Misconfigured retry logic
+
+### **Connection Resets**
+- Load balancer timeouts
+- Idle connection drops
+- Firewall interference
+
+### **Packet Loss**
+- Congestion
+- Faulty links
+- Overloaded nodes
+
+### **Misrouting**
+- Incorrect routes
+- NAT issues
+- Wrong load balancer target
+
+### **Port Conflicts**
+- Multiple services binding to the same port
+
+---
+
+# 🛡️ Networking Protection Patterns
+
+### **Network Boundaries**
+Separate public, private, and internal networks.
+
+### **Firewalls & Security Groups**
+Control inbound/outbound traffic.
+
+### **TLS / Encryption in Transit**
+Protect data from interception.
+
+### **Zero Trust Networking**
+Never trust by default; always verify.
+
+### **Rate Limiting**
+Protect against abuse and overload.
+
+### **mTLS**
+Mutual authentication between services.
+
+---
+
+# 🧭 When to Use Networking Concepts
+
+Use these concepts when:
+
+- Investigating API failures
+- Reviewing distributed system behaviour
+- Assessing latency or performance issues
+- Designing service‑to‑service communication
+- Evaluating security boundaries
+- Understanding container or cloud networking
+
+---
+
+# 🚫 When Not to Use
+
+Avoid deep networking analysis when:
+
+- The issue is clearly application‑level
+- The system is local and not distributed
+- You’re still in early design and not discussing communication paths
+
+Networking concepts matter most when **systems talk to each other**.
+
+---
+
+# 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **IP Address** | Numerical identifier for a host |
+| **Port** | Logical endpoint for communication |
+| **DNS** | Maps names to addresses |
+| **Latency** | Time for data to travel |
+| **Throughput** | Amount of data transferred per second |
+| **Load Balancer** | Distributes traffic across services |
+| **Firewall** | Controls allowed traffic |
+| **TLS** | Encryption for data in transit |
+| **CDN** | Network of edge nodes that cache and deliver content |
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A service failing because DNS cached an old IP
+- A load balancer routing traffic unevenly
+- An API timing out due to downstream latency
+- A firewall blocking outbound requests
+- A CDN serving stale content due to long TTL
+- A container unable to reach another pod due to network policies
+
+---
+
+## 🔗 Related Concepts
+
+- Distributed Systems Concepts
+- Containerised Environments
+- API & Communication Patterns
+- Observability
+- Cyber Security Patterns

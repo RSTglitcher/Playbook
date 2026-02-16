@@ -1,0 +1,403 @@
+---
+title: "File Types & Data Formats"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**File Types & Data Formats** describe how information is encoded, structured, and represented for storage, transmission, configuration, or processing.  
+They define *how data looks*, *how it is parsed*, and *how systems interpret it*.
+:::
+
+File types are not storage systems — they are **formats** that shape interoperability, performance, and correctness.
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Understanding file types enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Correct parsing** | Prevents misinterpretation between systems |
+| **Interoperability** | Enables communication across languages, platforms, and services |
+| **Performance optimisation** | Choose formats suited for analytics, messaging, or configuration |
+| **Schema enforcement** | Ensures data integrity and predictable structure |
+| **Debuggability** | Human‑readable formats simplify troubleshooting |
+
+---
+
+## 🧠 Conceptual Model (How File Types Work)
+
+File types vary along several axes:
+
+### **Text vs Binary**
+- **Text** → human‑readable, easy to debug  
+- **Binary** → compact, fast, schema‑driven  
+
+### **Schema‑less vs Schema‑enforced**
+- JSON, CSV → flexible but error‑prone  
+- Protobuf, Avro, XSD → strict structure, safer evolution  
+
+### **Row‑based vs Columnar**
+- CSV → row‑oriented  
+- Parquet → column‑oriented for analytics  
+
+### **Configuration vs Data vs Code**
+- YAML/TOML → configuration  
+- JSON/XML → structured data  
+- SQL/GraphQL → schema or query definitions  
+
+---
+
+# 🧬 Categories of File Types
+
+<Tabs>
+
+<TabItem value="serialization" label="Serialization & Messaging Formats">
+
+### Purpose  
+Encode structured data for storage or transmission.
+
+---
+
+## Text‑Based Formats
+
+### **JSON (`.json`)**
+Human‑readable key/value structured data.
+
+**Use When**
+- REST APIs  
+- Configuration  
+- Logging/debugging  
+- Cross‑language communication  
+
+**Characteristics**
+- Lightweight  
+- Flexible  
+- No enforced schema  
+
+---
+
+### **XML (`.xml`)**
+Markup‑based structured data with optional schemas.
+
+**Use When**
+- Enterprise integrations  
+- Document‑centric data  
+- Systems requiring strict validation  
+
+**Characteristics**
+- Verbose  
+- Supports namespaces  
+- Often paired with XSD  
+
+---
+
+## Binary Formats
+
+### **Protobuf (`.proto`)**
+Compact, schema‑driven binary format.
+
+**Use When**
+- High‑performance services  
+- gRPC  
+- Low‑latency communication  
+
+**Characteristics**
+- Strong schema  
+- Very small payloads  
+- Fast serialization  
+
+---
+
+### **Avro (`.avsc`)**
+Schema‑based binary format used in data pipelines.
+
+**Use When**
+- Event streaming  
+- Schema evolution  
+- Kafka ecosystems  
+
+**Characteristics**
+- Self‑describing  
+- Good for long‑term storage  
+- Efficient for ingestion pipelines  
+
+</TabItem>
+
+<TabItem value="config" label="Configuration & Infrastructure Files">
+
+### Purpose  
+Define system behaviour, environment settings, and infrastructure.
+
+---
+
+### **YAML (`.yaml`, `.yml`)**
+Human‑friendly configuration.
+
+**Use When**
+- Kubernetes manifests  
+- CI/CD pipelines  
+- Application config  
+
+**Characteristics**
+- Indentation‑based  
+- Easy to read  
+- Easy to mis‑indent  
+
+---
+
+### **TOML (`.toml`)**
+Minimal, strongly‑typed configuration.
+
+**Use When**
+- Tooling config  
+- Python/Rust project metadata  
+
+**Characteristics**
+- Predictable parsing  
+- Less ambiguous than YAML  
+
+---
+
+### **ENV (`.env`)**
+Key‑value environment variables.
+
+**Use When**
+- Local development  
+- Injecting secrets/config at runtime  
+
+**Characteristics**
+- Simple  
+- No structure beyond key/value  
+
+</TabItem>
+
+<TabItem value="schema" label="Programming & Schema Definition Files">
+
+### Purpose  
+Define structure, contracts, or executable logic.
+
+---
+
+### **SQL (`.sql`)**
+Schema and query definitions for relational databases.
+
+**Use When**
+- Table creation  
+- Migrations  
+- Query logic  
+
+---
+
+### **GraphQL (`.graphql`)**
+Schema and query language for APIs.
+
+**Use When**
+- Client‑driven data fetching  
+- Typed API contracts  
+
+---
+
+### **XSD (`.xsd`)**
+Schema definition for XML.
+
+**Use When**
+- Validating XML structure  
+- Enforcing strict document rules  
+
+**Characteristics**
+- Defines elements, attributes, types  
+- Supports namespaces  
+- Used in enterprise and government systems  
+
+</TabItem>
+
+<TabItem value="docs" label="Documentation & Markup">
+
+### Purpose  
+Represent text, documentation, or rendered content.
+
+---
+
+### **Markdown (`.md`)**
+Lightweight markup for documentation.
+
+**Use When**
+- READMEs  
+- Knowledge bases  
+- Static sites  
+
+---
+
+### **HTML (`.html`)**
+Markup language for web content.
+
+**Use When**
+- Web pages  
+- UI rendering  
+
+</TabItem>
+
+<TabItem value="analytics" label="Data & Analytics Formats">
+
+### Purpose  
+Store tabular or analytical data efficiently.
+
+---
+
+### **CSV (`.csv`)**
+Plain‑text tabular data.
+
+**Use When**
+- Imports/exports  
+- Simple pipelines  
+- Interoperability  
+
+**Characteristics**
+- Human‑readable  
+- No schema  
+- Error‑prone for complex data  
+
+---
+
+### **Parquet (`.parquet`)**
+Columnar, compressed format for analytics.
+
+**Use When**
+- Data lakes  
+- BigQuery/Spark/Hive  
+- Large‑scale analytical workloads  
+
+**Characteristics**
+- Highly compressed  
+- Columnar for fast scans  
+- Schema‑aware  
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧩 Deep Dives (JSON, XML, XSD)
+
+## JSON — JavaScript Object Notation
+
+### What It Is
+A lightweight, human‑readable format for structured data.
+
+### Characteristics
+- Key/value pairs  
+- Supports numbers, strings, booleans, arrays, null  
+- Ignores whitespace  
+- Easy to parse and generate  
+
+### TA Lens
+Use JSON when **interoperability** and **debuggability** matter more than strict schemas.
+
+---
+
+## XML — eXtensible Markup Language
+
+### What It Is
+A verbose, markup‑based format for structured documents.
+
+### Characteristics
+- Requires closing tags  
+- Supports nested elements  
+- Often paired with XSD for validation  
+- Harder to read than JSON  
+
+### TA Lens
+Use XML when **strict validation**, **namespaces**, or **enterprise compatibility** are required.
+
+---
+
+## XSD — XML Schema Definition
+
+### What It Is
+A schema language defining the allowed structure of XML documents.
+
+### Characteristics
+- Defines elements, attributes, types  
+- Enforces structure and constraints  
+- Supports namespaces  
+- Used in enterprise, finance, government  
+
+### TA Lens
+Use XSD when XML must be **validated**, **versioned**, or **governed**.
+
+---
+
+# 🧭 When to Use Which Format
+
+| Need | Best Fit |
+|------|----------|
+| Human‑readable structured data | JSON, YAML |
+| High‑performance messaging | Protobuf |
+| Schema evolution in pipelines | Avro |
+| Analytics at scale | Parquet |
+| Simple tabular exchange | CSV |
+| Strict document validation | XML + XSD |
+| Configuration | YAML, TOML, ENV |
+
+---
+
+# 🧠 TA Lens
+
+:::info How a TA Evaluates File Types
+- What guarantees are required (schema, ordering, types)?  
+- Is human readability important?  
+- Is performance or payload size critical?  
+- Will the format evolve over time?  
+- Does the system require strict validation?  
+- Is the data for operational use or analytics?  
+:::
+
+---
+
+# 📊 What Results Normally Look Like
+
+| Output Type | Description |
+|-------------|-------------|
+| **Schemas** | Structure definitions (XSD, Avro, Protobuf) |
+| **Payloads** | JSON/XML messages |
+| **Config files** | YAML/TOML/ENV |
+| **Analytics files** | CSV/Parquet |
+| **Documentation** | Markdown/HTML |
+
+---
+
+# ⚠️ Common Misunderstandings / Anti‑Patterns
+
+- Using CSV for complex nested data  
+- Using JSON when strict schemas are required  
+- Using YAML for secrets (indentation errors, parsing issues)  
+- Using XML without XSD in regulated environments  
+- Using Parquet for operational workloads  
+- Treating file formats as storage systems  
+
+---
+
+# 🏗️ Real‑World Examples
+
+- A REST API returns JSON payloads  
+- A Kafka pipeline uses Avro schemas for evolution  
+- A Kubernetes deployment uses YAML manifests  
+- A data lake stores Parquet files for analytics  
+- A legacy integration uses XML validated by XSD  
+
+---
+
+## 🔗 Related Concepts
+
+- Data Modelling  
+- Serialization & Encoding  
+- API Contracts  
+- Data Pipeline Quality  
+- Analytical Storage Systems  
+
