@@ -221,7 +221,6 @@ flowchart LR
 
 ```
 
-
 ---
 
 ## Benefit / What problem does it solve?
@@ -280,32 +279,6 @@ Using Kafka enables:
 
 ---
 
-## Variants / Types
-
-<Tabs>
-<TabItem value="messaging" label="Messaging (Pub/Sub)">
-
-- High‑throughput publish/subscribe
-- Producers write once; many consumers read independently
-- Used for microservices, event-driven systems, logs
-
-**Primary purpose:** decoupling and real‑time communication
-
-</TabItem>
-
-<TabItem value="streaming" label="Stream Processing">
-
-- Continuous processing of events
-- Stateful operations (windows, joins, aggregations)
-- Tools: Kafka Streams, ksqlDB, Flink
-
-**Primary purpose:** real‑time transformation and enrichment
-
-</TabItem>
-</Tabs>
-
----
-
 ## Key Strategies
 
 <Tabs>
@@ -329,6 +302,18 @@ Using Kafka enables:
 
 </TabItem>
 </Tabs>
+
+---
+
+## System Contract
+
+Kafka does not store schemas, it stores raw bytes. However, evidence of the contract can be found at different points:
+
+**Schema creation:**
+- In code / YAML
+- Protobuf / Avro
+- Schema Registry
+- Inferred from Sample files
 
 ---
 
