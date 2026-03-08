@@ -42,24 +42,24 @@ Application storage enables:
 
 Application storage systems vary along several dimensions:
 
-### **Operational vs Analytical**
+****Operational vs Analytical**
 - Application storage → OLTP, correctness, low latency
 - Analytical storage → OLAP, large scans, historical analysis
 
-### **Structured vs Unstructured**
+****Structured vs Unstructured**
 - Databases → structured
 - Object storage → unstructured
 - File/block storage → filesystem semantics
 
-### **Ephemeral vs Persistent**
+****Ephemeral vs Persistent**
 - Ephemeral → tied to container lifecycle
 - Persistent → survives restarts and rescheduling
 
-### **Hot vs Cold**
+****Hot vs Cold**
 - Hot → caches, search indices
 - Cold → archival storage
 
-### **Local vs Networked**
+****Local vs Networked**
 - Local → fast, but not durable
 - Networked → durable, but higher latency
 
@@ -154,18 +154,19 @@ Avoid application storage when:
 
 ---
 
-# 🧬 Variants / Types
+## 🧬 Variants / Types
 
 <Tabs>
+<TabItem value="sqldatabases" label="SQL Databases">
 
-<TabItem value="databases" label="Databases">
+### SQL
 
-### Key Characteristics
+**Key Characteristics**
 - Authoritative, structured data
 - Strong consistency and integrity
 - Transactional guarantees
 
-### Core Concepts
+**Core Concepts**
 - Storage engine
 - Indexing
 - Transactions
@@ -173,145 +174,171 @@ Avoid application storage when:
 - Replication
 - Sharding
 
-### Behaviour
+**Behaviour**
 - Low‑latency reads/writes
 - Sensitive to schema and indexing
 - Requires careful scaling
 
-### Exceptions (Not Universal)
+**Exceptions (Not Universal)**
 - Not all databases support full ACID
 - Some provide tunable consistency
 - Some scale horizontally by design
 
 </TabItem>
+<TabItem value="nosqldatabases" label="NoSQL Databases">
 
+### NoSQL
+
+**Key Characteristics**
+- Schema‑flexible document or key/value storage
+- Low‑latency reads and writes
+- Automatic indexing on fields
+- Horizontal scaling through partitioning/sharding
+
+**Use When**
+- Application workloads require flexible schemas
+- High‑frequency operational reads/writes
+- Mobile or web apps need real‑time updates
+- Global replication or offline support is important
+
+**Trade-offs**
+- Limited querying compared to relational databases
+- No joins; denormalisation required
+- Aggregations and scans are expensive
+- Not suitable for analytical workloads
+
+</TabItem>
 <TabItem value="platform" label="Container & Platform Storage">
 
-### Key Characteristics
+### Containers
+
+**Key Characteristics**
 - Platform‑managed persistent storage
 - Decouples data from container lifecycle
 - Provides filesystem or block‑device semantics
 
-### Core Concepts
+**Core Concepts**
 - Persistent vs ephemeral storage
 - Storage abstractions
 - Stateful workload identity
 - Declarative provisioning
 
-### Behaviour
+**Behaviour**
 - Durable across restarts
 - Latency depends on backend
 - May require node affinity
 
-### Trade-offs
+**Trade-offs**
 - Durable and managed
 - Higher latency than local disk
 - Not a replacement for databases or caches
 
-### When to Use
+**When to Use**
 - Stateful workloads in container platforms
 - Data must survive rescheduling
 - Applications require filesystem/block access
 
-### Avoid When
+**Avoid When**
 - Data is temporary
 - Querying or indexing is required
 - Low‑latency key access is needed
 
-### Exceptions (Not Universal)
+**Exceptions (Not Universal)**
 - Some platforms do not guarantee volume portability
 - Some storage classes provide eventual consistency
 
 </TabItem>
-
 <TabItem value="fileobject" label="File & Object Storage">
 
-### Key Characteristics
+### Files
+
+**Key Characteristics**
 - Stores unstructured or semi‑structured data
 - Accessed via file paths or object keys
 - Scales horizontally
 
-### Core Concepts
+**Core Concepts**
 - Block storage
 - File storage
 - Object storage
 - Snapshots and versioning
 
-### Behaviour
+**Behaviour**
 - Higher latency than databases
 - Ideal for large files, logs, artifacts
 - Limited querying
 
-### Trade-offs
+**Trade-offs**
 - Extremely scalable
 - No transactional semantics
 - Requires lifecycle management
 
-### When to Use
+**When to Use**
 - Filesystem or object‑based access
 - Large unstructured datasets
 - Shared data across services
 
-### Avoid When
+**Avoid When**
 - Low‑latency key access is required
 - Complex querying is needed
 - ACID transactions are required
 
-### Exceptions (Not Universal)
+**Exceptions (Not Universal)**
 - Some object stores provide strong consistency
 - Some file systems do not support concurrent writes
 
 </TabItem>
-
 <TabItem value="performance" label="Performance-Oriented Storage">
 
-### Key Characteristics
+### Caches
+
+**Key Characteristics**
 - Optimised for speed and searchability
 - Not authoritative sources of truth
 
-### Core Concepts
+**Core Concepts**
 - Caches
 - In‑memory stores
 - Search indices
 - Materialised views
 
-### Behaviour
+**Behaviour**
 - Extremely fast reads
 - Requires invalidation or reindexing
 - Not durable by default
 
-### Trade-offs
+**Trade-offs**
 - High performance
 - Requires careful lifecycle management
 
-### Exceptions (Not Universal)
+**Exceptions (Not Universal)**
 - Some caches persist to disk
 - Some search engines support limited transactions
 
 </TabItem>
-
 <TabItem value="archival" label="Archival Storage">
 
-### Key Characteristics
+### Archival
+
+**Key Characteristics**
 - Long‑term retention
 - Very low cost
 - High retrieval latency
 
-### Core Concepts
+**Core Concepts**
 - Cold storage
 - Lifecycle policies
 - Retention and compliance
 
-### Behaviour
+**Behaviour**
 - Optimised for infrequent access
 - Retrieval may take minutes or hours
 
-### Exceptions (Not Universal)
+**Exceptions (Not Universal)**
 - Some archival systems support expedited retrieval
 - Some enforce strict immutability
 
 </TabItem>
-
 </Tabs>
 
 ---
@@ -356,11 +383,12 @@ Storage failures often appear as application failures — understanding the stor
 
 ---
 
-## 🔗 Related Concepts
+## 🔗 Related Runbook Concepts
 
-- Databases
-- Analytical Storage Systems
-- Caching
-- Search
-- Configuration & Secrets
-- Stateful Workloads
+- PostgreSQL / MySQL — operational relational databases used for OLTP workloads
+- Firestore / DynamoDB / MongoDB — document and key‑value NoSQL stores
+- Redis (cache mode) — in‑memory caching for hot paths and performance
+- Elasticsearch / OpenSearch — search indices and relevance‑based querying
+- GCS / S3 Buckets — object storage for files, artifacts, and unstructured data
+- Kubernetes Persistent Volumes — platform‑managed durable storage for stateful workloads
+- Secret Manager / ConfigMaps — configuration and secrets storage

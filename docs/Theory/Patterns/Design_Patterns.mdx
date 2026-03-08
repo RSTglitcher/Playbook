@@ -1,0 +1,493 @@
+---
+title: "Design Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Design Patterns** are reusable templates for solving recurring software design problems.  
+For a Technical Analyst, patterns provide a shared vocabulary for reasoning about structure, behaviour, and trade‑offs across systems.
+:::
+
+**When to Use**
+- When analysing unfamiliar systems
+- When evaluating design intent or structure
+- When identifying coupling, complexity, or maintainability risks
+- When supporting extensible or scalable architectures
+- When communicating design decisions across teams
+
+**When Not to Use**
+- When the problem is simple and a pattern adds unnecessary abstraction
+- When the pattern does not fit the domain intent
+- When applying a pattern would increase complexity without benefit
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Design patterns solve the problem of **recurring design challenges** by providing proven, reusable structures that improve clarity and predictability.
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Shared language** | Improves clarity in design discussions |
+| **Reusable solutions** | Avoids reinventing common structures |
+| **Predictable behaviour** | Patterns encode known trade-offs |
+| **Better reasoning** | Helps TAs analyse unfamiliar systems |
+| **Risk identification** | Reveals coupling, complexity, and anti‑patterns |
+
+Patterns are not rules — they are **tools**. Their value comes from *intent*, not implementation.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+- **Problem context** — the recurring situation the pattern addresses
+- **Structure** — the arrangement of objects or components
+- **Behaviour** — how responsibilities are distributed
+- **Collaboration** — how components interact
+- **Trade-offs** — what the pattern optimises and what it sacrifices
+
+### Axes of Variation
+- **Creational vs Structural vs Behavioural**
+- **Object composition vs inheritance**
+- **Runtime flexibility vs compile-time safety**
+- **Encapsulation vs transparency**
+- **Simplicity vs extensibility**
+
+---
+
+### Typical Lifecycle or Flow
+
+1. Identify a recurring design problem
+2. Select a pattern whose intent matches the problem
+3. Apply the structure (classes, components, relationships)
+4. Evaluate trade-offs (complexity, flexibility, coupling)
+5. Validate behaviour through examples or scenarios
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How the pattern behaves under pressure
+- Questions to ask during reviews or incidents
+- Risks, constraints, or trade-offs to surface
+:::
+
+**What happens when:**
+- Requirements change → does the pattern adapt or resist?
+- Complexity grows → does the pattern scale or collapse?
+- Concurrency increases → does the pattern introduce contention?
+- The system evolves → does the pattern support extension?
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Creational Pattern** | Controls object creation |
+| **Structural Pattern** | Shapes relationships between components |
+| **Behavioural Pattern** | Defines how components interact |
+| **Anti‑Pattern** | A common but harmful design choice |
+| **Composition** | Building behaviour by combining objects |
+| **Delegation** | Passing responsibility to another component |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+<TabItem value="creational" label="Creational Patterns">
+
+**Purpose** 
+Manage object creation in a controlled, extensible way.
+
+**Patterns**  
+- **Singleton** — one instance, global access  
+- **Factory Method** — delegate creation to subclasses  
+- **Builder** — construct complex objects step‑by‑step  
+
+**TA Interpretation**  
+Creational patterns reveal how a system manages **configuration**, **instantiation**, and **resource ownership**.
+
+### Singleton
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Ensure only one instance exists and provide global access.
+
+**Use When:**
+- You need a single source of truth
+- Object creation is expensive
+- Global coordination is required
+
+```mermaid
++------------------+
+|   Singleton      |
+|------------------|
+|  getInstance()   |
++------------------+
+        |
+        v
+   [Single Object]
+```
+
+**Trade-offs:**
+- ✔ Simple global access
+- ✔ Prevents duplicate state
+- ✘ Harder to test
+- ✘ Hidden dependencies
+
+</details>
+
+### Factory Method
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Delegate object creation to subclasses.
+
+**Use When:**
+- Object creation varies by context
+- You want consistent construction logic
+- You want to avoid scattered `new` calls
+
+```mermaid
+Creator
++----------------------+
+| factoryMethod()      |
++----------------------+
+          |
+          v
+   Product (interface)
+      ^          ^
+      |          |
+ ProductA    ProductB
+```
+
+**Trade-offs:**
+- ✔ Centralised creation logic
+- ✔ Supports extensibility
+- ✘ More indirection
+- ✘ Can be overused
+
+</details>
+
+### Builder
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Construct complex objects step-by-step.
+
+**Use When:**
+- Objects have many optional parameters
+- Construction logic is complex
+- You want readable, fluent creation
+
+```mermaid
+Director ----> Builder Interface
+                  |
+        ---------------------
+        |         |         |
+   BuilderA   BuilderB   BuilderC
+```
+
+**Trade-offs:**
+- ✔ Clear construction
+- ✔ Avoids telescoping constructors
+- ✘ More classes
+- ✘ Can be verbose
+
+</details>
+
+</TabItem>
+
+<TabItem value="structural" label="Structural Patterns">
+
+**Purpose** 
+Define how components are composed or related.
+
+**Patterns**  
+- **Adapter** — convert one interface into another  
+- **Facade** — simplify a complex subsystem  
+- **Decorator** — add behaviour dynamically  
+
+**TA Interpretation**  
+Structural patterns reveal **coupling**, **abstraction boundaries**, and **integration strategies**.
+
+### Adapter
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Convert one interface into another expected by the client.
+
+**Use When:**
+- Two systems don’t naturally fit together
+- You want to reuse existing components
+- You need compatibility without rewriting
+
+```mermaid
+Client ---> Adapter ---> Adaptee
+```
+
+**Trade-offs:**
+- ✔ Enables reuse
+- ✔ Decouples systems
+- ✘ Adds indirection
+- ✘ Can hide complexity
+
+</details>
+---
+
+### Facade
+
+<details>
+<summary>Mental Map</summary>
+**Intent:** Provide a simplified interface to a complex subsystem.
+
+**Use When:**
+- A system has many moving parts
+- You want to hide complexity
+- You want a clean entry point
+
+```mermaid
+        +---------+
+Client ->| Facade |----> Subsystem A
+        +---------+----> Subsystem B
+                     \-> Subsystem C
+```
+
+**Trade-offs:**
+- ✔ Simplifies usage
+- ✔ Reduces coupling
+- ✘ Can become a god-object
+- ✘ May hide important details
+
+</details>
+---
+
+### Decorator
+
+<details>
+<summary>Mental Map</summary>
+**Intent:** Add behaviour dynamically without modifying the original object.
+
+**Use When:**
+- You want flexible, runtime composition
+- You want to avoid subclass explosion
+- You need optional behaviours
+
+```mermaid
+Client
+   |
+   v
++-----------+
+| Decorator |----> Component
++-----------+
+       |
+       v
+  [Wrapped Component]
+```
+
+**Trade-offs:**
+- ✔ Flexible composition
+- ✔ Avoids deep inheritance
+- ✘ Can be hard to trace
+- ✘ Many small objects
+
+</details>
+
+</TabItem>
+
+<TabItem value="behavioral" label="Behavioral Patterns">
+
+**Purpose** 
+Define how components communicate and collaborate.
+
+**Patterns**  
+- **Strategy** — interchangeable behaviours  
+- **Observer** — notify many listeners  
+- **Command** — encapsulate requests as objects  
+
+**TA Interpretation**  
+Behavioural patterns reveal **runtime dynamics**, **responsibility flow**, and **extensibility**.
+
+### Strategy
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Swap algorithms or behaviours at runtime.
+
+**Use When:**
+- You want interchangeable behaviours
+- Logic varies by context
+- You want to avoid giant `if/else` blocks
+
+```mermaid
++-----------+        +----------------+
+|  Context  |------->|  Strategy      |
+| set(strat)|        |  interface     |
++-----------+        +----------------+
+        |                   ^
+        |                   |
+        v                   |
+   +-----------+     +-------------+
+   | StrategyA |     | StrategyB   |
+   +-----------+     +-------------+
+```
+
+**Trade-offs:**
+- ✔ Cleaner extensibility
+- ✔ Behaviour is isolated
+- ✘ More classes
+- ✘ Requires clear interfaces
+
+</details>
+
+### Observer
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:** Notify multiple subscribers when something changes.
+
+**Use When:**
+- Many components depend on one source
+- You need event-driven behaviour
+- Loose coupling is important
+
+```mermaid
+   +-----------+
+   | Subject   |
+   |-----------|
+   | notify()  |
+   +-----------+
+        |
+   --------------
+   |     |      |
+   v     v      v
+ObserverA  ObserverB  ObserverC
+```
+
+**Trade-offs:**
+- ✔ Decoupled communication
+- ✔ Scales to many listeners
+- ✘ Harder to trace flows
+- ✘ Risk of cascading updates
+
+</details>
+
+### Command
+
+<details>
+<summary>Mental Map</summary>
+**Intent:** Encapsulate a request as an object.
+
+**Use When:**
+- You want undo/redo
+- You want to queue or log operations
+- You want to parameterise actions
+
+```mermaid
+Invoker ---> Command ---> Receiver
+```
+
+**Trade-offs:**
+- ✔ Decouples sender/receiver
+- ✔ Enables undo, logging
+- ✘ More classes
+- ✘ Can be over-engineered
+
+</details>
+
+</TabItem>
+
+</Tabs>
+
+---
+
+# 🧭 Pattern Decision Map
+
+| Problem Shape | Consider These Patterns |
+|---------------|-------------------------|
+| Need to swap behaviour | Strategy, State |
+| Need to notify many listeners | Observer, Pub/Sub |
+| Need to simplify a complex API | Facade |
+| Need to adapt incompatible interfaces | Adapter |
+| Need to build complex objects | Builder |
+| Need a single shared instance | Singleton |
+| Need to control object creation | Factory Method |
+| Need to add behaviour dynamically | Decorator |
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How this concept interacts with architecture, data, or runtime
+- How the pattern behaves when under pressure
+- What changes, what stays constant, what becomes a bottleneck
+:::
+
+### Local Systems
+- Object lifecycles
+- Memory usage
+- Threading and concurrency
+- Component boundaries
+
+### Remote Systems
+- API orchestration
+- Distributed object interactions
+- Service boundaries
+
+### Questions to ask during reviews or incidents
+- Does this pattern reduce or increase coupling?
+- Does it introduce unnecessary abstraction?
+- Does it scale with system growth?
+- Does it hide complexity or create it?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Design patterns influence **structure**, **flexibility**, and **maintainability**, not functional output.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Clear structure** | Components have well-defined roles |
+| **Reduced coupling** | Dependencies are controlled and explicit |
+| **Extensibility** | New behaviour can be added safely |
+| **Predictable behaviour** | Known trade-offs guide reasoning |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| **Over-engineering** | Pattern used where unnecessary |
+| **Hidden complexity** | Abstraction obscures behaviour |
+| **Tight coupling** | Pattern misapplied or misunderstood |
+| **Rigid design** | Pattern prevents evolution |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Communication Patterns  
+- API Design  
+- Modularity & Cohesion  
+- Coupling & Abstraction  
+- Anti‑Patterns  
+

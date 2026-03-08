@@ -1,0 +1,387 @@
+---
+title: "Cyber Security Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Hacking & Cyber Security Patterns** describe the recurring ways attackers exploit systems, and the defensive strategies used to prevent, detect, and contain those attacks.
+They focus on *attack shapes*, *risk patterns*, and *protection principles*, not tools or implementation details.
+:::
+
+**When to Use**
+- Reviewing designs
+- Evaluating APIs
+- Assessing data flows
+- Working with authentication or authorisation
+- Reviewing third‑party integrations
+- Handling sensitive data
+- Preparing for audits or compliance
+
+**When Not to Use**
+- The system is isolated and non‑critical
+- The cost of controls outweighs the risk
+- You are prototyping and not storing real data
+Security should be **proportionate**, not maximal.
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Cyber security patterns solve the problem of recognising how systems fail under adversarial pressure and how to design
+them so they fail safely. They give Technical Analysts a structured way to understand common attack shapes, anticipate
+risks early in design, and evaluate whether a system’s defences match the threats it faces. Knowing these patterns
+enables clearer communication with security engineers, stronger requirements, and better incident readiness.
+
+---
+
+## 🧠 Conceptual Model
+
+Cyber security is fundamentally about understanding **how attacks unfold** and **how defences map to each stage**.
+
+### Core Components
+- **Attacker goals** (access, disruption, exfiltration)
+- **Attack vectors** (input, identity, network, supply chain)
+- **Vulnerabilities** (misconfigurations, weak controls, unsafe defaults)
+- **Defensive controls** (validation, authentication, authorisation, monitoring)
+
+### Axes of Variation
+- **Technical vs human‑focused attacks**
+- **Passive vs active reconnaissance**
+- **Automated vs manual exploitation**
+- **Opportunistic vs targeted attacks**
+- **Short‑lived vs persistent access**
+
+---
+
+### Typical Lifecycle or Flow
+
+Most attacks follow a predictable sequence:
+
+1. **Reconnaissance** — gather information
+2. **Initial Access** — exploit a weakness
+3. **Privilege Escalation** — gain higher permissions
+4. **Lateral Movement** — move across systems
+5. **Impact** — exfiltrate, disrupt, or take control
+6. **Persistence** — maintain long‑term access
+
+**Diagram(s):**
+```
+flowchart LR
+    R[Reconnaissance] --> A[Initial Access] --> E[Privilege Escalation]
+    E --> L[Lateral Movement] --> I[Impact] --> P[Persistence]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How the concept behaves under pressure
+- Questions to ask during reviews or incidents
+- Risks, constraints, or trade-offs to surface
+:::
+
+**What happens when:**
+- Data grows → more valuable target, larger attack surface
+- Traffic increases → more opportunities for brute force or DoS
+- Concurrency rises → race conditions, session confusion
+- Resources become constrained → degraded defences, noisy logs, missed alerts
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Attack Surface** | All points where an attacker can interact |
+| **Threat Model** | Assumptions about attacker capabilities |
+| **Payload** | Malicious input crafted to exploit a vulnerability |
+| **Vector** | The path an attack takes |
+| **Exploit** | Code or technique that triggers a vulnerability |
+| **Mitigation** | A control that reduces risk |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="injection" label="Injection Attacks">
+
+### Key Characteristics
+- Untrusted input becomes executable
+- Targets interpreters (SQL, shell, templates)
+
+### Behaviour
+Attackers craft input that changes the meaning of a query or command.
+
+### Trade-offs
+Strong validation and parameterisation reduce flexibility but dramatically increase safety.
+
+</TabItem>
+
+<TabItem value="xss" label="Cross‑Site Scripting (XSS)">
+
+### Key Characteristics
+- Untrusted data rendered as script
+- Impacts browsers and user sessions
+
+### Behaviour
+Attackers inject JavaScript into pages viewed by other users.
+
+### Trade-offs
+Strict output encoding and CSP require disciplined frontend patterns.
+
+</TabItem>
+
+<TabItem value="auth" label="Authentication & Session Attacks">
+
+### Key Characteristics
+- Target identity and session state
+- Often automated at scale
+
+### Behaviour
+Attackers bypass or break authentication flows.
+
+### Trade-offs
+Stronger authentication increases friction but reduces risk.
+
+</TabItem>
+
+<TabItem value="access" label="Broken Access Control">
+
+### Key Characteristics
+- Missing or weak authorisation
+- Often invisible until exploited
+
+### Behaviour
+Attackers access data or actions they shouldn’t.
+
+### Trade-offs
+Strict server‑side checks add overhead but prevent catastrophic breaches.
+
+</TabItem>
+
+<TabItem value="csrf" label="Cross‑Site Request Forgery (CSRF)">
+
+### Key Characteristics
+- Exploits browser trust
+- Requires user interaction
+
+### Behaviour
+Attackers trick a user’s browser into performing unwanted actions.
+
+### Trade-offs
+CSRF protections require careful cookie and session design.
+
+</TabItem>
+
+<TabItem value="deserialisation" label="Deserialization Attacks">
+
+### Key Characteristics
+- Unsafe object creation
+- Often hidden in frameworks
+
+### Behaviour
+Untrusted data is turned into objects or code.
+
+### Trade-offs
+Safer formats reduce flexibility but eliminate entire classes of attacks.
+
+</TabItem>
+
+<TabItem value="supply" label="Supply Chain Attacks">
+
+### Key Characteristics
+- Compromise dependencies or pipelines
+- Hard to detect
+
+### Behaviour
+Attackers infiltrate through external code or build systems.
+
+### Trade-offs
+Stricter dependency controls slow development but increase trust.
+
+</TabItem>
+
+<TabItem value="ddos" label="Denial of Service (DoS/DDoS)">
+
+### Key Characteristics
+- Overwhelm systems with load
+- Exploit expensive operations
+
+### Behaviour
+Attackers degrade or disable availability.
+
+### Trade-offs
+Rate limiting and caching reduce risk but require tuning.
+
+</TabItem>
+
+<TabItem value="phishing" label="Phishing & Social Engineering">
+
+### Key Characteristics
+- Targets humans
+- Bypasses technical controls
+
+### Behaviour
+Attackers trick users into unsafe actions.
+
+### Trade-offs
+Education and MFA reduce risk but require organisational investment.
+
+</TabItem>
+<TabItem value="all-attacks" label="All Attack Patterns">
+
+### Key Characteristics
+- A consolidated view of the major ways attackers exploit systems
+- Groups patterns by theme (input, identity, configuration, logic, supply chain, human factors)
+- Helps TAs quickly recognise attack shapes during reviews or incidents
+
+### Behaviour
+Attack patterns describe how adversaries achieve their goals by exploiting weaknesses in input handling, identity, configuration, business logic, or system design.
+They often chain together across the attack lifecycle.
+
+### Trade-offs
+A broad overview improves situational awareness but lacks the depth of individual pattern analysis.
+
+### Catalogue of Attack Patterns
+
+#### **Input & Interpreter Attacks**
+- Injection (SQLi, command, template, LDAP)
+- Cross‑Site Scripting (XSS)
+- Deserialization attacks
+- Directory traversal
+
+#### **Identity & Session Attacks**
+- Credential stuffing
+- Brute force
+- Session hijacking
+- Weak password reset flows
+- CSRF
+
+#### **Access & Authorisation Attacks**
+- Broken access control
+- IDOR
+- Privilege escalation
+
+#### **Availability Attacks**
+- DoS / DDoS
+- Resource exhaustion
+- Algorithmic complexity attacks
+
+#### **Supply Chain Attacks**
+- Compromised dependencies
+- Malicious packages
+- Build pipeline compromise
+
+#### **Data Exposure Attacks**
+- Sensitive data exposure
+- Secrets leakage
+- Misconfigured storage
+
+#### **API & Logic Abuse**
+- API abuse
+- Business logic abuse
+- Undocumented endpoints
+
+#### **Human-Focused Attacks**
+- Phishing
+- Social engineering
+- Pretexting
+
+#### **Misconfiguration Attacks**
+- Unsafe defaults
+- Overly permissive settings
+- Missing hardening
+
+</TabItem>
+<TabItem value="defensive" label="Defensive Patterns">
+
+### Key Characteristics
+- Cross‑cutting protections
+- Apply across multiple attack types
+- Reduce blast radius and increase resilience
+
+### Behaviour
+These patterns shape how systems respond to adversarial pressure by enforcing strong defaults, limiting privileges, and layering controls.
+
+### Trade-offs
+Stronger controls increase safety but may add operational overhead, friction, or complexity.
+
+### Examples
+- **Least Privilege** — minimal permissions
+- **Zero Trust** — always verify
+- **Defense in Depth** — multiple layers
+- **Secure Defaults** — safe out of the box
+- **Fail Closed** — deny on error
+- **Threat Modelling** — anticipate attacker behaviour
+
+</TabItem>
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How this concept interacts with architecture, data, or runtime
+- How the concept behaves when under pressure
+- What changes, what stays constant, what becomes a bottleneck
+:::
+
+### Local Systems
+- OS
+- Runtime
+- Network
+- Storage
+- Concurrency
+- Scaling
+
+### Remote Systems
+- Pods
+- Data Centers
+
+### Questions to ask during reviews or incidents
+- Where can untrusted input enter?
+- What assumptions are we making about identity?
+- What happens if an attacker controls the client?
+- What logs or alerts would reveal misuse?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Security outputs often involve **risk reduction**, **attack detection**, or **containment**, not functional behaviour.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Attack prevented** | Controls block or neutralise malicious input |
+| **Attack detected** | Monitoring identifies suspicious behaviour |
+| **Impact contained** | Blast radius is limited through segmentation |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| **Silent compromise** | Attack succeeds without detection |
+| **Privilege escalation** | Weak controls allow attackers to gain access |
+| **Data exfiltration** | Sensitive data is accessed or leaked |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Code Security
+- Authentication & Authorisation
+- Data Protection
+- API Contracts
+- Threat Modelling
