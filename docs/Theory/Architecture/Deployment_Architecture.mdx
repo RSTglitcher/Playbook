@@ -1,0 +1,240 @@
+---
+title: "Deployment Architecture"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Deployment Architecture** describes how software is built, tested, packaged, released, and deployed across environments — ensuring changes move from commit → production safely, predictably, and with controlled risk.
+:::
+
+**Typical examples include:**
+- CI/CD pipelines  
+- Deployment strategies (rolling, blue/green, canary)  
+- Release workflows and artifact management  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Using **Deployment Architecture** enables:
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Reliable releases** | Reduces risk of production failures |
+| **Fast feedback loops** | Developers get rapid validation |
+| **Automation** | Removes manual, error‑prone steps |
+| **Consistency across environments** | Eliminates “works on my machine” |
+| **Safe experimentation** | Canary/blue‑green reduce blast radius |
+| **Traceability** | Every change is tracked, tested, and auditable |
+
+---
+
+## 🧠 Conceptual Model (How It Works)
+
+A deployment architecture coordinates the systems and workflows that move code through a predictable lifecycle:
+
+- **Build** — compile, lint, package, produce artifacts  
+- **Test** — validate correctness at multiple layers  
+- **Package & Release** — create immutable, versioned outputs  
+- **Deploy** — roll out changes using controlled strategies  
+- **Verify** — observe health, metrics, logs, user impact  
+- **Operate** — run, scale, and maintain in production  
+
+**Diagram (optional):**
+```
+Commit → Build → Test → Package → Release → Deploy → Verify → Operate
+```
+
+---
+
+## 🔬 Behaviour Under Load / Scale
+
+As systems grow:
+
+- Build times increase unless caching and parallelisation exist  
+- Test suites become slower and more brittle without layering  
+- Deployment strategies must handle more instances, more traffic  
+- Observability becomes essential for safe rollout  
+- Rollbacks must be fast and automated to reduce blast radius  
+
+**TA insight:**  
+Scaling reveals whether the pipeline is **deterministic**, **observable**, and **resilient** — or whether it hides bottlenecks, flaky tests, or unsafe deployment patterns.
+
+---
+
+## ⚖️ Trade-offs
+
+| Dimension | Strength | Weakness |
+|----------|----------|----------|
+| Performance | Fast, automated delivery | Requires investment in tooling & infra |
+| Complexity | Supports sophisticated workflows | Can become over‑engineered |
+| Safety | Canary/blue‑green reduce risk | Requires strong observability |
+| Flexibility | Many deployment patterns available | Harder governance without discipline |
+
+---
+
+## 🧭 When to Use
+
+### **Use When**
+- You need predictable, repeatable releases  
+- You operate multiple environments (DEV → SIT → UAT → PRE → PROD)  
+- You require safe rollout strategies (canary, blue/green)  
+- You need traceability and auditability  
+
+:::warning Avoid When
+- You rely heavily on manual deployments  
+- Observability is weak (unsafe for canary/rolling)  
+- The system is too small/simple for full CI/CD investment  
+:::
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Are builds reproducible and deterministic?  
+- Are tests layered, meaningful, and fast?  
+- Are deployment strategies aligned with risk tolerance?  
+- Is observability strong enough to support safe rollout?  
+- Are rollbacks defined, fast, and reliable?  
+- Does the pipeline reflect the project’s constraints and domain?  
+:::
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Artifact** | Immutable build output deployed to environments |
+| **Pipeline** | Automated sequence from commit → production |
+| **Rollback** | Reverting to a known‑good version |
+| **Environment Parity** | Staging mirrors production |
+| **Feature Flag** | Toggle enabling controlled rollout |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="cicd" label="CI/CD Architecture">
+
+### Key Characteristics
+- Frequent commits to mainline  
+- Automated builds and tests  
+- Fast feedback loops  
+- Every change is deployable  
+
+### Behaviour
+CI/CD reduces integration drift and ensures every commit is validated.
+
+### Trade-offs
+Requires discipline, strong test coverage, and reliable automation.
+
+</TabItem>
+
+<TabItem value="deploy" label="Deployment Patterns">
+
+### Key Characteristics
+- Rolling, blue/green, canary, shadow, recreate  
+- Each pattern expresses a different risk posture  
+
+### Behaviour
+Controls how new versions replace old ones and how traffic shifts.
+
+### Trade-offs
+- Rolling: no downtime, harder rollback  
+- Blue/green: instant rollback, double capacity  
+- Canary: minimal blast radius, requires observability  
+- Shadow: safe validation, traffic duplication  
+- Recreate: simple, downtime  
+
+</TabItem>
+
+<TabItem value="testing" label="Testing Architecture">
+
+### Key Characteristics
+- Unit → integration → system → acceptance  
+- Performance and security layers  
+- Multiple environments (DEV → SIT → UAT → PRE → PROD)
+
+### Behaviour
+Quality gates increase confidence as changes progress.
+
+### Trade-offs
+More layers increase safety but slow feedback if not optimised.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+Deployment architecture interacts with:
+
+- **OS** — process lifecycle, health checks  
+- **Runtime** — container orchestration, scaling  
+- **Network** — routing, load balancing, traffic shifting  
+- **Storage** — schema migrations, data consistency  
+- **Concurrency** — rolling updates, instance coordination  
+- **Scaling** — horizontal/vertical autoscaling, capacity planning  
+
+**TA insight:**  
+Most failures surface at the **boundaries** — between versions, environments, or traffic shifts.
+
+---
+
+## 💥 Failure Modes
+
+- Flaky tests blocking releases  
+- Long build times slowing feedback  
+- Missing health checks causing stalled rollouts  
+- Unsafe rollback mechanisms  
+- Deploying without observability  
+- Environment drift between staging and production  
+
+**TA signal:**  
+Symptoms appear as failing health checks, rising error rates, stalled deployments, or inconsistent behaviour across environments.
+
+---
+
+## 📊 What Results Normally Look Like
+
+| Result Type | Description |
+|-------------|-------------|
+| **Pipeline map** | Visualisation of build → test → deploy flow |
+| **Release artifacts** | Versioned, immutable outputs |
+| **Deployment logs** | Evidence of rollout behaviour |
+| **Quality gates** | Test results, coverage, linting |
+| **Observability signals** | Metrics, alerts, health checks |
+
+:::note Special Considerations
+Deployment logs and observability signals are essential for diagnosing rollout behaviour and validating canary/blue‑green strategies.
+:::
+
+---
+
+## 🏗️ Real‑World Examples
+
+- A canary deployment catches a memory leak before full rollout  
+- A blue/green switch enables instant rollback during an incident  
+- A flaky integration test blocks releases  
+- A long build pipeline slows developer productivity  
+- A missing health check causes a rolling deployment to stall  
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Project Architecture  
+- Communication Patterns  
+- Observability  
+- Infrastructure as Code  
+- Release Management  
+- Application Storage Systems  
+

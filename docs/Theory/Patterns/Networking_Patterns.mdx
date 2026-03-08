@@ -1,0 +1,410 @@
+---
+title: "Networking Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Networking Concepts** describe the patterns, abstractions, and behaviours that allow systems to communicate reliably across machines, services, and environments.
+They explain *how data moves*, *how services find each other*, and *how failures manifest* in distributed systems.
+:::
+
+**When to Use**
+- Investigating API failures
+- Reviewing distributed system behaviour
+- Assessing latency or performance issues
+- Designing service‑to‑service communication
+- Evaluating security boundaries
+- Understanding container or cloud networking
+
+**When Not to Use**
+- When the issue is clearly application‑level
+- When the system is local and not distributed
+- When early design does not yet involve communication paths
+
+Networking concepts matter most when **systems talk to each other.
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Networking concepts solve the problem of **reliable, predictable communication** between distributed systems.
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Reliable communication** | Services can talk to each other predictably |
+| **Service discovery** | Systems can find the right endpoints dynamically |
+| **Performance awareness** | Understand latency, throughput, and bottlenecks |
+| **Security boundaries** | Control who can talk to whom |
+| **Failure diagnosis** | Recognise network‑driven issues quickly |
+
+For a TA, networking concepts help you reason about **API behaviour**, **distributed systems**, **security**, and **observability**.
+
+---
+
+## 🧠 Conceptual Model
+
+Networking can be understood through four fundamental abstractions:
+
+### Core Components
+- **Addressing** — how systems identify each other
+- **Routing** — how data finds its way across networks
+- **Transport** — how data is delivered reliably (or unreliably)
+- **Application Protocols** — how meaning is structured on top of transport
+
+### Axes of Variation
+- Static vs dynamic addressing
+- Direct vs multi‑hop routing
+- Reliable vs unreliable transport
+- Request/response vs streaming vs messaging
+- Stateful vs stateless connections
+
+---
+
+### Typical Lifecycle or Flow
+
+**Diagram(s):**
+
+Client --> DNS --> Routing --> Transport --> Application Protocol --> Response
+
+Typical flow:
+1. Resolve an address
+2. Route traffic to the destination
+3. Establish transport semantics (TCP/UDP)
+4. Apply protocol rules (HTTP, gRPC, WebSockets)
+5. Handle responses, retries, and failures
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How the network behaves under pressure
+- Questions to ask during reviews or incidents
+- Risks, constraints, or trade-offs to surface
+:::
+
+**What happens when:**
+- Latency increases → slow APIs, cascading timeouts
+- Throughput drops → backpressure, queue growth
+- DNS misbehaves → wrong endpoints, stale records
+- Routing changes → traffic shifts unexpectedly
+- Transport degrades → packet loss, retries, resets
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **IP Address** | Numerical identifier for a host |
+| **Port** | Logical endpoint for communication |
+| **DNS** | Maps names to addresses |
+| **Latency** | Time for data to travel |
+| **Throughput** | Amount of data transferred per second |
+| **Load Balancer** | Distributes traffic across services |
+| **Firewall** | Controls allowed traffic |
+| **TLS** | Encryption for data in transit |
+| **CDN** | Network of edge nodes that cache and deliver content |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="addressing" label="Addressing">
+
+**Key Characteristics**
+- Identifies where a service or machine lives
+- Uses IPs, ports, hostnames, DNS
+
+**Behaviour**
+Addressing determines *how* a service is located and *what* endpoint is used.
+
+**Trade-offs**
+- Static addressing is simple but inflexible
+- Dynamic addressing is flexible but requires discovery
+
+**Problem Shapes**
+- “Why can’t service A reach service B?”
+- “Why is DNS returning the wrong address?”
+
+</TabItem>
+
+<TabItem value="routing" label="Routing">
+
+**Key Characteristics**
+- Moves data between networks or services
+- Uses routes, gateways, NAT, load balancers
+
+**Behaviour**
+Routing determines the path traffic takes and how it adapts to topology.
+
+**Trade-offs**
+- More routing layers increase resilience but add latency
+- NAT simplifies networks but obscures source identity
+
+**Problem Shapes**
+- Traffic not leaving a subnet
+- Requests reaching the wrong service
+- Load balancing inconsistencies
+
+</TabItem>
+
+<TabItem value="transport" label="Transport">
+
+**Key Characteristics**
+- Defines how data is delivered
+- Connection‑oriented vs connectionless
+- Reliability vs speed
+
+**Behaviour**
+Transport governs retries, ordering, congestion control, and connection lifecycle.
+
+**Trade-offs**
+- TCP is reliable but slower
+- UDP is fast but lossy
+
+**Problem Shapes**
+- Slow APIs
+- Connection resets
+- Packet loss
+- Retry storms
+
+</TabItem>
+
+<TabItem value="application" label="Application Protocols">
+
+**Key Characteristics**
+- Defines meaning on top of transport
+- Request/response, streaming, messaging
+
+**Behaviour**
+Protocols shape how clients and servers communicate and interpret data.
+
+**Trade-offs**
+- Rich protocols add power but increase complexity
+- Simple protocols are predictable but limited
+
+**Problem Shapes**
+- API timeouts
+- Misinterpreted payloads
+- Version mismatches
+
+</TabItem>
+
+<TabItem value="cdn" label="Content Delivery (CDN)">
+
+**Purpose**
+Reduce latency and improve performance by delivering content from locations geographically closer to users.
+
+**Key Characteristics**
+- **Edge caching**: storing frequently accessed content near users
+- **Anycast routing**: directing users to the nearest edge node
+- **Request collapsing**: preventing multiple identical upstream requests
+- **TTL & cache expiry**: controlling freshness
+- **Failover routing**: redirecting to alternative nodes when edges fail
+
+**Behaviour**
+CDNs bring content closer to users and absorb traffic spikes.
+
+### What CDNs Optimise
+- Latency (distance → speed)
+- Bandwidth usage
+- Load on origin servers
+- Resilience during traffic spikes
+- Global user experience consistency
+
+**Trade-offs**
+- Faster delivery vs risk of stale content
+- Lower origin load vs cache invalidation complexity
+
+**Problem Shapes**
+- “Why is the site fast for some users but slow for others?”
+- “Why is stale content being served?”
+- “Why is the origin under heavy load despite caching?”
+
+</TabItem>
+
+<TabItem value="failures" label="Networking Failure Patterns">
+
+**Key Characteristics**
+- Recurring shapes of network‑driven failures
+- Often subtle and intermittent
+
+**Behaviour**
+Failures manifest as latency, resets, misrouting, or degraded throughput.
+
+**Trade-offs**
+- More diagnostics increase visibility but add noise
+
+### Catalogue of Failure Patterns
+- DNS resolution failures
+- Timeouts
+- Connection resets
+- Packet loss
+- Misrouting
+- Port conflicts
+
+</TabItem>
+
+<TabItem value="protection" label="Networking Protection Patterns">
+
+**Key Characteristics**
+- Define boundaries and enforce safe communication
+- Protect data in transit and restrict access
+
+**Behaviour**
+Protection patterns shape who can talk to whom and under what guarantees.
+
+**Trade-offs**
+- Stronger boundaries reduce flexibility
+- Encryption adds overhead
+
+### Catalogue of Protection Patterns
+- Network segmentation
+- Firewalls & security groups
+- TLS / encryption in transit
+- Zero Trust networking
+- Rate limiting
+- mTLS
+
+</TabItem>
+<TabItem value="latency" label="Latency">
+
+**Key Characteristics**
+- The time it takes for data to travel between two points
+- Influenced by physical distance, congestion, and processing overhead
+- Often the root cause of “slow” systems
+- Highly variable in distributed systems
+- Directly impacts user experience and API responsiveness
+
+**Behaviour**
+Latency accumulates across every hop in a request path — DNS lookup, routing, load balancers, service processing, and response return.
+It increases under congestion, inefficient routing, overloaded services, or when stateful connections require specific nodes.
+Latency also interacts with throughput, connection lifecycle, and protocol semantics.
+
+**Trade-offs**
+- Lower latency improves responsiveness but may require caching, CDNs, or architectural changes
+- Reducing latency can increase infrastructure cost
+- Stateless designs reduce routing constraints but may require more computation
+- Stateful designs can optimise performance but require sticky routing and careful failover
+
+### Catalogue of Related Networking Concepts
+
+- Throughput
+- Bandwidth
+- Connection Lifecycle
+> - Open
+> - Use
+> - Idle
+> - Close
+- Statefulness vs Statelessness
+- Service Discovery
+- Network Segmentation
+</TabItem>
+<TabItem value="failure" label="Failure Patterns">
+
+#### DNS Resolution Failures**
+- Wrong hostname
+- Stale DNS cache
+- Misconfigured records
+
+#### Timeouts**
+- Slow downstream services
+- Network congestion
+- Misconfigured retry logic
+
+#### Connection Resets**
+- Load balancer timeouts
+- Idle connection drops
+- Firewall interference
+
+#### Packet Loss**
+- Congestion
+- Faulty links
+- Overloaded nodes
+
+#### Misrouting**
+- Incorrect routes
+- NAT issues
+- Wrong load balancer target
+
+#### Port Conflicts**
+- Multiple services binding to the same port
+
+</TabItem>
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How networking interacts with architecture, data, or runtime
+- How the network behaves under pressure
+- What changes, what stays constant, what becomes a bottleneck
+:::
+
+### Local Systems
+- OS networking stack
+- Container networking
+- Local routing tables
+- Connection lifecycle
+
+### Remote Systems
+- Load balancers
+- Gateways
+- DNS resolvers
+- CDNs
+- Cloud networking layers
+
+### Questions to ask during reviews or incidents
+- Where is the request actually going?
+- What address is being resolved?
+- What path does traffic take?
+- What retries, timeouts, or backoff exist?
+- What happens when the network is slow or lossy?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Networking outputs often manifest as **latency**, **throughput**, **connection behaviour**, or **error patterns**.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Low latency** | Requests travel quickly end‑to‑end |
+| **Stable throughput** | Data flows consistently |
+| **Correct routing** | Traffic reaches the intended service |
+| **Secure communication** | TLS/mTLS enforced |
+| **Resilient behaviour** | Retries, backoff, and failover work correctly |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| **DNS failures** | Wrong or stale address resolution |
+| **Timeouts** | Slow downstream or congested network |
+| **Connection resets** | Load balancer or firewall interference |
+| **Packet loss** | Congestion or faulty links |
+| **Misrouting** | Incorrect routes or NAT issues |
+| **Port conflicts** | Multiple services binding to the same port |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Distributed Systems Concepts
+- Containerised Environments
+- API & Communication Patterns
+- Observability
+- Cyber Security Patterns

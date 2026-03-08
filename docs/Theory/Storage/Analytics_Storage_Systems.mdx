@@ -385,19 +385,13 @@ Most issues originate upstream (ingestion, modelling), not in the warehouse.
 
 ---
 
-## 🏗️ Real‑World Examples (Conceptual Only)
+## 🔗 Related Runbook Concepts
 
-- Distributed query engines  
-- Columnar storage formats  
-- Transaction logs for ACID tables  
-- Metadata‑driven table formats  
-
----
-
-## 🔗 Related Concepts
-
-- ETL/ELT  
-- OLAP  
-- Storage Formats  
-- Messaging & Ingestion  
-- Data Modelling  
+- BigQuery / Snowflake / Redshift — cloud data warehouses used for large‑scale analytical queries
+- Databricks / Spark / Flink — distributed compute engines for batch and streaming analytics
+- Delta Lake / Iceberg / Hudi — table formats providing ACID semantics on top of data lakes
+- GCS / S3 Data Lakes — object‑storage foundations for raw and curated analytical zones
+- Airflow / Cloud Composer — orchestration systems for ETL/ELT pipelines
+- Pub/Sub / Kafka — event ingestion systems feeding analytical pipelines
+- BI Tools (Looker / Tableau / Power BI) — consumption layer for dashboards and reporting
+- Metadata & Lineage Systems (Data Catalog / Amundsen) — governance, schema tracking, and lineage visibility

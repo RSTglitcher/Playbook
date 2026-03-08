@@ -1,0 +1,301 @@
+---
+title: "Problem‑Solving Patterns"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Problem‑Solving Patterns** are reusable algorithmic strategies that help identify problem shapes and apply predictable, efficient solutions — independent of programming language or implementation.
+:::
+
+---
+
+## **When to Use**
+
+- When a problem resembles a known pattern (e.g., sliding window, recursion, DP)
+- When brute force is too slow or inefficient
+- When constraints require predictable performance or scaling
+- When analysing engineering solutions or reviewing algorithmic choices
+- When preparing for interviews or technical assessments
+
+---
+
+## 🎯 **What Problem Does This Solve?**
+
+### **Enables**
+
+| Benefit | Why it matters |
+|--------|----------------|
+| **Pattern recognition** | Most problems map to known shapes |
+| **Predictable performance** | Avoid brute force and unnecessary work |
+| **Scalable solutions** | Handle large inputs without timeouts |
+| **Clear reasoning** | Understand *why* a solution works |
+| **Interview readiness** | Many questions are variations of the same patterns |
+
+### **Trade-offs**
+
+| Dimension | Strength | Weakness |
+|----------|----------|----------|
+| Performance | Efficient, avoids brute force | Requires recognising the correct pattern |
+| Complexity | Reduces cognitive load | Some patterns (DP, recursion) add mental overhead |
+| Safety | Predictable behaviour | Incorrect mapping → incorrect solution |
+| Flexibility | Works across domains | Not all problems fit a known pattern |
+
+---
+
+## 🧠 **Conceptual Model**
+
+### **How It Works**
+
+Most algorithmic problems reduce to four components:
+
+- **A data structure**  
+  (list, map, tree, graph, matrix)
+
+- **A constraint**  
+  (time, memory, ordering, uniqueness)
+
+- **A pattern**  
+  (two‑pointers, recursion, BFS, DP)
+
+- **A goal**  
+  (find, count, optimise, detect, transform)
+
+Once the pattern is recognised, the solution becomes mechanical.
+
+:::warning Avoid When
+- The problem does not map cleanly to a known pattern  
+- A simpler brute‑force solution is acceptable for the input size  
+- Over‑optimisation obscures clarity  
+:::
+
+---
+
+## 🔍 **TA Lens**
+
+:::info How a TA Evaluates This Concept
+- Identify the **problem shape** before thinking about code  
+- Map the shape to a known pattern  
+- Predict performance using Big‑O intuition  
+- Recognise when brute force is unacceptable  
+- Understand memory vs time trade‑offs  
+- Ask whether the solution is optimal or merely correct  
+:::
+
+**What happens when:**
+
+- Data grows → brute force collapses  
+- Traffic increases → inefficient patterns time out  
+- Concurrency rises → shared structures become bottlenecks  
+- Resources become constrained → recursion depth, memory usage matter  
+
+---
+
+## 📘 **Key Terminology**
+
+| Term | Definition |
+|------|------------|
+| Pattern | A reusable algorithmic strategy |
+| Problem Shape | The structural form a problem takes |
+| Complexity | Time and space behaviour of a solution |
+| Traversal | Systematic exploration of a structure |
+| State | Information carried across steps |
+
+---
+
+## 🧬 **Variants / Types**
+
+<Tabs>
+
+<TabItem value="twopointers" label="Two‑Pointers">
+
+### Key Characteristics
+- Two indices scanning a structure  
+- Moves inward or outward  
+- Eliminates nested loops  
+
+### Behaviour
+Linear-time comparison or scanning.
+
+### Trade-offs
+Fast but only works on linear, indexable structures.
+
+</TabItem>
+
+<TabItem value="sliding" label="Sliding Window">
+
+### Key Characteristics
+- Expanding/contracting window  
+- Tracks contiguous segments  
+
+### Behaviour
+Efficient for substring/subarray problems.
+
+### Trade-offs
+Only applies to contiguous ranges.
+
+</TabItem>
+
+<TabItem value="recursion" label="Recursion & Backtracking">
+
+### Key Characteristics
+- Self‑referential decomposition  
+- Explore → undo → explore  
+
+### Behaviour
+Ideal for trees, graphs, permutations.
+
+### Trade-offs
+Stack depth, exponential branching.
+
+</TabItem>
+
+<TabItem value="dp" label="Dynamic Programming">
+
+### Key Characteristics
+- Overlapping subproblems  
+- Store → reuse  
+
+### Behaviour
+Transforms exponential problems into polynomial.
+
+### Trade-offs
+Memory heavy, requires careful formulation.
+
+</TabItem>
+
+<TabItem value="search" label="Search & Traversal">
+
+### Key Characteristics
+- DFS: depth-first  
+- BFS: breadth-first  
+- Binary search: monotonic space  
+
+### Behaviour
+Systematic exploration of structures.
+
+### Trade-offs
+DFS risks stack overflow; BFS uses more memory.
+
+</TabItem>
+
+<TabItem value="greedy" label="Greedy & Optimisation">
+
+### Key Characteristics
+- Local optimum → global optimum  
+- Fast, simple  
+
+### Behaviour
+Ideal for scheduling, intervals, resource allocation.
+
+### Trade-offs
+Fails when local choices don’t lead to global optimum.
+
+</TabItem>
+<TabItem value="problemshapes" label="Common Problem Shapes">
+
+### 🧩 Common Problem Shapes
+These appear everywhere — interviews, production systems, data pipelines.
+Each one maps cleanly to a known algorithmic pattern.
+
+**1. Palindromes**
+Check symmetry using two‑pointers.
+
+**2. Anagrams**
+Use frequency maps or sorting.
+
+**3. Intervals**
+Sort by start time → merge or detect overlap.
+
+**4. Cycles**
+Use fast/slow pointers (Floyd’s algorithm).
+
+**5. Prefix Sums**
+Efficient range queries.
+
+**6. Hashing**
+Detect duplicates, membership, or frequency.
+
+**7. Graph Connectivity**
+DFS/BFS, union‑find.
+
+**8. Matrix Traversal**
+Spiral, flood fill, island counting.
+
+**9. Monotonic Stacks**
+Next greater element, histogram area.
+
+**10. Heaps**
+Top‑k problems, streaming medians.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 **System Interactions**
+
+:::info How a TA Understands the System
+- Patterns determine performance under load  
+- Data structures influence memory and concurrency behaviour  
+- Traversal strategies affect latency and throughput  
+- Recursive patterns interact with stack limits  
+:::
+
+### **Local Systems**
+
+- CPU cost (loops, recursion, branching)  
+- Memory usage (DP tables, recursion stack)  
+- Cache locality (arrays vs linked structures)  
+
+### **Remote Systems**
+
+- Distributed traversal (graphs, DAGs)  
+- Data centre–scale search (indexing, sharding)  
+- Network‑bound operations (BFS across services)  
+
+### **Questions to Ask**
+
+- Does the pattern scale with input size?  
+- What are the memory implications?  
+- Is the pattern optimal or just convenient?  
+- Does the data structure support the required operations?  
+
+---
+
+## 💥 **Outputs / Results**
+
+:::note Special Considerations
+Edge cases: empty input, single element, boundaries, sorted vs unsorted.
+:::
+
+### **Success Modes**
+
+| Result Type | Description |
+|-------------|-------------|
+| Pattern identification | “This is a sliding‑window problem.” |
+| Complexity intuition | “This solution is O(n²); can we reduce it?” |
+| Decision trees | Mapping conditions to algorithmic paths |
+| Traversal traces | How DFS/BFS explored the structure |
+
+### **Failure Modes**
+
+| Failure Type | Description |
+|-------------|-------------|
+| Incorrect pattern | Misidentifying the shape leads to wrong solution |
+| Inefficient approach | Brute force where O(n) or O(n log n) exists |
+| Memory blow‑ups | DP tables too large, recursion depth exceeded |
+| Logical errors | Off‑by‑one, boundary conditions, missing resets |
+
+---
+
+## 🔗 **Related Runbook Concepts**
+
+- Data Structures & Conditionals  
+- Performance Engineering  
+- System Design  
+- State Machines  
+- Caching & Indexing  
