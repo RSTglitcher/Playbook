@@ -6,6 +6,7 @@ const FeatureList = [
   {
     title: 'Get Inspired',
     Svg: require('@site/static/img/coverpage/pinterest.svg').default,
+    link: 'https://pinterest.com',
     description: (
       <>
         Use social sites and other platforms to be inspired
@@ -15,6 +16,7 @@ const FeatureList = [
   {
     title: 'Take Quick Notes',
     Svg: require('@site/static/img/coverpage/notion.svg').default,
+    link: 'https://notion.so',
     description: (
       <>
         Write quick notes during the day to review
@@ -22,11 +24,12 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Store Info that Matters',
-    Svg: require('@site/static/img/coverpage/github.svg').default,
+    title: 'Challenge Yourself',
+    Svg: require('@site/static/img/coverpage/copilot.svg').default,
+    link: 'https://copilot.microsoft.com/',
     description: (
       <>
-        Store key knowledge for long term reference
+        Use a sounding board to challenge yourself
       </>
     ),
   },
