@@ -1,193 +1,255 @@
 ---
 title: "Code Security"
-sidebar_position: 10
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Code Security** refers to the patterns, principles, and safeguards that prevent vulnerabilities in software systems.
-It focuses on protecting data, preventing misuse, and ensuring that code behaves safely under malicious or unexpected conditions.
+Code Security refers to the patterns, principles, and safeguards that prevent vulnerabilities in software systems by protecting data, preventing misuse, and ensuring safe behaviour under malicious or unexpected conditions.
 :::
 
-Code security is not about tools — it is about **recognising risk patterns**, **understanding attack surfaces**, and **ensuring safe defaults**.
+**When to Use**
+
+- Reviewing API or service designs  
+- Evaluating data flows and trust boundaries  
+- Assessing risk in new features or integrations  
+- Reviewing pull requests for security concerns  
+- Handling sensitive data or authentication logic  
+
+**When Not to Use**
+
+- Over‑securing early prototypes  
+- Adding controls without understanding risk  
+- Assuming internal systems are inherently safe  
+- Relying solely on tools instead of patterns and reasoning  
 
 ---
 
-## 🎯 What Problem Does Code Security Solve?
+## 🎯 What Problem Does This Solve?
 
-Code Security enables:
+Code Security solves the problem of **unsafe behaviour** when untrusted input, malicious actors, or insecure defaults interact with software.
+
+It enables:
 
 | Benefit | Why it matters |
 |--------|----------------|
-| **Protection of data** | Prevents leaks, corruption, and unauthorised access |
-| **Resilience to attacks** | Reduces risk of exploitation and downtime |
-| **Predictable behaviour** | Prevents unexpected or unsafe execution paths |
-| **Trustworthiness** | Ensures systems behave safely under adversarial input |
-| **Compliance** | Supports regulatory and organisational requirements |
+| Protection of data | Prevents leaks, corruption, and unauthorised access |
+| Resilience to attacks | Reduces risk of exploitation and downtime |
+| Predictable behaviour | Prevents unsafe execution paths |
+| Trustworthiness | Ensures systems behave safely under adversarial input |
+| Compliance | Supports regulatory and organisational requirements |
 
 ---
 
-## 🧠 Conceptual Model (How Code Security Works)
+## 🧠 Conceptual Model
 
 Security issues arise when **untrusted input** interacts with:
 
-- code
-- data stores
-- interpreters
-- file systems
-- networks
-- authentication systems
+- code  
+- data stores  
+- interpreters  
+- file systems  
+- networks  
+- authentication systems  
 
-Code Security patterns focus on:
+### Core Components
 
-### **1. Input Validation**
-Ensure data is safe before use.
+- **Input validation**  
+- **Output encoding**  
+- **Authentication & authorisation**  
+- **Data protection**  
+- **Error & exception safety**  
+- **Dependency & supply‑chain safety**
 
-### **2. Output Encoding**
-Ensure data is safe before display or transmission.
+### Axes of Variation
 
-### **3. Authentication & Authorisation**
-Ensure only the right people or systems can act.
+#### Synchronous vs Asynchronous Risk
+- Synchronous → immediate exploitation (SQL injection)  
+- Asynchronous → delayed exploitation (poisoned queues, malicious events)
 
-### **4. Data Protection**
-Ensure sensitive data is stored and transmitted safely.
+#### Trust Boundaries
+Where data crosses from “trusted” to “untrusted.”
 
-### **5. Safe Defaults**
-Ensure systems fail closed, not open.
+#### Attack Surface
+All the ways an attacker can interact with the system.
 
-### **6. Dependency & Supply Chain Safety**
-Ensure third‑party code is trustworthy.
+#### Safe Defaults
+Systems should fail closed, not open.
 
 ---
 
-# 🧬 Core Code Security Patterns
+### Typical Lifecycle or Flow
+
+```mermaid
+flowchart TD
+    A[Untrusted Input] --> B[Validation & Sanitisation]
+    B --> C[Business Logic]
+    C --> D[Output Encoding]
+    C --> E[AuthN/AuthZ Checks]
+    C --> F[Data Protection]
+    A -.-> X[Rejected Input]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates Code Security
+- What input is untrusted, and how is it validated?  
+- What assumptions does the code make about callers or data?  
+- What happens under failure, and is the fallback safe?  
+- Are authentication and authorisation boundaries explicit?  
+- How is sensitive data stored, transmitted, and logged?  
+- What external dependencies or supply‑chain risks exist?  
+:::
+
+**What happens when:**
+
+- **Data grows** → more attack surface, more input to validate  
+- **Traffic increases** → rate‑limiting, brute‑force protection, auth load  
+- **Concurrency rises** → race conditions, session safety  
+- **Resources become constrained** → error paths become dangerous  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Attack Surface | All points where an attacker can interact with the system |
+| Threat Model | Assumptions about attacker capabilities |
+| Least Privilege | Only the permissions required |
+| Secure Defaults | Systems should be safe without configuration |
+| Hardening | Reducing attack surface |
+| Secret | Sensitive value requiring protection |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
 <TabItem value="input" label="Input Validation Pattern">
 
-### Purpose
+### Input Validation Pattern
+
+**Purpose**  
 Prevent malicious or malformed input from being executed or trusted.
 
-### Characteristics
-- Validate type, length, format
-- Reject unexpected characters
-- Use allowlists over denylists
+**Key Characteristics**
+- Validate type, length, format  
+- Reject unexpected characters  
+- Prefer allowlists over denylists  
 
-### Problem Shapes
-- User input
-- Query parameters
-- File uploads
-- API payloads
+**Behaviour**  
+Rejects unsafe input early before it reaches business logic.
 
-### TA Lens
-Ask: *“What input is untrusted, and how is it validated?”*
+**Trade-offs**  
+Strict validation may block legitimate edge cases.
 
 </TabItem>
 
 <TabItem value="output" label="Output Encoding Pattern">
 
-### Purpose
+### Output Encoding Pattern
+
+**Purpose**  
 Prevent untrusted data from being interpreted as code.
 
-### Characteristics
-- Escape HTML, SQL, shell, or JSON contexts
-- Encode before rendering
-- Prevent injection attacks
+**Key Characteristics**
+- Escape HTML, SQL, shell, or JSON contexts  
+- Encode before rendering  
+- Prevent injection attacks  
 
-### Problem Shapes
-- UI rendering
-- Logs
-- Dynamic templates
+**Behaviour**  
+Ensures output is treated as data, not executable code.
 
-### TA Lens
-Ask: *“Where is untrusted data being output, and in what context?”*
+**Trade-offs**  
+Incorrect encoding can break UI or logs.
 
 </TabItem>
 
 <TabItem value="auth" label="Authentication & Authorisation Pattern">
 
-### Purpose
+### Authentication & Authorisation Pattern
+
+**Purpose**  
 Ensure only legitimate users or systems can act.
 
-### Characteristics
-- Strong authentication
-- Role‑based or attribute‑based access
-- Least privilege
-- Session management
+**Key Characteristics**
+- Strong authentication  
+- Role‑based or attribute‑based access  
+- Least privilege  
+- Session management  
 
-### Problem Shapes
-- API access
-- Admin interfaces
-- Multi‑tenant systems
+**Behaviour**  
+Controls who can do what.
 
-### TA Lens
-Ask: *“Who is allowed to do this, and how is that enforced?”*
+**Trade-offs**  
+Overly strict rules can block legitimate access.
 
 </TabItem>
 
 <TabItem value="data" label="Data Protection Pattern">
 
-### Purpose
+### Data Protection Pattern
+
+**Purpose**  
 Protect sensitive data at rest and in transit.
 
-### Characteristics
-- Encryption
-- Hashing
-- Key management
-- Secrets isolation
+**Key Characteristics**
+- Encryption  
+- Hashing  
+- Key management  
+- Secrets isolation  
 
-### Problem Shapes
-- Credentials
-- Personal data
-- Tokens
-- Payment information
+**Behaviour**  
+Prevents exposure of sensitive information.
 
-### TA Lens
-Ask: *“What data is sensitive, and how is it protected?”*
+**Trade-offs**  
+Encryption adds operational complexity.
 
 </TabItem>
 
 <TabItem value="error" label="Error & Exception Safety Pattern">
 
-### Purpose
+### Error & Exception Safety Pattern
+
+**Purpose**  
 Prevent information leakage and unsafe fallback behaviour.
 
-### Characteristics
-- Generic error messages
-- No stack traces to users
-- Fail closed, not open
+**Key Characteristics**
+- Generic error messages  
+- No stack traces to users  
+- Fail closed, not open  
 
-### Problem Shapes
-- Authentication failures
-- API errors
-- Validation failures
+**Behaviour**  
+Ensures errors do not reveal sensitive details.
 
-### TA Lens
-Ask: *“What happens when this fails, and is that safe?”*
+**Trade-offs**  
+Generic errors can reduce debuggability.
 
 </TabItem>
 
 <TabItem value="dependency" label="Dependency & Supply Chain Pattern">
 
-### Purpose
+### Dependency & Supply Chain Pattern
+
+**Purpose**  
 Prevent vulnerabilities introduced by third‑party code.
 
-### Characteristics
-- Version pinning
-- Vulnerability scanning
-- Minimal dependencies
-- Trusted sources
+**Key Characteristics**
+- Version pinning  
+- Vulnerability scanning  
+- Minimal dependencies  
+- Trusted sources  
 
-### Problem Shapes
-- Package managers
-- Open‑source libraries
-- Build pipelines
+**Behaviour**  
+Reduces risk from external libraries and packages.
 
-### TA Lens
-Ask: *“What external code do we rely on, and is it safe?”*
+**Trade-offs**  
+Strict dependency rules may slow development.
 
 </TabItem>
 
@@ -195,132 +257,72 @@ Ask: *“What external code do we rely on, and is it safe?”*
 
 ---
 
-# 🧩 Common Vulnerability Patterns (TA‑Friendly)
+## 🧩 System Interactions
 
-These are the **problem shapes** behind most real‑world vulnerabilities.
+:::info How a TA Understands the System
+- How code security interacts with storage, compute, and orchestration  
+- How systems behave under malicious load or malformed input  
+- What becomes a bottleneck as traffic or attack attempts increase  
+:::
 
-### **Injection Pattern**
-Untrusted input becomes executable code.
-Examples: SQL injection, command injection, template injection.
+### Local Systems
 
-### **Broken Access Control Pattern**
-Users can access data or actions they shouldn’t.
+- OS  
+- Runtime  
+- File system  
+- Local secrets stores  
+- Logging and error handling  
 
-### **Authentication Weakness Pattern**
-Weak or missing authentication.
+### Remote Systems
 
-### **Insecure Deserialization Pattern**
-Untrusted data becomes objects or code.
+- Authentication providers  
+- Secrets managers  
+- External APIs  
+- Package registries  
 
-### **Misconfiguration Pattern**
-Unsafe defaults, exposed admin panels, debug modes.
+### Questions to ask during reviews or incidents
 
-### **Sensitive Data Exposure Pattern**
-Unencrypted data, logs containing secrets.
-
-### **Cross‑Site Scripting (XSS) Pattern**
-Untrusted data rendered as HTML/JS.
-
-### **Cross‑Site Request Forgery (CSRF) Pattern**
-Unwanted actions triggered by another site.
-
-### **Dependency Vulnerability Pattern**
-Outdated or compromised libraries.
-
----
-
-# 🧭 When to Use Code Security Patterns
-
-Use these patterns when:
-
-- Reviewing API or service designs
-- Evaluating data flows
-- Assessing risk in new features
-- Reviewing pull requests
-- Working with external integrations
-- Handling sensitive data
+- Where is the trust boundary?  
+- What happens if this input is malicious?  
+- Are secrets exposed in logs or errors?  
+- What happens if authentication fails?  
+- Are dependencies pinned and scanned?  
 
 ---
 
-# 🚫 When Not to Use
+## 💥 Outputs / Results
 
-Avoid over‑security when:
+:::note Special Considerations
+Security failures often appear as unexpected behaviour rather than explicit errors.
+:::
 
-- The system is isolated and non‑critical
-- The cost of controls outweighs the risk
-- You are still in early prototyping
+### Success Modes
 
-Security should be **proportionate**, not maximal.
+| Result Type | Description |
+|-------------|-------------|
+| Clean Input | Unsafe input rejected early |
+| Safe Output | No XSS or injection vulnerabilities |
+| Controlled Access | Clear permission boundaries |
+| Protected Data | No plaintext secrets |
+| Safe Errors | No sensitive information leaked |
+| Trusted Dependencies | No known CVEs |
 
----
+### Failure Modes
 
-# 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **Attack Surface** | All points where an attacker can interact with the system |
-| **Threat Model** | Assumptions about what attackers can do |
-| **Least Privilege** | Give only the permissions required |
-| **Secure Defaults** | Systems should be safe without configuration |
-| **Hardening** | Reducing attack surface |
-| **Secret** | Sensitive value requiring protection |
-
----
-
-# 🔌 How to Interact With Code Security as a TA
-
-**Access Pattern**
-- Requirements
-- Design reviews
-- Code walkthroughs
-- API contracts
-- Data flow diagrams
-
-**Interaction Model**
-- Identify risk
-- Ask clarifying questions
-- Validate assumptions
-- Ensure safe defaults
-- Escalate unclear or high‑risk areas
-
----
-
-# 📊 What Results Normally Look Like
-
-- Clear validation rules
-- Safe error handling
-- Defined access control models
-- Documented sensitive data flows
-- Reduced attack surface
-- Fewer vulnerabilities in testing
-
----
-
-###  ⚠️ Common Mistakes
-
-- “Security is an engineering problem”
-- “We’ll fix it later”
-- “It’s internal, so it’s safe”
-- “We trust our users”
-- “Validation is optional”
-- “Dependencies are safe by default”
-
----
-
-# 🏗️ Real‑World Examples
-
-- A login form rejecting malformed input
-- An API returning generic error messages
-- A service encrypting tokens before storage
-- A system enforcing role‑based access
-- A pipeline scanning dependencies for vulnerabilities
+| Failure Type | Description |
+|--------------|-------------|
+| Injection | Untrusted input becomes executable code |
+| Privilege Escalation | Broken access control |
+| Sensitive Data Exposure | Secrets in logs or plaintext |
+| Unsafe Fallbacks | Debug modes, verbose errors |
+| Supply Chain Attacks | Compromised dependencies |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- API Contracts
-- Data Protection
-- Authentication & Authorisation
-- Secure Coding Practices
-- Threat Modelling
+- API Contracts  
+- Data Protection  
+- Authentication & Authorisation  
+- Secure Coding Practices  
+- Threat Modelling  

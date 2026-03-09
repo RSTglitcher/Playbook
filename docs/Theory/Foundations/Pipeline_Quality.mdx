@@ -1,271 +1,326 @@
 ---
 title: "Data Pipeline Quality"
-sidebar_position: 7
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::tip Definition
-**Data Pipeline Quality** refers to the practices, rules, and controls that ensure data is **accurate, complete, consistent, timely, and fit for purpose** as it flows through ingestion, transformation, storage, and consumption layers.
+Data Pipeline Quality refers to the practices, rules, and controls that ensure data is accurate, complete, consistent, timely, and fit for purpose as it flows through ingestion, transformation, storage, and consumption layers.
 :::
 
-Data quality is not a single check — it is a **system of guarantees** spanning:
+**When to Use**
 
-- Quality dimensions
-- Validation rules
-- Pipeline behaviour
-- Observability
-- Governance and ownership
-- Lineage and metadata
-- Incident response
+- Designing or reviewing data pipelines  
+- Ensuring data is trustworthy for analytics, ML, or reporting  
+- Defining SLAs, validation rules, and governance  
+- Investigating data incidents or silent failures  
+- Establishing quality controls across ingestion, transformation, and storage  
+
+**When Not to Use**
+
+- When discussing storage engines (use Analytical or Application Storage Systems)  
+- When modelling domain entities (use Data Modelling)  
+- When evaluating pipeline orchestration (use ETL/ELT Pipelines)  
+- When focusing solely on schema (use Schema & Structural Quality)  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-High‑quality data pipelines enable:
+Data Pipeline Quality solves the problem of **trustworthy, reliable, and predictable data flow** across systems.
+
+High‑quality pipelines enable:
 
 | Benefit | Why it matters |
 |--------|----------------|
-| **Trustworthy data** | Decisions rely on accurate, complete, consistent inputs |
-| **Reliable pipelines** | Failures are detected early and handled predictably |
-| **Stable downstream systems** | Prevents breakage in dashboards, ML models, and APIs |
-| **Faster debugging** | Clear lineage and observability reduce MTTR |
-| **Governance & accountability** | Ownership and SLAs ensure long‑term quality |
+| Trustworthy data | Decisions rely on accurate, complete, consistent inputs |
+| Reliable pipelines | Failures are detected early and handled predictably |
+| Stable downstream systems | Prevents breakage in dashboards, ML models, and APIs |
+| Faster debugging | Clear lineage and observability reduce MTTR |
+| Governance & accountability | Ownership and SLAs ensure long‑term quality |
 
 Poor quality pipelines create silent failures, incorrect metrics, and business risk.
 
 ---
 
-## 🧠 Conceptual Model (How Data Quality Works)
+## 🧠 Conceptual Model
 
-Data quality spans **four layers**:
+Data quality spans **four layers**, each reinforcing the others:
 
-### **1. Structural Quality**
+### Core Components
+
+#### **1. Structural Quality**  
 Does the data conform to expected schema and types?
 
-### **2. Semantic Quality**
+#### **2. Semantic Quality**  
 Does the data make sense in the business domain?
 
-### **3. Operational Quality**
+#### **3. Operational Quality**  
 Is the pipeline behaving correctly under load and over time?
 
-### **4. Organisational Quality**
+#### **4. Organisational Quality**  
 Are ownership, SLAs, and governance clearly defined?
 
-These layers reinforce each other — a pipeline is only as strong as its weakest dimension.
+### Axes of Variation
+
+- **Schema vs Semantics** → technical vs business correctness  
+- **Batch vs Streaming** → different quality risks and guarantees  
+- **Strict vs Flexible Validation** → block vs warn  
+- **Reactive vs Proactive Quality** → detection vs prevention  
 
 ---
 
-# 🧩 Quality Dimensions (Foundational)
+### Typical Lifecycle or Flow
 
-### **Accuracy**
-Data correctly represents real‑world events or entities.
-
-### **Completeness**
-Required data is present (no missing keys, no partial ingestion).
-
-### **Consistency**
-Data does not conflict across systems or time.
-
-### **Timeliness**
-Data arrives within expected SLAs.
-
-### **Validity**
-Data conforms to expected formats, ranges, and allowed values.
-
-These dimensions form the **baseline trust contract** for any dataset.
+```mermaid
+flowchart TD
+    A[Ingestion] --> B[Structural Validation]
+    B --> C[Semantic Validation]
+    C --> D[Transformation & Processing]
+    D --> E[Storage & Serving]
+    E --> F[Monitoring & Observability]
+    F --> G[Governance, SLAs, Ownership]
+    G --> A
+```
 
 ---
 
-# 🧬 Structural & Schema Quality
+## 🔍 TA Lens
 
-Ensures data adheres to expected technical structure.
+:::info How a TA Evaluates This Concept
+- Identify where quality breaks: schema, semantics, operations, or governance  
+- Understand how pipelines behave under load, retries, or late data  
+- Ask whether SLAs, lineage, and ownership are explicit  
+- Surface risks around freshness, duplication, or inconsistent metrics  
+:::
 
-### **Schema Enforcement**
-Detects or blocks unexpected schema changes.
+**What happens when:**
 
-### **Data Types & Constraints**
-Ensures values match declared types and constraints.
-
-### **Referential Integrity**
-Validates relationships between datasets (e.g., foreign keys resolve).
-
-### **Evolution Rules**
-Defines how schemas may change without breaking consumers.
-
-**TA Lens:**
-Structural issues often cause pipeline breakage, not silent errors.
+- **Data grows** → volume anomalies, distribution drift  
+- **Traffic increases** → freshness delays, backpressure  
+- **Concurrency rises** → duplicate writes, ordering issues  
+- **Resources become constrained** → partial ingestion, stalled pipelines  
 
 ---
 
-# 🔧 Operational Quality
+## 📘 Key Terminology
 
-Day‑to‑day checks that ensure pipelines behave as expected.
-
-### **Freshness**
-Detects delayed or stalled data updates.
-
-### **Volume & Distribution**
-Ensures record counts and value distributions fall within expected bounds.
-
-### **Anomaly Detection**
-Flags unexpected changes in metrics or patterns.
-
-### **Idempotency**
-Ensures reprocessing does not create duplicates or inconsistencies.
-
-### **Error Handling**
-Defines how malformed or invalid records are handled.
-
-**TA Lens:**
-Operational quality reveals pipeline health, not just data correctness.
+| Term | Definition |
+|------|------------|
+| Structural Quality | Schema, types, constraints, referential integrity |
+| Semantic Quality | Business meaning, domain rules, metric correctness |
+| Freshness | How up‑to‑date data is relative to SLAs |
+| Idempotency | Ability to reprocess without duplication |
+| Lineage | Trace of where data came from and how it changed |
+| Drift | Unexpected changes in schema, distribution, or semantics |
 
 ---
 
-# 🧠 Business & Semantic Quality
+## 🧬 Variants / Types
 
-Ensures data aligns with business meaning.
+<Tabs>
 
-### **Business Rules**
-Domain‑specific validation (e.g., order value > 0).
+<TabItem value="structural" label="Structural & Schema Quality">
 
-### **Metric Definitions**
-Ensures metrics are calculated consistently across teams.
+### Structural & Schema Quality
 
-### **Domain Constraints**
-Industry‑specific rules (e.g., valid lifecycle states).
+**Purpose**  
+Ensure data adheres to expected technical structure.
 
-### **Cross‑Dataset Consistency**
-Ensures metrics align across sources.
+**Key Characteristics**
+- Schema enforcement  
+- Type validation  
+- Referential integrity  
+- Schema evolution rules  
 
-**TA Lens:**
-Semantic quality is where most “silent errors” originate.
+**Behaviour**  
+Breaks loudly when structure changes unexpectedly.
+
+**Trade-offs**  
+Strict enforcement prevents silent errors but may block ingestion.
+
+</TabItem>
+
+<TabItem value="operational" label="Operational Quality">
+
+### Operational Quality
+
+**Purpose**  
+Ensure pipelines behave correctly day‑to‑day.
+
+**Key Characteristics**
+- Freshness checks  
+- Volume & distribution monitoring  
+- Anomaly detection  
+- Idempotency  
+- Error handling  
+
+**Behaviour**  
+Reveals pipeline health, not just data correctness.
+
+**Trade-offs**  
+Operational checks require good observability and baselines.
+
+</TabItem>
+
+<TabItem value="semantic" label="Semantic & Business Quality">
+
+### Semantic & Business Quality
+
+**Purpose**  
+Ensure data aligns with business meaning.
+
+**Key Characteristics**
+- Business rules  
+- Metric definitions  
+- Domain constraints  
+- Cross‑dataset consistency  
+
+**Behaviour**  
+Silent errors often originate here.
+
+**Trade-offs**  
+Requires domain expertise and clear definitions.
+
+</TabItem>
+
+<TabItem value="pipeline" label="Pipeline & Processing Quality">
+
+### Pipeline & Processing Quality
+
+**Purpose**  
+Protect data quality during ingestion and transformation.
+
+**Key Characteristics**
+- Ingestion validation  
+- Transformation integrity  
+- Deduplication  
+- Ordering guarantees  
+- Checkpointing & recovery  
+
+**Behaviour**  
+Ensures pipelines do not introduce loss, distortion, or duplication.
+
+**Trade-offs**  
+Stronger guarantees may reduce throughput.
+
+</TabItem>
+
+<TabItem value="observability" label="Monitoring & Observability">
+
+### Monitoring & Observability
+
+**Purpose**  
+Provide visibility into data quality and pipeline health.
+
+**Key Characteristics**
+- Profiling  
+- Freshness checks  
+- Volume monitoring  
+- Drift detection  
+- Alerting  
+
+**Behaviour**  
+Turns unknown failures into observable signals.
+
+**Trade-offs**  
+Requires investment in metrics, logs, and lineage.
+
+</TabItem>
+
+<TabItem value="governance" label="Governance & Organisational Quality">
+
+### Governance & Organisational Quality
+
+**Purpose**  
+Ensure long‑term accountability and clarity.
+
+**Key Characteristics**
+- Ownership  
+- Metadata & lineage  
+- SLAs  
+- Incident management  
+- Documentation  
+
+**Behaviour**  
+Prevents quality from degrading over time.
+
+**Trade-offs**  
+Requires cross‑team alignment and process maturity.
+
+</TabItem>
+
+</Tabs>
 
 ---
 
-# 🔄 Pipeline & Processing Quality
+## 🧩 System Interactions
 
-Protects data quality during ingestion and transformation.
+:::info How a TA Understands the System
+- How data quality interacts with ingestion, transformation, and storage  
+- How pipelines behave under retries, backpressure, or late data  
+- What becomes a bottleneck as data volume or complexity grows  
+:::
 
-### **Ingestion Validation**
-Rejects malformed or incomplete records at entry points.
+### Local Systems
 
-### **Transformation Integrity**
-Ensures transformations do not introduce loss or distortion.
+- Validation engines  
+- Transformation logic  
+- Local profiling tools  
+- Schema enforcement libraries  
 
-### **Deduplication**
-Prevents duplicate outputs during retries or reprocessing.
+### Remote Systems
 
-### **Ordering Guarantees**
-Ensures events or records are processed in the correct order.
+- Data warehouses  
+- Streaming platforms  
+- Metadata stores  
+- Orchestration systems  
+- Lineage and governance tools  
 
-### **Checkpointing & Recovery**
-Prevents partial writes or inconsistent states.
+### Questions to ask during reviews or incidents
 
-**TA Lens:**
-Pipeline quality is about *behaviour*, not just data.
-
----
-
-# 📡 Monitoring & Observability
-
-Quality requires visibility.
-
-### **Data Profiling**
-Baseline distributions, ranges, and patterns.
-
-### **Freshness Checks**
-Detects late or missing data.
-
-### **Volume Monitoring**
-Tracks record counts and anomalies.
-
-### **Drift Detection**
-Identifies changes in schema, distribution, or semantics.
-
-### **Alerting**
-Notifies owners when quality thresholds are breached.
-
-**TA Lens:**
-Observability is the difference between *knowing* and *guessing*.
+- Where did the quality failure originate?  
+- Is the issue structural, semantic, operational, or organisational?  
+- Are SLAs being met?  
+- Is lineage clear enough to trace the issue?  
+- Are retries causing duplicates or ordering issues?  
 
 ---
 
-# 🏛️ Cross‑Cutting Quality Capabilities
+## 💥 Outputs / Results
 
-### **Governance & Ownership**
-Clear responsibility for datasets and pipelines.
+:::note Special Considerations
+Quality failures often appear as silent errors unless observability is strong.
+:::
 
-### **Metadata & Lineage**
-Tracks where data came from, how it was transformed, and who owns it.
+### Success Modes
 
-### **Data Quality SLAs**
-Defines expectations for freshness, accuracy, and availability.
-
-### **Incident Management**
-Structured response to quality failures.
-
-### **Documentation**
-Clear definitions, schemas, and expectations.
-
-**TA Lens:**
-Quality is not just technical — it is organisational.
-
----
-
-# 🧭 TA Skills Checklist
-
-| Skill Area | What a TA Should Do |
-|------------|----------------------|
-| **Analysis** | Identify quality gaps, map lineage, detect inconsistencies |
-| **Requirements** | Capture SLAs, validation rules, and domain constraints |
-| **Review** | Evaluate pipeline design for quality risks |
-| **Communication** | Explain quality issues and trade‑offs clearly |
-
----
-
-# 🧩 Quality Decision Map
-
-| Problem Shape | Quality Focus |
-|---------------|---------------|
-| Missing or late data | Freshness, SLAs, ingestion checks |
-| Incorrect metrics | Semantic rules, metric definitions |
-| Schema breakage | Structural quality, schema enforcement |
-| Duplicate records | Idempotency, deduplication |
-| Unexpected spikes/drops | Volume monitoring, anomaly detection |
-| Conflicting values | Consistency, referential integrity |
-
----
-
-## 📊 What Results Normally Look Like
-
-| Output Type | Description |
+| Result Type | Description |
 |-------------|-------------|
-| **Quality reports** | Summaries of checks, failures, and trends |
-| **Alerts** | Notifications for SLA breaches or anomalies |
-| **Lineage graphs** | Visualisation of data flow and dependencies |
-| **Validation logs** | Records of rejected or malformed data |
-| **Quality dashboards** | Freshness, volume, and distribution metrics |
+| Quality Reports | Summaries of checks, failures, and trends |
+| Freshness Guarantees | Data arrives within SLA windows |
+| Stable Metrics | Consistent definitions across teams |
+| Reliable Pipelines | No duplicates, ordering issues, or partial writes |
+| Clear Lineage | Easy to trace data flow and transformations |
 
----
+### Failure Modes
 
-####  ⚠️ Common Mistakes
-
-- Treating data quality as a “final step” instead of a system
-- Relying solely on schema validation
-- Assuming pipelines are idempotent when they aren’t
-- Ignoring semantic quality in favour of structural checks
-- No clear ownership for datasets
-- No SLAs for freshness or accuracy
-- Silent failures due to missing observability
+| Failure Type | Description |
+|--------------|-------------|
+| Schema Breakage | Unexpected structural changes |
+| Duplicate Records | Missing idempotency or retry logic |
+| Late or Missing Data | Freshness or ingestion failures |
+| Incorrect Metrics | Semantic or cross‑dataset inconsistencies |
+| Drift | Unexpected changes in schema or distribution |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- Data Modelling
-- ETL/ELT Pipelines
-- Analytical Storage Systems
-- Observability
-- Governance & Lineage
-- Idempotency
-
+- Data Modelling  
+- ETL/ELT Pipelines  
+- Analytical Storage Systems  
+- Observability  
+- Governance & Lineage  
+- Idempotency  

@@ -1,67 +1,125 @@
 ---
 title: "Data Structures & Conditionals"
-sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Data Structures & Conditionals** form the foundational mental models for understanding how software organises data and makes decisions.  
-They underpin performance, correctness, and behaviour in every system — from simple scripts to distributed architectures.
+Data Structures & Conditionals describe how software organises information and makes decisions, forming the foundation of performance, correctness, and system behaviour.
 :::
 
-These foundations include:
+**When to Use**
 
-- Core data structures (lists, sets, maps, queues, stacks)  
-- Hierarchical and relational structures (trees, graphs)  
-- Algorithmic intuition (searching, sorting, traversal)  
-- Conditional logic (branching, boolean logic, control flow)  
-- Performance intuition (Big‑O, scaling behaviour)  
+- Understanding performance characteristics  
+- Evaluating system behaviour under load  
+- Reviewing logic, branching, or data access patterns  
+- Debugging slow or incorrect behaviour  
+- Designing flows, pipelines, or decision rules  
+
+**When Not to Use**
+
+- When discussing storage systems (use Storage Theory instead)  
+- When modelling domain entities (use Data Modelling)  
+- When evaluating distributed behaviour (use Communication Patterns)  
+- When logic belongs in state machines or workflow engines  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Understanding these foundations enables:
+Data Structures & Conditionals solve the problem of **how systems organise information and choose actions**.  
+They give Technical Analysts the mental models needed to:
 
-| Benefit | Why it matters |
-|--------|----------------|
-| **Predictable performance** | Anticipate latency, bottlenecks, and scaling limits |
-| **Correct behaviour** | Ensure decisions and flows behave as expected |
-| **Efficient data access** | Avoid unnecessary computation or scanning |
-| **Better debugging** | Explain why systems slow down or behave unexpectedly |
-| **Sharper reviews** | Ask meaningful questions without reading code |
-| **Clearer communication** | Shared vocabulary for reasoning about logic and data |
+- Predict performance and scaling behaviour  
+- Understand why systems slow down or misbehave  
+- Evaluate branching logic for correctness  
+- Identify bottlenecks caused by repeated scans or poor structure  
+- Communicate clearly with engineers using shared vocabulary  
 
 ---
 
-## 🧠 Conceptual Model (How It Works)
+## 🧠 Conceptual Model
 
 Software behaviour emerges from two primitives:
 
-### **1. Data Structures**  
+### Core Components
+
+#### **1. Data Structures**  
 How data is *organised* and *accessed*.
 
-### **2. Conditionals**  
+#### **2. Conditionals**  
 How decisions are *made* based on that data.
 
-Together, they define:
+Together, they determine:
 
 - What the system *knows*  
 - How it *chooses*  
 - How it *scales*  
 - How it *responds* under load  
 
+### Axes of Variation
+
+- **Ordered vs Unordered** (lists vs sets)  
+- **Indexed vs Keyed** (arrays vs maps)  
+- **Linear vs Hierarchical** (lists vs trees)  
+- **Deterministic vs Branching** (simple vs nested conditionals)  
+- **Constant‑time vs Linear‑time** (O(1) vs O(n))  
+
 ---
 
-# 🧬 Part 1 — Data Structures
+### Typical Lifecycle or Flow
+
+```mermaid
+flowchart TD
+    A[Input Data] --> B[Choose Data Structure]
+    B --> C[Apply Conditional Logic]
+    C --> D[Perform Operation (lookup/insert/traverse)]
+    D --> E[Return Result or Trigger Action]
+    E --> F[Performance Changes as Data Grows]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Identify the **problem shape** and map it to the right structure  
+- Look for repeated linear scans (O(n))  
+- Evaluate branching logic for clarity and completeness  
+- Understand how structure and logic behave under load  
+- Surface risks around ordering, uniqueness, or lookup speed  
+:::
+
+**What happens when:**
+
+- **Data grows** → linear scans become bottlenecks  
+- **Traffic increases** → branching logic becomes hot paths  
+- **Concurrency rises** → shared structures become contention points  
+- **Resources become constrained** → inefficient structures degrade sharply  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Collection | A group of values (list, set, map) |
+| Graph | Nodes connected by edges representing relationships |
+| Tree | Hierarchical structure with parent/child relationships |
+| Big‑O | Approximation of algorithmic scaling behaviour |
+| Branch | A conditional path the system may take |
+| Predicate | A condition that evaluates to true/false |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
 <TabItem value="collections" label="Collections">
 
-### Core Collections (TA Mental Models)
+### Collections
 
 #### Arrays / Lists
 
@@ -70,10 +128,19 @@ Index → 0  1  2  3
         [A][B][C][D]
 ```
 
-| Strengths | Weaknesses | Use When |
-|-----------|------------|----------|
-| Fast indexed access | Slow inserts/deletes | Order matters |
-| Good for scans | Resizing cost | Predictable size |
+**Purpose**  
+Ordered, index‑based storage.
+
+**Key Characteristics**
+- Fast indexed access  
+- Good for scans  
+- Slow inserts/deletes  
+
+**Behaviour**  
+Performance degrades linearly as size grows.
+
+**Trade-offs**  
+Simple and predictable, but costly for mutation.
 
 ---
 
@@ -83,10 +150,18 @@ Index → 0  1  2  3
 { A, B, C }   // No duplicates
 ```
 
-| Strengths | Weaknesses | Use When |
-|-----------|------------|----------|
-| Fast membership checks | No ordering | Deduplication |
-| Enforces uniqueness | Hashing overhead | Fast “contains?” |
+**Purpose**  
+Uniqueness and fast membership checks.
+
+**Key Characteristics**
+- O(1) lookup  
+- No ordering  
+
+**Behaviour**  
+Ideal for deduplication and “contains?” checks.
+
+**Trade-offs**  
+Hashing overhead; no positional access.
 
 ---
 
@@ -98,10 +173,18 @@ A   → 1
 B   → 2
 ```
 
-| Strengths | Weaknesses | Use When |
-|-----------|------------|----------|
-| O(1) lookup | Memory overhead | Fast lookup by key |
-| Natural modelling | Collisions degrade performance | Caching, indexing |
+**Purpose**  
+Fast lookup by key.
+
+**Key Characteristics**
+- O(1) access  
+- Natural modelling of relationships  
+
+**Behaviour**  
+Excellent for caching, indexing, and routing.
+
+**Trade-offs**  
+Memory overhead; collisions degrade performance.
 
 ---
 
@@ -111,7 +194,11 @@ B   → 2
 Front → [A][B][C] → Back
 ```
 
-Use for: task scheduling, message processing, pipelines.
+**Purpose**  
+Ordered processing.
+
+**Use When**  
+Task scheduling, message processing.
 
 ---
 
@@ -123,7 +210,11 @@ Top → [C]
        [A]
 ```
 
-Use for: undo operations, expression evaluation, DFS.
+**Purpose**  
+Last‑in, first‑out behaviour.
+
+**Use When**  
+Undo operations, DFS traversal.
 
 </TabItem>
 
@@ -137,10 +228,18 @@ Use for: undo operations, expression evaluation, DFS.
     B   C
 ```
 
-| Strengths | Weaknesses | Use When |
-|-----------|------------|----------|
-| Hierarchical modelling | Depth affects lookup | Indexing (B‑trees) |
-| Fast search (balanced) | Unbalanced trees degrade | Searching, routing |
+**Purpose**  
+Hierarchical modelling.
+
+**Key Characteristics**
+- Fast search when balanced  
+- Depth affects lookup  
+
+**Behaviour**  
+Used in indexing, routing, and file systems.
+
+**Trade-offs**  
+Unbalanced trees degrade to linear behaviour.
 
 ---
 
@@ -152,10 +251,18 @@ A — B — C
    D
 ```
 
-| Strengths | Weaknesses | Use When |
-|-----------|------------|----------|
-| Models relationships | Traversal cost varies | Networks, dependencies |
-| Flexible structure | Cycles complicate logic | Social graphs, routing |
+**Purpose**  
+Model relationships and networks.
+
+**Key Characteristics**
+- Flexible structure  
+- Supports cycles  
+
+**Behaviour**  
+Used in routing, dependencies, social graphs.
+
+**Trade-offs**  
+Traversal cost varies; cycles complicate logic.
 
 </TabItem>
 
@@ -177,233 +284,139 @@ Repeated linear scans (O(n)) are the root cause of many performance issues.
 
 </TabItem>
 
-</Tabs>
+<TabItem value="conditionals" label="Conditionals & Control Flow">
 
----
+### Conditionals
 
-# 🧬 Part 2 — Conditionals & Control Flow
+#### IF / ELSE — Binary Decisions
 
-<Tabs>
+**Purpose**  
+Choose between two behaviours.
 
-<TabItem value="if" label="IF / ELSE">
+**Key Characteristics**
+- Simple branching  
+- Clear fallback path  
 
-### IF / ELSE — Binary Decisions
-
-:::tip Definition
-**Conditionals** define how systems make decisions by evaluating rules, states, and inputs to determine the correct behaviour.
-:::
-
-**TA Pattern**
+**Behaviour**
 ```
 WHEN <condition>
 THEN <action>
 ELSE <fallback>
 ```
 
-**Example (TA)**
+---
+
+#### Multi‑branch (IF / ELIF / ELSE)
+
+**Purpose**  
+Choose between multiple paths.
+
+**Behaviour**
 ```
-WHEN file size > 10MB
-THEN compress before upload
-ELSE upload directly
+WHEN <A> → <action A>
+WHEN <B> → <action B>
+ELSE → <fallback>
 ```
 
 ---
 
-### IF / ELIF / ELSE — Multi‑branch Decisions
+#### CASE / SWITCH — Category Decisions
 
-**TA Pattern**
+**Purpose**  
+Match categories or types.
+
+**Behaviour**
 ```
-WHEN <condition A> → <action A>
-WHEN <condition B> → <action B>
-ELSE → <fallback>
-```
-
-**Example (TA)**
-```
-WHEN status = "new" → send welcome email
-WHEN status = "active" → show dashboard
-ELSE → show onboarding flow
-```
-
-</TabItem>
-
-<TabItem value="case" label="CASE / SWITCH">
-
-### CASE / SWITCH — Category‑Based Decisions
-
-**TA Pattern**
-```
-WHEN value is <category1> → <action1>
-WHEN value is <category2> → <action2>
+WHEN <category1> → <action1>
+WHEN <category2> → <action2>
 OTHERWISE → <fallback>
 ```
 
-**Example (TA)**
+---
+
+#### Loops — Repeated Conditional Behaviour
+
+**FOR** → known iteration count  
+**WHILE** → repeat while condition is true  
+**UNTIL** → repeat until condition becomes true  
+
+---
+
+#### Functions — Encapsulated Logic
+
+**Purpose**  
+Group conditional logic into reusable units.
+
+**Behaviour**
 ```
-WHEN file type = "csv" → parse as table
-WHEN file type = "json" → parse as object
-OTHERWISE → reject file
-```
-
-</TabItem>
-
-<TabItem value="loops" label="Loops">
-
-### Loops — Repeated Conditional Behaviour
-
-#### FOR — Known Iteration Count
-
-**TA Pattern**
-```
-FOR EACH <item> IN <collection>
-DO <action>
-```
-
-#### WHILE — Repeat WHILE condition is true
-
-**TA Pattern**
-```
-WHILE <condition>
-DO <action>
-STOP WHEN <condition becomes false>
-```
-
-#### UNTIL — Repeat UNTIL condition becomes true
-
-**TA Pattern**
-```
-REPEAT <action>
-UNTIL <condition>
-```
-
-</TabItem>
-
-<TabItem value="functions" label="Functions">
-
-### Functions — Encapsulating Conditional Logic
-
-**TA Pattern**
-```
-DEFINE function <name>:
+DEFINE function:
     WHEN <condition>
     THEN <action>
     ELSE <fallback>
 ```
 
-Functions allow complex decision logic to be isolated, reused, and tested.
-
 </TabItem>
 
 </Tabs>
 
 ---
 
-# 🧭 TA Lens
+## 🧩 System Interactions
 
-:::info How a TA Evaluates Foundations
-- Identify the **problem shape** and map it to the right structure  
-- Look for repeated linear scans (O(n)) in designs or pipelines  
-- Recognise when ordering, uniqueness, or lookup speed matters  
-- Evaluate branching logic for clarity, correctness, and edge cases  
-- Ensure all conditions are explicit, complete, and non‑contradictory  
+:::info How a TA Understands the System
+- How data structures interact with memory, CPU, and storage  
+- How branching logic interacts with runtime and concurrency  
+- What becomes a bottleneck as data or traffic grows  
 :::
 
----
+### Local Systems
 
-# 🧩 Key Strategies
+- Memory layout  
+- CPU cache behaviour  
+- Runtime data access  
+- Concurrency and locking  
+- Sorting and traversal  
 
-<Tabs>
+### Remote Systems
 
-<TabItem value="strategy1" label="Match Problem Shape">
+- Distributed graphs  
+- Query engines  
+- Caches and indexes  
+- Message queues  
 
-### Approach
-Identify the behavioural need: lookup, ordering, uniqueness, traversal, branching.
+### Questions to ask during reviews or incidents
 
-### Responsibility
-TA frames the requirement; engineers choose the implementation.
-
-### Focus
-Fit the structure and logic to the access pattern.
-
-</TabItem>
-
-<TabItem value="strategy2" label="Identify Edge Cases">
-
-### Approach
-List all exceptional or boundary conditions.
-
-### Responsibility
-TA surfaces risks; engineers handle execution.
-
-### Focus
-Prevent undefined behaviour.
-
-</TabItem>
-
-<TabItem value="strategy3" label="Predict Scaling Behaviour">
-
-### Approach
-Use Big‑O intuition and branching complexity to anticipate bottlenecks.
-
-### Responsibility
-TA highlights risks; engineers validate with profiling.
-
-### Focus
-Prevent performance issues before they appear.
-
-</TabItem>
-
-</Tabs>
+- What structure is being used, and is it appropriate?  
+- Are we scanning repeatedly?  
+- Are conditions complete and non‑contradictory?  
+- What happens when data doubles?  
+- Are we missing edge cases?  
 
 ---
 
-# 🔌 How to Interact With It
+## 💥 Outputs / Results
 
-**Access Pattern:**  
-Through APIs, libraries, query engines, or language primitives.
+:::note Special Considerations
+Performance issues often arise from structure/logic mismatches rather than code bugs.
+:::
 
-**Operations / Interfaces:**  
-- Insert, delete, lookup  
-- Traversal (DFS/BFS)  
-- Sorting, filtering, grouping  
-- Branching, matching, evaluating predicates  
-
-**Interaction Model:**  
-TA describes behaviour; engineers translate into code.
-
----
-
-# 📊 What Results Normally Look Like
+### Success Modes
 
 | Result Type | Description |
 |-------------|-------------|
-| **Decision tables** | Structured mapping of conditions to actions |
-| **Flow diagrams** | Visual branching paths |
-| **Performance profiles** | Latency by operation type |
-| **Access patterns** | Sequential vs random access |
-| **Scaling curves** | How performance changes with data size |
+| Predictable Performance | Operations scale as expected |
+| Clear Decision Logic | Branching is explicit and correct |
+| Efficient Access Patterns | Minimal scanning or unnecessary work |
+| Stable Behaviour Under Load | No sudden degradation |
 
----
+### Failure Modes
 
-###  ⚠️ Common Mistakes
-
-- Using lists for repeated lookups instead of maps  
-- Assuming sets/maps are always O(1) (collisions matter)  
-- Sorting unnecessarily or too late in a pipeline  
-- Deeply nested conditionals instead of guards or state machines  
-- Missing fallback behaviour  
-- Overlapping or contradictory rules  
-- Treating Big‑O as exact rather than approximate  
-
----
-
-# 🏗️ Real‑World Examples
-
-- A Python service slows down due to repeated list scans  
-- A cache hit rate drops because keys aren’t hashed consistently  
-- A graph traversal explodes in cost due to cycles  
-- A branching rule misroutes requests due to missing edge cases  
-- A data pipeline spends 40% of time sorting unnecessarily  
+| Failure Type | Description |
+|--------------|-------------|
+| Linear Scan Bottlenecks | Repeated O(n) operations |
+| Incorrect Branching | Missing or contradictory conditions |
+| Explosive Traversal | Graph cycles or deep recursion |
+| Unnecessary Sorting | Wasted computation in pipelines |
 
 ---
 
@@ -415,4 +428,3 @@ TA describes behaviour; engineers translate into code.
 - Data Modelling  
 - Performance Engineering  
 - Design Patterns  
-

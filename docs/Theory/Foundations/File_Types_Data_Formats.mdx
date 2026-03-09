@@ -1,65 +1,133 @@
 ---
 title: "File Types & Data Formats"
-sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**File Types & Data Formats** describe how information is encoded, structured, and represented for storage, transmission, configuration, or processing.  
-They define *how data looks*, *how it is parsed*, and *how systems interpret it*.
+File Types & Data Formats define how information is encoded, structured, and represented for storage, transmission, configuration, or processing.
 :::
 
-File types are not storage systems — they are **formats** that shape interoperability, performance, and correctness.
+**When to Use**
+
+- Choosing how systems exchange or persist data  
+- Designing APIs, pipelines, or integrations  
+- Selecting formats for analytics, messaging, or configuration  
+- Ensuring interoperability across languages and platforms  
+- Enforcing schemas or validating structure  
+
+**When Not to Use**
+
+- When discussing storage engines (use Storage Systems pages)  
+- When modelling domain entities (use Data Modelling)  
+- When describing communication semantics (use Communication Patterns)  
+- When formats are used as transport rather than structure (e.g., HTTP)  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Understanding file types enables:
+File types solve the problem of **how data is represented** so that systems can:
 
 | Benefit | Why it matters |
 |--------|----------------|
-| **Correct parsing** | Prevents misinterpretation between systems |
-| **Interoperability** | Enables communication across languages, platforms, and services |
-| **Performance optimisation** | Choose formats suited for analytics, messaging, or configuration |
-| **Schema enforcement** | Ensures data integrity and predictable structure |
-| **Debuggability** | Human‑readable formats simplify troubleshooting |
+| Correct parsing | Prevents misinterpretation between systems |
+| Interoperability | Enables cross‑language and cross‑platform communication |
+| Performance optimisation | Choose formats suited for analytics, messaging, or configuration |
+| Schema enforcement | Ensures data integrity and predictable structure |
+| Debuggability | Human‑readable formats simplify troubleshooting |
 
 ---
 
-## 🧠 Conceptual Model (How File Types Work)
+## 🧠 Conceptual Model
 
-File types vary along several axes:
+### Core Components
 
-### Text vs Binary
+- **Encoding** → text vs binary  
+- **Structure** → schema‑less vs schema‑enforced  
+- **Orientation** → row‑based vs columnar  
+- **Purpose** → configuration, messaging, analytics, documentation  
+
+### Axes of Variation
+
+#### Text vs Binary
 - **Text** → human‑readable, easy to debug  
 - **Binary** → compact, fast, schema‑driven  
 
-### Schema‑less vs Schema‑enforced
+#### Schema‑less vs Schema‑enforced
 - JSON, CSV → flexible but error‑prone  
 - Protobuf, Avro, XSD → strict structure, safer evolution  
 
-### Row‑based vs Columnar
+#### Row‑based vs Columnar
 - CSV → row‑oriented  
 - Parquet → column‑oriented for analytics  
 
-### Configuration vs Data vs Code
+#### Configuration vs Data vs Code
 - YAML/TOML → configuration  
 - JSON/XML → structured data  
 - SQL/GraphQL → schema or query definitions  
 
 ---
 
-## 🧬 Categories of File Types
+### Typical Lifecycle or Flow
+
+```mermaid
+flowchart TD
+    A[Choose Format] --> B[Encode Data]
+    B --> C[Store or Transmit]
+    C --> D[Parse or Deserialize]
+    D --> E[Interpret According to Schema or Structure]
+    E --> F[Process, Validate, or Transform]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates File Types
+- What guarantees are required (schema, ordering, types)?  
+- Is human readability important?  
+- Is performance or payload size critical?  
+- Will the format evolve over time?  
+- Does the system require strict validation?  
+- Is the data for operational use or analytics?  
+:::
+
+**What happens when:**
+
+- **Data grows** → binary formats outperform text  
+- **Traffic increases** → payload size becomes critical  
+- **Schemas evolve** → compatibility rules matter  
+- **Systems integrate** → interoperability becomes a constraint  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Serialization | Converting objects into a storable/transmittable format |
+| Schema | Structure definition for data |
+| Columnar | Data stored by column for analytical workloads |
+| Row‑based | Data stored row‑by‑row for operational workloads |
+| Markup | Text with embedded structure (XML, HTML) |
+| Configuration File | Format used to define system behaviour |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
 <TabItem value="serialization" label="Serialization & Messaging Formats">
 
-**Purpose:**
+### Serialization & Messaging Formats
+
+**Purpose**  
 Encode structured data for storage or transmission.
+
+---
 
 ### JSON (`.json`)
 Human‑readable key/value structured data.
@@ -74,11 +142,8 @@ Human‑readable key/value structured data.
 - Lightweight  
 - Flexible  
 - No enforced schema  
-- Text-based format
-- Key/value pairs
-- Supports numbers, strings, booleans, arrays, null
-- Ignores whitespace
-- Easy to parse and generate
+- Text‑based  
+- Supports arrays, objects, primitives  
 
 ---
 
@@ -88,20 +153,16 @@ Markup‑based structured data with optional schemas.
 **Use When**
 - Enterprise integrations  
 - Document‑centric data  
-- Systems requiring strict validation
-- Use XML when strict validation, namespaces, or enterprise compatibility are required.
+- Systems requiring strict validation  
 
 **Characteristics**
 - Verbose  
 - Supports namespaces  
-- Often paired with XSD
-- Text-based format
-- Requires closing tags
-- Supports nested elements
-- Often paired with XSD for validation
-- Harder to read than JSON
+- Often paired with XSD  
+- Text‑based  
 
 ---
+
 ### Protobuf (`.proto`)
 Compact, schema‑driven binary format.
 
@@ -113,8 +174,8 @@ Compact, schema‑driven binary format.
 **Characteristics**
 - Strong schema  
 - Very small payloads  
-- Fast serialization
-- Binary-based format
+- Fast serialization  
+- Binary‑based  
 
 ---
 
@@ -128,15 +189,16 @@ Schema‑based binary format used in data pipelines.
 
 **Characteristics**
 - Self‑describing  
-- Good for long‑term storage  
-- Efficient for ingestion pipelines
-- Binary-based format
+- Efficient for ingestion pipelines  
+- Binary‑based  
 
 </TabItem>
 
 <TabItem value="config" label="Configuration & Infrastructure Files">
 
-**Purpose:**
+### Configuration & Infrastructure Files
+
+**Purpose**  
 Define system behaviour, environment settings, and infrastructure.
 
 ---
@@ -152,8 +214,7 @@ Human‑friendly configuration.
 **Characteristics**
 - Indentation‑based  
 - Easy to read  
-- Easy to mis‑indent
-- Text-based format
+- Easy to mis‑indent  
 
 ---
 
@@ -166,8 +227,7 @@ Minimal, strongly‑typed configuration.
 
 **Characteristics**
 - Predictable parsing  
-- Less ambiguous than YAML
-- Text-based format
+- Less ambiguous than YAML  
 
 ---
 
@@ -186,9 +246,12 @@ Key‑value environment variables.
 
 <TabItem value="schema" label="Programming & Schema Definition Files">
 
-**Purpose:**
+### Programming & Schema Definition Files
+
+**Purpose**  
 Define structure, contracts, or executable logic.
 
+---
 
 ### SQL (`.sql`)
 Schema and query definitions for relational databases.
@@ -196,8 +259,7 @@ Schema and query definitions for relational databases.
 **Use When**
 - Table creation  
 - Migrations  
-- Query logic
-- Text-based format
+- Query logic  
 
 ---
 
@@ -206,8 +268,7 @@ Schema and query language for APIs.
 
 **Use When**
 - Client‑driven data fetching  
-- Typed API contracts
-- Text-based format
+- Typed API contracts  
 
 ---
 
@@ -217,24 +278,22 @@ Schema definition for XML.
 **Use When**
 - Validating XML structure  
 - Enforcing strict document rules  
-- Use XSD when XML must be **validated**, **versioned**, or **governed**.
 
 **Characteristics**
 - Defines elements, attributes, types  
 - Supports namespaces  
-- Used in enterprise and government systems
-- Text-based format
-- Defines elements, attributes, types
-- Enforces structure and constraints
-- Supports namespaces
-- Used in enterprise, finance, government
+- Used in enterprise and government systems  
 
 </TabItem>
 
 <TabItem value="docs" label="Documentation & Markup">
 
-**Purpose:**
+### Documentation & Markup
+
+**Purpose**  
 Represent text, documentation, or rendered content.
+
+---
 
 ### Markdown (`.md`)
 Lightweight markup for documentation.
@@ -242,8 +301,7 @@ Lightweight markup for documentation.
 **Use When**
 - READMEs  
 - Knowledge bases  
-- Static sites
-- Text-based format
+- Static sites  
 
 ---
 
@@ -252,15 +310,18 @@ Markup language for web content.
 
 **Use When**
 - Web pages  
-- UI rendering
-- Text-based format
+- UI rendering  
 
 </TabItem>
 
 <TabItem value="analytics" label="Data & Analytics Formats">
 
-**Purpose:**
+### Data & Analytics Formats
+
+**Purpose**  
 Store tabular or analytical data efficiently.
+
+---
 
 ### CSV (`.csv`)
 Plain‑text tabular data.
@@ -273,8 +334,7 @@ Plain‑text tabular data.
 **Characteristics**
 - Human‑readable  
 - No schema  
-- Error‑prone for complex data
-- Text-based format
+- Error‑prone for complex data  
 
 ---
 
@@ -288,9 +348,9 @@ Columnar, compressed format for analytics.
 
 **Characteristics**
 - Highly compressed  
-- Columnar for fast scans  
-- Schema‑aware
-- Binary-based
+- Columnar  
+- Schema‑aware  
+- Binary‑based  
 
 </TabItem>
 
@@ -298,62 +358,70 @@ Columnar, compressed format for analytics.
 
 ---
 
-## 🧭 When to Use Which Format
+## 🧩 System Interactions
 
-| Need | Best Fit |
-|------|----------|
-| Human‑readable structured data | JSON, YAML |
-| High‑performance messaging | Protobuf |
-| Schema evolution in pipelines | Avro |
-| Analytics at scale | Parquet |
-| Simple tabular exchange | CSV |
-| Strict document validation | XML + XSD |
-| Configuration | YAML, TOML, ENV |
-
----
-
-## 🧠 TA Lens
-
-:::info How a TA Evaluates File Types
-- What guarantees are required (schema, ordering, types)?  
-- Is human readability important?  
-- Is performance or payload size critical?  
-- Will the format evolve over time?  
-- Does the system require strict validation?  
-- Is the data for operational use or analytics?  
+:::info How a TA Understands the System
+- How formats interact with storage, compute, and pipelines  
+- How parsing, encoding, and schema validation behave under load  
+- What becomes a bottleneck as data volume or complexity grows  
 :::
 
-###  ⚠️ Common Mistakes
+### Local Systems
 
-- Using CSV for complex nested data
-- Using JSON when strict schemas are required
-- Using YAML for secrets (indentation errors, parsing issues)
-- Using XML without XSD in regulated environments
-- Using Parquet for operational workloads
-- Treating file formats as storage systems
+- Parsers  
+- Runtime encoders/decoders  
+- File systems  
+- CLI tools  
+
+### Remote Systems
+
+- APIs  
+- Message brokers  
+- Data lakes  
+- Schema registries  
+
+### Questions to ask during reviews or incidents
+
+- Is the format appropriate for the workload?  
+- Is schema evolution safe?  
+- Are we over‑using text formats for large data?  
+- Are consumers tolerant of missing or extra fields?  
+- Is the format validated before processing?  
 
 ---
 
-## 📊 What Results Normally Look Like
+## 💥 Outputs / Results
 
-| Output Type | Description |
+:::note Special Considerations
+File formats determine how data is interpreted — incorrect choice leads to silent failures.
+:::
+
+### Success Modes
+
+| Result Type | Description |
 |-------------|-------------|
-| **Schemas** | Structure definitions (XSD, Avro, Protobuf) |
-| **Payloads** | JSON/XML messages |
-| **Config files** | YAML/TOML/ENV |
-| **Analytics files** | CSV/Parquet |
-| **Documentation** | Markdown/HTML |
+| Correct Parsing | Systems interpret data consistently |
+| Schema Compatibility | Producers and consumers evolve safely |
+| Efficient Processing | Formats match workload (analytics vs operational) |
+| Interoperability | Multiple systems can read/write the same format |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Schema Drift | Producers and consumers disagree on structure |
+| Parsing Errors | Invalid or ambiguous formats |
+| Performance Degradation | Using text formats for large analytical workloads |
+| Data Loss | Incorrect encoding/decoding or truncation |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- BigQuery / Snowflake / Redshift — analytical engines that read columnar formats such as Parquet and ORC
-- Databricks / Spark / Flink — distributed compute engines that process Parquet, Avro, and other analytical formats
-- Kafka / Pub/Sub — messaging systems that commonly use Avro or Protobuf schemas for event payloads
-- Schema Registries — systems that manage Avro/Protobuf schemas and enforce compatibility
-- GCS / S3 Data Lakes — object stores that hold Parquet, ORC, Avro, and CSV files for analytical workloads
-- Airflow / Cloud Composer — ETL/ELT orchestration systems that transform and materialise data into specific file formats
-- API Gateways / gRPC Services — operational systems that emit JSON, XML, or Protobuf payloads
-- Metadata & Governance Systems (Data Catalog, Amundsen) — tools that track schema definitions, file formats, and lineage
-
+- Analytical Storage Systems  
+- Application Storage Systems  
+- Performance Storage Systems  
+- Kafka & Event Streaming  
+- Schema Registries  
+- Data Pipeline Quality  
+- Communication Patterns  

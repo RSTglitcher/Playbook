@@ -1,95 +1,99 @@
 ---
 title: "Memory Management"
-sidebar_position: 2
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Memory Management** is how an operating system and runtime allocate, track, and reclaim memory so applications can run safely, efficiently, and at scale.
+Memory Management is how an operating system, runtime, and container environment allocate, track, and reclaim memory so applications can run safely, efficiently, and at scale.
 :::
 
-Memory management spans:
-- OS‑level allocation  
-- Runtime‑level behaviour (JVM, Python, Node.js)  
-- Container memory limits  
-- Garbage collection  
-- Fragmentation and leaks  
-- OOM behaviour  
+**When to Use**
+
+- Investigating performance degradation or latency spikes  
+- Diagnosing crashes, OOM kills, or memory leaks  
+- Understanding runtime behaviour (JVM, Python, Node.js)  
+- Evaluating container memory limits or GC tuning  
+- Analysing memory pressure in distributed systems  
+
+**When Not to Use**
+
+- Assuming memory issues are always application bugs  
+- Treating GC tuning as a first step instead of a last resort  
+- Confusing container memory limits with VM‑level isolation  
+- Using memory metrics without understanding RSS vs heap vs cgroup limits  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Memory is finite, shared, and easy to misuse. Memory management enables:
+Memory is finite, shared, and easy to misuse. Memory management solves the problem of **safe, efficient, and predictable use of memory** across processes, runtimes, and containers.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| **Safe sharing of memory** | Prevents corruption and cross‑process interference |
-| **Efficient allocation** | Ensures fast execution and predictable performance |
-| **Automatic cleanup** | Avoids leaks and runaway memory growth |
-| **Isolation** | Protects workloads in multi‑tenant systems |
-| **Scalability** | Supports many processes on limited hardware |
+It enables:
 
-Without memory management, modern systems simply wouldn’t run.
+- Safe sharing of memory across processes  
+- Efficient allocation for fast execution  
+- Automatic cleanup to avoid leaks  
+- Isolation in multi‑tenant systems  
+- Scalability across many processes on limited hardware  
 
----
-
-## 🧠 Conceptual Model (How Memory Works)
-
-Memory is divided into **regions**, each with different rules and behaviours:
-
-### **Stack**
-- Fast, structured  
-- Stores function calls and local variables  
-- Grows and shrinks predictably  
-
-### **Heap**
-- Dynamic, flexible  
-- Stores objects, arrays, long‑lived data  
-- Requires manual or automatic cleanup  
-
-### **Runtime Memory**
-- Managed by language runtimes (JVM, Python, Node.js)  
-- Includes GC, object pools, interpreter state  
-
-### **Kernel Memory**
-- OS‑level structures, buffers, caches  
-
-### **Container Memory**
-- Enforced by cgroups  
-- Shared kernel, isolated limits  
-
-Memory issues can originate in any of these layers.
+Without memory management, modern systems would be unstable, unsafe, and unscalable.
 
 ---
 
-## 🧭 When to Use
+## 🧠 Conceptual Model
 
-### **Use When**
-- Investigating performance degradation or latency spikes  
-- Diagnosing crashes, OOM kills, or memory leaks  
-- Understanding runtime behaviour (JVM, Python, Node.js)  
-- Evaluating container memory limits or GC tuning  
+### Core Components
 
-:::warning Avoid When
-- Assuming memory issues are always application bugs  
-- Treating GC tuning as a first step instead of last resort  
-- Confusing container memory limits with VM‑level isolation  
-:::
+- **Stack** — structured, fast memory for function calls and locals  
+- **Heap** — dynamic memory for objects and long‑lived data  
+- **Runtime Memory** — GC, interpreter state, object pools  
+- **Kernel Memory** — OS buffers, caches, kernel structures  
+- **Container Memory** — cgroup‑enforced limits, shared kernel  
+
+### Axes of Variation
+
+- Stack vs heap behaviour  
+- Manual vs automatic memory management  
+- Runtime‑managed vs OS‑managed memory  
+- Container vs VM vs bare‑metal enforcement  
+- GC‑based vs reference‑counting vs manual allocation  
+
+---
+
+### Typical Lifecycle or Flow
+
+**Diagram(s):**
+
+```mermaid
+flowchart TD
+    A[Application Allocates Memory] --> B[Runtime or OS Reserves Memory]
+    B --> C[Application Uses Memory]
+    C --> D[Memory Becomes Unreachable or Unused]
+    D --> E[GC or OS Reclaims Memory]
+    E --> F[Memory Returned to System or Heap]
+```
 
 ---
 
 ## 🔍 TA Lens
 
-:::info How a TA Evaluates Memory Management
-- Identify whether memory pressure is **stack**, **heap**, or **GC‑related**  
-- Understand how runtimes differ in allocation behaviour  
-- Recognise when memory issues originate from OS‑level constraints  
-- Map container memory limits to kernel enforcement (cgroups, OOM killer)  
-- Ask whether memory growth is expected, accidental, or pathological  
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck  
+- Whether memory pressure is stack, heap, GC, or kernel‑related  
+- How runtimes differ in allocation behaviour (JVM vs Python vs Node.js)  
+- How container limits map to kernel enforcement (cgroups, OOM killer)  
+- Whether memory growth is expected, accidental, or pathological  
+- How memory behaviour changes under load or concurrency  
 :::
+
+**What happens when:**
+
+- **Data grows** → heap expansion, GC pressure, fragmentation  
+- **Traffic increases** → more allocations, more GC cycles  
+- **Concurrency rises** → more stacks, more threads, more RSS  
+- **Resources become constrained** → OOM kills, swapping, kernel throttling  
 
 ---
 
@@ -97,17 +101,17 @@ Memory issues can originate in any of these layers.
 
 | Term | Definition |
 |------|------------|
-| **Stack** | Fast, structured memory for function calls and locals |
-| **Heap** | Dynamic memory for objects and long‑lived data |
-| **Garbage Collection (GC)** | Automatic memory reclamation |
-| **OOM Killer** | Kernel mechanism that terminates processes under pressure |
-| **Fragmentation** | Free memory scattered into unusable blocks |
-| **RSS** | Resident Set Size — actual memory used in RAM |
-| **Working Set** | Memory actively used by the process |
+| Stack | Fast, structured memory for function calls and locals |
+| Heap | Dynamic memory for objects and long‑lived data |
+| Garbage Collection (GC) | Automatic memory reclamation |
+| OOM Killer | Kernel mechanism that terminates processes under pressure |
+| Fragmentation | Free memory scattered into unusable blocks |
+| RSS | Resident Set Size — actual memory used in RAM |
+| Working Set | Memory actively used by the process |
 
 ---
 
-# 🧬 Core Memory Areas
+## 🧬 Variants / Types
 
 <Tabs>
 
@@ -115,32 +119,19 @@ Memory issues can originate in any of these layers.
 
 ### Stack
 
-**What It Is**  
-A structured, automatically managed memory region for function calls and local variables.
+**Purpose**  
+Provide fast, structured memory for function calls and local variables.
 
-```mermaid
-+----------------------+
-|      Stack Frame     |
-|----------------------|
-| Local Variables      |
-| Return Address       |
-+----------------------+
-        ^
-        |
-   LIFO Growth
-```
-
-**Characteristics**
+**Key Characteristics**
 - Very fast  
 - Deterministic lifecycle  
 - Fixed size per thread  
 
-**Failure Mode**  
-- **Stack overflow** (deep recursion, large locals)
+**Behaviour**  
+Grows and shrinks predictably with function calls.
 
-:::note TA Signal
-Crashes in recursion‑heavy workloads or when large objects are placed on the stack.
-:::
+**Trade-offs**  
+Limited size; deep recursion causes stack overflow.
 
 </TabItem>
 
@@ -148,73 +139,60 @@ Crashes in recursion‑heavy workloads or when large objects are placed on the s
 
 ### Heap
 
-**What It Is**  
-A dynamically managed region for objects, arrays, and complex structures.
+**Purpose**  
+Store dynamic objects, arrays, and long‑lived data.
 
-```mermaid
-+---------------------------+
-|           Heap            |
-|---------------------------|
-|  [Object] --> [Object]    |
-|      |            ^       |
-|      v            |       |
-|   [Array]      [Graph]    |
-+---------------------------+
-```
-
-**Characteristics**
+**Key Characteristics**
 - Flexible size  
 - Slower than stack  
 - Requires explicit management or GC  
 
-**Failure Modes**
-- Memory leaks  
-- Fragmentation  
-- Out‑of‑memory (OOM)
+**Behaviour**  
+Grows with allocations; shrinks when memory is reclaimed.
 
-:::note TA Signal
-Gradual memory growth, GC pressure, or sudden OOM failures.
-:::
+**Trade-offs**  
+Leaks, fragmentation, and OOM failures.
 
 </TabItem>
 
 <TabItem value="gc" label="Garbage Collection">
 
-### Garbage Collection (GC)
+### Garbage Collection
 
-**What It Is**  
-Automatic heap memory management used by JVM, .NET, JavaScript, and other managed runtimes.
+**Purpose**  
+Automatically reclaim unreachable heap memory.
 
-```mermaid
-[Roots]
-   |
-   v
-+-----------------------+
-|     GC Tracing        |
-|  (mark reachable)     |
-+-----------------------+
-   |
-   v
-[Unreachable Objects]
-   |
-   v
-Freed Automatically
-```
-
-**Core Concepts**
+**Key Characteristics**
 - Mark & sweep  
 - Stop‑the‑world pauses  
-- Generational GC (young/old/metaspace)  
+- Generational GC  
 - Object promotion  
 
-**Trade-offs**
-- Safer memory management  
-- Runtime overhead  
-- Latency spikes  
+**Behaviour**  
+Reduces manual memory errors; introduces latency spikes.
 
-:::note TA Signal
-Latency jitter, pause‑time analysis, GC tuning discussions.
-:::
+**Trade-offs**  
+Pause times, jitter, runtime overhead.
+
+</TabItem>
+
+<TabItem value="container" label="Container Memory">
+
+### Container Memory
+
+**Purpose**  
+Provide isolated memory limits for workloads.
+
+**Key Characteristics**
+- Enforced by cgroups  
+- Shared kernel  
+- Hard limits trigger OOM kills  
+
+**Behaviour**  
+RSS, heap, and kernel memory all count toward the limit.
+
+**Trade-offs**  
+Easy to misconfigure; OOM kills can be surprising.
 
 </TabItem>
 
@@ -222,84 +200,70 @@ Latency jitter, pause‑time analysis, GC tuning discussions.
 
 ---
 
-# 🧩 Compiler vs Runtime Responsibility
+## 🧩 System Interactions
 
-| Aspect | Stack | Heap | Garbage Collector |
-|--------|--------|--------|-------------------|
-| Allocation | Compile‑time | Runtime | Runtime |
-| Lifecycle | Deterministic | Dynamic | Automatic |
-| Performance | Very fast | Slower | Variable |
-| Safety | High | Medium | High |
-| Control | Compiler | Programmer/runtime | Runtime |
-
----
-
-# 🧬 Memory in Modern Platforms
-
-### **Traditional Applications**
-- One OS  
-- One runtime  
-- Direct memory ownership  
-
-### **Virtual Machines**
-- Guest OS manages memory  
-- Hypervisor abstracts physical RAM  
-- Ballooning & overcommit  
-
-### **Containers**
-- Shared host kernel  
-- Memory limits via cgroups  
-- OOM killer enforces limits  
-
-### **Managed & Serverless Platforms**
-- Memory abstracted away  
-- Cost tied to allocated memory  
-- Limited tuning options  
-
-:::info TA Insight
-Containers **do not** isolate memory like VMs — they rely on kernel enforcement.
+:::info How a TA Understands the System
+- How memory interacts with OS, runtime, containers, and hardware  
+- How memory pressure affects CPU, GC, and I/O  
+- What becomes a bottleneck as load increases  
 :::
 
+### Local Systems
+
+- OS memory manager  
+- Runtime heap and GC  
+- Stack allocation  
+- Kernel caches and buffers  
+- cgroup limits  
+
+### Remote Systems
+
+- Pods  
+- Containers  
+- Virtual machines  
+- Distributed runtimes  
+
+### Questions to ask during reviews or incidents
+
+- Is memory pressure coming from heap, stack, or kernel?  
+- Is GC causing latency spikes?  
+- Is the container hitting its cgroup limit?  
+- Is RSS larger than expected heap usage?  
+- Is memory growth expected or pathological?  
+
 ---
 
-# 📊 What Results Normally Look Like
-
-| Result Type | Description |
-|-------------|-------------|
-| **Memory graphs** | Heap usage, stack depth, GC cycles |
-| **GC logs** | Pause times, promotion rates, collection frequency |
-| **OOM events** | Kernel‑level termination signals |
-| **Container metrics** | RSS, working set, cgroup limits |
+## 💥 Outputs / Results
 
 :::note Special Considerations
 Memory behaviour differs significantly between runtimes (JVM vs Python vs Node.js).
 :::
 
----
+### Success Modes
 
-###  ⚠️ Common Mistakes
+| Result Type | Description |
+|-------------|-------------|
+| Stable Heap Usage | Predictable allocation and GC cycles |
+| Low GC Pause Times | Minimal impact on latency |
+| No OOM Events | Memory fits within container/VM limits |
+| Efficient Allocation | Minimal fragmentation and overhead |
 
-- Assuming GC means “no memory leaks”  
-- Treating container memory limits as soft suggestions  
-- Confusing RSS with heap size  
-- Over‑tuning GC without evidence  
-- Assuming serverless eliminates memory concerns  
+### Failure Modes
 
----
-
-# 🏗️ Real‑World Examples
-
-- A JVM service pauses due to long GC cycles under load  
-- A Python ETL job leaks memory due to unbounded object retention  
-- A Node.js service crashes when hitting container memory limits  
-- A Kubernetes pod is OOM‑killed despite low heap usage (RSS vs heap mismatch)  
+| Failure Type | Description |
+|--------------|-------------|
+| OOM Kill | Kernel terminates process due to memory pressure |
+| GC Thrashing | Excessive GC cycles causing latency spikes |
+| Memory Leak | Heap grows without being reclaimed |
+| Fragmentation | Free memory unusable due to fragmentation |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- OS Architecture  
-- Garbage Collection Algorithms  
-- Container Runtime Architecture  
-- Performance Engineering  
-- Data Structures & Algorithms  
+- **JVM Memory Tuning**  
+- **Python Memory Profiling**  
+- **Node.js Heap & Event Loop Behaviour**  
+- **Container Runtime Architecture**  
+- **Garbage Collection Algorithms**  
+- **Linux OOM Killer & cgroups**  

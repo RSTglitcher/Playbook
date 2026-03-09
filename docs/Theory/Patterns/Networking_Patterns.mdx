@@ -118,6 +118,8 @@ Typical flow:
 
 <TabItem value="addressing" label="Addressing">
 
+### Addressing
+
 **Key Characteristics**
 - Identifies where a service or machine lives
 - Uses IPs, ports, hostnames, DNS
@@ -136,6 +138,8 @@ Addressing determines *how* a service is located and *what* endpoint is used.
 </TabItem>
 
 <TabItem value="routing" label="Routing">
+
+### Routing
 
 **Key Characteristics**
 - Moves data between networks or services
@@ -156,6 +160,8 @@ Routing determines the path traffic takes and how it adapts to topology.
 </TabItem>
 
 <TabItem value="transport" label="Transport">
+
+### Transport
 
 **Key Characteristics**
 - Defines how data is delivered
@@ -179,6 +185,8 @@ Transport governs retries, ordering, congestion control, and connection lifecycl
 
 <TabItem value="application" label="Application Protocols">
 
+### Application Protocols
+
 **Key Characteristics**
 - Defines meaning on top of transport
 - Request/response, streaming, messaging
@@ -199,6 +207,8 @@ Protocols shape how clients and servers communicate and interpret data.
 
 <TabItem value="cdn" label="Content Delivery (CDN)">
 
+### Content Delivery Network
+
 **Purpose**
 Reduce latency and improve performance by delivering content from locations geographically closer to users.
 
@@ -211,13 +221,6 @@ Reduce latency and improve performance by delivering content from locations geog
 
 **Behaviour**
 CDNs bring content closer to users and absorb traffic spikes.
-
-### What CDNs Optimise
-- Latency (distance → speed)
-- Bandwidth usage
-- Load on origin servers
-- Resilience during traffic spikes
-- Global user experience consistency
 
 **Trade-offs**
 - Faster delivery vs risk of stale content
@@ -232,6 +235,8 @@ CDNs bring content closer to users and absorb traffic spikes.
 
 <TabItem value="failures" label="Networking Failure Patterns">
 
+### Networking Failure Patterns
+
 **Key Characteristics**
 - Recurring shapes of network‑driven failures
 - Often subtle and intermittent
@@ -242,7 +247,7 @@ Failures manifest as latency, resets, misrouting, or degraded throughput.
 **Trade-offs**
 - More diagnostics increase visibility but add noise
 
-### Catalogue of Failure Patterns
+**Problem Shapes**
 - DNS resolution failures
 - Timeouts
 - Connection resets
@@ -253,6 +258,8 @@ Failures manifest as latency, resets, misrouting, or degraded throughput.
 </TabItem>
 
 <TabItem value="protection" label="Networking Protection Patterns">
+
+### Networking Protection Patterns
 
 **Key Characteristics**
 - Define boundaries and enforce safe communication
@@ -265,7 +272,7 @@ Protection patterns shape who can talk to whom and under what guarantees.
 - Stronger boundaries reduce flexibility
 - Encryption adds overhead
 
-### Catalogue of Protection Patterns
+**Problem Shapes**
 - Network segmentation
 - Firewalls & security groups
 - TLS / encryption in transit
@@ -274,7 +281,10 @@ Protection patterns shape who can talk to whom and under what guarantees.
 - mTLS
 
 </TabItem>
+
 <TabItem value="latency" label="Latency">
+
+### Latency
 
 **Key Characteristics**
 - The time it takes for data to travel between two points
@@ -285,8 +295,6 @@ Protection patterns shape who can talk to whom and under what guarantees.
 
 **Behaviour**
 Latency accumulates across every hop in a request path — DNS lookup, routing, load balancers, service processing, and response return.
-It increases under congestion, inefficient routing, overloaded services, or when stateful connections require specific nodes.
-Latency also interacts with throughput, connection lifecycle, and protocol semantics.
 
 **Trade-offs**
 - Lower latency improves responsiveness but may require caching, CDNs, or architectural changes
@@ -294,51 +302,56 @@ Latency also interacts with throughput, connection lifecycle, and protocol seman
 - Stateless designs reduce routing constraints but may require more computation
 - Stateful designs can optimise performance but require sticky routing and careful failover
 
-### Catalogue of Related Networking Concepts
-
+**Examples**
 - Throughput
 - Bandwidth
 - Connection Lifecycle
-> - Open
-> - Use
-> - Idle
-> - Close
+  - Open
+  - Use
+  - Idle
+  - Close
 - Statefulness vs Statelessness
 - Service Discovery
 - Network Segmentation
+
 </TabItem>
+
 <TabItem value="failure" label="Failure Patterns">
 
-#### DNS Resolution Failures**
+### Failure Patterns
+
+#### DNS Resolution Failures
 - Wrong hostname
 - Stale DNS cache
 - Misconfigured records
 
-#### Timeouts**
+#### Timeouts
 - Slow downstream services
 - Network congestion
 - Misconfigured retry logic
 
-#### Connection Resets**
+#### Connection Resets
 - Load balancer timeouts
 - Idle connection drops
 - Firewall interference
 
-#### Packet Loss**
+#### Packet Loss
 - Congestion
 - Faulty links
 - Overloaded nodes
 
-#### Misrouting**
+#### Misrouting
 - Incorrect routes
 - NAT issues
 - Wrong load balancer target
 
-#### Port Conflicts**
+#### Port Conflicts
 - Multiple services binding to the same port
 
 </TabItem>
+
 </Tabs>
+
 
 ---
 

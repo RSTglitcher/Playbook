@@ -1,252 +1,278 @@
 ---
 title: "Documentation Architecture"
-sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Documentation Architecture** describes how technical knowledge is structured, communicated, and maintained across systems, teams, and lifecycles.
-It includes API contracts, system design docs, operational runbooks, onboarding guides, and schema definitions.
+Documentation Architecture describes how technical knowledge is structured, communicated, and maintained across systems, teams, and lifecycles to ensure shared understanding and safe operation.
 :::
 
-Documentation is not just “writing things down” — it is a **system of shared understanding** that enables teams to build, operate, and evolve software safely.
+**When to Use**
+
+- Sharing knowledge across teams or roles  
+- Designing APIs, systems, or operational workflows  
+- Onboarding new engineers  
+- Ensuring operational safety and reducing outages  
+- Supporting compliance, audits, or governance  
+- Coordinating work across distributed teams  
+
+**When Not to Use**
+
+- Information is volatile and changes daily  
+- A simple README or code comment is sufficient  
+- The system is experimental or short‑lived  
+- Documentation is being used to justify poor design  
+- The audience does not need long‑form documentation  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Documentation Architecture enables:
+Documentation Architecture solves the problem of **knowledge fragmentation**, **tribal knowledge**, and **unsafe operation**.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| **Shared understanding** | Reduces ambiguity and tribal knowledge |
-| **Faster onboarding** | New engineers understand systems quickly |
-| **Operational safety** | Runbooks prevent outages and mistakes |
-| **API reliability** | Contracts ensure consistent behaviour |
-| **Governance & compliance** | Traceability for audits and reviews |
-| **Scalable collaboration** | Teams coordinate without constant meetings |
+It enables:
+
+- Shared understanding across teams  
+- Faster onboarding  
+- Reliable operations through runbooks  
+- Consistent API behaviour via contracts  
+- Traceability for governance and audits  
+- Scalable collaboration without constant meetings  
+
+Documentation is a **system**, not a deliverable — it ensures teams can build, operate, and evolve software safely.
 
 ---
 
-## 🧠 Conceptual Model (How Documentation Works)
+## 🧠 Conceptual Model
 
-Documentation spans **four layers**:
+Documentation spans **four layers**, each serving a different purpose:
 
-### **1. Product & User Documentation**
+### Core Components
+
+#### **1. Product & User Documentation**  
 Explains *what the system does*.
 
-### **2. Architecture & Design Documentation**
+#### **2. Architecture & Design Documentation**  
 Explains *how the system works*.
 
-### **3. API & Contract Documentation**
+#### **3. API & Contract Documentation**  
 Explains *how to interact with the system*.
 
-### **4. Operational Documentation**
+#### **4. Operational Documentation**  
 Explains *how to run, debug, and maintain the system*.
 
-Each layer serves a different audience and purpose.
+### Axes of Variation
+
+- **Audience** → user, engineer, operator, auditor  
+- **Purpose** → understanding, interaction, operation, governance  
+- **Format** → narrative, diagrams, schemas, contracts  
+- **Lifecycle** → static vs frequently updated  
+- **Scope** → system‑wide vs component‑specific  
 
 ---
 
-# 🧬 Categories of Documentation
+### Typical Lifecycle or Flow
+
+**Diagram:**
+
+```mermaid
+flowchart TD
+    A[Design] --> B[Document]
+    B --> C[Review & Validate]
+    C --> D[Publish & Share]
+    D --> E[Operate & Maintain]
+    E --> F[Update as System Evolves]
+    F --> B
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck  
+- Whether documentation reflects reality or has drifted  
+- Whether contracts and runbooks are complete and unambiguous  
+- Whether diagrams match system behaviour under load  
+- Whether documentation supports safe operation and onboarding  
+:::
+
+**What happens when:**
+
+- **Data grows** → schemas and data dictionaries become critical  
+- **Traffic increases** → operational docs must cover scaling and failure modes  
+- **Concurrency rises** → API contracts and sequencing diagrams matter  
+- **Resources become constrained** → runbooks guide safe recovery  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Contract | Agreed behaviour between systems |
+| Specification | Formal description of an API or schema |
+| Runbook | Step‑by‑step operational instructions |
+| Playbook | Strategy for handling classes of incidents |
+| ADR | Architecture Decision Record |
+| Schema | Structured definition of data |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
 <TabItem value="api" label="API & Contract Documentation">
 
-### Purpose
+### API & Contract Documentation
+
+**Purpose**  
 Define how systems communicate and what they expect.
 
----
+**Key Characteristics**
+- Machine‑readable contracts  
+- Strong typing or schema validation  
+- Clear request/response structures  
 
-## OpenAPI (REST API Contracts)
+**Behaviour**  
+Ensures consistent API behaviour across teams and clients.
 
-**What It Is**
-A machine‑readable specification describing HTTP APIs.
-
-**Use When**
-- Exposing REST APIs
-- Generating client SDKs
-- Validating request/response schemas
-- Publishing API docs to portals (e.g., Backstage)
-
-**TA Lens**
-OpenAPI describes *what* an API looks like, not *how* it behaves internally.
+**Trade-offs**  
+Strict contracts require disciplined versioning.
 
 ---
 
-## GraphQL Schema Documentation
+#### OpenAPI (REST)
 
-GraphQL APIs are self‑describing via introspection.
+- Machine‑readable HTTP API specification  
+- Used for SDK generation, validation, and portals  
 
-**Use When**
-- Clients choose their own fields
-- Strong typing is required
-- Schema evolution matters
+#### GraphQL Schema
 
----
+- Self‑describing via introspection  
+- Strong typing and flexible querying  
 
-## gRPC / Protobuf Contracts
+#### gRPC / Protobuf
 
-Binary, schema‑driven API definitions.
+- Binary, schema‑driven  
+- High‑performance service‑to‑service communication  
 
-**Use When**
-- High‑performance service‑to‑service communication
-- Strong typing and versioning
-- Low latency is critical
+#### SOAP / WSDL (Legacy)
 
----
-
-## SOAP / WSDL (Legacy)
-
-XML‑based contract definitions.
-
-**Use When**
-- Integrating with legacy enterprise systems
-- Strict schema validation is required
+- XML‑based enterprise contracts  
+- Strict schema validation  
 
 </TabItem>
 
 <TabItem value="architecture" label="Architecture & System Documentation">
 
-### Purpose
+### Architecture & System Documentation
+
+**Purpose**  
 Explain how systems are designed, structured, and interact.
+
+**Key Characteristics**
+- Components, flows, dependencies  
+- Failure modes and scaling behaviour  
+- Historical decisions (ADRs)  
+
+**Behaviour**  
+Provides shared understanding for design, review, and onboarding.
+
+**Trade-offs**  
+Can drift if not maintained.
 
 ---
 
-## Architecture Decision Records (ADRs)
+#### Architecture Decision Records (ADRs)
 
 Capture *why* decisions were made.
 
-**Use When**
-- Making long‑term architectural choices
-- Providing historical context
-- Ensuring traceability
+#### System Design Docs
 
----
+Describe components, flows, dependencies, and failure modes.
 
-## System Design Docs
-
-Describe:
-- Components
-- Data flows
-- Dependencies
-- Failure modes
-- Scaling behaviour
-
-**Use When**
-- Designing new systems
-- Reviewing architecture
-- Onboarding new engineers
-
----
-
-## Sequence Diagrams & Flow Diagrams
+#### Sequence & Flow Diagrams
 
 Explain runtime behaviour and interactions.
-
-**Use When**
-- Clarifying workflows
-- Explaining request/response cycles
-- Mapping dependencies
 
 </TabItem>
 
 <TabItem value="operational" label="Operational Documentation">
 
-### Purpose
+### Operational Documentation
+
+**Purpose**  
 Enable safe operation, debugging, and maintenance.
 
----
+**Key Characteristics**
+- Runbooks for known scenarios  
+- Playbooks for incident classes  
+- SLO/SLA definitions  
 
-## Runbooks
+**Behaviour**  
+Reduces outages and accelerates incident response.
 
-Step‑by‑step instructions for handling known scenarios.
-
-**Use When**
-- Responding to alerts
-- Restarting services
-- Handling predictable failures
-
----
-
-## Playbooks
-
-Higher‑level operational strategies.
-
-**Use When**
-- Incident response
-- Disaster recovery
-- Scaling events
+**Trade-offs**  
+Requires continuous updates as systems evolve.
 
 ---
 
-## SLO/SLA Documentation
+#### Runbooks
 
-Defines:
-- Availability targets
-- Error budgets
-- Performance expectations
+Step‑by‑step instructions for predictable failures.
 
-**Use When**
-- Setting reliability standards
-- Aligning teams on expectations
+#### Playbooks
+
+Higher‑level strategies for incident response.
+
+#### SLO/SLA Documentation
+
+Defines availability targets, error budgets, and expectations.
 
 </TabItem>
 
 <TabItem value="product" label="Product & User Documentation">
 
-### Purpose
+### Product & User Documentation
+
+**Purpose**  
 Explain what the system does and how to use it.
 
----
+**Key Characteristics**
+- User guides  
+- Tutorials  
+- Release notes  
 
-## User Guides
+**Behaviour**  
+Supports end‑users and internal consumers.
 
-Explain features, workflows, and usage patterns.
-
-## Tutorials & Examples
-
-Walk users through common tasks.
-
-## Release Notes
-
-Communicate changes, deprecations, and migrations.
+**Trade-offs**  
+Must balance detail with usability.
 
 </TabItem>
 
 <TabItem value="schema" label="Schema & Data Documentation">
 
-### Purpose
+### Schema & Data Documentation
+
+**Purpose**  
 Define the structure, meaning, and constraints of data.
 
----
+**Key Characteristics**
+- JSON Schema  
+- XSD  
+- Avro/Protobuf schemas  
+- Data dictionaries  
 
-## JSON Schema
+**Behaviour**  
+Ensures semantic consistency across pipelines and teams.
 
-Validates JSON payloads.
-
-## XSD (XML Schema Definition)
-
-Validates XML documents.
-
-## Avro / Protobuf Schemas
-
-Define binary data structures.
-
-## Data Dictionary
-
-Explains:
-- Field definitions
-- Allowed values
-- Business meaning
-
-**Use When**
-- Working with data pipelines
-- Ensuring semantic consistency
-- Supporting analytics teams
+**Trade-offs**  
+Requires alignment between engineering and analytics.
 
 </TabItem>
 
@@ -254,68 +280,71 @@ Explains:
 
 ---
 
-# 🧭 When to Use Documentation
+## 🧩 System Interactions
 
-Use documentation when:
+:::info How a TA Understands the System
+- How documentation interacts with architecture, data, and runtime  
+- How documentation supports safe operation under pressure  
+- What becomes a bottleneck when systems scale or evolve  
+:::
 
-- Knowledge must be shared across teams
-- APIs need clear contracts
-- Systems are complex or long‑lived
-- Operational safety matters
-- Compliance or auditability is required
-- Onboarding new engineers
+### Local Systems
 
----
+- OS  
+- Runtime  
+- Network  
+- Storage  
+- Concurrency  
+- Scaling  
 
-# 🚫 When Not to Use
+### Remote Systems
 
-Avoid documentation when:
+- Pods  
+- Data Centers  
+- API Gateways  
+- CI/CD Platforms  
+- Knowledge Portals (e.g., Backstage)  
 
-- The information is volatile and changes daily
-- A simple comment or README is enough
-- The system is experimental or short‑lived
-- Documentation becomes a substitute for good design
+### Questions to ask during reviews or incidents
 
----
-
-# 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **Contract** | Agreed behaviour between systems |
-| **Specification** | Formal description of an API or schema |
-| **Runbook** | Step‑by‑step operational instructions |
-| **Playbook** | Strategy for handling classes of incidents |
-| **ADR** | Architecture Decision Record |
-| **Schema** | Structured definition of data |
+- Does documentation reflect current reality?  
+- Are runbooks complete and actionable?  
+- Are API contracts versioned and validated?  
+- Are diagrams accurate under load or failure?  
+- Is ownership and update responsibility clear?  
 
 ---
 
-###  ⚠️ Common Mistakes
+## 💥 Outputs / Results
 
-- Treating documentation as optional
-- Letting documentation drift out of sync with reality
-- Over‑documenting trivial systems
-- Using documentation to justify poor design
-- Writing documentation that only the author understands
-- Mixing business rules with implementation details
+:::note Special Considerations
+Documentation must be accurate, discoverable, and maintained — stale documentation is dangerous.
+:::
 
----
+### Success Modes
 
-# 🏗️ Real‑World Examples
+| Result Type | Description |
+|-------------|-------------|
+| Shared Understanding | Teams align without meetings |
+| Reliable Operations | Runbooks prevent outages and mistakes |
+| API Reliability | Contracts ensure consistent behaviour |
+| Faster Onboarding | New engineers become productive quickly |
 
-- A Backstage portal showing OpenAPI specs for all internal services
-- A runbook describing how to restart a failing Kubernetes Deployment
-- An ADR explaining why the team chose Kafka over RabbitMQ
-- A data dictionary defining metrics for analytics teams
-- A system design doc mapping out microservice interactions
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Documentation Drift | Docs no longer match reality |
+| Ambiguous Contracts | APIs behave inconsistently |
+| Missing Runbooks | Incidents escalate unnecessarily |
+| Tribal Knowledge | Only a few people understand the system |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- API Design
-- Data Modelling
-- System Architecture
-- Delivery & Deployment Architecture
-- Configurations & Declarative Systems
+- API Design  
+- Data Modelling  
+- System Architecture  
+- Delivery & Deployment Architecture  
+- Configurations & Declarative Systems  

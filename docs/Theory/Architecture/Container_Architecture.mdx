@@ -1,60 +1,125 @@
 ---
 title: "Containerisation Architecture"
-sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Containerisation Architecture** describes how applications are packaged, isolated, executed, and managed using containers.
-It includes container images, runtimes, registries, networking, storage, and orchestration platforms like Kubernetes.
+Containerisation Architecture describes how applications are packaged, isolated, executed, and managed using containers across images, runtimes, registries, networking, storage, and orchestration platforms.
 :::
 
-Containerisation is not just “running Docker.”
-It is a full ecosystem that shapes how modern software is built, deployed, scaled, and operated.
+**When to Use**
+
+- Deploying microservices or distributed systems  
+- Ensuring consistent environments across dev/test/prod  
+- Scaling workloads horizontally  
+- Running workloads across multiple environments (local, VM, cloud, cluster)  
+- Building reproducible, portable delivery pipelines  
+
+**When Not to Use**
+
+- When full OS isolation is required (use VMs)  
+- When workloads depend heavily on host OS internals  
+- When ultra‑low latency is required  
+- When GPU/accelerator support is needed but drivers are not container‑friendly  
+- When stateful workloads cannot externalise storage  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Containerisation enables:
+Containerisation solves the problem of **environment inconsistency**, **manual deployment**, and **resource inefficiency**.
+
+It enables:
 
 | Benefit | Why it matters |
 |--------|----------------|
-| **Environment consistency** | “Works on my machine” disappears |
-| **Isolation** | Workloads run independently with controlled resources |
-| **Portability** | Same container runs on laptop, VM, cloud, or cluster |
-| **Scalability** | Orchestrators manage replicas, rollouts, and failures |
-| **Faster delivery** | Images build once, run anywhere |
-| **Resource efficiency** | Lighter than VMs, faster to start |
+| Environment consistency | Eliminates “works on my machine” issues |
+| Isolation | Workloads run independently with controlled resources |
+| Portability | Same container runs anywhere |
+| Scalability | Orchestrators manage replicas, rollouts, failures |
+| Faster delivery | Build once, run anywhere |
+| Resource efficiency | Lighter than VMs, faster to start |
 
 ---
 
-## 🧠 Conceptual Model (How Containerisation Works)
+## 🧠 Conceptual Model
 
-Containerisation has **four layers**:
+Containerisation has **four architectural layers**:
 
-### **1. Image Layer**
-Immutable filesystem + metadata
-Built from Dockerfiles or build tools.
+### Core Components
 
-### **2. Runtime Layer**
-Executes containers using OS kernel features
-(e.g., containerd, CRI‑O).
+#### **1. Image Layer**  
+Immutable filesystem + metadata built from Dockerfiles or build tools.
 
-### **3. Infrastructure Layer**
+#### **2. Runtime Layer**  
+Executes containers using OS kernel features (containerd, CRI‑O).
+
+#### **3. Infrastructure Layer**  
 Nodes (VMs or bare metal) that run containers.
 
-### **4. Orchestration Layer**
-Manages scheduling, scaling, networking, and rollouts
-(Kubernetes, Nomad, Swarm).
+#### **4. Orchestration Layer**  
+Manages scheduling, scaling, networking, and rollouts (Kubernetes, Nomad).
 
-Together, they form a complete execution environment.
+### Axes of Variation
+
+- **Immutable vs Mutable** → images are immutable; containers are ephemeral  
+- **Ephemeral vs Persistent** → containers vs volumes  
+- **Manual vs Declarative** → Docker vs Kubernetes  
+- **Single‑node vs Clustered** → local dev vs orchestrated workloads  
 
 ---
 
-# 🧬 Core Components of Containerisation
+### Typical Lifecycle or Flow
+
+```mermaid
+flowchart TD
+    A[Source Code] --> B[Build Image]
+    B --> C[Push to Registry]
+    C --> D[Pull Image to Node]
+    D --> E[Runtime Starts Container]
+    E --> F[Orchestrator Schedules, Scales, Monitors]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates Containerisation
+- What is packaged into the image, and what is externalised?  
+- How does the runtime isolate processes and resources?  
+- How does orchestration handle failures, rollouts, and scaling?  
+- What happens when containers restart or nodes fail?  
+- How does networking behave across pods, nodes, and services?  
+- Where does state live, and how is it persisted?  
+:::
+
+**What happens when:**
+
+- **Traffic increases** → autoscaling triggers, scheduling constraints matter  
+- **Data grows** → persistent volumes and storage classes become critical  
+- **Nodes fail** → orchestrator reschedules workloads  
+- **Resources become constrained** → cgroups enforce limits, OOM kills occur  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Image | Immutable filesystem + metadata |
+| Container | Running instance of an image |
+| Pod | Kubernetes wrapper around one or more containers |
+| Node | Machine that runs containers |
+| CNI | Container Networking Interface |
+| CRI | Container Runtime Interface |
+| Ingress | External traffic routing |
+| Sidecar | Helper container in a pod |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
@@ -62,21 +127,20 @@ Together, they form a complete execution environment.
 
 ### Container Images
 
-**What They Are**
-Immutable, layered filesystem snapshots containing:
-- Application code
-- Dependencies
-- Runtime environment
-- Entrypoint command
+**Purpose**  
+Package application code, dependencies, and runtime environment.
 
-### Key Concepts
-- **Layers** → cached, reusable
-- **Base images** → Ubuntu, Alpine, distroless
-- **Image tags** → versioning
-- **Registries** → Docker Hub, ECR, GCR
+**Key Characteristics**
+- Immutable  
+- Layered filesystem  
+- Versioned via tags  
+- Stored in registries  
 
-### TA Lens
-Images define *what* runs; orchestrators define *how* it runs.
+**Behaviour**  
+Images define *what* runs.
+
+**Trade-offs**  
+Large images slow deployments; base image choice affects security.
 
 </TabItem>
 
@@ -84,20 +148,19 @@ Images define *what* runs; orchestrators define *how* it runs.
 
 ### Container Runtime
 
-Executes containers using OS kernel features.
+**Purpose**  
+Execute containers using OS kernel features.
 
-### Core Mechanisms
-- **Namespaces** → isolation (PID, network, mount, IPC)
-- **cgroups** → resource limits (CPU, memory)
-- **Union filesystems** → layered images
+**Key Characteristics**
+- Namespaces → isolation  
+- cgroups → resource limits  
+- Union filesystems → layered images  
 
-### Common Runtimes
-- containerd
-- CRI‑O
-- Docker Engine (legacy runtime)
+**Behaviour**  
+Containers share the host kernel; they are not VMs.
 
-### TA Lens
-Containers share the host kernel — they are not VMs.
+**Trade-offs**  
+Kernel bugs affect all containers; isolation is not absolute.
 
 </TabItem>
 
@@ -105,19 +168,20 @@ Containers share the host kernel — they are not VMs.
 
 ### Container Networking
 
-Containers need:
-- IP addresses
-- DNS
-- Service discovery
-- Load balancing
+**Purpose**  
+Enable communication between containers, pods, and services.
 
-### Kubernetes Networking Model
-- Every pod gets an IP
-- Pods communicate without NAT
-- Services provide stable virtual IPs
-- CNI plugins implement networking (Calico, Cilium, Flannel)
+**Key Characteristics**
+- Pod IPs  
+- DNS  
+- Service discovery  
+- Load balancing  
+- CNI plugins (Calico, Cilium, Flannel)  
 
-### TA Lens
+**Behaviour**  
+Pods communicate without NAT; Services provide stable virtual IPs.
+
+**Trade-offs**  
 Networking is often the hardest part of containerisation.
 
 </TabItem>
@@ -126,116 +190,103 @@ Networking is often the hardest part of containerisation.
 
 ### Container Storage
 
-Containers are ephemeral — storage is not.
+**Purpose**  
+Provide persistence for otherwise ephemeral containers.
 
-### Types
-- **Ephemeral storage** → tied to container lifecycle
-- **Persistent storage** → PVCs, volumes
-- **Config storage** → ConfigMaps, Secrets
+**Key Characteristics**
+- Ephemeral storage  
+- Persistent volumes (PVCs)  
+- ConfigMaps & Secrets  
 
-### TA Lens
-Containers do not store state — platforms do.
+**Behaviour**  
+State lives outside containers; platforms manage persistence.
+
+**Trade-offs**  
+Persistent storage adds complexity and latency.
 
 </TabItem>
 
-</Tabs>
+<TabItem value="orchestration" label="Orchestration">
 
----
+### Orchestration (Kubernetes & Others)
 
-# 🧬 Orchestration (Kubernetes & Others)
+**Purpose**  
+Automate deployment, scaling, and management of containers.
 
-<Tabs>
+**Key Characteristics**
+- Scheduling  
+- Rollouts & rollbacks  
+- Autoscaling  
+- Health checks  
+- Service discovery  
 
-<TabItem value="orchestrators" label="Orchestrators">
-
-### What Orchestrators Do
-- Schedule containers onto nodes
-- Restart failed workloads
-- Scale replicas
-- Manage rollouts and rollbacks
-- Provide service discovery
-- Enforce resource limits
-
-### Common Orchestrators
-- **Kubernetes** (industry standard)
-- **Nomad** (lightweight, multi‑runtime)
-- **Docker Swarm** (simple clusters)
-
-### TA Lens
+**Behaviour**  
 Orchestrators automate everything humans used to do manually.
 
-</TabItem>
-
-<TabItem value="core" label="Core Kubernetes Concepts">
-
-### Pods
-Smallest deployable unit; one or more containers.
-
-### Services
-Stable networking + load balancing.
-
-### Namespaces
-Logical isolation within a cluster.
-
-### ConfigMaps
-Non‑secret configuration.
-
-### Secrets
-Sensitive configuration.
-
-### Persistent Volumes / Claims
-Declarative storage.
+**Trade-offs**  
+Powerful but complex; requires strong operational maturity.
 
 </TabItem>
 
 <TabItem value="workloads" label="Workload Types">
 
-### Deployments
-Stateless applications; rolling updates.
+### Workload Types
 
-### StatefulSets
-Stateful apps; stable identities + storage.
+**Purpose**  
+Define how applications run in a cluster.
 
-### DaemonSets
-One pod per node; logging/monitoring agents.
+**Key Characteristics**
+- Deployments → stateless apps  
+- StatefulSets → stateful apps  
+- DaemonSets → one per node  
+- Jobs/CronJobs → run‑to‑completion tasks  
 
-### Jobs / CronJobs
-Run‑to‑completion tasks; scheduled jobs.
+**Behaviour**  
+Different workloads suit different operational needs.
+
+**Trade-offs**  
+Choosing the wrong workload type leads to instability.
 
 </TabItem>
 
 <TabItem value="scheduling" label="Scheduling & Scaling">
 
-### Horizontal Pod Autoscaler (HPA)
-Scales pods based on metrics.
+### Scheduling & Scaling
 
-### Cluster Autoscaler
-Adds/removes nodes based on demand.
+**Purpose**  
+Place workloads on nodes and adjust capacity.
 
-### Affinity & Tolerations
-Control where pods can run.
+**Key Characteristics**
+- HPA → scales pods  
+- Cluster Autoscaler → scales nodes  
+- Affinity & tolerations → placement rules  
 
-### TA Lens
-Scheduling is about **constraints**, **resources**, and **placement logic**.
+**Behaviour**  
+Scheduling is about constraints, resources, and placement logic.
+
+**Trade-offs**  
+Misconfigured autoscaling causes instability or resource waste.
 
 </TabItem>
 
 <TabItem value="observability" label="Observability & Management">
 
-### Logs & Metrics
-Prometheus, Grafana, ELK, Fluentd.
+### Observability & Management
 
-### Health Checks
-- **Liveness** → restart unhealthy pods
-- **Readiness** → control traffic flow
+**Purpose**  
+Monitor, debug, and operate containerised workloads.
 
-### Rollouts & Rollbacks
-Declarative, controlled updates.
+**Key Characteristics**
+- Logs & metrics (Prometheus, Grafana, ELK)  
+- Liveness & readiness probes  
+- Rollouts & rollbacks  
+- kubectl, k9s, exec, logs  
 
-### Debugging Tools
-- kubectl
-- k9s
-- exec, logs, port‑forward
+**Behaviour**  
+Observability determines how quickly issues are detected and resolved.
+
+**Trade-offs**  
+Poor observability leads to long outages and unclear failures.
 
 </TabItem>
 
@@ -243,71 +294,71 @@ Declarative, controlled updates.
 
 ---
 
-# 🧭 When to Use Containerisation
+## 🧩 System Interactions
 
-Use containerisation when:
+:::info How a TA Understands the System
+- How containers interact with OS, network, and storage  
+- How orchestrators handle failures, scaling, and scheduling  
+- What becomes a bottleneck as workloads grow  
+:::
 
-- You need consistent environments
-- You deploy microservices
-- You want fast, reproducible builds
-- You need horizontal scaling
-- You want declarative infrastructure
-- You run workloads across multiple environments
+### Local Systems
 
----
+- OS kernel  
+- Filesystem  
+- Container runtime  
+- Local networking stack  
+- Resource limits (CPU/memory)  
 
-# 🚫 When Not to Use
+### Remote Systems
 
-Avoid containerisation when:
+- Kubernetes control plane  
+- Container registries  
+- Cloud load balancers  
+- Persistent storage backends  
 
-- You need full OS isolation (use VMs)
-- You run monolithic apps with complex OS dependencies
-- You require GPU/accelerator support without proper drivers
-- You need ultra‑low latency (containers add overhead)
+### Questions to ask during reviews or incidents
 
----
-
-# 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **Image** | Immutable filesystem + metadata |
-| **Container** | Running instance of an image |
-| **Pod** | Kubernetes wrapper around containers |
-| **Node** | Machine that runs containers |
-| **CNI** | Container networking interface |
-| **CRI** | Container runtime interface |
-| **Ingress** | External traffic routing |
-| **Sidecar** | Helper container in a pod |
+- Where does state live?  
+- What happens when a container restarts?  
+- How does the orchestrator handle failure?  
+- Are resource limits defined?  
+- How does networking behave across nodes?  
 
 ---
 
-###  ⚠️ Common Mistakes
+## 💥 Outputs / Results
 
-- Thinking containers are VMs
-- Storing state inside containers
-- Using ConfigMaps for secrets
-- Overusing sidecars
-- Treating YAML as “just files” instead of declarative state
-- Running everything as root
-- Ignoring resource limits (leading to OOM kills)
+:::note Special Considerations
+Containerisation failures often appear as scheduling issues, restarts, or networking problems.
+:::
 
----
+### Success Modes
 
-# 🏗️ Real‑World Examples
+| Result Type | Description |
+|-------------|-------------|
+| Consistent Environments | Same behaviour across dev/test/prod |
+| Reliable Deployments | Declarative rollouts and rollbacks |
+| Scalable Workloads | Autoscaling responds to demand |
+| Efficient Resource Use | Containers start fast and use fewer resources |
+| Clear Observability | Logs, metrics, and probes reveal system health |
 
-- A Deployment rolls out a new version with zero downtime
-- A StatefulSet runs a replicated database with stable identities
-- A DaemonSet deploys a logging agent to every node
-- HPA scales pods during traffic spikes
-- A misconfigured readiness probe blocks traffic to healthy pods
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| OOM Kills | Missing or incorrect resource limits |
+| CrashLoops | Misconfigured readiness/liveness probes |
+| Networking Failures | CNI issues, DNS failures |
+| Image Pull Errors | Missing tags, registry issues |
+| State Loss | Writing data inside ephemeral containers |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- Configurations & Declarative Systems
-- Delivery & Deployment Architecture
-- Application Storage Systems
-- OS Architecture
-- Memory Management
+- Configurations & Declarative Systems  
+- Delivery & Deployment Architecture  
+- Application Storage Systems  
+- OS Architecture  
+- Memory Management  

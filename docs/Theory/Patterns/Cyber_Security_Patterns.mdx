@@ -110,219 +110,204 @@ flowchart LR
 
 <Tabs>
 
-<TabItem value="injection" label="Injection Attacks">
+<TabItem value="input" label="Input & Interpreter Attacks">
 
-### Key Characteristics
-- Untrusted input becomes executable
-- Targets interpreters (SQL, shell, templates)
+**Key Characteristics**
+- Untrusted input is executed or interpreted
+- Targets parsers, interpreters, and templating engines
 
-### Behaviour
-Attackers craft input that changes the meaning of a query or command.
+**Behaviour**
+Attackers craft input that alters program execution or file paths.
 
-### Trade-offs
-Strong validation and parameterisation reduce flexibility but dramatically increase safety.
-
-</TabItem>
-
-<TabItem value="xss" label="Cross‑Site Scripting (XSS)">
-
-### Key Characteristics
-- Untrusted data rendered as script
-- Impacts browsers and user sessions
-
-### Behaviour
-Attackers inject JavaScript into pages viewed by other users.
-
-### Trade-offs
-Strict output encoding and CSP require disciplined frontend patterns.
-
-</TabItem>
-
-<TabItem value="auth" label="Authentication & Session Attacks">
-
-### Key Characteristics
-- Target identity and session state
-- Often automated at scale
-
-### Behaviour
-Attackers bypass or break authentication flows.
-
-### Trade-offs
-Stronger authentication increases friction but reduces risk.
-
-</TabItem>
-
-<TabItem value="access" label="Broken Access Control">
-
-### Key Characteristics
-- Missing or weak authorisation
-- Often invisible until exploited
-
-### Behaviour
-Attackers access data or actions they shouldn’t.
-
-### Trade-offs
-Strict server‑side checks add overhead but prevent catastrophic breaches.
-
-</TabItem>
-
-<TabItem value="csrf" label="Cross‑Site Request Forgery (CSRF)">
-
-### Key Characteristics
-- Exploits browser trust
-- Requires user interaction
-
-### Behaviour
-Attackers trick a user’s browser into performing unwanted actions.
-
-### Trade-offs
-CSRF protections require careful cookie and session design.
-
-</TabItem>
-
-<TabItem value="deserialisation" label="Deserialization Attacks">
-
-### Key Characteristics
-- Unsafe object creation
-- Often hidden in frameworks
-
-### Behaviour
-Untrusted data is turned into objects or code.
-
-### Trade-offs
-Safer formats reduce flexibility but eliminate entire classes of attacks.
-
-</TabItem>
-
-<TabItem value="supply" label="Supply Chain Attacks">
-
-### Key Characteristics
-- Compromise dependencies or pipelines
-- Hard to detect
-
-### Behaviour
-Attackers infiltrate through external code or build systems.
-
-### Trade-offs
-Stricter dependency controls slow development but increase trust.
-
-</TabItem>
-
-<TabItem value="ddos" label="Denial of Service (DoS/DDoS)">
-
-### Key Characteristics
-- Overwhelm systems with load
-- Exploit expensive operations
-
-### Behaviour
-Attackers degrade or disable availability.
-
-### Trade-offs
-Rate limiting and caching reduce risk but require tuning.
-
-</TabItem>
-
-<TabItem value="phishing" label="Phishing & Social Engineering">
-
-### Key Characteristics
-- Targets humans
-- Bypasses technical controls
-
-### Behaviour
-Attackers trick users into unsafe actions.
-
-### Trade-offs
-Education and MFA reduce risk but require organisational investment.
-
-</TabItem>
-<TabItem value="all-attacks" label="All Attack Patterns">
-
-### Key Characteristics
-- A consolidated view of the major ways attackers exploit systems
-- Groups patterns by theme (input, identity, configuration, logic, supply chain, human factors)
-- Helps TAs quickly recognise attack shapes during reviews or incidents
-
-### Behaviour
-Attack patterns describe how adversaries achieve their goals by exploiting weaknesses in input handling, identity, configuration, business logic, or system design.
-They often chain together across the attack lifecycle.
-
-### Trade-offs
-A broad overview improves situational awareness but lacks the depth of individual pattern analysis.
-
-### Catalogue of Attack Patterns
-
-#### **Input & Interpreter Attacks**
-- Injection (SQLi, command, template, LDAP)
+**Examples**
+- Injection (SQL, command, template, LDAP)
 - Cross‑Site Scripting (XSS)
 - Deserialization attacks
 - Directory traversal
 
-#### **Identity & Session Attacks**
+**Trade-offs**
+Strict validation and sandboxing reduce flexibility but eliminate entire exploit classes.
+
+</TabItem>
+
+<TabItem value="identity" label="Identity & Session Attacks">
+
+**Key Characteristics**
+- Target authentication, identity proof, and session state
+- Often automated at scale
+
+**Behaviour**
+Attackers attempt to impersonate users or hijack active sessions.
+
+**Examples**
 - Credential stuffing
 - Brute force
 - Session hijacking
 - Weak password reset flows
 - CSRF
 
-#### **Access & Authorisation Attacks**
+**Trade-offs**
+Stronger authentication increases friction but dramatically improves resilience.
+
+</TabItem>
+
+<TabItem value="access" label="Access & Authorisation Attacks">
+
+**Key Characteristics**
+- Exploit missing or weak authorisation checks
+- Often invisible until exploited
+
+**Behaviour**
+Attackers access data or actions outside their permissions.
+
+**Examples**
 - Broken access control
 - IDOR
 - Privilege escalation
 
-#### **Availability Attacks**
+**Trade-offs**
+Strict server‑side checks add overhead but prevent catastrophic data exposure.
+
+</TabItem>
+
+<TabItem value="availability" label="Availability Attacks">
+
+**Key Characteristics**
+- Target system capacity, cost, or algorithmic weaknesses
+- Aim to degrade or deny service
+
+**Behaviour**
+Attackers overwhelm compute, memory, or expensive code paths.
+
+**Examples**
 - DoS / DDoS
 - Resource exhaustion
 - Algorithmic complexity attacks
 
-#### **Supply Chain Attacks**
+**Trade-offs**
+Rate limiting and defensive coding reduce risk but require tuning and observability.
+
+</TabItem>
+
+<TabItem value="supply" label="Supply Chain Attacks">
+
+**Key Characteristics**
+- Compromise external dependencies or build systems
+- Hard to detect and often discovered late
+
+**Behaviour**
+Attackers infiltrate via libraries, packages, or CI/CD pipelines.
+
+**Examples**
 - Compromised dependencies
 - Malicious packages
 - Build pipeline compromise
 
-#### **Data Exposure Attacks**
+**Trade-offs**
+Stricter dependency controls slow development but increase trust and integrity.
+
+</TabItem>
+
+<TabItem value="data" label="Data Exposure Attacks">
+
+**Key Characteristics**
+- Target sensitive data at rest or in transit
+- Often caused by misconfiguration
+
+**Behaviour**
+Attackers access secrets, credentials, or unencrypted data.
+
+**Examples**
 - Sensitive data exposure
 - Secrets leakage
 - Misconfigured storage
 
-#### **API & Logic Abuse**
+**Trade-offs**
+Encryption and secret management add operational overhead but prevent severe breaches.
+
+</TabItem>
+
+<TabItem value="api" label="API & Logic Abuse">
+
+**Key Characteristics**
+- Exploit business logic, workflows, or undocumented surfaces
+- Hard to detect with traditional security tools
+
+**Behaviour**
+Attackers manipulate APIs or workflows in unintended ways.
+
+**Examples**
 - API abuse
 - Business logic abuse
 - Undocumented endpoints
 
-#### **Human-Focused Attacks**
+**Trade-offs**
+Stronger schema enforcement and rate limits reduce abuse but require careful design.
+
+</TabItem>
+
+<TabItem value="human" label="Human-Focused Attacks">
+
+**Key Characteristics**
+- Target human behaviour, trust, and cognitive shortcuts
+- Bypass technical controls entirely
+
+**Behaviour**
+Attackers trick users into unsafe actions.
+
+**Examples**
 - Phishing
 - Social engineering
 - Pretexting
 
-#### **Misconfiguration Attacks**
+**Trade-offs**
+Education and MFA reduce risk but require organisational investment.
+
+</TabItem>
+
+<TabItem value="misconfig" label="Misconfiguration Attacks">
+
+**Key Characteristics**
+- Exploit insecure defaults or missing hardening
+- Extremely common in cloud environments
+
+**Behaviour**
+Attackers discover and exploit misconfigured services or permissions.
+
+**Examples**
 - Unsafe defaults
 - Overly permissive settings
 - Missing hardening
 
+**Trade-offs**
+Secure-by-default configurations reduce flexibility but dramatically reduce attack surface.
+
 </TabItem>
 <TabItem value="defensive" label="Defensive Patterns">
 
-### Key Characteristics
-- Cross‑cutting protections
-- Apply across multiple attack types
+**Key Characteristics**
+- Cross‑cutting protections that apply across multiple attack types
 - Reduce blast radius and increase resilience
+- Enforce strong defaults and predictable behaviour
 
-### Behaviour
-These patterns shape how systems respond to adversarial pressure by enforcing strong defaults, limiting privileges, and layering controls.
+**Behaviour**
+Defensive patterns shape how systems respond under adversarial pressure by limiting privileges, validating assumptions, and layering controls so that a single failure does not become a breach.
 
-### Trade-offs
-Stronger controls increase safety but may add operational overhead, friction, or complexity.
+**Examples**
+- **Least Privilege** — minimal permissions by default
+- **Zero Trust** — never assume trust; always verify
+- **Defense in Depth** — multiple layers of protection
+- **Secure Defaults** — safe configuration out of the box
+- **Fail Closed** — deny access when uncertain or on error
+- **Threat Modelling** — anticipate attacker behaviour and design accordingly
 
-### Examples
-- **Least Privilege** — minimal permissions
-- **Zero Trust** — always verify
-- **Defense in Depth** — multiple layers
-- **Secure Defaults** — safe out of the box
-- **Fail Closed** — deny on error
-- **Threat Modelling** — anticipate attacker behaviour
+**Trade-offs**
+Stronger controls increase safety but may add operational overhead, friction, or complexity. The goal is to balance usability with robust, systemic protection.
 
 </TabItem>
+
 </Tabs>
+
 
 ---
 
