@@ -1,123 +1,228 @@
 ---
-title: "🗄️Cassandra"
+title: "🗄️ Cassandra"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip Cassandra
-Apache Cassandra is a **distributed NoSQL database** designed for **high availability, horizontal scalability, and fault tolerance**.
-It handles large volumes of structured data across multiple nodes with no single point of failure.
+:::tip Cassandra  
+Apache Cassandra is a **distributed NoSQL database** designed for **high availability, horizontal scalability, and fault tolerance**.  
+It handles large volumes of structured data across multiple nodes with no single point of failure.  
 :::
 
----
-##  🧩 Technical Skills
+### Key Terms
 
-```mermaid
-Cassandra
-├── Cluster Management
-│   ├── Nodes
-│   ├── Data Centers
-│   └── Replication
-├── TA Skills
-│   ├── Inspect cluster health
-│   ├── Check keyspaces and tables
-│   ├── Monitor repairs and backups
-│   └── Validate performance and scaling
-└── SWE Skills
-    ├── Create keyspaces & tables
-    ├── Insert / query / delete data
-    ├── Trigger repairs & snapshots
-    └── Scale cluster
-````
+- **Node:** A Cassandra server participating in the cluster  
+- **Data Center (DC):** Logical grouping of nodes for replication and locality  
+- **Replication Factor (RF):** Number of copies of data stored across nodes  
+- **Partition Key:** Determines data distribution across the cluster  
+- **Consistency Level:** Read/write guarantee (e.g., ONE, QUORUM, ALL)  
+- **SSTable:** Immutable on‑disk storage file  
+- **Compaction:** Process of merging SSTables to reclaim space  
+- **Tombstone:** Marker for deleted data, cleaned up during compaction  
+
+### Knowing when to use **Cassandra**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| High‑write, high‑availability workloads | Workloads requiring strong ACID transactions |
+| Multi‑region or multi‑DC replication | Complex joins or relational modelling |
+| Predictable, low‑latency reads/writes | OLAP/analytics workloads |
+| Horizontal scaling with no downtime | Small datasets where simpler DBs suffice |
+
+---
+
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+- Cassandra uses a **peer‑to‑peer architecture** — no master node.  
+- Data is distributed using **consistent hashing** across nodes.  
+- Replication is configured per keyspace using **NetworkTopologyStrategy**.  
+- Writes are fast due to **log‑structured storage** (memtables + SSTables).  
+- Reads merge data from memtables, caches, and SSTables.  
+- Compaction merges SSTables and removes tombstones.  
+- Repairs ensure consistency across replicas.
+
+### System Contract
+
+Cassandra enforces contracts through:
+
+- **Keyspace replication strategy**  
+- **Partition key design** (determines distribution and performance)  
+- **Consistency levels** (read/write guarantees)  
+- **Schema definition** (tables, clustering columns, TTLs)  
+- **Node topology** (DCs, racks, seeds)
+
+### Key Strategies
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+<TabItem value="partitioning" label="Partitioning Strategy">
 
-```shell
---------------
-How to use Cassandra as a TA
---------------
-
-# Check cluster status
-nodetool status
-
-# View keyspaces and replication
-cqlsh -e "DESCRIBE KEYSPACES;"
-cqlsh -e "DESCRIBE KEYSPACE <keyspace_name>;"
-
-# Inspect node metrics and health
-nodetool info
-nodetool ring
-
-# Check repair and backup status
-nodetool repair <keyspace_name>
-nodetool snapshot <keyspace_name>
-
-# Check ongoing operations / compactions
-nodetool compactionstats
-nodetool tpstats
-```
+- Choose partition keys that avoid hotspots  
+- Ensure even distribution across nodes  
+- Avoid unbounded partitions (e.g., time‑series without bucketing)  
+- Responsibility: SWE + TA validation  
+- Goal: predictable performance and scalability  
 
 </TabItem>
-<TabItem value="requirements" label="Requirements">
 
-**How to formulate requirements when working with Cassandra**
+<TabItem value="replication" label="Replication & Durability Strategy">
 
-* Identify cluster topology and replication factor
-* Gather node IPs, data center layout, and owner/maintainer contacts
-* List keyspaces, tables, and replication strategies
-* Validate access credentials for cqlsh and API clients
-* Ensure monitoring and alerting is set up (Prometheus/Grafana, JMX metrics)
-* Capture backup and repair schedules, including responsible engineers
-* Determine what TAs need to provide for handover or troubleshooting
+- Use **NetworkTopologyStrategy** for multi‑DC setups  
+- Set RF ≥ 3 for production workloads  
+- Align consistency levels with RF (e.g., QUORUM reads/writes)  
+- Responsibility: Platform team + TA oversight  
+- Goal: durability, availability, and predictable consistency  
+
+</TabItem>
+
+<TabItem value="maintenance" label="Maintenance Strategy">
+
+- Schedule regular repairs (incremental recommended)  
+- Monitor compaction and tombstone accumulation  
+- Ensure snapshot/backup processes are reliable  
+- Responsibility: SWE + TA collaboration  
+- Goal: cluster health and long‑term stability  
 
 </TabItem>
 </Tabs>
 
----
+### What Results Normally Look Like
 
-## Pre-Requisites
-
-| Action / Service     | What TA Needs to Gather / Confirm                                 |
-| -------------------- | ----------------------------------------------------------------- |
-| Cluster Setup        | Node IPs, seeds, replication factor, data centers                 |
-| Access & Login       | cqlsh access or API credentials, user roles                       |
-| Keyspaces & Tables   | Keyspace names, table schemas, replication strategies             |
-| Metrics & Monitoring | Integration with Prometheus/Grafana, JMX ports, alerts configured |
+- `nodetool status` → node health, load, tokens, state  
+- `DESCRIBE KEYSPACE` → replication, tables, schema  
+- `nodetool compactionstats` → compaction backlog  
+- `nodetool tpstats` → thread pool saturation  
+- `nodetool cfstats` → SSTable counts, tombstones, read/write latency  
 
 ---
 
-## Engineering
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Credentials for `cqlsh`  
+- Role‑based access for schema changes  
+- Network access to nodes (ports 9042, 7199 for JMX)
+
+#### Networking
+- Node IPs and seed nodes  
+- Data center and rack configuration  
+- Firewall rules and VPC/subnet access  
+- JMX connectivity for `nodetool`
+
+#### Architecture
+- Replication factor and keyspace strategy  
+- Number of nodes per DC  
+- Storage type (SSD recommended)  
+- Compaction strategy (STCS, LCS, TWCS)
+
+#### Data
+- Keyspace and table schemas  
+- Partition key and clustering column design  
+- TTL usage and tombstone expectations  
+- Backup and snapshot retention policies
+
+#### Operational Guarantees
+- Consistency levels (ONE, QUORUM, ALL)  
+- Repair frequency and strategy  
+- Compaction behaviour  
+- Node failure tolerance
+
+#### Observability Metrics
+- Disk usage per node  
+- SSTable counts  
+- Read/write latency  
+- Pending compactions  
+- Tombstone warnings  
+- Repair progress  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (`cqlsh`, `nodetool`)  
+- UI (Grafana dashboards, Prometheus metrics, JMX tools)  
+:::
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-Common ways engineers use Cassandra
+How to set up credentials
+--------------
+
+# Connect to a node
+cqlsh <node_ip> -u <username> -p <password>
+
+--------------
+How to log-in via the terminal
+--------------
+
+# Validate cluster access
+nodetool status
+
+# List keyspaces
+cqlsh -e "DESCRIBE KEYSPACES;"
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify cluster topology and replication factor  
+- Gather node IPs, DC layout, and ownership contacts  
+- List keyspaces, tables, and replication strategies  
+- Validate access credentials for `cqlsh` and JMX  
+- Ensure monitoring and alerting are configured  
+- Capture backup and repair schedules  
+- Determine TA handover expectations  
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
+
+```shell
+--------------
+Key Terminal Commands
 --------------
 
 # Connect to cluster
 cqlsh <node_ip> -u <username> -p <password>
 
 # Create keyspace
-cqlsh> CREATE KEYSPACE my_keyspace WITH REPLICATION = {'class': 'NetworkTopologyStrategy', 'dc1': 3};
+CREATE KEYSPACE my_keyspace
+WITH REPLICATION = {'class': 'NetworkTopologyStrategy', 'dc1': 3};
 
 # Create table
-cqlsh> CREATE TABLE my_keyspace.users (id UUID PRIMARY KEY, name text, email text);
+CREATE TABLE my_keyspace.users (
+  id UUID PRIMARY KEY,
+  name text,
+  email text
+);
 
 # Insert data
-cqlsh> INSERT INTO my_keyspace.users (id, name, email) VALUES (uuid(), 'Alice', 'alice@example.com');
+INSERT INTO my_keyspace.users (id, name, email)
+VALUES (uuid(), 'Alice', 'alice@example.com');
 
 # Query data
-cqlsh> SELECT * FROM my_keyspace.users;
+SELECT * FROM my_keyspace.users;
 
 # Delete data
-cqlsh> DELETE FROM my_keyspace.users WHERE id=<uuid>;
+DELETE FROM my_keyspace.users WHERE id=<uuid>;
 
 # Scale cluster
-nodetool bootstrap / add new nodes to the cluster
+nodetool bootstrap
 
 # Trigger repairs
 nodetool repair <keyspace_name>
@@ -127,29 +232,58 @@ nodetool snapshot <keyspace_name>
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-* Identify keyspaces and tables to be created or modified
-* Document replication strategy and cluster scaling plan
-* Plan repair and backup schedules
-* Define what TAs need to provide for monitoring and alerting handover
-* Track node health and performance metrics
-* Include procedures for handling tombstone issues, compactions, and high disk usage
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Inspect cluster health
+nodetool status
+
+# Check keyspaces and replication
+cqlsh -e "DESCRIBE KEYSPACE <keyspace>;"
+
+# Monitor compactions and tombstones
+nodetool compactionstats
+nodetool cfstats <keyspace.table>
+
+# Check repair status
+nodetool repair <keyspace> --dry-run
+
+# Inspect node performance
+nodetool tpstats
+nodetool info
+
+# Validate table schema
+cqlsh -e "DESCRIBE TABLE <keyspace.table>;"
+
+# Identify high disk usage
+df -h
+nodetool cfstats | grep "Space used"
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom               | TLDR of Root Cause                         | What to Check                              | Action to Propose                                  |
-| --------------------- | ------------------------------------------ | ------------------------------------------ | -------------------------------------------------- |
-| Node down             | Hardware failure, network issue, JVM crash | nodetool status, system logs               | Restart node, check network, rebalance cluster     |
-| Cluster inconsistency | Missed repairs, failed writes              | nodetool repair status, hinted handoff     | Run repair, verify replication factor              |
-| Slow queries          | High cardinality, unindexed queries        | Query logs, table schema, compaction stats | Optimize queries, add indexes, adjust compaction   |
-| High disk usage       | SSTable accumulation, compaction backlog   | nodetool cfstats, disk usage per node      | Run compaction, clean up snapshots, expand storage |
-| Tombstone issues      | Excessive deletes / TTL expiry             | nodetool cfstats, read/query performance   | Tune TTL, monitor tombstones, repair cluster       |
-| Backup failures       | Snapshot or backup process misconfigured   | Backup logs, snapshot status               | Fix backup process, validate permissions           |
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| Node down | Hardware failure, network issue, JVM crash | `nodetool status`, system logs | Restart node, check network, rebalance cluster |
+| Cluster inconsistency | Missed repairs, failed writes | Repair status, hinted handoff | Run repair, verify replication factor |
+| Slow queries | High cardinality, unindexed queries | Query logs, schema, compaction stats | Optimize schema, add indexes, adjust compaction |
+| High disk usage | SSTable accumulation, compaction backlog | `nodetool cfstats`, disk usage | Run compaction, clean snapshots, expand storage |
+| Tombstone issues | Excessive deletes / TTL expiry | `nodetool cfstats`, read latency | Tune TTL, monitor tombstones, repair cluster |
+| Backup failures | Misconfigured snapshot/backup process | Backup logs, snapshot status | Fix backup config, validate permissions |

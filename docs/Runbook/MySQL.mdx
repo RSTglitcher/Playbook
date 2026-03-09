@@ -1,178 +1,276 @@
 ---
-title: "🗄️MySQL"
+title: "🗄️ MySQL"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip MySQL
-MySQL is a widely used open‑source relational database management system (RDBMS) designed for structured data storage, querying, and transactional workloads. It powers applications ranging from small internal tools to large‑scale, high‑availability production systems.
+:::tip MySQL  
+MySQL is a widely used **relational database management system (RDBMS)** designed for structured data storage, transactional workloads, and SQL‑based querying.  
+It powers applications ranging from internal tools to large‑scale production systems with replication, indexing, and high‑availability setups.  
 :::
 
-```mermaid
-MySQL
-├── Relational Database Concepts
-│   ├── Tables, Rows & Columns
-│   ├── Primary & Foreign Keys
-│   ├── Indexes & Constraints
-│   └── Joins, Views & Transactions
-├── TA Skills
-│   ├── Review Schema & Relationships
-│   ├── Validate Data Quality & Assumptions
-│   ├── Check Indexing & Query Plans
-│   └── Confirm Access, Environments & Constraints
-└── SWE Skills
-    ├── Design & Modify Schemas
-    ├── Write & Optimize Queries
-    ├── Manage Migrations & Indexes
-    └── Monitor Performance & Replication
+### Key Terms
 
-```
+- **Table:** Structured collection of rows and columns  
+- **Primary Key:** Unique identifier for a row  
+- **Foreign Key:** Relationship constraint between tables  
+- **Index:** Data structure that speeds up queries  
+- **Transaction:** Atomic unit of work (`BEGIN`, `COMMIT`, `ROLLBACK`)  
+- **Storage Engine:** InnoDB (default), MyISAM, Memory  
+- **Query Plan:** Execution strategy chosen by MySQL (`EXPLAIN`)  
+- **Replication:** Copying data from primary to replicas  
+
+### Knowing when to use **MySQL**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Structured, relational data | Unstructured or schema‑less data |
+| Strong consistency and ACID transactions | High‑throughput event ingestion |
+| OLTP workloads | Large analytical workloads (use BigQuery/Snowflake) |
+| Complex joins and constraints | Wide‑column or time‑series workloads |
+| Mature SQL ecosystem | Highly distributed NoSQL architectures |
+
+---
+
+## 📘 About / Foundations  
+_Conceptual grounding for how the platform works._
+
+### How It Works (Conceptual Model)
+
+- Data is stored in **tables** with rows and typed columns  
+- **Indexes** accelerate lookups and joins  
+- **Constraints** enforce data integrity  
+- **Transactions** ensure atomicity and consistency  
+- **Query optimizer** chooses execution plans  
+- **Storage engines** determine durability and performance characteristics  
+- **Replication** provides read scaling and failover  
+
+### System Contract
+
+MySQL enforces contracts through:
+
+- **Schema definitions** (tables, columns, constraints)  
+- **Data types** (INT, VARCHAR, DATETIME, JSON, etc.)  
+- **Indexing strategy**  
+- **Transaction isolation levels**  
+- **User permissions and roles**  
+- **Replication configuration**  
+- **Backup and restore policies**  
+
+### Key Strategies
+
+<Tabs>
+<TabItem value="schema" label="Schema Strategy">
+
+- Use normalized schemas for OLTP workloads  
+- Add foreign keys for referential integrity  
+- Use appropriate data types (avoid oversized VARCHAR)  
+- Responsibility: SWE + TA  
+- Goal: maintainable, consistent data models  
+
+</TabItem>
+
+<TabItem value="performance" label="Performance Strategy">
+
+- Use indexes for frequent filters and joins  
+- Use `EXPLAIN` to inspect query plans  
+- Avoid full table scans on large tables  
+- Responsibility: SWE  
+- Goal: predictable, efficient queries  
+
+</TabItem>
+
+<TabItem value="operations" label="Operations Strategy">
+
+- Use replication for read scaling  
+- Schedule regular backups  
+- Monitor slow query logs  
+- Responsibility: TA + Platform  
+- Goal: reliable, recoverable database operations  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- Query results (rows, columns)  
+- Schema metadata (`SHOW TABLES`, `DESCRIBE`)  
+- Query plans (`EXPLAIN`)  
+- Index usage statistics  
+- Replication status  
+- Backup files (`mysqldump`)  
 
 ---
 
 ## 🧩 Technical Skills
 
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Credentials (user/password)  
+- SSL certificates (if required)  
+- User permissions (SELECT, INSERT, UPDATE, etc.)  
+- IP allowlists or VPN access  
+
+#### Networking
+- Hostname, port (default 3306)  
+- SSH tunnel or bastion host  
+- Firewall rules  
+
+#### Architecture
+- Storage engine (InnoDB recommended)  
+- Replication topology (primary/replica)  
+- Backup and restore strategy  
+- Connection pooling  
+
+#### Data
+- Table schemas and relationships  
+- Indexing strategy  
+- Nullability and constraints  
+- Data volume and growth patterns  
+
+#### Operational Guarantees
+- Transaction isolation level  
+- Query latency expectations  
+- Replication lag tolerance  
+- Backup retention  
+
+#### Observability Metrics
+- Slow query log  
+- Buffer pool usage  
+- Connection count  
+- Replication delay  
+- Disk I/O  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (`mysql`, `mysqldump`)  
+- UI (phpMyAdmin, Adminer, cloud provider consoles)  
+:::
+
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-How to use the tool/platform as TA
+Connecting to MySQL
 --------------
 
-# Connecting to a MySQL instance
+# Connect to a MySQL instance
 mysql -h <host> -u <user> -p
 
-# Running queries
-SELECT * FROM table_name LIMIT 10;
+# List databases
+SHOW DATABASES;
 
-# Inspecting schema
+# Switch database
+USE database_name;
+
+# Inspect tables
 SHOW TABLES;
-DESCRIBE table_name;
-
-# Checking indexes
-SHOW INDEX FROM table_name;
-
-# Exporting data
-mysqldump -h <host> -u <user> <database> > backup.sql
 ```
 
 </TabItem>
+
 <TabItem value="requirements" label="Requirements">
 
-**How to formulate requirements when working with this platform**
+**How to formulate requirements when working with MySQL**
 
-- Identify the environment (dev/staging/prod) and hosting model (self‑hosted, AWS RDS, Azure MySQL, etc.)
-- Confirm access method: direct connection, SSH tunnel, VPN, bastion host
-- Clarify expected data volume and query patterns
-- Understand table relationships and business logic behind the schema
-- Capture performance expectations (latency, throughput, concurrency)
-- Determine backup, retention, and compliance requirements
-
-**Examples of use cases**
-
-- Validating data assumptions during requirements intake
-- Investigating data quality issues or mismatches
-- Supporting analytics teams with structured extracts
-- Understanding schema dependencies before engineering changes
+- Identify environment (dev/staging/prod) and hosting model (self‑hosted, RDS, Cloud SQL)  
+- Confirm connection method (direct, SSH tunnel, VPN, bastion)  
+- Clarify expected data volume and query patterns  
+- Understand table relationships and business logic  
+- Capture performance expectations (latency, concurrency)  
+- Determine backup, retention, and compliance requirements  
 
 **What a TA needs to gather**
 
-- Connection details (host, port, credentials, SSL requirements)
-- Target tables, fields, and business definitions
-- Expected outputs, filters, and edge cases
-- Known data constraints (nullability, foreign keys, uniqueness)
+- Host, port, credentials, SSL requirements  
+- Target tables and fields  
+- Expected outputs and filters  
+- Nullability and constraint rules  
+- Data quality assumptions  
 
 </TabItem>
-</Tabs>
 
----
+<TabItem value="engineering" label="Engineering">
 
-## Pre-Requisites
-
-| Action / Service       | What TA Needs to Gather / Confirm |
-|------------------------|-----------------------------------|
-| Set-up                 | MySQL client availability, version compatibility |
-| Access & Login         | Credentials, MFA, VPN, IP allowlist, bastion host details |
-| API                    | Whether MySQL will be accessed programmatically; service accounts |
-| Other tool-specific actions | Required drivers (JDBC, Python connectors), SSL certificates |
-
----
-
-## Engineering
-
-<Tabs>
-<TabItem value="skill" label="Skill">
+Common workflows and commands used by engineers when operating this platform
 
 ```shell
 --------------
-Common ways engineers use the tool/platform
+Schema & Query Operations
 --------------
 
+# Inspect schema
+DESCRIBE table_name;
+
 # Query optimization
-EXPLAIN SELECT ...;
+EXPLAIN SELECT * FROM table_name WHERE column = 'value';
 
-# Schema migrations
-ALTER TABLE table_name ADD COLUMN ...;
-
-# Creating indexes
+# Create index
 CREATE INDEX idx_name ON table_name(column);
 
-# Managing users & permissions
+# Schema migrations
+ALTER TABLE table_name ADD COLUMN new_col VARCHAR(255);
+
+# Manage users
 CREATE USER 'app'@'%' IDENTIFIED BY 'password';
 GRANT SELECT, INSERT ON db.* TO 'app'@'%';
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-- Define schema changes and migration strategy
-- Identify indexing needs based on query patterns
-- Plan for connection pooling and retry logic
-- Determine backup, replication, and failover requirements
-- Validate performance with representative datasets
+Common workflows and queries used by analysts when interpreting data.
 
-**Examples of implementation**
+```shell
+--------------
+Key Analyst Skills
+--------------
 
-- Building CRUD services backed by MySQL
-- Designing relational schemas for new features
-- Implementing ETL pipelines that read/write MySQL
-- Integrating MySQL into CI/CD for automated migrations
+# Explore data
+SELECT * FROM table_name LIMIT 20;
 
-**Engineering considerations**
+# Validate relationships
+SELECT * FROM child c
+JOIN parent p ON c.parent_id = p.id
+LIMIT 20;
 
-- Query performance and indexing strategy
-- Transaction isolation levels
-- Handling large datasets and pagination
-- Replication lag and read/write splitting
-- Storage engine choice (InnoDB vs MyISAM)
+# Check data quality
+SELECT COUNT(*) FROM table WHERE important_field IS NULL;
 
-**What a TA needs to provide for handover**
+# Inspect indexes
+SHOW INDEX FROM table_name;
 
-- Clear data definitions and business rules
-- Entity relationships and constraints
-- Expected query patterns and edge cases
-- Performance expectations and SLAs
-- Migration requirements and rollout considerations
+# Export data
+mysqldump -h <host> -u <user> <database> > backup.sql
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-:::danger
-Symptoms and issues with this platform and how to triage this:
+:::danger  
+Symptoms and issues with MySQL and how to triage:  
 :::
 
 | Symptom | TLDR of Root Cause | What to Check | Action to Propose |
 |---------|---------------------|---------------|-------------------|
-| Slow queries | Missing indexes or inefficient SQL | EXPLAIN plan, table size, index usage | Add indexes, rewrite query |
-| Locking / deadlocks | High contention or long transactions | SHOW ENGINE INNODB STATUS | Reduce transaction scope, add indexes |
-| Connection failures | Network, credentials, or max connections | Logs, firewall, `max_connections` | Request access, increase limits |
+| Slow queries | Missing indexes or inefficient SQL | `EXPLAIN`, table size, index usage | Add indexes, rewrite query |
+| Locking / deadlocks | High contention or long transactions | `SHOW ENGINE INNODB STATUS` | Reduce transaction scope, add indexes |
+| Connection failures | Network, credentials, or max connections | Logs, firewall, `max_connections` | Fix access, increase limits |
 | Replication lag | Heavy writes or slow replica | Replica status, slow queries | Optimize writes, scale replicas |
-| Data inconsistency | Application logic or missing constraints | Foreign keys, triggers, ETL jobs | Add constraints, fix ETL logic |
+| Data inconsistency | Missing constraints or ETL issues | Foreign keys, triggers, ETL jobs | Add constraints, fix ETL logic |
+| Disk full | Large tables or logs | Disk usage, binlogs | Purge logs, archive data |
+| High CPU usage | Expensive queries | Slow query log | Optimize queries, add indexes |
+

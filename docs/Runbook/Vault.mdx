@@ -1,142 +1,263 @@
 ---
-title: "🔒Vault"
+title: "🔒 Vault"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip Vault
-**HashiCorp Vault** is a secrets management and data protection platform. It securely stores, distributes, and controls access to tokens, passwords, certificates, and encryption keys. Vault solves problems around secret sprawl, access auditing, and dynamic credential generation.
+:::tip Vault  
+**HashiCorp Vault** is a secrets‑management and data‑protection platform that securely stores, distributes, and controls access to sensitive credentials such as tokens, passwords, certificates, and encryption keys. It solves problems around secret sprawl, access governance, auditing, and dynamic credential generation.  
 :::
 
-```mermaid
-Vault
-├── Secrets Management
-│   ├── KV Engine
-│   ├── Database Engine
-│   ├── PKI Engine
-│   └── Transit Engine
-├── TA Skills
-│   ├── Review & Validate Access
-│   ├── Monitor Secrets Usage
-│   ├── Audit & Policy Checks
-│   └── Failure Analysis
-└── SWE Skills
-    ├── Dynamic Secrets
-    ├── Certificates
-    ├── Encryption / Decryption
-    └── CI/CD Integration
-```
+### Key Terms
+
+- **Secrets Engine:** A pluggable backend that stores or generates secrets (KV, PKI, Database, Transit).  
+- **Policy:** A rule set defining what a token or identity can access.  
+- **Token:** A credential used to authenticate to Vault.  
+- **Lease:** A time‑bound credential issued by Vault (dynamic secrets).  
+- **Unseal:** The process of decrypting Vault’s master key to make it operational.  
+
+### Knowing when to use **Vault**
+
+| When to use | When not to use |
+|-------------|------------------|
+| Secure storage of secrets, credentials, certificates | Storing large files or application data |
+| Dynamic, short‑lived credentials for databases or cloud | When static secrets are acceptable and low‑risk |
+| Encryption/decryption without exposing keys | When you need full KMS‑level key lifecycle management |
+| Centralised access control and auditing | When secrets can be safely embedded in environment variables |
+| CI/CD secret injection | When secrets never leave a secure compute boundary |
 
 ---
 
-##  🧩 Technical Skills
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+Vault operates as a **centralised secrets broker**:
+
+- Clients authenticate (token, AppRole, OIDC, Kubernetes auth).  
+- Vault evaluates **policies** to determine access.  
+- Secrets engines either **store** secrets (KV) or **generate** them dynamically (Database, PKI).  
+- All operations are logged via **audit devices**.  
+- Vault encrypts all data at rest and in transit.  
+- Vault must be **unsealed** before use (Shamir key shares).  
+
+### System Contract
+
+Vault guarantees:
+
+- **Confidentiality:** Secrets encrypted at rest and in transit.  
+- **Access Control:** Policies define who can read/write which paths.  
+- **Auditability:** Every request is logged.  
+- **Dynamic Secrets:** Time‑bound credentials with automatic revocation.  
+- **Encryption as a Service:** Transit engine for cryptographic operations.  
+
+Vault does **not** guarantee:
+
+- Application‑level secret rotation  
+- Automatic policy correctness  
+- High availability unless configured  
+
+### Key Strategies
+
+- Use **AppRole or OIDC** instead of static tokens.  
+- Prefer **dynamic secrets** over long‑lived credentials.  
+- Enforce **short TTLs** and automatic rotation.  
+- Use **namespaces** for multi‑team isolation.  
+- Enable **audit logs** early and monitor them.  
+- Keep Vault **unseal keys** secure and distributed.  
+
+### What Results Normally Look Like
+
+- JSON responses containing secret data or metadata  
+- Lease IDs and TTLs for dynamic secrets  
+- Policy evaluation logs  
+- Audit entries for every request  
+- Error messages for permission or path issues  
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Vault token, AppRole credentials, or OIDC login  
+- RBAC policies for read/write/admin  
+- TLS certificates for secure communication  
+
+#### Networking
+- Vault cluster URL  
+- Firewall/VPN access  
+- Load balancer or HA setup  
+
+#### Architecture
+- Enabled secrets engines (KV, PKI, Database, Transit)  
+- Storage backend (Consul, Raft)  
+- Unseal method (Shamir, auto‑unseal)  
+
+#### Data
+- Secret paths and naming conventions  
+- TTLs, leases, and rotation rules  
+- Versioning for KV v2  
+
+#### Operational Guarantees
+- HA mode enabled  
+- Backup/restore strategy  
+- Seal/unseal procedures  
+
+#### Observability Metrics
+- Seal status  
+- Token usage  
+- Lease counts  
+- Latency and request volume  
+- Audit log health  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (`vault` CLI)  
+- UI (Vault Web UI)  
+:::
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-How to use Vault as a TA
+How to set up credentials
 --------------
 
-# Login and validate Vault
+# Login with token
 vault login <token>
+
+# Login with AppRole
+vault write auth/approle/login \
+    role_id="<role_id>" \
+    secret_id="<secret_id>"
+
+--------------
+How to log in via the terminal
+--------------
+
 vault status
 vault auth list
 vault secrets list
-
-# Inspect secrets and policies
-vault read <path>
-vault policy list
-vault audit list
-vault token lookup
-
-# Monitor usage and validate setup
-vault kv list <path>
-vault read <path>
-vault token revoke <token>
-vault operator unseal -status
 ```
 
 </TabItem>
+
 <TabItem value="requirements" label="Requirements">
 
 **How to formulate requirements when working with Vault**
 
-* Identify secrets engines needed (KV, database, PKI, transit)
-* Determine teams, owners, and access policies for each engine
-* Define secrets lifecycle expectations (rotation, expiry, revocation)
-* Gather details of applications or services that will consume secrets
-* Understand audit, compliance, and reporting requirements
+- Identify which secrets engines are required (KV, PKI, Database, Transit).  
+- Determine secret ownership and access policies.  
+- Clarify lifecycle expectations (rotation, TTL, revocation).  
+- Understand which applications/services will consume secrets.  
+- Capture compliance and audit requirements.  
+- Confirm environment differences (dev/stage/prod).  
+
+**Examples of use cases**
+
+- Storing application credentials  
+- Generating short‑lived DB credentials  
+- Issuing TLS certificates  
+- Encrypting/decrypting sensitive data  
+- Injecting secrets into CI/CD pipelines  
+
+**What a TA needs to gather**
+
+- Secret paths and naming conventions  
+- Policies and role definitions  
+- Authentication method (token, AppRole, OIDC)  
+- TTLs, leases, and rotation rules  
+- Audit requirements and reporting expectations  
 
 </TabItem>
-</Tabs>
 
----
+<TabItem value="engineering" label="Engineering">
 
-## Pre-Requisites
-
-| Action / Service            | What TA Needs to Gather / Confirm                             |
-| --------------------------- | ------------------------------------------------------------- |
-| Set-up                      | Vault cluster provisioned (self-hosted or SaaS)               |
-| Access & Login              | Vault token or AppRole credentials                            |
-| API                         | Enable Vault API access if programmatic use is needed         |
-| Other tool specific actions | Required secrets engines enabled (KV, database, PKI, transit) |
-
----
-
-## Engineering
-
-<Tabs>
-<TabItem value="skill" label="Skill">
+Common workflows and commands used by engineers when operating this tool
 
 ```shell
 --------------
-Common ways engineers use Vault
+Key Terminal Commands
 --------------
 
-# Dynamic database credentials
+# Read a secret
+vault read secret/data/app/config
+
+# Write a secret
+vault write secret/data/app/config value="example"
+
+# Dynamic DB credentials
 vault read database/creds/<role>
 
-# PKI certificates
+# PKI certificate issuance
 vault write pki/issue/<role> common_name="example.com"
 
 # Encrypt/decrypt data
-vault write transit/encrypt/<key> plaintext=$(base64 <<< "sensitive data")
-vault write transit/decrypt/<key> ciphertext=<ciphertext>
+vault write transit/encrypt/mykey plaintext=$(base64 <<< "secret")
+vault write transit/decrypt/mykey ciphertext=<cipher>
 
 # Rotate secrets
 vault lease revoke <lease_id>
-
-# CI/CD integration
-export VAULT_TOKEN=<token>
-vault kv get secret/<app>/<env>
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-* Map which secrets each application/service requires and which engine to use
-* Plan access policies, roles, and namespaces for teams
-* Define lifecycle and rotation strategies for each secret
-* Integrate secrets retrieval into CI/CD pipelines
-* Ensure observability: logging, alerting, and audit trails
-* Document TA handover: provide spec of secrets engines, policies, and intended use for engineering teams
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Validate Vault health
+vault status
+
+# Inspect policies
+vault policy list
+vault policy read <policy_name>
+
+# Audit token usage
+vault token lookup <token>
+
+# Check secrets engine configuration
+vault secrets list
+vault read <engine>/config
+
+# Investigate failures
+vault audit list
+vault operator unseal -status
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom                       | TLDR of Root Cause                         | What to Check                      | Action to Propose                               |
-| ----------------------------- | ------------------------------------------ | ---------------------------------- | ----------------------------------------------- |
-| Vault sealed / unresponsive   | Vault not unsealed or service down         | `vault status`, pod/service logs   | Unseal Vault, restart service                   |
-| Authentication fails          | Token expired, AppRole misconfigured       | Check token TTL, role policies     | Renew token, fix AppRole configuration          |
-| Secrets not accessible        | Policy misconfigured or path disabled      | `vault policy read <name>`         | Adjust policies, enable required secrets engine |
-| Dynamic secrets not generated | Database or external service misconfigured | Engine configuration, lease status | Fix secrets engine, regenerate credentials      |
-| High latency or slow reads    | Vault overloaded or network issues         | Check server metrics, networ       |                                                 |
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|---------|---------------------|---------------|-------------------|
+| Vault sealed / unavailable | Vault not unsealed or service down | `vault status`, pod logs | Unseal Vault, restart service |
+| Authentication fails | Token expired or AppRole misconfigured | Token TTL, role policies | Renew token, fix AppRole |
+| Secrets not accessible | Policy denies access | `vault policy read <name>` | Adjust policy or enable engine |
+| Dynamic secrets not generated | Engine misconfigured | Engine config, lease status | Fix engine, regenerate creds |
+| High latency / slow reads | Vault overloaded or network issue | Metrics, network path | Scale Vault, fix network |
+| “permission denied” errors | Wrong path or missing capability | Policy capabilities | Update policy with correct rules |
+| Unseal keys lost | Operational error | Unseal key backups | Restore from backup or re‑init (last resort) |
+

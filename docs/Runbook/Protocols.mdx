@@ -1,172 +1,312 @@
 ---
-title: "Protocols"
+title: "🔌 Protocols"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-Protocols define **rules and conventions for communication between systems or components** in software engineering.
+Protocols define the **rules, formats, and behavioural contracts** that allow systems to communicate reliably across networks.
+They specify *how data is structured, transmitted, secured, acknowledged, and interpreted* between components.
 :::
 
-Typical examples include:
-- HTTP / HTTPS for web communication
-- TCP / UDP for transport-level communication
-- WebSockets for real-time bidirectional messaging
+---
 
+## **When to Use**
 
-## HTTP Methods
+- Systems must communicate across a network boundary
+- You need predictable, standardised message formats
+- Reliability, ordering, or security guarantees matter
+- Multiple teams or platforms must interoperate
+- You need request–response, streaming, or real‑time messaging
 
-| Method | Meaning / Purpose                                      |
-|--------|--------------------------------------------------------|
-| GET    | Retrieve a resource; should not modify server state    |
-| POST   | Create a new resource or submit data to a server       |
-| PUT    | Update an existing resource or create it if it doesn’t exist |
-| PATCH  | Apply partial modifications to a resource             |
-| DELETE | Remove a resource                                      |
-| HEAD   | Retrieve headers only, no body                        |
-| OPTIONS| Discover available HTTP methods for a resource        |
-| CONNECT| Establish a tunnel to a server (used for proxies)     |
-| TRACE  | Echo the received request for diagnostic purposes      |
+## **When Not to Use**
 
-
-## HTTP Status Codes
-
-| Status Code Class | Meaning / Description                                                                 |
-|------------------|--------------------------------------------------------------------------------------|
-| 1xx (Informational) | Request received, continuing process                                                |
-| 2xx (Success)       | Action successfully received, understood, and accepted (e.g., 200 OK, 201 Created) |
-| 3xx (Redirection)   | Further action needed to complete request (e.g., 301 Moved Permanently, 302 Found) |
-| 4xx (Client Error)  | Request contains an error (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found) |
-| 5xx (Server Error)  | Server failed to fulfill a valid request (e.g., 500 Internal Server Error)         |
-
+- Components run in the same memory space
+- Latency requirements exceed protocol overhead
+- You need device‑specific or proprietary signalling
+- The system is purely internal and can use direct function calls
 
 ---
 
-## Benefit / What problem does it solve?
+## 🎯 What Problem Does This Solve?
 
-Using Protocols enables:
+Protocols solve the foundational problems of distributed systems:
 
-- **Interoperability:** Different systems and platforms can communicate reliably
-- **Consistency:** Messages are interpreted in a predictable, agreed-upon format
-- **Control:** Provides mechanisms for error handling, sequencing, and flow control
+- **Interoperability** — different systems can communicate predictably
+- **Reliability** — messages can be delivered, ordered, retried, or acknowledged
+- **Security** — data can be encrypted, authenticated, and protected in transit
+- **Consistency** — shared rules prevent misinterpretation of messages
+- **Scalability** — standardised communication enables distributed architectures
 
----
-
-## When to Use
-
-**Use Protocols when:**
-
-- Multiple systems need to communicate over a network
-- Communication reliability, ordering, or format is important
-- You need to define standard interfaces for integration
-
-**Typical examples:**
-
-- Web applications interacting with backend services (HTTP/HTTPS)
-- Real-time dashboards and live notifications (WebSockets)
-- IoT devices communicating with a central server (MQTT, CoAP)
+This is the backbone of all networked computing.
 
 ---
 
-## When Not to Use
+## 🧠 Conceptual Model
 
-**Avoid Protocols when:**
+### **Core Components**
 
-- Components run in the same memory space and can use direct function calls
-- Performance is extremely latency-sensitive and protocol overhead is unacceptable
-- Low-level device-specific communication that bypasses standard protocols
+- **Transport Layer (TCP/UDP)**
+  Defines delivery guarantees, ordering, and connection behaviour.
+
+- **Application Layer (HTTP, WebSockets, MQTT, gRPC)**
+  Defines semantics, message patterns, and interaction models.
+
+- **Security Layer (TLS/SSL)**
+  Encrypts and authenticates communication.
+
+- **Serialization Layer (JSON, XML, Protobuf)**
+  Defines how data is encoded and decoded.
+
+- **Connection Model**
+  Request–response, streaming, publish–subscribe, or bidirectional.
 
 ---
 
-## Key Terminology & Definitions
+### **Axes of Variation**
 
-- **Protocol** – A set of rules defining how data is formatted, transmitted, and interpreted
-- **Transport Layer** – The layer responsible for end-to-end communication (TCP, UDP)
-- **Application Layer** – Defines higher-level communication semantics (HTTP, WebSockets)
-- **Handshake** – Initial negotiation between communicating parties to establish connection
-- **Encryption / Security** – Mechanisms to protect data in transit (TLS, SSL)
+- **Reliability:** best‑effort (UDP) → guaranteed delivery (TCP)
+- **Latency:** low‑latency (UDP/WebSockets) → higher overhead (HTTPS)
+- **Directionality:** unidirectional → bidirectional → full‑duplex
+- **Statefulness:** stateless (HTTP) → stateful (WebSockets)
+- **Security:** plaintext → encrypted (TLS)
+- **Message Format:** text (JSON) → binary (Protobuf)
 
 ---
 
-## Variants / Types
+## **Typical Lifecycle or Flow**
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Protocol
+    participant Server
+
+    Client->>Protocol: Format request (headers, payload)
+    Protocol->>Server: Transmit over TCP/UDP
+    Server->>Protocol: Process + generate response
+    Protocol->>Client: Return status + payload
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What guarantees the protocol provides (ordering, retries, encryption)
+- What becomes a bottleneck under load (latency, packet loss, TLS overhead)
+- How message formats evolve and versioning is handled
+- Whether error semantics are predictable and actionable
+- How the protocol behaves when traffic spikes or connections churn
+:::
+
+### **What happens when:**
+
+- **Data grows** → payload size impacts latency and throughput
+- **Traffic increases** → connection limits, queueing, and congestion appear
+- **Concurrency rises** → TCP handshake overhead or WebSocket scaling issues
+- **Resources become constrained** → packet loss, timeouts, TLS failures
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Protocol** | A set of rules for communication between systems |
+| **Transport Layer** | Responsible for delivery, ordering, and reliability |
+| **Application Layer** | Defines semantics (HTTP, WebSockets, MQTT) |
+| **Handshake** | Initial negotiation to establish a connection |
+| **TLS/SSL** | Encryption and authentication for secure communication |
+| **Idempotency** | Safe retries without unintended side effects |
+| **Serialization** | Encoding data into a transferable format |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
+
 <TabItem value="http" label="HTTP / HTTPS">
 
-- **Key characteristics:** Request-response model, stateless by default, widely supported
-- **Example tools / libraries:** cURL, Postman, Axios, Fetch API
-- **Primary purpose / benefit:** Standard for web communication; HTTPS adds encryption
+### HTTP / HTTPS
+
+**Purpose**
+Standard protocol for web communication using request–response semantics.
+
+**Key Characteristics**
+- Stateless
+- Human‑readable
+- Widely supported
+- HTTPS adds encryption and identity
+
+**Behaviour**
+Client sends a request → server returns a status code + payload.
+
+**Trade-offs**
+- Simple and universal
+- Higher latency than binary protocols
+- Statelessness requires additional coordination
+
+---
+
+### **HTTP Methods**
+
+| Method | Meaning |
+|--------|---------|
+| GET | Retrieve a resource (safe, idempotent) |
+| POST | Create or submit data |
+| PUT | Replace or create a resource |
+| PATCH | Partial update |
+| DELETE | Remove a resource |
+| HEAD | Headers only |
+| OPTIONS | Discover supported methods |
+| CONNECT | Establish a tunnel |
+| TRACE | Diagnostic echo |
+
+### **HTTP Status Codes**
+
+| Class | Meaning |
+|--------|---------|
+| 1xx | Informational |
+| 2xx | Success (200 OK, 201 Created) |
+| 3xx | Redirection (301, 302) |
+| 4xx | Client error (400, 401, 404) |
+| 5xx | Server error (500, 503) |
 
 </TabItem>
-<TabItem value="tcp-udp" label="TCP / UDP">
 
-- **Key characteristics:** TCP is connection-oriented and reliable; UDP is connectionless and low-latency
-- **Example tools / libraries:** Sockets API, Netcat, Wireshark
-- **Primary purpose / benefit:** Enables transport-layer communication with reliability (TCP) or speed (UDP)
+<TabItem value="tcpudp" label="TCP / UDP">
+
+### TCP / UDP
+
+**Purpose**
+Transport‑layer communication with different guarantees.
+
+**Key Characteristics**
+- **TCP:** reliable, ordered, connection‑oriented
+- **UDP:** fast, connectionless, best‑effort
+
+**Behaviour**
+TCP ensures delivery; UDP sends packets without guarantees.
+
+**Trade-offs**
+- TCP: reliable but slower
+- UDP: fast but lossy
 
 </TabItem>
+
 <TabItem value="websocket" label="WebSockets">
 
-- **Key characteristics:** Full-duplex, bidirectional communication over a single TCP connection
-- **Example tools / libraries:** Socket.IO, ws (Node.js), native browser WebSocket API
-- **Primary purpose / benefit:** Real-time messaging for dashboards, notifications, and chat systems
+### WebSockets
+
+**Purpose**
+Real‑time, bidirectional communication over a single persistent connection.
+
+**Key Characteristics**
+- Full‑duplex
+- Low latency
+- Stateful
+
+**Behaviour**
+Client and server can send messages at any time.
+
+**Trade-offs**
+- Requires connection management
+- Harder to scale horizontally
 
 </TabItem>
-<TabItem value="iot-protocols" label="IoT / Lightweight Protocols">
 
-- **Key characteristics:** Lightweight, optimized for low-bandwidth or constrained devices
-- **Example tools / libraries:** MQTT, CoAP
-- **Primary purpose / benefit:** Efficient communication for IoT and embedded systems
+<TabItem value="iot" label="MQTT / IoT Protocols">
+
+### MQTT / CoAP
+
+**Purpose**
+Lightweight communication for constrained devices.
+
+**Key Characteristics**
+- Publish–subscribe
+- Low bandwidth
+- Minimal overhead
+
+**Behaviour**
+Optimised for intermittent connectivity.
+
+**Trade-offs**
+- Limited feature set
+- Requires broker infrastructure
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Key Strategies
+## 🧩 System Interactions
 
-<Tabs>
-<TabItem value="reliable-comm" label="Reliable Communication">
+:::info How a TA Understands the System
+- How protocols interact with OS networking, load balancers, proxies, and TLS termination
+- How message size, connection count, and latency affect performance
+- What becomes a bottleneck under pressure (handshakes, packet loss, queueing)
+:::
 
-- Ensure ordered delivery and error recovery (TCP, acknowledgment patterns)
-- Responsibility: Guarantee message delivery between systems
-- Focus / goal: Prevent data loss and maintain system integrity
+### Local Systems
 
-</TabItem>
-<TabItem value="low-latency" label="Low-Latency / Real-Time Communication">
+- OS networking stack
+- NIC throughput
+- TLS libraries
+- Serialization/deserialization
+- CPU for encryption
+- Memory for connection buffers
 
-- Use protocols optimized for speed, possibly at the cost of reliability (UDP, WebSockets)
-- Responsibility: Enable real-time responsiveness
-- Focus / goal: Fast, efficient communication for real-time applications
+### Remote Systems
 
-</TabItem>
-<TabItem value="secure-comm" label="Secure Communication">
+- Load balancers
+- API gateways
+- Reverse proxies
+- Data centers / regions
 
-- Encrypt data in transit using TLS/SSL or similar mechanisms
-- Responsibility: Protect confidentiality, integrity, and authenticity of data
-- Focus / goal: Prevent eavesdropping and tampering
+### Questions to ask during reviews or incidents
 
-</TabItem>
-</Tabs>
-
----
-
-## How to Interact With It
-
-- **Access pattern:** Request-response, publish-subscribe, streaming, or bidirectional
-- **Operations / Interfaces:** HTTP methods (GET, POST, PUT, DELETE), WebSocket messages, TCP/UDP sockets
-- **Interaction model:** Direct client-server calls, message brokers, or peer-to-peer
+- Is the protocol appropriate for the workload?
+- Are retries/idempotency implemented correctly?
+- Is TLS configured securely?
+- Are we hitting connection or handshake limits?
+- Is packet loss or congestion degrading performance?
 
 ---
 
-## What Do Results Normally Look Like
+## 💥 Outputs / Results
 
-- Structured data (JSON, XML, Protobuf) delivered reliably or in real-time
-- Acknowledgments, error codes, or retransmissions depending on the protocol
-- Encrypted traffic when using secure protocols (HTTPS / TLS)
+:::note Special Considerations
+Protocols define *how* results are formatted, transmitted, and interpreted.
+:::
 
-**Notes:**
-- Choice of protocol affects latency, throughput, reliability, and security
-- Many protocols can be layered (e.g., WebSockets over TCP, HTTPS over TCP/IP)
-- Proper error handling and retry strategies are essential for robust communication
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Structured Response** | JSON/XML/Protobuf payload delivered successfully |
+| **Status Codes / ACKs** | Clear indication of success or partial success |
+| **Encrypted Traffic** | Secure, authenticated communication |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| **Timeouts** | Network congestion or server overload |
+| **Packet Loss** | UDP unreliability or network issues |
+| **TLS Errors** | Certificate mismatch or handshake failure |
+| **4xx/5xx Errors** | Client or server protocol violations |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Communication Patterns
+- Messaging Theory
+- API Design (OpenAPI)
+- Networking Fundamentals
+- Load Balancing
+- Serialization Formats (JSON, Protobuf)

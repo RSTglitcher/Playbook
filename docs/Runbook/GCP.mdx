@@ -1,186 +1,265 @@
 ---
-title: "☁️Google Cloud Platform"
+title: "☁️ Google Cloud Platform (GCP)"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip Google Cloud Platform (GCP)
-GCP is a **cloud platform** providing a wide range of services for computing, storage, analytics, and messaging. Key services include **BigQuery**, **Pub/Sub**, **BigTable**, **Cloud Storage**, **Compute Engine**, and more.
+:::tip Google Cloud Platform (GCP)  
+GCP is a **cloud platform** providing compute, storage, analytics, and messaging services.  
+This runbook focuses on key data and messaging services used by engineers and monitored by TAs: **BigQuery, BigTable, Cloud Storage, and Pub/Sub**.  
 :::
 
-```mermaid
-GCP
-├── Data Services
-│ ├── BigQuery
-│ ├── BigTable
-│ └── Cloud Storage
-├── Messaging Services
-│ └── Pub/Sub
-├── TA Skills
-│ ├── Inspect datasets, tables, topics, subscriptions
-│ ├── Validate IAM roles and access
-│ ├── Check scaling, quotas, and metrics
-│ └── Verify network/security config
-└── SWE Skills
-├── Run queries and load/export data
-├── Insert/query/update BigTable via `cbt`
-├── Publish/subscription to Pub/Sub
-└── Provision or modify resources (datasets, tables, topics)
-```
+### Key Terms
+
+- **Project:** Logical boundary for resources, billing, IAM  
+- **Service Account:** Identity used by applications to access GCP services  
+- **BigQuery Dataset:** Logical container for tables  
+- **BigTable Instance:** Clustered NoSQL wide‑column store  
+- **Pub/Sub Topic:** Channel for publishing messages  
+- **Subscription:** Consumer endpoint for Pub/Sub messages  
+- **Cloud Storage Bucket:** Object storage container  
+- **IAM Role:** Permission set assigned to users or service accounts  
+
+### Knowing when to use **GCP**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Large‑scale analytics (BigQuery) | OLTP workloads requiring transactions |
+| High‑throughput messaging (Pub/Sub) | Complex routing or ordering guarantees |
+| Wide‑column NoSQL workloads (BigTable) | Small datasets or relational joins |
+| Object storage for logs, files, ML artifacts | Low‑latency block storage |
+| Serverless, autoscaling data pipelines | Real‑time compute (use Databricks/Spark) |
 
 ---
 
-## Pre-Requisites
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
 
-| Action / Service       | What TA Needs to Gather / Confirm |
-|------------------------|----------------------------------|
-| GCP Account & Project  | Project name/ID, billing status, organization/folder context, project owner |
-| Service Accounts       | Names of service accounts in use, roles/permissions granted, key management practices, expiration/rotation policies |
-| IAM Roles & Permissions| What roles are assigned to users and service accounts, are roles scoped appropriately, any custom roles to be aware of |
-| APIs & Enabled Services| Which APIs are enabled per project (BigQuery, Pub/Sub, BigTable, Cloud Storage, Secret Manager, etc.) |
-| BigQuery               | Dataset names, table schemas, partitioning/clustering setup, ownership, access patterns |
-| Pub/Sub                | Topics and subscriptions, consumer details, retention policies, dead-letter queues, alerting configuration |
-| BigTable               | Table names, column families, cluster configuration, node count/scaling rules, ownership |
-| Networking / Connectivity | VPCs, private endpoints, VPNs, firewall rules, network owners |
-| Logging & Observability | Cloud Logging / Monitoring enabled for services, dashboards, alerting thresholds, responsible teams |
-| Secrets & Credentials  | Secret Manager locations, access policies, rotation schedules |
-| Environment Variables  | Required env vars for SDKs or scripts (e.g., GOOGLE_PROJECT, GOOGLE_APPLICATION_CREDENTIALS) |
+### How It Works (Conceptual Model)
 
----
+- GCP resources live inside **projects**, governed by IAM  
+- **BigQuery** is a serverless analytics warehouse  
+- **BigTable** is a horizontally scalable NoSQL database  
+- **Pub/Sub** is a global messaging system for event ingestion  
+- **Cloud Storage** provides durable object storage  
+- Services integrate through IAM, VPC networking, and APIs  
+- Monitoring and logging are provided via **Cloud Monitoring** and **Cloud Logging**  
 
-## Engineering
+### System Contract
+
+GCP enforces contracts through:
+
+- **IAM roles and policies**  
+- **Project and folder hierarchy**  
+- **Service APIs** (must be enabled per project)  
+- **Resource‑specific schemas** (BigQuery tables, BigTable column families)  
+- **Pub/Sub retention and delivery settings**  
+- **Cloud Storage bucket policies**  
+
+### Key Strategies
 
 <Tabs>
-<TabItem value="bigquery" label="BigQuery">
+<TabItem value="bigquery" label="BigQuery Strategy">
 
-<Tabs>
-<TabItem value="ta-bq" label="TA Skills">
-
-```shell
-# List datasets in project
-bq ls
-
-# Inspect table metadata
-bq show PROJECT_ID:DATASET.TABLE
-
-# Check query jobs and costs
-bq ls -j --max_results=10
-
-# Validate dataset ownership and labels
-bq show --format=prettyjson PROJECT_ID:DATASET
-````
+- Use partitioning and clustering for large tables  
+- Apply table expiration policies for cost control  
+- Use IAM at dataset level for access boundaries  
+- Responsibility: SWE + TA  
+- Goal: scalable, cost‑efficient analytics  
 
 </TabItem>
-<TabItem value="swe-bq" label="SWE Skills">
+
+<TabItem value="pubsub" label="Pub/Sub Strategy">
+
+- Use pull subscriptions for worker pools  
+- Configure DLQs for failure handling  
+- Tune ack deadlines and retry policies  
+- Responsibility: SWE + TA  
+- Goal: reliable, high‑throughput messaging  
+
+</TabItem>
+
+<TabItem value="bigtable" label="BigTable Strategy">
+
+- Design row keys to avoid hotspots  
+- Scale nodes based on throughput  
+- Use replication for availability  
+- Responsibility: SWE + Platform  
+- Goal: predictable performance and durability  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- BigQuery query results, job logs, and cost breakdowns  
+- Pub/Sub backlog metrics and subscription details  
+- BigTable table metadata and cluster performance  
+- Cloud Storage bucket listings and object metadata  
+- IAM policy bindings  
+- Cloud Monitoring dashboards  
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Project access (IAM)  
+- Service account roles and key rotation  
+- Secret Manager usage  
+- Organization/folder policies  
+
+#### Networking
+- VPCs, subnets, firewall rules  
+- Private Service Connect endpoints  
+- VPNs or interconnects  
+- Regional vs global service endpoints  
+
+#### Architecture
+- Project hierarchy (org → folder → project)  
+- BigQuery datasets and table design  
+- BigTable cluster configuration  
+- Pub/Sub topics and subscriptions  
+- Cloud Storage bucket layout  
+
+#### Data
+- Table schemas and partitioning  
+- BigTable column families  
+- Pub/Sub message formats  
+- Storage locations (multi‑region vs region)  
+
+#### Operational Guarantees
+- BigQuery SLAs and quotas  
+- Pub/Sub delivery semantics (at‑least‑once)  
+- BigTable consistency model  
+- Cloud Storage durability  
+
+#### Observability Metrics
+- BigQuery job performance  
+- Pub/Sub backlog and ack latency  
+- BigTable CPU, storage, and node health  
+- Cloud Storage request metrics  
+- IAM audit logs  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (`gcloud`, `bq`, `cbt`)  
+- UI (GCP Console, Cloud Monitoring, Logging)  
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
 
 ```shell
-# Run a query
+--------------
+How to set up credentials
+--------------
+
+# Authenticate with GCP
+gcloud auth login
+
+# Set project
+gcloud config set project <PROJECT_ID>
+
+# Validate identity
+gcloud auth list
+
+--------------
+How to log-in via the terminal
+--------------
+
+# List enabled services
+gcloud services list
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify datasets, tables, topics, subscriptions, or instances in scope  
+- Confirm IAM roles for users and service accounts  
+- Validate enabled APIs (BigQuery, Pub/Sub, BigTable, Storage)  
+- Confirm network access (VPC, firewall rules, endpoints)  
+- Determine retention, partitioning, and scaling expectations  
+- Establish TA expectations for monitoring and triage  
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# BigQuery: Run a query
 bq query --use_legacy_sql=false 'SELECT COUNT(*) FROM dataset.table'
 
-# Export data to Cloud Storage
-bq extract --destination_format CSV dataset.table gs://bucket/file.csv
+# BigTable: Insert data
+cbt set TABLE_NAME ROW_KEY cf:col value
 
-# Load data from Cloud Storage
-bq load --source_format CSV dataset.table gs://bucket/file.csv schema.json
-```
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="pubsub" label="Pub/Sub">
-
-<Tabs>
-<TabItem value="ta-ps" label="TA Skills">
-
-```shell
-# List topics
-gcloud pubsub topics list
-
-# List subscriptions
-gcloud pubsub subscriptions list
-
-# Inspect topic and subscription configuration
-gcloud pubsub topics describe TOPIC_NAME
-gcloud pubsub subscriptions describe SUBSCRIPTION_NAME
-
-# Check IAM policies and retry/backlog settings
-gcloud pubsub subscriptions get-iam-policy SUBSCRIPTION_NAME
-```
-
-</TabItem>
-<TabItem value="swe-ps" label="SWE Skills">
-
-```shell
-# Publish message
+# Pub/Sub: Publish a message
 gcloud pubsub topics publish TOPIC_NAME --message "Hello World"
 
-# Pull messages from subscription
-gcloud pubsub subscriptions pull SUBSCRIPTION_NAME --limit=10 --auto-ack
-
-# Create topic/subscription
-gcloud pubsub topics create TOPIC_NAME
-gcloud pubsub subscriptions create SUBSCRIPTION_NAME --topic TOPIC_NAME
-
-# Delete topic/subscription
-gcloud pubsub topics delete TOPIC_NAME
-gcloud pubsub subscriptions delete SUBSCRIPTION_NAME
+# Cloud Storage: Upload a file
+gsutil cp file.txt gs://bucket/
 ```
 
 </TabItem>
-</Tabs>
 
-</TabItem>
-<TabItem value="bigtable" label="BigTable">
+<TabItem value="analyst" label="Analyst">
 
-<Tabs>
-<TabItem value="ta-bt" label="TA Skills">
+Common workflows and queries used by analysts when interpreting data from this tool.
 
 ```shell
-# List BigTable instances
-gcloud bigtable instances list
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
 
-# Inspect tables and clusters
+# Inspect BigQuery table schema
+bq show --schema --format=prettyjson dataset.table
+
+# Check BigQuery job history
+bq ls -j --max_results=20
+
+# Inspect Pub/Sub subscription backlog
+gcloud pubsub subscriptions describe SUBSCRIPTION_NAME
+
+# Inspect BigTable tables
 gcloud bigtable tables list --instance INSTANCE_NAME
 
-# Review IAM permissions for instance
-gcloud bigtable instances get-iam-policy INSTANCE_NAME
-
-# Check replication and performance metrics
+# Explore Cloud Storage bucket
+gsutil ls gs://bucket/
 ```
 
 </TabItem>
-<TabItem value="swe-bt" label="SWE Skills">
 
-```shell
-# Create a BigTable instance
-gcloud bigtable instances create INSTANCE_NAME --cluster=CLUSTER_NAME --cluster-zone=ZONE --display-name="Display Name" --instance-type=PRODUCTION
-
-# Create table
-gcloud bigtable tables create TABLE_NAME --instance INSTANCE_NAME
-
-# Insert data using cbt
-cbt set TABLE_NAME ROW_KEY COLUMN_FAMILY:QUALIFIER VALUE
-
-# Read data
-cbt lookup TABLE_NAME ROW_KEY
-```
-
-</TabItem>
-</Tabs>
-
-</TabItem>
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom              | TLDR of Root Cause                          | What to Check                           | Action to Propose                          |
-| -------------------- | ------------------------------------------- | --------------------------------------- | ------------------------------------------ |
-| BigQuery query fails | SQL error or insufficient permissions       | Query syntax, dataset access            | Fix query, adjust IAM                      |
-| Pub/Sub message lost | Subscription misconfigured or consumer down | Subscription config, consumer logs      | Reconfigure subscription, restart consumer |
-| BigTable slow reads  | Hotspot or overloaded cluster               | Table splits, cluster size              | Reshard table, scale cluster               |
-| IAM access denied    | Missing roles or policies                   | `gcloud iam` policies, project bindings | Adjust IAM roles, grant permissions        |
-| API quota exceeded   | Too many requests                           | Quotas, logs                            | Request quota increase, throttle requests  |
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| BigQuery query fails | SQL error or insufficient permissions | Query syntax, IAM roles | Fix SQL, adjust IAM |
+| Pub/Sub message loss | Misconfigured subscription or consumer down | Subscription config, consumer logs | Fix subscription, restart consumer |
+| BigTable slow reads | Hotspot or insufficient nodes | Row key design, cluster size | Redesign keys, scale cluster |
+| IAM access denied | Missing roles or policies | IAM bindings | Grant required roles |
+| API quota exceeded | Too many requests | Quotas, logs | Request increase, throttle |
+| Cloud Storage access denied | Bucket policy or missing permissions | IAM + bucket ACLs | Fix IAM, update bucket policy |

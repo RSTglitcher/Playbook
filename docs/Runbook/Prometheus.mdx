@@ -1,135 +1,321 @@
 ---
-title: "🔥Prometheus"
+title: "📡 Prometheus"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip Prometheus
-**Prometheus** is an open-source monitoring and alerting platform designed for collecting time-series metrics from applications and infrastructure. It enables querying, visualization (often via Grafana), and automated alerting.
+:::tip Prometheus  
+Prometheus is a **metrics collection and monitoring system** designed for reliability, dimensional data, and powerful querying via PromQL.  
+It solves problems related to **time‑series metrics, alerting, service monitoring, and SRE observability**.  
 :::
 
+### Key Terms
+
+- **Metric:** A time‑series identified by a name and labels  
+- **Label:** Key/value metadata attached to metrics  
+- **Scrape:** Prometheus pulling metrics from a target  
+- **Target:** An endpoint exposing metrics (e.g., `/metrics`)  
+- **Exporter:** A service that exposes metrics in Prometheus format  
+- **PromQL:** Query language for Prometheus  
+- **Alertmanager:** Component that routes alerts to Slack, PagerDuty, email  
+- **Retention:** How long metrics are stored locally  
+
+### Knowing when to use **Prometheus**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Service‑level metrics (CPU, latency, errors, throughput) | Log search (use Loki/Kibana) |
+| Alerting on thresholds or SLOs | Long‑term analytics (use BigQuery/Snowflake) |
+| Kubernetes cluster monitoring | High‑cardinality event data |
+| Dimensional metrics with labels | Distributed tracing (use Jaeger/Tempo) |
+| SRE/SLO monitoring | Business dashboards (use Looker/PowerBI) |
+
 ---
 
-##  🧩 Technical Skills
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
 
-```mermaid
-Prometheus
-├── Metrics Collection
-│   ├── Scrape Targets
-│   ├── Exporters
-│   ├── Service Discovery
-│   └── TSDB Storage
-├── TA Skills
-│   ├── Review Metrics & Alerts
-│   ├── Validate Scrape & Retention
-│   ├── Inspect Dashboards & Dependencies
-│   └── Monitor for Anomalies
-└── SWE Skills
-    ├── Add / Configure Targets
-    ├── Create Alert Rules
-    ├── Query Metrics (PromQL)
-    └── Integrate Dashboards / CI
-```
+### How It Works (Conceptual Model)
+
+- Prometheus **scrapes** metrics from targets at fixed intervals  
+- Metrics are stored locally as **time‑series**  
+- PromQL queries aggregate, filter, and transform metrics  
+- Alert rules evaluate PromQL expressions  
+- Alertmanager handles routing, grouping, and silencing  
+- Exporters expose metrics for systems that don’t natively support Prometheus  
+- Service discovery (Kubernetes, EC2, Consul) dynamically updates targets  
+
+### System Contract
+
+Prometheus enforces contracts through:
+
+- **Scrape configs** (targets, intervals, relabeling)  
+- **Metric naming conventions** (`http_requests_total`)  
+- **Label cardinality constraints**  
+- **Alerting rules** (PromQL expressions + conditions)  
+- **Retention policies**  
+- **Exporter formats** (OpenMetrics)  
+
+### Key Strategies
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+<TabItem value="metrics" label="Metrics Strategy">
+
+- Use consistent naming (`<component>_<metric>_<unit>`)  
+- Avoid high‑cardinality labels (user IDs, request IDs)  
+- Use histograms for latency and distribution metrics  
+- Responsibility: SWE + TA  
+- Goal: reliable, queryable metrics  
+
+</TabItem>
+
+<TabItem value="scraping" label="Scraping Strategy">
+
+- Use Kubernetes service discovery where possible  
+- Tune scrape intervals based on SLOs  
+- Use relabeling to reduce noise  
+- Responsibility: Platform + SWE  
+- Goal: efficient, scalable scraping  
+
+</TabItem>
+
+<TabItem value="alerting" label="Alerting Strategy">
+
+- Use multi‑condition alerts (threshold + duration)  
+- Group alerts by service and severity  
+- Use silence windows for deployments  
+- Responsibility: TA + SRE  
+- Goal: actionable, low‑noise alerting  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- PromQL query results (time‑series, vectors)  
+- Target health (`UP`/`DOWN`)  
+- Alert firing/resolved events  
+- Exporter metrics (node_exporter, kube-state-metrics)  
+- Rule evaluation logs  
+- Retention and storage usage  
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Access to Prometheus UI  
+- Access to Alertmanager UI  
+- Credentials for protected endpoints  
+- TLS configuration (if enabled)
+
+#### Networking
+- Target reachability  
+- Kubernetes service discovery  
+- Firewall rules for scrape endpoints  
+- Load balancer configuration  
+
+#### Architecture
+- Prometheus server topology (single, HA pair, Thanos)  
+- Exporters (node_exporter, blackbox_exporter, custom exporters)  
+- Alertmanager routing tree  
+- Retention and storage configuration  
+
+#### Data
+- Metric naming conventions  
+- Label schema  
+- Histogram and summary usage  
+- Recording rules  
+
+#### Operational Guarantees
+- Scrape interval  
+- Alert evaluation interval  
+- Retention window  
+- Storage limits  
+
+#### Observability Metrics
+- Prometheus scrape duration  
+- Target availability  
+- Alert firing frequency  
+- Query latency  
+- Storage usage and WAL size  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- UI (Prometheus, Alertmanager, Grafana)  
+- Terminal (PromQL queries via API)  
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-How to use Prometheus as a TA
+How to set up credentials
 --------------
 
-# Access Prometheus Web UI
-# Review scrape targets: https://<prometheus-url>/targets
-# Check target status, scrape intervals, last scrape times
-# Navigate alerting rules: https://<prometheus-url>/rules
-# Inspect active and pending alerts
-# Validate metrics coverage for key services
-# Verify retention settings and storage usage
-# Query sample metrics using PromQL, e.g., CPU usage per pod:
-#   sum(rate(container_cpu_usage_seconds_total{namespace="default"}[5m])) by (pod)
-# Confirm alerting routes integrate with Slack, PagerDuty, etc.
-# Export targets or rules via API:
-#   curl http://<prometheus-url>/api/v1/targets
-#   curl http://<prometheus-url>/api/v1/rules
+# Access Prometheus UI
+https://<prometheus-host>:9090
+
+# Access Alertmanager UI
+https://<alertmanager-host>:9093
+
+--------------
+How to log-in via the terminal
+--------------
+
+# Query Prometheus API
+curl "http://<prometheus-host>:9090/api/v1/query?query=up"
+
+# Check targets
+curl "http://<prometheus-host>:9090/api/v1/targets"
 ```
 
 </TabItem>
+
 <TabItem value="requirements" label="Requirements">
 
-**How to formulate requirements when working with Prometheus**
+**How to formulate requirements when working with this platform**
 
-* Identify key services, applications, and infrastructure to monitor
-* Determine required metrics, scrape intervals, and retention periods
-* Understand alerting and SLA expectations
-* Identify responsible owners for each metric / target
-* Confirm visualization or reporting needs (Grafana dashboards, panels, panels owners)
-* Document network and authentication requirements (VPN, firewall, API tokens)
+- Identify metrics, dashboards, or alerts in scope  
+- Confirm scrape targets and exporters  
+- Validate label schema and cardinality  
+- Confirm alerting channels and severity levels  
+- Determine retention and scrape interval expectations  
+- Establish TA expectations for monitoring and triage  
 
 </TabItem>
-</Tabs>
 
----
+<TabItem value="engineering" label="Engineering">
 
-## Pre-Requisites
-
-| Action / Service           | What TA Needs to Gather / Confirm                                                 |
-| -------------------------- | --------------------------------------------------------------------------------- |
-| Set-up                     | Is Prometheus self-hosted or SaaS? Server URL, K8s pod/service details, owner     |
-| Access & Login             | Web UI access, user roles, API tokens if scripts used, authentication methods     |
-| Metrics Targets            | List of scrape targets, owners, intervals, relabeling rules                       |
-| Alerting Rules             | Configured alert rules, notification channels, responsible engineer               |
-| Integrations / Dashboards  | Connected visualization tools, dashboard ownership, panels description            |
-| Retention / Storage        | TSDB retention period, storage backend, shard / replication info, disk monitoring |
-| Observability & Monitoring | Internal metrics, logging, audit/alert logs, who reviews alerts                   |
-| Environment / Network      | Access restrictions, scrape network connectivity, SLA for service availability    |
-
----
-
-## Engineering
-
-<Tabs>
-<TabItem value="skill" label="Skill">
+Common workflows and commands used by engineers when operating this tool
 
 ```shell
 --------------
-Common ways engineers use Prometheus
+Key Terminal Commands
 --------------
 
-# Add or modify scrape targets in prometheus.yml or via service discovery
-# Reload configuration without downtime: curl -X POST http://<prometheus-url>/-/reload
-# Query metrics using PromQL via UI or API, e.g., memory usage:
-#   node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes
-# Create or update alert rules for thresholds
-# Integrate with Grafana dashboards
-# Troubleshoot performance: inspect /metrics endpoints and Prometheus logs
-# Manage retention and storage: configure storage.tsdb.retention.time and disk size
+# Query a metric
+curl "http://<prometheus>/api/v1/query?query=rate(http_requests_total[5m])"
+
+# Inspect target health
+curl "http://<prometheus>/api/v1/targets"
+
+# Check alert rules
+curl "http://<prometheus>/api/v1/rules"
+
+# Evaluate a recording rule
+curl "http://<prometheus>/api/v1/query?query=node_cpu_seconds_total"
+
+# Inspect storage usage
+curl "http://<prometheus>/api/v1/status/tsdb"
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-* Map which services, applications, and infrastructure components require monitoring
-* Define metrics and scrape intervals per target
-* Establish alerting thresholds and notification channels
-* Document expected retention, storage, and scaling considerations
-* Integrate Prometheus into CI/CD pipelines for automated monitoring
-* Provide TA handover: list of scrape targets, alert rules, dashboards, owners, and intended use
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Check service availability
+curl "http://<prometheus>/api/v1/query?query=up"
+
+# Inspect latency (histogram)
+curl "http://<prometheus>/api/v1/query?query=histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))"
+
+# Validate error rates
+curl "http://<prometheus>/api/v1/query?query=rate(http_requests_total{status=~\"5..\"}[5m])"
+
+# Inspect CPU/memory usage
+curl "http://<prometheus>/api/v1/query?query=node_memory_MemAvailable_bytes"
+
+# Check alert status
+curl "http://<alertmanager>/api/v2/alerts"
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom                | TLDR of Root Cause                        | What to Check                           | Action to Propose                                   |
-| ---------------------- | ----------------------------------------- | --------------------------------------- | --------------------------------------------------- |
-| Targets down           | Network issues, endpoint unavailable      | /targets page, service logs             | Restart target or fix network                       |
-| Alerts not firing      | Misconfigured alert rules or channel      | /rules page, alertmanager config        | Correct rules or notification config                |
-| Slow queries           | High cardinality metrics, complex queries | Query performance, dashboard complexity | Optimize queries, reduce cardinality, shard metrics |
-| Data missing           | Metrics not scraped or retention exceeded | Scrape intervals, TSDB storage          | Fix endpoint, increase retention, validate scrape   |
-| Prometheus server down | Pod/service crash, out-of-memory          | Server logs, pod status                 | Restart pod, allocate                               |
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| Target DOWN | Network issue or exporter crash | `/targets`, exporter logs | Fix exporter, restore connectivity |
+| High cardinality | Unbounded labels | Label schema, metric names | Remove high‑cardinality labels |
+| Slow queries | Heavy PromQL or large datasets | Query inspector, Prometheus logs | Optimize queries, add recording rules |
+| Alerts not firing | Wrong condition or data source down | Alert rules, Alertmanager logs | Fix rule, restore data source |
+| Prometheus OOM | Too many metrics or high scrape frequency | TSDB stats, WAL size | Reduce retention, adjust scrape interval |
+| Missing metrics | Exporter misconfig or scrape failure | `/targets`, exporter endpoint | Fix exporter, update scrape config |
+| Alert spam | Overly sensitive thresholds | Alert rules, firing frequency | Tune thresholds, add duration windows |
+
+---
+
+## 📘 PromQL Cheat Sheet (Analyst‑Focused)
+
+Below is a compact cheat sheet you can embed directly under the Analyst tab or keep as a reference block.
+
+### Error & Traffic Patterns
+
+| Goal | PromQL |
+|------|--------|
+| Error rate (5xx) | `rate(http_requests_total{status=~"5.."}[5m])` |
+| Traffic volume | `rate(http_requests_total[5m])` |
+| Requests per instance | `sum by(instance)(rate(http_requests_total[5m]))` |
+
+### Latency (Histograms)
+
+| Goal | PromQL |
+|------|--------|
+| p95 latency | `histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))` |
+| p99 latency | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
+| Latency per endpoint | `histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{handler!=""}[5m]))` |
+
+### Resource Usage
+
+| Goal | PromQL |
+|------|--------|
+| CPU usage | `rate(node_cpu_seconds_total{mode!="idle"}[5m])` |
+| Memory available | `node_memory_MemAvailable_bytes` |
+| Disk usage | `node_filesystem_avail_bytes` |
+
+### Instance & Service Health
+
+| Goal | PromQL |
+|------|--------|
+| Count healthy instances | `count(up == 1)` |
+| Identify down instances | `up == 0` |
+| Restart count | `changes(process_start_time_seconds[1h])` |
+
+### Detecting Spikes, Drops, and Trends
+
+| Goal | PromQL |
+|------|--------|
+| Sudden spike | `deriv(metric_name[10m]) > threshold` |
+| Sudden drop | `deriv(metric_name[10m]) < -threshold` |
+| Rolling average | `avg_over_time(metric_name[5m])` |
+
+### High‑Cardinality Detection
+
+| Goal | PromQL |
+|------|--------|
+| Top 10 metrics by label count | `topk(10, count by(__name__)({__name__!=""}))` |
+| High‑cardinality label values | `count by(label)(metric_name)` |

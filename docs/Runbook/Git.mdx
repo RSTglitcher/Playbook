@@ -6,225 +6,267 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Git
-**Git** is a distributed version control system used to track changes in source code, collaborate across teams, manage branches, and coordinate deployments.
-It solves problems related to source code history, collaboration, and version management.
+Git is a **distributed version control system** used to track changes in source code, collaborate across teams, manage branches, and coordinate releases.
+It solves problems related to **source code history, collaboration, branching strategies, and reproducible deployments**.
 :::
 
----
-##  🧩 Technical Skills
+### Key Terms
 
-```mermaid
-Git
-├── Repositories
-│   ├── Clone
-│   ├── Remote configuration
-│   └── Forks
-├── Branching Strategies
-│   ├── Feature branches
-│   ├── GitFlow
-│   ├── Trunk-based development
-│   └── Release branches
-├── TA Skills
-│   ├── Inspect history & diffs
-│   ├── Validate workflows
-│   └── Identify risks/conflicts
-└── SWE Skills
-    ├── Commit & push
-    ├── Merge/rebase
-    ├── Tagging & releases
-    └── Conflict resolution
-````
+- **Repository:** A project tracked by Git
+- **Commit:** A snapshot of changes
+- **Branch:** A movable pointer to a commit history
+- **Merge:** Combine changes from one branch into another
+- **Rebase:** Replay commits on top of another branch
+- **Tag:** A named reference to a specific commit (often releases)
+- **Remote:** A reference to a hosted repository (GitHub, GitLab, Azure DevOps)
+- **HEAD:** The currently checked‑out commit or branch
+
+### Knowing when to use **Git**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Source code versioning | Binary file storage (use artifact storage) |
+| Collaboration via branches and PRs | Real‑time document editing |
+| Release management and tagging | Large dataset versioning (use DVC/LakeFS) |
+| CI/CD integration | Database schema versioning (use migrations) |
+
+---
+
+## 📘 About / Foundations
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+- Git tracks changes using **snapshots**, not diffs
+- Commits form a **directed acyclic graph (DAG)**
+- Branches are lightweight pointers to commits
+- Remotes allow distributed collaboration
+- Merges and rebases integrate changes across branches
+- Tags mark important commits (e.g., releases)
+- `.git` directory stores all repository metadata
+
+### System Contract
+
+Git enforces contracts through:
+
+- **Repository structure** (`.git` directory)
+- **Branching model** (feature branches, trunk‑based, GitFlow)
+- **Commit history** (immutable snapshots)
+- **Remote configuration** (origin, upstream)
+- **Authentication** (SSH keys, tokens)
+- **Protected branches** (main, release branches)
+
+### Key Strategies
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+<TabItem value="branching" label="Branching Strategy">
 
-```shell
---------------
-How to use Git as a TA
---------------
-
-# Clone repository and inspect structure
-git clone <repo_url>
-cd <repo_name>
-
-# Explore branches and commit history
-git branch -a
-git log --oneline --graph
-git show <commit_hash>
-
-# Compare changes
-git diff <commit1> <commit2>
-
-# Inspect remotes
-git remote -v
-
-# Validate workflows and recent changes
-git fetch
-git status
-
-# Review forks for contributions
-git remote show origin
-```
+- Use feature branches for isolated work
+- Keep `main` stable and deployable
+- Use PRs for code review and quality gates
+- Choose between GitFlow or trunk‑based depending on team maturity
+- Responsibility: SWE + TA validation
+- Goal: predictable, conflict‑free collaboration
 
 </TabItem>
-<TabItem value="requirements" label="Requirements">
 
-**How to formulate requirements when working with Git**
+<TabItem value="history" label="History Strategy">
 
-* Gather repository URLs, branch structures, and ownership
-* Determine branching strategy (GitFlow, trunk-based, release branches)
-* Identify CI/CD integration points and PR policies
-* Collect commit/PR templates and required reviewers
-* Validate authentication methods (SSH, HTTPS tokens) and rotation policies
-* Establish what TAs need to provide engineers for merges, releases, or audits
+- Prefer small, meaningful commits
+- Use rebase for clean history
+- Use merge for preserving context
+- Responsibility: SWE
+- Goal: readable, auditable commit history
+
+</TabItem>
+
+<TabItem value="release" label="Release Strategy">
+
+- Use annotated tags for releases
+- Automate release notes via CI/CD
+- Protect release branches
+- Responsibility: SWE + TA
+- Goal: reproducible, traceable releases
 
 </TabItem>
 </Tabs>
 
----
+### What Results Normally Look Like
 
-## Pre-Requisites
-
-| Action / Service     | What TA Needs to Gather / Confirm                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------ |
-| Repository Access    | Repo URL, branch structure, owners/maintainers, read/write permissions, protected branches |
-| Authentication       | SSH keys, HTTPS tokens, OAuth, token/key validity and rotation, credential owner           |
-| Branching / Workflow | Naming conventions, mainline strategy, pull request process, code review requirements      |
-| Commit / PR Policies | Commit message/PR templates, pre-commit hooks, CI/CD enforcement, required reviewers       |
-| Optional Tooling     | IDE or GUI clients used (VS Code Git, SourceTree, GitKraken)                               |
+- Commit logs (`git log --oneline --graph`)
+- Branch lists (`git branch -a`)
+- Diffs (`git diff`)
+- PRs and merge histories
+- Tags for releases
+- CI/CD pipelines triggered by Git events
 
 ---
 
-## Engineering
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- SSH keys or HTTPS tokens
+- Token rotation policies
+- Protected branches and required reviewers
+- Access control for repos and orgs
+
+#### Networking
+- Remote URLs (SSH/HTTPS)
+- Firewall rules for Git servers (self‑hosted)
+- VPN or SSO requirements
+
+#### Architecture
+- Repository structure
+- Branching model (GitFlow, trunk‑based)
+- CI/CD integration points
+- Forking vs shared‑repo model
+
+#### Data
+- Commit message conventions
+- PR templates
+- Code ownership rules
+- Required checks (linting, tests)
+
+#### Operational Guarantees
+- Merge protection rules
+- Required status checks
+- Release tagging policies
+- Auditability of commit history
+
+#### Observability Metrics
+- PR throughput
+- Merge frequency
+- Commit volume
+- CI/CD pipeline success rates
+
+</details>
+
+:::info
+How to interact with this tool day‑to‑day:
+- Terminal (`git` CLI)
+- UI (GitHub, GitLab, Azure DevOps, Bitbucket)
+:::
 
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-Common ways engineers use Git
+How to set up credentials
 --------------
 
-# Branching and workflow
+# Configure Git identity
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# Add SSH key
+ssh-add ~/.ssh/id_rsa
+
+--------------
+How to log-in via the terminal
+--------------
+
+# Validate remote access
+git ls-remote <repo_url>
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify repository URLs, owners, and branch structure
+- Confirm branching strategy (GitFlow, trunk‑based, release branches)
+- Validate authentication method (SSH, HTTPS tokens)
+- Confirm CI/CD integration and required checks
+- Identify PR templates, commit conventions, and review policies
+- Establish TA expectations for merges, releases, or audits
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Create and push a feature branch
 git checkout -b feature-branch
 git add .
 git commit -m "Description of changes"
 git push origin feature-branch
 
-# Collaboration
+# Sync with main
 git pull origin main
-git merge feature-branch
 git rebase main
-
-# Forking workflow
-# Fork repo to own namespace
-# Clone fork and add upstream remote
-git remote add upstream <original_repo_url>
-git fetch upstream
-git merge upstream/main
 
 # Resolve conflicts
 git status
 git diff
-# Edit files to resolve conflicts
 git add <file>
 git commit
 
-# Tagging and releases
+# Tag a release
 git tag -a v1.0 -m "Release v1.0"
 git push origin v1.0
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-* Identify which branches, forks, or tags are relevant for work
-* Document repository ownership and access for each branch
-* Establish merge/rebase strategy and release cadence
-* Define what TAs need to provide for branch merges, release verification, or CI/CD handover
-* Include guidance for handling conflicts and code reviews
-* Track compliance or audit requirements (commit history, PR approvals)
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Inspect commit history
+git log --oneline --graph
+
+# Compare two commits
+git diff <commit1> <commit2>
+
+# Inspect repository structure
+git remote -v
+git branch -a
+
+# Validate workflow compliance
+git fetch
+git status
+
+# Review forks and remotes
+git remote show origin
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom                     | TLDR of Root Cause                             | What to Check                                  | Action to Propose                          |
-| --------------------------- | ---------------------------------------------- | ---------------------------------------------- | ------------------------------------------ |
-| Cannot clone repository     | Wrong URL, network issue, or permission denied | Repository URL, network connectivity, SSH keys | Correct URL, check network, validate keys  |
-| Merge conflicts             | Concurrent edits to same files                 | `git status`, diff conflicting files           | Resolve conflicts manually, commit changes |
-| Push rejected               | Remote branch protected, missing commits       | Remote branch policy, `git log`                | Pull latest changes, rebase or merge       |
-| Detached HEAD               | Checked out commit instead of branch           | `git status`                                   | Checkout correct branch                    |
-| Untracked or missing files  | Files ignored, deleted, or not added           | `git status`, `.gitignore`                     | Add missing files, adjust `.gitignore`     |
-| Commit not showing remotely | Local changes not pushed                       | `git status`, `git log`                        | Push changes to remote                     |
-| Authentication fails        | SSH key or token expired/misconfigured         | `ssh -T git@host`, token validity              | Update SSH key or token                    |
-| Slow operations             | Large repo, large files, network latency       | Repo size, network performance                 | Shallow clone, optimize repo, use LFS      |
+:::danger
+Symptoms and issues with this platform and how to triage this:
+:::
 
-
----
-
----
-title: "Version Control"
----
-
-### Source Code Management (SCM):
-
-- Version control systems, including Git, serve as the backbone for SCM in CI/CD. Developers use Git to manage and collaborate on source code changes. CI/CD systems pull the source code from version control repositories to build, test, and deploy applications.
-
-### Continuous Integration (CI):
-
-- CI involves automatically building and testing code changes whenever they are committed to the version control system. CI systems monitor the version control repository for changes and trigger automated builds and tests to ensure the code's integrity.
-
-### Version Tagging and Release Management:
-
-- Git is often used to tag specific versions of the codebase (e.g., releases) using tags. CI/CD pipelines can be configured to trigger specific actions (e.g., deployment to production) based on the creation of new version tags.
-
-### Branching Strategies:
-
-- Git's branching features are essential for implementing branching strategies in CI/CD. Developers can use feature branches for new features or bug fixes, and CI/CD systems can automate the testing and integration of these branches.
-
-### Artifact Management:
-
-- CI/CD pipelines often produce build artifacts (e.g., compiled binaries, Docker images). These artifacts can be versioned and stored in artifact repositories, with references to specific versions maintained in the version control system.
-
-### Deployment Configuration:
-
-- Deployment configurations, such as environment-specific settings or infrastructure as code, are often stored alongside the application code in the version control system. CI/CD pipelines reference these configurations to deploy applications consistently across different environments.
-
-### Collaboration and Code Reviews:
-
-- Collaboration features of Git, including pull requests or merge requests, facilitate code reviews. CI/CD systems can be configured to trigger additional checks or tests before allowing a pull request to be merged, ensuring code quality.
-
-
-### GIT FILE SYSTEM
-
-    - Working directory = Contains all the files that are a part of our project.
-        - Initialise a Git repository = A hidden directory is created inside the working directory called .Git.
-          Monitors and track all files added to the project.
-          git add * = put the state of the file that was just added to the project into a staging area within
-          the project wd. Records the state using SHA1 hashes. No physical movement, but the status
-          is updated from the staging area to a feature/master branch
-
-    - COMMIT_EDITMSG = Plain text file containing the messages for each commit to the repository. Each line in the file
-      is in order of the commit.
-
-   -HEAD = Plain text file that contains a reference to the current branch that you are working on.
-
-   -config = Contains the configuration information about your repository, such as the developer's username and email address.
-
-   -description = Plain text file that contains the name of the repository. Typically used by Git web, a web front end
-   to Git that you can install.
-
-   -hooks = Contains scripts that you can create to set up some automated tasks that can be run during some particular
-   phases of the Git process.
-
-   -index = link between the database and what is currently sitting in the working directory.
-
-   -rest directory = reference files in folders for the branches and tags of your repository.
-
-
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| Cannot clone repository | Wrong URL, network issue, permission denied | Repo URL, network, SSH keys | Fix URL, check network, update keys |
+| Merge conflicts | Concurrent edits to same files | `git status`, diff | Resolve conflicts manually |
+| Push rejected | Protected branch or missing commits | Branch policy, `git log` | Pull latest, rebase or merge |
+| Detached HEAD | Checked out commit instead of branch | `git status` | Checkout correct branch |
+| Missing files | Ignored or untracked files | `.gitignore`, `git status` | Add files or update ignore rules |
+| Commit not visible remotely | Local commits not pushed | `git log`, `git status` | Push branch |
+| Authentication fails | Expired SSH key or token | `ssh -T git@host` | Rotate key or token |
+| Slow operations | Large repo or binary files | Repo size, LFS usage | Use shallow clone, enable Git LFS |

@@ -1,124 +1,214 @@
 ---
-title: "🔌GraphQL"
+title: "🔌 GraphQL"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip GraphQL
-GraphQL is a query language and runtime for APIs that allows clients to request exactly the data they need. It enables efficient, strongly‑typed data retrieval across complex systems by exposing a unified schema of types, fields, and resolvers.
+:::tip GraphQL  
+GraphQL is a **query language and runtime** for APIs that allows clients to request exactly the data they need.  
+It enables efficient, strongly‑typed data retrieval across complex systems by exposing a unified schema of types, fields, and resolvers.  
 :::
 
-```mermaid
-GraphQL
-├── Core Concepts
-│   ├── Schema, Types & Fields
-│   ├── Queries, Mutations & Subscriptions
-│   ├── Resolvers & Data Sources
-│   └── Strong Typing & Validation
-├── TA Skills
-│   ├── Review Schema & Type Definitions
-│   ├── Validate Query Shapes & Variables
-│   ├── Check Resolver Behaviour & Data Mapping
-│   └── Confirm Auth, Permissions & Edge Cases
-└── SWE Skills
-    ├── Implement Resolvers & Data Fetching
-    ├── Define Types, Inputs & Mutations
-    ├── Integrate with Services & Datastores
-    └── Monitor Performance & N+1 Issues
-```
+### Key Terms
+
+- **Schema:** The contract defining types, fields, and relationships  
+- **Query:** Read operation requesting specific fields  
+- **Mutation:** Write operation modifying data  
+- **Subscription:** Real‑time event stream  
+- **Resolver:** Function that returns data for a field  
+- **Type:** Object, scalar, enum, interface, union  
+- **Input Type:** Structured input for mutations  
+- **Directive:** Annotation modifying execution (`@include`, `@skip`)  
+- **Introspection:** Ability to query the schema itself  
+
+### Knowing when to use **GraphQL**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Complex client apps needing flexible data | Simple CRUD APIs |
+| Multiple clients with different data needs | High‑throughput streaming (Kafka, Pub/Sub) |
+| Strongly‑typed API contracts | Large binary uploads |
+| Avoiding over‑fetching/under‑fetching | Simple internal APIs where REST is sufficient |
+| Aggregating multiple backends | Event‑driven workflows |
+
+---
+
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+- Clients send **queries** specifying exactly which fields they want  
+- The **schema** defines types, fields, and relationships  
+- **Resolvers** fetch data for each field, often from downstream services  
+- Execution walks the query as a **tree**, resolving fields recursively  
+- Mutations modify data and return updated objects  
+- Subscriptions (if enabled) push real‑time updates  
+- Introspection exposes the schema for tooling and validation  
+
+### System Contract
+
+GraphQL enforces contracts through:
+
+- **Schema Definition Language (SDL)**  
+- **Type system** (objects, scalars, enums, interfaces, unions)  
+- **Field‑level resolver functions**  
+- **Validation rules** (queries must match schema)  
+- **Nullability rules** (non‑null fields must always resolve)  
+- **Schema evolution strategy** (prefer additive changes)  
+- **Query complexity and depth limits**  
+
+### Key Strategies
+
+<Tabs>
+<TabItem value="schema" label="Schema Strategy">
+
+- Keep types small and composable  
+- Avoid deeply nested structures  
+- Use interfaces/unions for polymorphism  
+- Prefer cursor‑based pagination  
+- Responsibility: SWE + TA validation  
+- Goal: stable, evolvable API contracts  
+
+</TabItem>
+
+<TabItem value="performance" label="Performance Strategy">
+
+- Use batching (DataLoader) to avoid N+1 queries  
+- Cache expensive resolvers  
+- Apply query depth and complexity limits  
+- Responsibility: SWE  
+- Goal: predictable, efficient execution  
+
+</TabItem>
+
+<TabItem value="versioning" label="Versioning Strategy">
+
+- Avoid breaking changes  
+- Deprecate fields instead of removing them  
+- Use schema federation for large systems  
+- Responsibility: SWE + TA  
+- Goal: safe evolution of API surface  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- JSON responses with exactly the requested fields  
+- Schema introspection results  
+- Resolver logs and performance traces  
+- Query plans (depending on server)  
+- Error objects with `message`, `path`, and `extensions`  
 
 ---
 
 ## 🧩 Technical Skills
 
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Auth tokens (JWT, OAuth, API keys)  
+- Field‑level authorization rules  
+- Rate limiting and query complexity controls  
+
+#### Networking
+- Endpoint URL (usually `/graphql`)  
+- Required headers  
+- CORS configuration  
+- VPN or environment access  
+
+#### Architecture
+- Schema ownership and governance  
+- Resolver architecture (monolith vs federated)  
+- DataLoader/batching strategy  
+- Caching layers  
+
+#### Data
+- Type definitions and relationships  
+- Input types for mutations  
+- Error handling conventions  
+- Nullability rules  
+- Pagination strategy  
+
+#### Operational Guarantees
+- Query depth limits  
+- Timeout and resolver SLAs  
+- Schema evolution rules  
+- Error propagation rules  
+
+#### Observability Metrics
+- Query latency  
+- Resolver execution time  
+- Error rates  
+- Query complexity distribution  
+- Cache hit/miss ratios  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- UI (GraphiQL, Apollo Sandbox, Insomnia, Postman)  
+- Terminal (`curl`, `graphql-cli`)  
+:::
+
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-How to use the tool/platform as TA
+How to set up credentials
 --------------
 
-# Exploring the schema
-# (using GraphiQL, Apollo Sandbox, or similar)
-- Inspect types, fields, and relationships
-- Check required vs optional fields
-- Validate arguments and return types
+# Example: Using a bearer token
+curl -H "Authorization: Bearer <token>" \
+     -H "Content-Type: application/json" \
+     -d '{"query":"{ __typename }"}' \
+     https://api.example.com/graphql
 
-# Running queries
-query GetUser {
-  user(id: "123") {
-    id
-    name
-    email
-  }
-}
+--------------
+How to log-in via the terminal
+--------------
 
-# Running mutations
-mutation UpdateUser {
-  updateUser(id: "123", input: { name: "New Name" }) {
-    id
-    name
-  }
-}
-
-# Checking resolver behaviour
-- Confirm which downstream systems each field depends on
-- Validate error shapes and nullability
+# Introspection query
+curl -X POST https://api.example.com/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ __schema { types { name } } }"}'
 ```
 
 </TabItem>
+
 <TabItem value="requirements" label="Requirements">
 
 **How to formulate requirements when working with this platform**
 
-- Clarify the domain model and how it maps to GraphQL types
-- Identify required fields, optional fields, and validation rules
-- Confirm expected query shapes and nested relationships
-- Understand resolver dependencies and data sources
-- Capture error handling expectations and nullability rules
+- Clarify the domain model and how it maps to GraphQL types  
+- Identify required vs optional fields  
+- Confirm expected query shapes and nested relationships  
+- Understand resolver dependencies and data sources  
+- Capture error handling expectations and nullability rules  
 - Define performance expectations (depth, complexity, batching)
-
-**Examples of use cases**
-
-- Designing new queries or mutations for a feature
-- Validating schema changes before engineering implementation
-- Supporting frontend teams with data‑shape requirements
-- Mapping business logic to GraphQL types and relationships
 
 **What a TA needs to gather**
 
-- Schema documentation (SDL, introspection, or tooling)
-- Query/mutation examples and expected outputs
-- Data mapping rules and transformation logic
-- Authentication and authorization requirements
-- Edge cases, nullability rules, and error scenarios
+- Schema documentation (SDL or introspection)  
+- Query/mutation examples and expected outputs  
+- Data mapping rules and transformation logic  
+- Authentication and authorization requirements  
+- Edge cases and error scenarios  
 
 </TabItem>
-</Tabs>
 
----
+<TabItem value="engineering" label="Engineering">
 
-## Pre-Requisites
-
-| Action / Service       | What TA Needs to Gather / Confirm |
-|------------------------|-----------------------------------|
-| Set-up                 | Access to GraphiQL/Apollo Sandbox, schema files, introspection |
-| Access & Login         | Auth tokens, headers, environment URLs |
-| API                    | Versioning strategy, deprecation rules, complexity limits |
-| Other tool specific actions | Required headers, CORS rules, network/VPN requirements |
-
----
-
-## Engineering
-
-<Tabs>
-<TabItem value="skill" label="Skill">
+Common workflows and commands used by engineers when operating this tool
 
 ```shell
 --------------
-Common ways engineers use the tool/platform
+Key Terminal Commands
 --------------
 
 # Defining schema types
@@ -136,7 +226,7 @@ const resolvers = {
   }
 }
 
-# Handling mutations
+# Running mutations
 mutation {
   createUser(input: { name: "Alice" }) {
     id
@@ -144,62 +234,68 @@ mutation {
   }
 }
 
-# Managing performance
-- Use batching (DataLoader)
+# Performance management
+- Use DataLoader for batching
 - Avoid N+1 queries
 - Add caching layers
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-- Define new types, fields, and input objects
-- Identify resolver logic and downstream dependencies
-- Plan for batching, caching, and avoiding N+1 issues
-- Establish error handling and nullability rules
-- Determine authorization strategy at field or resolver level
+Common workflows and queries used by analysts when interpreting data from this tool.
 
-**Examples of implementation**
+```shell
+--------------
+Key Analyst Skills
+--------------
 
-- Adding a new mutation for a feature
-- Extending an existing type with new fields
-- Creating resolvers that aggregate multiple services
-- Implementing subscriptions for real‑time updates
+# Explore schema
+- Use GraphiQL/Apollo Sandbox introspection
+- Validate types, fields, and relationships
+- Check required vs optional fields
 
-**Engineering considerations**
+# Validate query shapes
+query GetUser {
+  user(id: "123") {
+    id
+    name
+    email
+  }
+}
 
-- Schema evolution and backward compatibility
-- Field‑level authorization
-- Query complexity limits and depth restrictions
-- Resolver performance and caching strategy
-- Consistent error shapes and nullability
+# Validate mutations
+mutation UpdateUser {
+  updateUser(id: "123", input: { name: "New Name" }) {
+    id
+    name
+  }
+}
 
-**What a TA needs to provide for handover**
-
-- Clear definitions of types, fields, and relationships
-- Business rules for mutations and validation
-- Expected query shapes and nested data requirements
-- Edge cases, nullability expectations, and error scenarios
-- Dependencies and integration points
+# Check resolver behaviour
+- Identify downstream dependencies
+- Validate nullability and error shapes
+- Confirm authorization behaviour
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-:::danger
-Symptoms and issues with this platform and how to triage this:
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
 :::
 
 | Symptom | TLDR of Root Cause | What to Check | Action to Propose |
 |---------|---------------------|---------------|-------------------|
 | Slow queries | N+1 issues or deep nested queries | Resolver logs, query depth | Add batching/caching, limit depth |
 | Null fields | Resolver failure or missing data | Downstream services, schema nullability | Fix resolver or update schema |
-| Authorization errors | Missing or invalid tokens | Headers, roles, field-level auth | Refresh token or update permissions |
+| Authorization errors | Missing or invalid tokens | Headers, roles, field‑level auth | Refresh token or update permissions |
 | Schema mismatch | Outdated schema or breaking change | SDL, introspection, versioning | Sync schema or update clients |
 | Unexpected errors | Resolver exceptions | Logs, downstream dependencies | Fix resolver logic or escalate |
 
