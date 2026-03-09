@@ -1,203 +1,177 @@
 ---
 title: "Configurations & Declarative Systems"
-sidebar_position: 7
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Configurations** define how applications, services, and infrastructure behave by specifying parameters, environment settings, and desired system state.
-They enable predictable, repeatable, and environment‑agnostic operation.
+Configurations define the parameters, environment settings, and desired state that control how applications and infrastructure behave at runtime.
 :::
 
-Configurations are not code — they are **controls** that shape runtime behaviour.
+**When to Use**
+
+- Behaviour must change without code changes  
+- Environments differ (dev/test/prod)  
+- Infrastructure is declarative and self‑reconciling  
+- Secrets must be isolated from code  
+- Systems require reproducibility and traceability  
+
+**When Not to Use**
+
+- Logic belongs in code  
+- Secrets would be stored in plaintext  
+- Configuration becomes overly dynamic or complex  
+- YAML is being used to express conditional logic or workflows  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Configuration systems enable:
-
-| Benefit | Why it matters |
-|--------|----------------|
-| **Separation of config from code** | Prevents hard‑coding values and improves portability |
-| **Environment‑specific behaviour** | Different settings for dev, test, prod |
-| **Declarative control** | Define *what* you want, not *how* to do it |
-| **Versioning & reproducibility** | Config lives in Git, enabling traceability |
-| **Security** | Secrets handled separately from application logic |
+Configurations solve the problem of **environment‑specific behaviour**, **runtime variability**, and **declarative control** without modifying code.  
+They enable predictable, repeatable, and secure operation across environments by externalising behaviour into structured, versioned artefacts.
 
 ---
 
-## 🧠 Conceptual Model (How Configuration Works)
+## 🧠 Conceptual Model
 
-Configuration systems vary along several axes:
+### Core Components
 
-### **Static vs Dynamic**
-- Static → loaded at startup
-- Dynamic → reloaded at runtime
+- **Environment configuration** → ENV vars, secrets, runtime parameters  
+- **Declarative manifests** → YAML, Terraform, Helm charts  
+- **Templating systems** → Jinja, Helm, Kustomize  
+- **Secrets management** → encrypted values, Vault, KMS  
+- **Controllers / reconcilers** → Kubernetes controllers, Terraform apply  
 
-### **Declarative vs Imperative**
-- Declarative → “desired state” (Kubernetes, Terraform)
-- Imperative → “run this command”
+### Axes of Variation
 
-### **Environment vs Application**
-- Environment → ENV vars, secrets
-- Application → YAML, TOML, config files
+- **Static vs Dynamic**  
+  - Static: loaded at startup  
+  - Dynamic: reloaded or reconciled at runtime  
 
-### **Plaintext vs Encrypted**
-- ConfigMaps vs Secrets
-- SOPS, Vault, KMS‑encrypted files
+- **Declarative vs Imperative**  
+  - Declarative: define desired state  
+  - Imperative: execute commands  
+
+- **Plaintext vs Encrypted**  
+  - ConfigMaps vs Secrets  
+  - SOPS, Vault, KMS  
+
+- **Environment vs Application**  
+  - ENV vars vs YAML/TOML config files  
 
 ---
 
-# 🧬 Types of Configuration
+### Typical Lifecycle or Flow
+
+**Diagram:**
+
+```mermaid
+flowchart TD
+    A[Define Config (YAML/ENV/TOML)] --> B[Store in Git/Vault/S3]
+    B --> C[Render Templates (Helm/Jinja/Kustomize)]
+    C --> D[Apply to System (kubectl apply / Terraform)]
+    D --> E[Controller Reconciles Desired vs Actual State]
+    E --> F[Observe Logs/Events/Drift]
+    F --> A[Update Config and Re‑apply]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What behaviour is controlled by config vs code  
+- How the system behaves when configuration changes  
+- Whether secrets are isolated and encrypted  
+- How declarative systems reconcile drift  
+- What becomes a bottleneck when configuration grows  
+:::
+
+**What happens when:**
+
+- **Data grows** → manifests become large, templates become complex  
+- **Traffic increases** → scaling parameters become critical  
+- **Concurrency rises** → misconfigurations surface under load  
+- **Resources become constrained** → controllers may fail to reconcile  
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Declarative | Define desired state; system reconciles it |
+| Imperative | Execute commands directly |
+| ConfigMap | Non‑secret configuration in Kubernetes |
+| Secret | Sensitive configuration stored separately |
+| Manifest | YAML file describing a resource |
+| Template | File with variables used to generate config |
+
+---
+
+## 🧬 Variants / Types
 
 <Tabs>
 
 <TabItem value="env" label="Environment Configuration">
 
-### Environment Variables (`.env`)
+### Environment Variables & Secrets
 
-**Purpose**
-- Inject runtime parameters
-- Configure services without changing code
+**Purpose**  
+Inject runtime parameters and sensitive values without modifying code.
 
-**Characteristics**
-- Key/value pairs
-- Loaded at startup
-- Often used for secrets (not ideal)
+**Key Characteristics**
+- Key/value pairs  
+- Loaded at startup  
+- Secrets encrypted or access‑controlled  
 
-**Use When**
-- Local development
-- Simple runtime configuration
-- Twelve‑Factor App alignment
+**Behaviour**  
+Application behaviour changes based on injected values.
 
----
-
-### Secrets
-
-**Purpose**
-- Store sensitive values (passwords, tokens, keys)
-
-**Characteristics**
-- Base64‑encoded in Kubernetes
-- Often encrypted at rest
-- Access‑controlled
-
-**Use When**
-- Credentials
-- API keys
-- Database passwords
+**Trade-offs**  
+Simple and flexible, but can become unstructured or insecure if misused.
 
 </TabItem>
 
 <TabItem value="declarative" label="Declarative Infrastructure">
 
-### Declarative Configuration
+### Declarative Manifests (Kubernetes, Terraform)
 
-Define the **desired state**, and the platform ensures reality matches it.
+**Purpose**  
+Define desired state; controllers ensure actual state matches.
 
-**Examples**
-- Kubernetes manifests
-- Terraform
-- Helm charts
+**Key Characteristics**
+- Version‑controlled  
+- Predictable and repeatable  
+- Self‑healing via reconciliation  
 
-**Benefits**
-- Predictable
-- Version‑controlled
-- Repeatable
+**Behaviour**  
+Controllers continuously enforce declared configuration.
 
----
-
-### Kubernetes Resource Types
-
-#### **Pods**
-Smallest deployable unit.
-
-#### **Deployments**
-Declarative updates + replica management.
-
-#### **Services**
-Stable networking for pods.
-
-#### **ConfigMaps**
-Non‑secret configuration.
-
-#### **Secrets**
-Sensitive configuration.
-
-#### **Persistent Volumes / Claims**
-Declarative storage.
+**Trade-offs**  
+Powerful but requires discipline; misconfigurations propagate quickly.
 
 </TabItem>
 
-<TabItem value="files" label="Configuration File Formats">
+<TabItem value="files" label="Configuration Files & Templates">
 
-### YAML (`.yaml`, `.yml`)
-Human‑readable configuration format.
+### YAML / TOML / Jinja / RAML
 
-**Use When**
-- Kubernetes manifests
-- CI/CD pipelines
-- Application config
+**Purpose**  
+Provide structured, human‑readable configuration formats.
 
----
+**Key Characteristics**
+- YAML for infra and pipelines  
+- TOML for strongly‑typed config  
+- Jinja for templating  
+- RAML for API modelling  
 
-### TOML (`.toml`)
-Strongly‑typed, minimal configuration.
+**Behaviour**  
+Files are rendered, parsed, or applied to shape system behaviour.
 
-**Use When**
-- Tooling
-- Python/Rust project metadata
-
----
-
-### Jinja Templates (`.j2`)
-Templating for generating config files.
-
-**Use When**
-- Dynamic configuration
-- Parameterised manifests
-- Infrastructure automation
-
----
-
-### RAML (`.raml`)
-YAML‑based API modelling language.
-
-**Use When**
-- Designing REST APIs
-- Mocking endpoints
-- Generating API interfaces
-
-</TabItem>
-
-<TabItem value="workflow" label="Configuration Workflows">
-
-### Configuration Lifecycle
-
-1. **Define**
-   YAML, TOML, ENV, templates
-2. **Store**
-   Git, Vault, S3, Config repos
-3. **Render**
-   Jinja, Helm, Kustomize
-4. **Apply**
-   `kubectl apply`, CI/CD pipelines
-5. **Observe**
-   `kubectl get/describe`, logs, events
-6. **Update**
-   Modify config → re‑apply
-
----
-
-### Deployment Steps (Kubernetes)
-
-- Inspect resources (`kubectl get`, `kubectl describe`)
-- Modify YAML
-- Re‑apply (`kubectl apply -f`)
-- Validate rollout (`kubectl rollout status`)
+**Trade-offs**  
+Readable but prone to complexity when over‑templated.
 
 </TabItem>
 
@@ -205,67 +179,73 @@ YAML‑based API modelling language.
 
 ---
 
-# 🧭 When to Use Configurations
+## 🧩 System Interactions
 
-Use configurations when:
+:::info How a TA Understands the System
+- How configuration interacts with runtime, storage, and orchestration  
+- How declarative systems reconcile drift  
+- What becomes a bottleneck as configuration grows  
+:::
 
-- Behaviour must change without code changes
-- Environments differ (dev/test/prod)
-- Infrastructure is declarative
-- Secrets must be isolated
-- Systems require reproducibility
+### Local Systems
 
----
+- OS environment  
+- Runtime loaders  
+- File systems  
+- Local secrets stores  
+- Scaling parameters  
 
-# 🚫 When Not to Use
+### Remote Systems
 
-Avoid configurations when:
+- Kubernetes controllers  
+- Terraform state  
+- Cloud provider APIs  
+- CI/CD pipelines  
 
-- Logic belongs in code
-- Secrets are stored in plaintext
-- Configuration becomes overly dynamic or complex
-- YAML is used for deeply nested logic (anti‑pattern)
+### Questions to ask during reviews or incidents
 
----
-
-# 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **Declarative** | Define desired state; system reconciles it |
-| **Imperative** | Execute commands directly |
-| **ConfigMap** | Non‑secret configuration in Kubernetes |
-| **Secret** | Sensitive configuration |
-| **Manifest** | YAML file describing a resource |
-| **Template** | File with variables to generate config |
+- What changed recently in configuration?  
+- Is the system reconciling or stuck?  
+- Are secrets stored securely?  
+- Is behaviour environment‑specific or global?  
+- Is drift occurring between desired and actual state?  
 
 ---
 
-###  ⚠️ Common Mistakes
+## 💥 Outputs / Results
 
-- Putting secrets in ConfigMaps
-- Using YAML for logic (if/else, loops)
-- Hard‑coding environment‑specific values
-- Mixing configuration with code
-- Overusing templates until they become unreadable
-- Treating Kubernetes YAML as “just files” instead of declarative state
+:::note Special Considerations
+Configuration errors often appear as runtime failures, not compile‑time errors.
+:::
 
----
+### Success Modes
 
-# 🏗️ Real‑World Examples
+What does success look like?
 
-- A Deployment YAML defines replicas, image, and environment variables
-- A ConfigMap injects feature flags into a service
-- A Secret stores database credentials
-- A Jinja template generates environment‑specific manifests
-- A `.env` file configures local development
+| Result Type | Description |
+|-------------|-------------|
+| Predictable Behaviour | System behaves consistently across environments |
+| Reproducibility | Config is versioned and traceable |
+| Secure Separation | Secrets isolated from code |
+| Declarative Convergence | System self‑heals toward desired state |
+
+### Failure Modes
+
+Symptoms of misconfiguration:
+
+| Failure Type | Description |
+|--------------|-------------|
+| Drift | Actual state diverges from declared state |
+| Secrets Exposure | Sensitive values appear in logs or repos |
+| Runtime Crashes | Invalid or missing config values |
+| Over‑templating | Config becomes unreadable or unmaintainable |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- File Types & Data Formats
-- Delivery & Deployment Architecture
-- Application Storage Systems
-- Kubernetes & Orchestration
-- Secrets Management
+- File Types & Data Formats  
+- Delivery & Deployment Architecture  
+- Application Storage Systems  
+- Kubernetes & Orchestration  
+- Secrets Management  

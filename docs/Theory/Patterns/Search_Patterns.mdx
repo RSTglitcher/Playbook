@@ -7,173 +7,245 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Search Patterns** describe the recurring strategies, concepts, and problem shapes used to index, retrieve, filter, and rank information efficiently.
-They explain *how search works conceptually*, independent of any specific tool or platform.
+Search Patterns describe the strategies and system behaviours used to ingest, index, retrieve, filter, and rank information efficiently across large datasets.
 :::
 
-Search is not just “finding text” — it is a discipline combining **information retrieval**, **indexing**, **ranking**, and **query patterns**.
+---
+
+## When to Use
+
+- You need fast, relevant retrieval across large datasets
+- You need faceted filtering or structured queries
+- You need semantic or AI‑driven search
+- You need real‑time or near‑real‑time indexing
+- You need dashboards, catalogues, or log search
+
+## When Not to Use
+
+- You need ACID transactions
+- You need relational joins
+- Data is small, static, or easily scanned
+- You only need key‑value lookups
+- You need strict schema enforcement
 
 ---
 
-## 🎯 What Problem Do Search Patterns Solve?
+## 🎯 What Problem Does This Solve?
 
-Search Patterns enable:
+Search Patterns solve the problem of **finding relevant information quickly and accurately** in large, unstructured or semi‑structured datasets.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| **Fast retrieval** | Quickly find relevant information across large datasets |
-| **Relevance ranking** | Order results by usefulness, not just matching |
-| **Filtering & faceting** | Support catalogues, dashboards, and analytics |
-| **Scalable indexing** | Handle continuous ingestion of documents or events |
-| **Semantic search** | Retrieve results based on meaning, not keywords |
+They provide predictable ways to:
 
-Search patterns help TAs recognise *which search strategy fits which problem*.
+- index and analyse text
+- retrieve documents efficiently
+- rank results by relevance
+- filter and aggregate structured fields
+- perform semantic similarity search
 
----
-
-## 🧠 Conceptual Model (How Search Works)
-
-Search systems follow a predictable conceptual flow:
-
-### **1. Ingestion Pattern**
-Data enters the system as documents, events, or records.
-
-### **2. Analysis Pattern**
-Text is processed through:
-- tokenisation
-- normalisation
-- stemming
-- stopword removal
-- embedding generation
-
-### **3. Indexing Pattern**
-Data is stored in structures optimised for retrieval:
-- inverted indexes
-- columnar stores
-- vector indexes
-
-### **4. Retrieval Pattern**
-Queries match documents using:
-- keywords
-- filters
-- boolean logic
-- ranges
-- aggregations
-- vector similarity
-
-### **5. Ranking Pattern**
-Results are ordered using:
-- term frequency
-- inverse document frequency
-- BM25‑style scoring
-- hybrid keyword + vector ranking
+This enables TAs to identify which search strategy fits which problem shape.
 
 ---
 
-# 🧬 Core Search Patterns
+## 🧠 **Conceptual Model**
+
+### **Core Components**
+
+- **Ingestion** — documents, logs, events enter the system
+- **Analysis** — tokenisation, normalisation, stemming, embeddings
+- **Indexing** — inverted indexes, columnar stores, vector indexes
+- **Retrieval** — keyword, boolean, filters, ranges, vector similarity
+- **Ranking** — BM25, TF‑IDF, hybrid scoring, semantic reranking
+
+### **Axes of Variation**
+
+- Keyword vs semantic
+- Exact match vs fuzzy match
+- Structured vs unstructured data
+- Real‑time vs batch indexing
+- Precision vs recall
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+        +-------------+
+        |   Ingest    |
+        +------+------+
+               |
+               v
+        +-------------+
+        |   Analyse   |
+        | tokenize    |
+        | normalise   |
+        | embed       |
+        +------+------+
+               |
+               v
+        +-------------+
+        |   Index     |
+        | inverted    |
+        | vector      |
+        +------+------+
+               |
+               v
+        +-------------+
+        |  Retrieve   |
+        | keyword     |
+        | filters     |
+        | vectors     |
+        +------+------+
+               |
+               v
+        +-------------+
+        |   Rank      |
+        | BM25        |
+        | hybrid      |
+        +-------------+
+```
+
+---
+
+## 🔍 **TA Lens**
+
+:::info How a TA Evaluates This Concept
+- What changes as data grows?
+- What becomes a bottleneck: indexing, retrieval, ranking?
+- How does the system behave under high query load?
+- How does ingestion lag affect freshness?
+- Are queries keyword‑shaped, filter‑shaped, or semantic‑shaped?
+- What trade‑offs exist between precision, recall, and latency?
+:::
+
+**What happens when:**
+
+- **Data grows** → indexing slows, shards increase, relevance shifts
+- **Traffic increases** → query latency rises, caches become critical
+- **Concurrency rises** → hotspots appear, ranking becomes expensive
+- **Resources become constrained** → ANN search degrades, merges stall
+
+---
+
+## 📘 **Key Terminology**
+
+| Term | Definition |
+|------|------------|
+| **Document** | Structured object containing fields |
+| **Field** | Attribute inside a document |
+| **Analyzer** | Text processing pipeline |
+| **Inverted Index** | Maps terms → documents |
+| **Embedding** | Vector representation of meaning |
+| **ANN Search** | Approximate nearest neighbour search |
+| **Ranking** | Ordering results by relevance |
+| **Vector Index** | Index storing embeddings for similarity search |
+| **Partitioning** | Splitting data into shards or segments |
+
+---
+
+## 🧬 **Variants / Types**
 
 <Tabs>
 
-<TabItem value="fulltext" label="Full‑Text Search Pattern">
+<TabItem value="fulltext" label="Full‑Text Search">
 
-### Purpose
+### Full‑Text Search
+
+**Purpose**
 Retrieve documents based on text relevance.
 
-### Characteristics
+**Key Characteristics**
 - Tokenisation
 - Stemming
 - Relevance scoring
 - Fuzzy matching
 
-### Problem Shapes
-- Searching documents
-- Product search
-- Knowledge bases
+**Behaviour**
+Matches documents based on processed text and relevance scoring.
 
-### TA Lens
-Use when **meaningful text relevance** is required.
+**Trade-offs**
+Great for meaning; weaker for structured precision.
 
 </TabItem>
 
-<TabItem value="filtering" label="Filtering & Faceting Pattern">
+<TabItem value="filtering" label="Filtering & Faceting">
 
-### Purpose
+### Filtering & Faceting
+
+**Purpose**
 Retrieve documents based on structured fields.
 
-### Characteristics
+**Key Characteristics**
 - Exact matches
 - Range queries
 - Boolean logic
 - Faceted navigation
 
-### Problem Shapes
-- E‑commerce filters
-- Dashboard drill‑downs
-- Log filtering
+**Behaviour**
+Filters documents using structured attributes.
 
-### TA Lens
-Use when **precision**, not relevance, matters.
+**Trade-offs**
+High precision; no semantic understanding.
 
 </TabItem>
 
-<TabItem value="analytics" label="Aggregation Pattern">
+<TabItem value="analytics" label="Aggregation">
 
-### Purpose
+### Aggregation
+
+**Purpose**
 Compute metrics and summaries over large datasets.
 
-### Characteristics
+**Key Characteristics**
 - Bucketing
 - Histograms
 - Counts and metrics
 - Time‑series grouping
 
-### Problem Shapes
-- Observability dashboards
-- Log analytics
-- Reporting
+**Behaviour**
+Executes analytical queries instead of retrieving documents.
 
-### TA Lens
-Use when you need **summaries**, not documents.
+**Trade-offs**
+Expensive at scale; not suitable for relevance search.
 
 </TabItem>
 
-<TabItem value="vector" label="Vector Search Pattern">
+<TabItem value="vector" label="Vector Search">
 
-### Purpose
+### Vector Search
+
+**Purpose**
 Retrieve documents based on semantic similarity.
 
-### Characteristics
+**Key Characteristics**
 - Embeddings
-- Approximate nearest neighbour (ANN) search
+- ANN search
 - High‑dimensional vectors
 
-### Problem Shapes
-- Semantic search
-- Recommendations
-- Similarity detection
+**Behaviour**
+Finds nearest neighbours in vector space.
 
-### TA Lens
-Use when **meaning** matters more than keywords.
+**Trade-offs**
+Semantic power vs ANN approximation errors.
 
 </TabItem>
 
-<TabItem value="hybrid" label="Hybrid Search Pattern">
+<TabItem value="hybrid" label="Hybrid Search">
 
-### Purpose
+### Hybrid Search
+
+**Purpose**
 Combine keyword relevance + semantic similarity.
 
-### Characteristics
+**Key Characteristics**
 - Weighted scoring
 - Multi‑stage retrieval
 - Reranking
 
-### Problem Shapes
-- AI‑enhanced search
-- Personalised search
-- Complex relevance requirements
+**Behaviour**
+Blends keyword and vector signals for richer relevance.
 
-### TA Lens
-Use when neither keyword nor vector search alone is sufficient.
+**Trade-offs**
+More accurate but more expensive.
 
 </TabItem>
 
@@ -181,144 +253,71 @@ Use when neither keyword nor vector search alone is sufficient.
 
 ---
 
-# 🧩 Core Concepts in Search Patterns
+## 🧩 **System Interactions**
 
-### **Document Pattern**
-Represent data as structured objects with fields.
+:::info How a TA Understands the System
+- How search interacts with ingestion pipelines
+- How indexing competes with query load
+- How shards, replicas, and caches affect performance
+- What becomes a bottleneck as data or traffic grows
+:::
 
-### **Field Pattern**
-Store attributes that can be searched, filtered, or aggregated.
+### **Local Systems**
 
-### **Analyzer Pattern**
-Define how text is processed before indexing.
+- CPU for scoring
+- Memory for caching
+- Disk for index segments
+- Network for distributed queries
 
-### **Inverted Index Pattern**
-Map terms → documents for fast retrieval.
+### **Remote Systems**
 
-### **Ranking Pattern**
-Score documents based on relevance.
+- Distributed clusters
+- Shards and replicas
+- Cross‑data‑centre search
 
-### **Vector Index Pattern**
-Store embeddings for semantic similarity.
+### **Questions to Ask**
 
-### **Partitioning Pattern**
-Split data into shards or segments for scalability.
-
----
-
-# 🧬 Query Patterns
-
-### **Keyword Query Pattern**
-Match documents containing specific terms.
-
-### **Boolean Query Pattern**
-Combine conditions using AND / OR / NOT.
-
-### **Filter Pattern**
-Match exact values or ranges.
-
-### **Aggregation Pattern**
-Compute metrics or summaries.
-
-### **Vector Similarity Pattern**
-Find nearest neighbours in embedding space.
-
-### **Hybrid Query Pattern**
-Blend keyword + vector retrieval.
+- Is indexing keeping up with ingestion?
+- Are queries slow due to ranking or retrieval?
+- Are shards balanced?
+- Is caching effective?
 
 ---
 
-# 🧭 When to Use Search Patterns
+## 💥 **Outputs / Results**
 
-Use search patterns when:
+:::note Special Considerations
+Search outputs vary by query type: documents, metrics, facets, or similarity scores.
+:::
 
-- You need **fast, relevant retrieval**
-- You have **large volumes of documents or logs**
-- You need **faceted filtering**
-- You need **semantic or AI‑driven search**
-- You need **real‑time indexing**
+### **Success Modes**
 
----
+| Result Type | Description |
+|-------------|-------------|
+| Ranked Results | Ordered list of relevant documents |
+| Aggregations | Metrics, histograms, summaries |
+| Facets | Filterable categories |
+| Similarity Scores | Vector‑based relevance |
 
-# 🚫 When Not to Use
+### **Failure Modes**
 
-Avoid search patterns when:
-
-- You need ACID transactions
-- You need relational joins
-- Data is small and static
-- You only need key‑value lookups
-- You need strict schema enforcement
-
----
-
-# 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **Document** | Structured object containing fields |
-| **Field** | Attribute inside a document |
-| **Analyzer** | Text processing pipeline |
-| **Inverted Index** | Maps terms to documents |
-| **Embedding** | Vector representation of meaning |
-| **ANN Search** | Approximate nearest neighbour search |
-| **Ranking** | Ordering results by relevance |
+| Failure Type | Description |
+|-------------|-------------|
+| Slow Queries | Ranking or retrieval bottlenecks |
+| Stale Results | Indexing lag or ingestion delays |
+| Irrelevant Results | Poor analysis or ranking |
+| Missing Data | Index corruption or shard imbalance |
 
 ---
 
-# 🔌 How to Interact With Search Patterns
+## 🔗 **Related Runbook Concepts**
 
-**Access Pattern**
-- Query languages
-- DSLs
-- APIs
-- SDKs
-
-**Operations**
-- Index documents
-- Update schemas
-- Run queries
-- Run aggregations
-- Analyse relevance
-
----
-
-# 📊 What Results Normally Look Like
-
-- Ranked search hits
-- Aggregation buckets
-- Faceted filters
-- Vector similarity scores
-- Highlighted text matches
-
----
-
-###  ⚠️ Common Mistakes
-
-- Using search systems as primary databases
-- Overusing dynamic schemas
-- Excessive wildcard queries
-- High‑cardinality fields
-- Ignoring relevance tuning
-- Treating vector search as a drop‑in replacement for keyword search
-
----
-
-# 🏗️ Real‑World Examples
-
-- Product search with filters and relevance ranking
-- Log analytics and dashboards
-- Semantic search using embeddings
-- Autocomplete and suggestions
-- Fraud detection using hybrid search
-- Observability pipelines
-
----
-
-## 🔗 Related Runbook Concepts
-
-- Data Modelling
-- Caching & Indexing
-- Observability Concepts
-- Information Retrieval
-- Vector Similarity
+- **Elasticsearch** — indexing, querying, cluster behaviour
+- **OpenSearch** — ingestion pipelines, shard management
+- **Solr / Lucene** — inverted indexes, analyzers, scoring
+- **Vector Databases** (Pinecone, Weaviate, Vespa) — ANN search, embeddings
+- **Indexing Pipelines** (Logstash, Fluentd, Kafka Connect) — ingestion, enrichment, transformation
+- **Log Search & Analytics** (Kibana, Grafana Loki) — dashboards, filters, aggregations
+- **Query Optimisation** — slow queries, ranking cost, caching
+- **Sharding & Partitioning** — scaling, balancing, routing
+- **Observability Dashboards** — query latency, indexing lag, shard health

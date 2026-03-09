@@ -1,252 +1,102 @@
 ---
 title: "Performance Storage Systems"
-sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Performance‑Oriented Storage Systems** are specialised storage layers designed to deliver **extremely fast access**, **low latency**, or **high‑efficiency retrieval** for application workloads.
-They optimise for *speed*, *searchability*, and *responsiveness* rather than durability or authoritative correctness.
+Performance Storage Systems are specialised storage layers optimised for extremely fast access, low latency, and high‑efficiency retrieval, prioritising speed and responsiveness over durability or authoritative correctness.
 :::
 
-These systems complement — but do not replace — authoritative storage such as databases.
+**When to Use**
 
-Performance‑oriented storage includes:
+- You need ultra‑fast reads on hot paths  
+- You need to offload expensive or repetitive database queries  
+- You need full‑text or relevance‑based search  
+- You need precomputed or denormalised views for fast retrieval  
+- You need high‑throughput read workloads  
 
-- **Caches** — ultra‑fast key/value access
-- **In‑memory stores** — low‑latency data structures
-- **Search indices** — full‑text and relevance‑based retrieval
-- **Materialised views** — precomputed results for fast reads
+**When Not to Use**
+
+- You need authoritative, durable, or strongly consistent storage  
+- You need transactional guarantees (ACID)  
+- You need long‑term persistence  
+- You need complex relational updates  
+- You need a system of record  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Performance‑oriented storage enables:
+Performance Storage Systems solve the problem of **slow or expensive reads** in application workloads.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| Low‑latency reads | Accelerates hot paths and user‑facing operations |
-| Reduced database load | Offloads repetitive or expensive queries |
-| Efficient search | Supports full‑text, fuzzy, and relevance‑based queries |
-| Precomputation | Avoids recomputing expensive results |
-| High throughput | Handles large read volumes with minimal overhead |
+They provide:
 
-These systems are essential for responsive applications and scalable architectures.
+- Low‑latency access for user‑facing operations  
+- Reduced load on primary databases  
+- Efficient full‑text and relevance‑based search  
+- Precomputation of expensive results  
+- High throughput for large read volumes  
 
----
-
-## 🧠 Conceptual Model (How It Works)
-
-Performance‑oriented storage systems optimise for:
-
-### **Speed over durability**
-- Data may be ephemeral
-- Durability is optional or limited
-
-### **Read optimisation**
-- Designed for fast lookups, scans, or search queries
-
-### **Derived or denormalised data**
-- Often stores *copies* or *representations* of authoritative data
-
-### **Specialised data structures**
-- Inverted indices
-- Sorted sets
-- Hash maps
-- Precomputed aggregates
-
-### **Separation of concerns**
-- Database = correctness
-- Performance storage = speed
+These systems complement — but do not replace — authoritative storage.
 
 ---
 
-## 🔬 Behaviour Under Load / Scale
+## 🧠 Conceptual Model
 
-- Caches absorb read spikes and reduce database pressure
-- In‑memory stores scale horizontally for high throughput
-- Search indices handle complex queries efficiently
-- Materialised views reduce CPU load by avoiding recomputation
-- Eviction, TTLs, and invalidation strategies shape behaviour
+### Core Components
 
-**TA insight:**
-Most performance issues arise from cache misses, stale indices, or invalidation failures — not from the storage engine itself.
+- **Caches** — ultra‑fast key/value access  
+- **In‑memory stores** — low‑latency data structures  
+- **Search indices** — inverted indices for text and relevance search  
+- **Materialised views** — precomputed results for fast reads  
+- **TTL & eviction policies** — control freshness and memory usage  
+- **Invalidation mechanisms** — ensure correctness of derived data  
 
----
+### Axes of Variation
 
-# ⭐ **Caching Patterns (Conceptual)**
-*(New, expanded section)*
-
-Caching is the most common form of performance‑oriented storage.
-It is a **speed layer**, not a system of record.
-
-Caching introduces predictable patterns and trade‑offs that a TA must recognise.
+- In‑memory vs on‑disk  
+- Key/value vs document vs index  
+- Push‑based vs pull‑based invalidation  
+- Write‑through vs write‑back vs write‑around caching  
+- Strong vs eventual freshness guarantees  
 
 ---
 
-## 🧩 Core Caching Patterns
+### Typical Lifecycle or Flow
 
-### **1. Cache‑Aside (Lazy Loading)**
-The application reads from the cache first.
-If the value is missing, it loads from the database and writes it into the cache.
+**Diagram(s):**
 
-**Characteristics**
-- Most common pattern
-- Cache populated on demand
-- Staleness controlled by TTL or explicit invalidation
-
-**TA Lens:**
-Ask: *“What happens on a cache miss?”*
-
----
-
-### **2. Write‑Through**
-Every write goes to the database **and** the cache at the same time.
-
-**Characteristics**
-- Cache always up‑to‑date
-- Slower writes
-- Simple read path
-
-**TA Lens:**
-Ask: *“Do writes update the cache synchronously?”*
-
----
-
-### **3. Write‑Back (Write‑Behind)**
-Writes go to the cache first and are flushed to the database later.
-
-**Characteristics**
-- Fast writes
-- Risk of data loss if cache fails
-- Requires careful durability guarantees
-
-**TA Lens:**
-Ask: *“Where does the authoritative write land first?”*
-
----
-
-## 🧩 Cache Invalidation Strategies
-
-Invalidation is the hardest part of caching.
-A TA needs to recognise the strategy being used.
-
-### **1. TTL‑Based Expiry**
-Entries expire after a fixed time.
-
-### **2. Explicit Invalidation**
-Application removes or updates entries when data changes.
-
-### **3. Event‑Driven Invalidation**
-Changes in the database trigger cache updates.
-
-### **4. Version‑Based Invalidation**
-Cache entries include version numbers or timestamps.
-
-### **5. Stale‑While‑Revalidate**
-Serve stale data while refreshing in the background.
-
-**TA Lens:**
-Ask: *“How does this system ensure cached data stays fresh?”*
-
----
-
-## 🧩 Cache Hierarchies
-
-Caching often exists at multiple layers:
-
-- **Browser cache**
-- **CDN edge cache**
-- **Reverse proxy cache**
-- **Application cache**
-- **In‑memory store**
-- **Database buffer cache**
-
-Each layer has different:
-- TTLs
-- invalidation rules
-- consistency expectations
-
-**TA Lens:**
-Ask: *“Which layer is responsible for this stale or inconsistent behaviour?”*
-
----
-
-## 🧩 Consistency vs Freshness Trade‑offs
-
-Caching introduces predictable anomalies:
-
-- stale reads
-- read‑your‑writes gaps
-- inconsistent views across nodes
-- race conditions during invalidation
-
-A TA must understand:
-
-> **Caching is a deliberate trade‑off: correctness → speed.**
-
-**TA Lens:**
-Ask: *“What level of staleness is acceptable for this data?”*
-
----
-
-## ⚖️ Trade-offs
-
-| Storage Type | Strengths | Weaknesses |
-|--------------|-----------|------------|
-| **Caches** | Extremely fast | Not durable, requires invalidation |
-| **In‑memory stores** | High throughput | Memory‑bound, volatile |
-| **Search indices** | Full‑text & relevance | Not authoritative, requires indexing |
-| **Materialised views** | Fast reads | Staleness unless refreshed |
-
----
-
-## 🧭 When to Use Performance-Oriented Storage
-
-Use performance‑oriented storage when:
-
-- You need **low‑latency access** to hot data
-- You need to **offload repetitive queries** from databases
-- You need **full‑text or relevance‑based search**
-- You need **precomputed or denormalised views**
-- You need **high‑throughput read workloads**
-
-Typical examples:
-- User session data
-- Feature flags
-- Product search
-- Autocomplete
-- Leaderboards
-- Precomputed analytics for dashboards
-
----
-
-## 🚫 When Not to Use
-
-Avoid performance‑oriented storage when:
-
-- You need **authoritative, durable data**
-- You need **strong consistency**
-- You need **complex transactional guarantees**
-- You need **large‑scale analytical queries**
-- You cannot tolerate **stale or eventually consistent data**
+```mermaid
+flowchart TD
+    A[Application] -->|Read| B[Performance Storage]
+    B -->|Hit| C[Return Cached/Indexed Result]
+    B -->|Miss| D[Authoritative Database]
+    D --> E[Compute / Query]
+    E --> F[Populate Cache / Index]
+    F --> C
+```
 
 ---
 
 ## 🔍 TA Lens
 
-:::info How a TA Evaluates Performance-Oriented Storage
-- What is the access pattern (read/write/scan/search)?
-- What level of staleness is acceptable?
-- What invalidation strategy is required?
-- Is the data derived or authoritative?
-- What happens on cache miss or index miss?
-- How does the system behave under eviction or memory pressure?
-- How is the data refreshed or rebuilt?
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck  
+- Whether the performance layer is authoritative or derived  
+- How invalidation, TTLs, and freshness are handled  
+- Whether cache misses or stale indices explain slow behaviour  
+- How search indices or materialised views are updated  
+- Whether the performance layer reduces or increases load  
 :::
+
+**What happens when:**
+
+- **Data grows** → eviction, memory pressure, index size growth  
+- **Traffic increases** → cache hit rate becomes critical  
+- **Concurrency rises** → lock contention, thundering herd, stampedes  
+- **Resources become constrained** → eviction storms, stale data, slow rebuilds  
 
 ---
 
@@ -254,114 +104,100 @@ Avoid performance‑oriented storage when:
 
 | Term | Definition |
 |------|------------|
-| Cache | Fast, in‑memory key/value store |
+| Cache | Fast key/value store for repeated reads |
+| In‑memory store | Data structures stored entirely in RAM |
+| Search index | Inverted index for full‑text or relevance search |
+| Materialised view | Precomputed query result stored for fast reads |
 | TTL | Time‑to‑live for cached entries |
-| Eviction | Removal of entries under memory pressure |
-| Inverted Index | Structure for full‑text search |
-| Materialised View | Precomputed query result |
-| Staleness | Divergence from authoritative data |
-| Invalidation | Removing or updating stale entries |
-| Cache‑Aside | Load on miss, write to cache |
-| Write‑Through | Write to cache and DB together |
-| Write‑Back | Write to cache first, DB later |
+| Eviction policy | Strategy for removing entries (LRU, LFU, FIFO) |
 
 ---
 
-# 🧬 Variants / Types
+## 🧬 Variants / Types
 
 <Tabs>
 
-<TabItem value="cache" label="Caches">
+<TabItem value="cache" label="Caching Systems">
 
-### Key Characteristics
-- Ultra‑fast key/value access
-- In‑memory or hybrid memory/disk
-- TTL‑based or eviction‑based lifecycle
+### Caching Systems
 
-### Core Concepts
-- Hot data
-- Cache keys
-- TTLs and expiry
-- Eviction policies (LRU, LFU, FIFO)
-- Cache‑aside / write‑through / write‑back
+**Purpose**  
+Provide ultra‑fast access to frequently used data.
 
-### Behaviour
-- Extremely low latency
-- Misses fall back to authoritative storage
-- Requires careful invalidation
+**Key Characteristics**
+- Key/value lookups  
+- TTLs and eviction policies  
+- Write‑through, write‑back, or write‑around  
+- In‑memory or distributed  
 
-### Exceptions (Not Universal)
-- Some caches persist to disk
-- Some support limited transactions
+**Behaviour**  
+Absorbs read spikes and reduces database load.
+
+**Trade-offs**  
+Stale data, invalidation complexity, cache stampedes.
 
 </TabItem>
 
-<TabItem value="inmemory" label="In-Memory Stores">
+<TabItem value="memory" label="In‑Memory Stores">
 
-### Key Characteristics
-- Data stored entirely in memory
-- High throughput and low latency
-- Supports complex data structures
+### In‑Memory Stores
 
-### Core Concepts
-- Hash maps
-- Sorted sets
-- Counters
-- Pub/sub primitives
+**Purpose**  
+Store data structures entirely in RAM for low‑latency access.
 
-### Behaviour
-- Volatile unless persisted
-- Ideal for real‑time workloads
+**Key Characteristics**
+- Sorted sets, lists, hashes  
+- Pub/sub messaging  
+- Atomic operations  
+- Horizontal scaling  
 
-### Exceptions (Not Universal)
-- Some in‑memory stores support snapshotting
-- Some provide append‑only durability
+**Behaviour**  
+Extremely fast operations; ideal for counters, sessions, leaderboards.
+
+**Trade-offs**  
+Limited durability; memory‑bound capacity.
 
 </TabItem>
 
 <TabItem value="search" label="Search Indices">
 
-### Key Characteristics
-- Full‑text search
-- Relevance scoring
-- Faceting and filtering
+### Search Indices
 
-### Core Concepts
-- Inverted indices
-- Tokenisation
-- Ranking and scoring
-- Index refresh cycles
+**Purpose**  
+Enable full‑text, fuzzy, and relevance‑based search.
 
-### Behaviour
-- Not authoritative
-- Requires indexing pipelines
-- Supports complex queries efficiently
+**Key Characteristics**
+- Inverted indices  
+- Tokenisation and stemming  
+- Ranking and scoring  
+- Distributed search clusters  
 
-### Exceptions (Not Universal)
-- Some search engines support limited transactions
-- Some support near‑real‑time indexing
+**Behaviour**  
+Efficient retrieval of documents based on text relevance.
+
+**Trade-offs**  
+Indexing cost, eventual consistency, stale results.
 
 </TabItem>
 
-<TabItem value="materialised" label="Materialised Views">
+<TabItem value="views" label="Materialised Views">
 
-### Key Characteristics
-- Precomputed query results
-- Fast reads
-- Derived from authoritative data
+### Materialised Views
 
-### Core Concepts
-- Refresh intervals
-- Incremental updates
-- Denormalisation
+**Purpose**  
+Provide precomputed results for fast reads.
 
-### Behaviour
-- May become stale
-- Reduces CPU load on primary storage
+**Key Characteristics**
+- Derived from authoritative data  
+- Periodic or incremental refresh  
+- Denormalised structures  
+- Optimised for read patterns  
 
-### Exceptions (Not Universal)
-- Some systems support automatic refresh
-- Some require manual rebuilds
+**Behaviour**  
+Avoids recomputing expensive queries.
+
+**Trade-offs**  
+Staleness, refresh cost, storage overhead.
 
 </TabItem>
 
@@ -371,47 +207,70 @@ Avoid performance‑oriented storage when:
 
 ## 🧩 System Interactions
 
-Performance‑oriented storage interacts with:
+:::info How a TA Understands the System
+- How performance storage interacts with authoritative databases  
+- How invalidation and refresh mechanisms behave under pressure  
+- What becomes a bottleneck as traffic or data volume grows  
+:::
 
-- **Databases** → authoritative source of truth
-- **Application logic** → cache reads/writes, search queries
-- **Indexing pipelines** → building and refreshing search indices
-- **Orchestration** → scaling, memory limits
-- **Observability** → hit/miss ratios, latency, eviction metrics
+### Local Systems
 
-**TA insight:**
-Understanding hit/miss ratios, staleness windows, and invalidation paths is essential for diagnosing performance issues.
+- OS memory  
+- Runtime data structures  
+- Local caches  
+- Application‑level caching layers  
+
+### Remote Systems
+
+- Redis / Memcached clusters  
+- Elasticsearch / OpenSearch  
+- Materialised view stores  
+- Downstream databases  
+
+### Questions to ask during reviews or incidents
+
+- Is the issue a cache miss or a stale entry?  
+- Is the index up‑to‑date with the source of truth?  
+- Is the materialised view refreshing correctly?  
+- Is the cache causing thundering herd behaviour?  
+- Is the performance layer masking deeper database issues?  
 
 ---
 
-## 💥 Failure Modes
+## 💥 Outputs / Results
 
-- Cache stampedes
-- Stale or inconsistent data
-- Eviction under memory pressure
-- Index drift or incomplete indexing
-- Hot key concentration
-- Materialised view staleness
-- Rebuild storms after restart
+:::note Special Considerations
+Performance layers are derived, not authoritative — correctness depends on invalidation and refresh.
+:::
 
----
+### Success Modes
 
-## 📊 What Results Normally Look Like
+| Result Type | Description |
+|-------------|-------------|
+| High Hit Rate | Most reads served from cache or index |
+| Low Latency | Fast responses for user‑facing operations |
+| Reduced DB Load | Primary database handles fewer reads |
+| Efficient Search | Full‑text queries return quickly |
 
-| Storage Type | Typical Output |
-|--------------|----------------|
-| Cache | Key/value entries |
-| In‑memory store | Data structures (sets, lists, counters) |
-| Search index | Ranked search results |
-| Materialised view | Precomputed rows or documents |
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Cache Miss Storm | Many misses overload the database |
+| Stale Index | Search results do not reflect current data |
+| Invalidated Views | Materialised views out of sync |
+| Eviction Storm | Memory pressure causes rapid churn |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- Databases
-- Application Storage Systems
-- Caching Strategies
-- Search Patterns
-- Eventual Consistency
-- Idempotency
+- **Redis** — in‑memory key/value store used for caching, counters, sessions
+- **Memcached** — lightweight distributed cache for simple key/value access
+- **Caffeine** — high‑performance JVM in‑process cache
+- **ElasticSearch / OpenSearch** — distributed search indices for full‑text and relevance search
+- **Solr** — enterprise search platform built on Lucene
+- **Materialised Views (Postgres / BigQuery / Snowflake)** — precomputed query results for fast reads
+- **CDNs (CloudFront, Akamai, Fastly)** — global edge caching for static assets
+- **Hazelcast / Ignite** — distributed in‑memory data grids
+- **RocksDB / LevelDB** — embedded high‑performance key/value stores

@@ -111,92 +111,91 @@ Once the pattern is recognised, the solution becomes mechanical.
 
 <TabItem value="twopointers" label="Two‑Pointers">
 
-### Key Characteristics
+**Key Characteristics**
 - Two indices scanning a structure  
 - Moves inward or outward  
 - Eliminates nested loops  
 
-### Behaviour
+**Behaviour**
 Linear-time comparison or scanning.
 
-### Trade-offs
+**Trade-offs**
 Fast but only works on linear, indexable structures.
 
 </TabItem>
 
 <TabItem value="sliding" label="Sliding Window">
 
-### Key Characteristics
+**Key Characteristics**
 - Expanding/contracting window  
 - Tracks contiguous segments  
 
-### Behaviour
+**Behaviour**
 Efficient for substring/subarray problems.
 
-### Trade-offs
+**Trade-offs**
 Only applies to contiguous ranges.
 
 </TabItem>
 
 <TabItem value="recursion" label="Recursion & Backtracking">
 
-### Key Characteristics
+**Key Characteristics**
 - Self‑referential decomposition  
 - Explore → undo → explore  
 
-### Behaviour
+**Behaviour**
 Ideal for trees, graphs, permutations.
 
-### Trade-offs
+**Trade-offs**
 Stack depth, exponential branching.
 
 </TabItem>
 
 <TabItem value="dp" label="Dynamic Programming">
 
-### Key Characteristics
+**Key Characteristics**
 - Overlapping subproblems  
 - Store → reuse  
 
-### Behaviour
+**Behaviour**
 Transforms exponential problems into polynomial.
 
-### Trade-offs
+**Trade-offs**
 Memory heavy, requires careful formulation.
 
 </TabItem>
 
 <TabItem value="search" label="Search & Traversal">
 
-### Key Characteristics
+**Key Characteristics**
 - DFS: depth-first  
 - BFS: breadth-first  
 - Binary search: monotonic space  
 
-### Behaviour
+**Behaviour**
 Systematic exploration of structures.
 
-### Trade-offs
+**Trade-offs**
 DFS risks stack overflow; BFS uses more memory.
 
 </TabItem>
 
 <TabItem value="greedy" label="Greedy & Optimisation">
 
-### Key Characteristics
+**Key Characteristics**
 - Local optimum → global optimum  
 - Fast, simple  
 
-### Behaviour
+**Behaviour**
 Ideal for scheduling, intervals, resource allocation.
 
-### Trade-offs
+**Trade-offs**
 Fails when local choices don’t lead to global optimum.
 
 </TabItem>
 <TabItem value="problemshapes" label="Common Problem Shapes">
 
-### 🧩 Common Problem Shapes
 These appear everywhere — interviews, production systems, data pipelines.
 Each one maps cleanly to a known algorithmic pattern.
 

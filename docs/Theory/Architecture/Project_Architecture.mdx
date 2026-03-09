@@ -1,59 +1,70 @@
 ---
 title: "Project Architecture"
-sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Project Architecture** describes how a software project is structured across code, dependencies, tooling, workflows, and team conventions — the system that shapes how engineers build, test, deploy, and operate software.
+Project Architecture describes how a software project is structured across code, dependencies, tooling, workflows, and team conventions — the system that shapes how engineers build, test, deploy, and operate software.
 :::
 
-**Typical examples include:**
-- A Python service with `src/`, `tests/`, Poetry, Docker, and GitHub Actions  
-- A JVM monolith with Maven, layered modules, and internal libraries  
-- A data engineering repo with ETL folders, schemas, and pipeline configs  
+**When to Use**
+
+- Designing or updating a project template  
+- Reviewing a team’s repo to understand constraints  
+- Diagnosing structural issues (build failures, dependency drift, CI pain)  
+- Identifying fixed vs flexible vs team‑specific elements  
+- Ensuring templates support real‑world engineering needs  
+
+**When Not to Use**
+
+- Assuming all teams should follow identical structures  
+- Forcing a template onto a team with domain‑specific needs  
+- Treating flexible elements as fixed (or vice versa)  
+- Over‑engineering structure for small or short‑lived projects  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Understanding **Project Architecture** enables:
+Project Architecture solves the problem of **how work gets done** inside a software project.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| **Clarity of constraints** | Reveals what the team *must* keep vs what can change |
-| **Template alignment** | Ensures cookiecutter templates support real-world needs |
-| **Risk reduction** | Identifies brittle or non-standard structures early |
-| **Faster onboarding** | New engineers understand the project shape quickly |
-| **Better requirements** | Requirements become grounded in engineering reality |
+It enables:
+
+- **Clarity of constraints** — what must stay stable vs what can change  
+- **Template alignment** — ensuring cookiecutter templates match real needs  
+- **Risk reduction** — identifying brittle or non‑standard structures early  
+- **Faster onboarding** — new engineers understand the project shape quickly  
+- **Better requirements** — grounding requirements in engineering reality  
+
+A project’s architecture is the *skeleton* that determines how teams build, test, deploy, and operate software.
 
 ---
 
-## 🧠 Conceptual Model (How It Works)
+## 🧠 Conceptual Model
 
-A project’s architecture is shaped by:
+### Core Components
 
-### **Language & Runtime Constraints**
+#### **Language & Runtime Constraints**
 - Packaging model  
 - Directory conventions  
 - Build tools  
 - Dependency resolution  
 
-### **Team Workflow**
+#### **Team Workflow**
 - CI/CD pipelines  
 - Testing strategy  
 - Deployment model  
 - Observability patterns  
 
-### **Domain Requirements**
+#### **Domain Requirements**
 - Data pipelines  
 - API boundaries  
-- Infrastructure-as-code  
+- Infrastructure‑as‑code  
 - ML workflows  
 
-### **Organisational Standards**
+#### **Organisational Standards**
 - Templates  
 - Security requirements  
 - Naming conventions  
@@ -61,21 +72,28 @@ A project’s architecture is shaped by:
 
 Together, these form the **project skeleton** — the structure that governs how work gets done.
 
+### Axes of Variation
+
+- **Fixed vs Flexible vs Team‑Specific elements**  
+- **Monorepo vs Polyrepo**  
+- **Strict vs Loose conventions**  
+- **Lightweight vs Heavyweight tooling**  
+- **Runtime‑driven vs Domain‑driven structure**  
+
 ---
 
-## 🧭 When to Use
+### Typical Lifecycle or Flow
 
-### **Use When**
-- Designing or updating a project template  
-- Reviewing a team’s repo to understand constraints  
-- Identifying fixed vs flexible vs team‑specific elements  
-- Diagnosing structural issues (build failures, dependency drift, CI pain)  
+**Diagram:**
 
-:::warning Avoid When
-- Assuming all teams should follow identical structures  
-- Forcing a template onto a team with domain‑specific needs  
-- Treating flexible elements as fixed (or vice versa)  
-:::
+```mermaid
+flowchart TD
+    A[Clone Repo] --> B[Inspect Structure]
+    B --> C[Identify Fixed/Flexible/Team-Specific Elements]
+    C --> D[Map Constraints to Template]
+    D --> E[Review with Team]
+    E --> F[Iterate & Maintain Architecture]
+```
 
 ---
 
@@ -84,20 +102,17 @@ Together, these form the **project skeleton** — the structure that governs how
 :::info How a TA Evaluates Project Architecture
 - Identify **fixed elements** dictated by language, runtime, or organisation  
 - Identify **flexible elements** that teams can change with effort  
-- Identify **team‑specific elements** that must be supported via extension points  
+- Identify **team‑specific elements** that require extension points  
 - Look for structural signals: modularity, testability, dependency hygiene  
 - Ask whether the architecture supports the team’s domain and workflow  
 :::
 
----
+**What happens when:**
 
-## 🧰 TA Skills Checklist
-
-| Skill Area | What a TA Should Do |
-|------------|----------------------|
-| **Analysis** | Map repo structure, identify constraints, detect inconsistencies |
-| **Requirements** | Capture fixed/flexible/team‑specific needs for templates |
-| **Review** | Validate alignment with standards, identify risks, propose extension points |
+- **Data grows** → repo structure must support pipelines, schemas, storage  
+- **Traffic increases** → CI/CD must scale, tests must be layered  
+- **Concurrency rises** → build tools and runtimes must handle parallelism  
+- **Resources become constrained** → builds slow, dependencies drift, CI bottlenecks appear  
 
 ---
 
@@ -105,15 +120,15 @@ Together, these form the **project skeleton** — the structure that governs how
 
 | Term | Definition |
 |------|------------|
-| **Fixed Element** | A project component that cannot change without major cost |
-| **Flexible Element** | A component that can change with effort and coordination |
-| **Team‑Specific Element** | A domain‑driven component unique to a team’s workflow |
-| **Extension Point** | A template mechanism allowing teams to customise behaviour |
-| **Project Skeleton** | The baseline directory and tooling structure |
+| Fixed Element | A project component that cannot change without major cost |
+| Flexible Element | A component that can change with effort and coordination |
+| Team‑Specific Element | A domain‑driven component unique to a team’s workflow |
+| Extension Point | A template mechanism allowing teams to customise behaviour |
+| Project Skeleton | The baseline directory and tooling structure |
 
 ---
 
-# 🧬 Variants / Types of Project Architecture
+## 🧬 Variants / Types
 
 <Tabs>
 
@@ -121,142 +136,97 @@ Together, these form the **project skeleton** — the structure that governs how
 
 ### Baseline Project Structure
 
-| Area | Components |
-|------|------------|
-| **Source Code** | Modules, packages, classes, functions, config files |
-| **Dependencies** | Language deps, system deps, internal libraries |
-| **Build & Packaging** | Build tool, package manager, artifact output |
-| **Testing** | Unit tests, integration tests, test data |
-| **CI/CD** | Linting, build, test, deploy |
-| **Runtime & Deployment** | Container/VM/serverless, env config, secrets |
-| **Observability** | Logging, metrics, health checks |
+**Purpose**  
+Provide a predictable, navigable foundation for engineering work.
+
+**Key Characteristics**
+- Source code layout  
+- Dependencies and package management  
+- Build & packaging tools  
+- Testing structure  
+- CI/CD pipelines  
+- Runtime & deployment configuration  
+- Observability hooks  
+
+**Behaviour**  
+Defines the default shape of the project.
+
+**Trade-offs**  
+Too rigid → slows teams; too loose → creates chaos.
 
 </TabItem>
 
 <TabItem value="fixed" label="Fixed Elements">
 
-### 🔒 Fixed Elements  
-These are dictated by the language, runtime, or organisational constraints.
+### Fixed Elements
 
-| Language | Typical Fixed Elements | Why Fixed |
-|---------|-------------------------|-----------|
-| **Java** | Maven/Gradle, `src/main/java`, JAR/WAR output | JVM conventions + ecosystem |
-| **Scala** | sbt, multi‑module builds | Compiler + community norms |
-| **Python** | `src/` layout, virtualenv/poetry | Packaging + interpreter behaviour |
-| **Node.js** | `package.json`, npm/yarn | Runtime + dependency model |
+**Purpose**  
+Represent non‑negotiable constraints imposed by language, runtime, or organisation.
 
-**TA Interpretation:**  
-Fixed elements are **non‑negotiable** and must be supported by templates.
+**Key Characteristics**
+- Language‑specific directory conventions  
+- Build tools (Maven, sbt, Poetry, npm)  
+- Packaging models (JAR, wheel, container image)  
+- Required internal libraries or security tooling  
+
+**Behaviour**  
+Stable across teams; must be supported by templates.
+
+**Trade-offs**  
+Rigid but predictable.
+
+---
+
+**Examples**
+
+| Language | Fixed Elements | Why Fixed |
+|---------|----------------|-----------|
+| Java | Maven/Gradle, `src/main/java`, JAR/WAR | JVM conventions |
+| Scala | sbt, multi‑module builds | Compiler + ecosystem |
+| Python | `src/` layout, virtualenv/poetry | Packaging + interpreter |
+| Node.js | `package.json`, npm/yarn | Runtime + dependency model |
 
 </TabItem>
 
 <TabItem value="flexible" label="Flexible Elements">
 
-### 🔄 Flexible Elements  
-These can change, but only with cost and coordination.
+### Flexible Elements
 
-| Area | Typical Flexibility | TA Interpretation |
-|------|----------------------|-------------------|
-| Directory structure | Medium | Reorganisation is disruptive |
-| Testing framework | Medium | Migration possible but painful |
-| CI pipeline | Medium | Adaptable via extension points |
-| Dockerfile | Medium | Standardisable if base image fits |
+**Purpose**  
+Allow teams to adapt structure to their workflow.
 
-**TA Interpretation:**  
-Flexible elements reveal **negotiation space** and team history.
+**Key Characteristics**
+- Directory structure  
+- Testing framework  
+- CI pipeline design  
+- Dockerfile patterns  
+
+**Behaviour**  
+Can change, but with cost and coordination.
+
+**Trade-offs**  
+Flexibility increases autonomy but reduces standardisation.
 
 </TabItem>
 
 <TabItem value="team" label="Team‑Specific Elements">
 
-### 🎨 Team‑Specific Elements  
-Unique to the team’s domain, workflow, or architecture.
+### Team‑Specific Elements
 
-| Team Type | Team‑Specific Needs |
-|-----------|---------------------|
-| Data Engineering | ETL folders, schema files, pipeline configs |
-| Backend API | Routing conventions, middleware patterns |
-| ML/AI | Model folders, notebooks, experiment tracking |
-| Platform | Terraform modules, infra scripts |
+**Purpose**  
+Capture domain‑driven needs unique to a team.
 
-**TA Interpretation:**  
-Team‑specific elements require **extension points**, not standardisation.
+**Key Characteristics**
+- ETL folders, schemas, pipeline configs  
+- API routing conventions  
+- ML model folders, notebooks, experiment tracking  
+- Terraform modules, infra scripts  
 
-</TabItem>
+**Behaviour**  
+Require extension points, not standardisation.
 
-</Tabs>
-
----
-
-# 🧩 Side‑by‑Side Project Examples
-
-<Tabs>
-
-<TabItem value="java" label="Java">
-
-```mermaid
-project/
-├── src/
-│   ├── main/java/
-│   └── test/java/
-├── pom.xml
-└── target/
-```
-
-**Fixed:** Maven, directory structure  
-**Flexible:** Test framework  
-**Team‑specific:** Internal libraries, domain modules
-
-</TabItem>
-
-<TabItem value="python" label="Python">
-
-```mermaid
-project/
-├── src/project_name/
-├── tests/
-├── pyproject.toml
-└── requirements.txt
-```
-
-**Fixed:** Packaging model  
-**Flexible:** Test runner, dependency tool  
-**Team‑specific:** Data folders, scripts
-
-</TabItem>
-
-<TabItem value="node" label="Node.js">
-
-```mermaid
-project/
-├── src/
-├── test/
-├── package.json
-└── node_modules/
-```
-
-**Fixed:** package.json  
-**Flexible:** Framework (Express/Fastify)  
-**Team‑specific:** API structure, middleware
-
-</TabItem>
-
-<TabItem value="scala" label="Scala">
-
-```mermaid
-project/
-├── src/
-│   ├── main/scala/
-│   └── test/scala/
-├── build.sbt
-├── project/
-│   └── plugins.sbt
-└── target/
-```
-
-**Fixed:** sbt, directory structure, compiler settings  
-**Flexible:** Multi‑module layout, test framework  
-**Team‑specific:** Functional libraries, domain boundaries
+**Trade-offs**  
+High variability; templates must support customisation.
 
 </TabItem>
 
@@ -264,87 +234,63 @@ project/
 
 ---
 
-# 🧩 Key Strategies
+## 🧩 System Interactions
 
-<Tabs>
+:::info How a TA Understands the System
+- How project structure interacts with build tools, CI/CD, and runtime  
+- How architecture behaves under load (large repos, heavy tests)  
+- What becomes a bottleneck as teams scale or add dependencies  
+:::
 
-<TabItem value="constraints" label="Identify Constraints">
+### Local Systems
 
-### Approach
-Map the repo to determine what is fixed, flexible, or team‑specific.
+- OS  
+- Runtime  
+- Build tools  
+- Dependency managers  
+- Local testing frameworks  
 
-### Responsibility
-TA leads the analysis; engineers validate feasibility.
+### Remote Systems
 
-### Focus
-Ensure templates respect real constraints.
+- CI/CD platforms  
+- Artifact registries  
+- Cloud runtimes  
+- Data centers  
+- Internal library repositories  
 
-</TabItem>
+### Questions to ask during reviews or incidents
 
-<TabItem value="extensions" label="Support Extension Points">
-
-### Approach
-Design templates that allow safe customisation.
-
-### Responsibility
-TA defines extension boundaries; engineers implement them.
-
-### Focus
-Balance standardisation with team autonomy.
-
-</TabItem>
-
-</Tabs>
-
----
-
-## 🔌 How to Interact With It
-
-**Access Pattern:**  
-Clone repo → inspect structure → map constraints → compare to template.
-
-**Operations / Interfaces:**  
-- Build tools (Maven, sbt, Poetry, npm)  
-- CI pipelines  
-- Dockerfiles  
-- Internal libraries  
-
-**Interaction Model:**  
-Direct repo analysis, interviews with engineers, comparison against standards.
+- What parts of the structure are fixed vs flexible?  
+- Does the architecture support the team’s domain?  
+- Are dependencies well‑managed or drifting?  
+- Are CI/CD pipelines aligned with project shape?  
+- Are extension points clearly defined?  
 
 ---
 
-## 📊 What Results Normally Look Like
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Historical decisions often explain structural quirks; avoid assuming mistakes.
+:::
+
+### Success Modes
 
 | Result Type | Description |
 |-------------|-------------|
-| **Project map** | Clear breakdown of fixed/flexible/team‑specific elements |
-| **Template requirements** | Structured list of what the template must support |
-| **Risk assessment** | Identification of brittle or inconsistent structures |
-| **Extension points** | Areas where teams need customisation |
+| Project Map | Clear breakdown of fixed/flexible/team‑specific elements |
+| Template Requirements | Structured list of what templates must support |
+| Risk Assessment | Identification of brittle or inconsistent structures |
+| Extension Points | Areas where teams can safely customise |
 
-:::note Special Considerations
-Some teams evolve organically; historical decisions often explain structural quirks.
-:::
+### Failure Modes
 
----
-
-####  ⚠️ Common Mistakes
-
-- Treating all teams as identical  
-- Over‑standardising and removing necessary flexibility  
-- Ignoring domain‑specific folder structures  
-- Assuming CI/CD can be fully templated  
-- Forcing a template onto a team without understanding constraints  
-
----
-
-## 🏗️ Real‑World Examples
-
-- A data team requires schema folders that don’t fit a backend template  
-- A Python team uses Poetry but the template assumes pip/requirements.txt  
-- A JVM team needs multi‑module builds that the template must support  
-- A platform team requires Terraform modules that don’t belong in other repos  
+| Failure Type | Description |
+|--------------|-------------|
+| Structural Drift | Repo becomes inconsistent or unmaintainable |
+| Dependency Drift | Versions diverge, causing build failures |
+| CI Pain | Slow, flaky, or brittle pipelines |
+| Template Misalignment | Templates fail to support real workflows |
 
 ---
 

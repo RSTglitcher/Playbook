@@ -7,135 +7,97 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip Definition
-**Application Storage Systems** refer to the storage mechanisms that applications use to **persist, retrieve, and manage operational data** during normal runtime.
-They support day‑to‑day business operations, stateful workloads, configuration, and performance‑critical access patterns.
+Application Storage Systems are the mechanisms applications use to persist, retrieve, and manage operational data required for day‑to‑day business functionality, correctness, and runtime behaviour.
 :::
 
-Application storage is distinct from **analytical storage**, which focuses on historical analysis, large‑scale aggregation, and BI workloads.
+**When to Use**
 
-Application storage includes:
+- Persisting operational or transactional data  
+- Serving authoritative reads and writes  
+- Managing configuration, secrets, and runtime state  
+- Supporting performance‑critical access patterns  
+- Ensuring durability across restarts, failures, and deployments  
 
-- **Databases** — structured, semi‑structured, and time‑series data
-- **Platform storage** — persistent volumes, ephemeral storage, configuration stores
-- **File & object storage** — block devices, file shares, object stores
-- **Performance‑oriented storage** — caches, search indices, in‑memory stores
-- **Archival storage** — long‑term retention for compliance or audit
+**When Not to Use**
+
+- Large‑scale analytical workloads (OLAP)  
+- Historical trend analysis or BI reporting  
+- Long‑term archival or compliance storage  
+- Ultra‑low‑latency caching or search (use performance storage instead)  
+- Unstructured data without governance requirements  
 
 ---
 
 ## 🎯 What Problem Does This Solve?
 
-Application storage enables:
+Application storage solves the problem of **durable, correct, and structured data access** for operational systems.
 
-| Benefit | Why it matters |
-|--------|----------------|
-| Durable state | Data survives restarts, failures, redeployments |
-| Correctness | Applications rely on authoritative, up‑to‑date data |
-| Structured access | Databases enforce schemas, constraints, indexing |
-| Operational performance | Caches and search engines accelerate hot paths |
-| Platform integration | Volumes, secrets, and config support runtime needs |
-| Lifecycle guarantees | Backups, replication, retention policies |
+It enables:
 
----
+- Durable state that survives restarts and failures  
+- Correctness through schemas, constraints, and transactions  
+- Structured access patterns for predictable behaviour  
+- Operational performance for user‑facing workloads  
+- Platform integration via volumes, secrets, and config  
+- Lifecycle guarantees such as backups, replication, and retention  
 
-## 🧠 Conceptual Model (How It Works)
-
-Application storage systems vary along several dimensions:
-
-****Operational vs Analytical**
-- Application storage → OLTP, correctness, low latency
-- Analytical storage → OLAP, large scans, historical analysis
-
-****Structured vs Unstructured**
-- Databases → structured
-- Object storage → unstructured
-- File/block storage → filesystem semantics
-
-****Ephemeral vs Persistent**
-- Ephemeral → tied to container lifecycle
-- Persistent → survives restarts and rescheduling
-
-****Hot vs Cold**
-- Hot → caches, search indices
-- Cold → archival storage
-
-****Local vs Networked**
-- Local → fast, but not durable
-- Networked → durable, but higher latency
+Without application storage, systems cannot maintain state, enforce correctness, or support business operations.
 
 ---
 
-## 🔬 Behaviour Under Load / Scale
+## 🧠 Conceptual Model
 
-- Databases handle high concurrency but require careful indexing
-- Persistent volumes scale with underlying storage classes
-- Object storage scales horizontally but has higher latency
-- Caches absorb read load and reduce database pressure
-- Search engines optimise for full‑text and relevance queries
-- Archival storage trades latency for cost
+### Core Components
 
-**TA insight:**
-Most application storage failures arise from mismatched access patterns, durability assumptions, or lifecycle expectations — not from the storage system itself.
+- **Databases** — relational, document, key/value, time‑series  
+- **Platform Storage** — persistent volumes, ephemeral storage, config stores  
+- **File & Object Storage** — block devices, file shares, object stores  
+- **Performance Storage** — caches, search indices, in‑memory stores  
+- **Archival Storage** — long‑term retention for compliance  
 
----
+### Axes of Variation
 
-## ⚖️ Trade-offs
-
-| Storage Type | Strengths | Weaknesses |
-|--------------|-----------|------------|
-| **Databases** | Correctness, transactions | Coordination overhead, schema rigidity |
-| **Platform Storage** | Durable, platform‑managed | Latency, scheduling constraints |
-| **File/Object Storage** | Scalable, flexible | Limited querying, eventual consistency |
-| **Caches** | Extremely fast reads | Not durable, invalidation required |
-| **Search Indices** | Full‑text & relevance | Not authoritative, requires indexing |
-| **Archival Storage** | Very low cost | High retrieval latency |
+- **Operational (OLTP) vs Analytical (OLAP)**  
+- **Structured vs Semi‑structured vs Unstructured**  
+- **Ephemeral vs Persistent**  
+- **Hot vs Cold storage**  
+- **Local vs Networked**  
+- **Transactional vs Eventually consistent**  
 
 ---
 
-## 🧭 When to Use Application Storage
+### Typical Lifecycle or Flow
 
-Use application storage when:
+**Diagram(s):**
 
-- Your application requires **persistent state**
-- Data must survive **pod restarts or failures**
-- You need **structured access** (databases)
-- You need **file/block/object interfaces**
-- You need **fast access** to hot data (caches)
-- You need **searchable access** (search engines)
-- You need **long‑term retention** (archival)
-
-Typical examples:
-- Stateful microservices
-- Message brokers
-- CI/CD systems storing artifacts
-- Configuration and secrets
-- Application logs and backups
-
----
-
-## 🚫 When Not to Use
-
-Avoid application storage when:
-
-- You need **large‑scale analytical queries** (use analytical storage)
-- You need **real‑time streaming analytics**
-- You need **cross‑service data sharing** (use APIs or messaging)
-- You need **extremely low latency** beyond what caches can provide
-- You need **schema‑on‑read flexibility** (use data lakes)
+```mermaid
+flowchart TD
+    A[Application] -->|Read/Write| B[Application Storage]
+    B --> C[Durable Persistence]
+    B --> D[Indexing / Caching]
+    C --> E[Backups / Replication]
+    D --> F[Fast Reads / Derived Data]
+```
 
 ---
 
 ## 🔍 TA Lens
 
-:::info How a TA Evaluates Application Storage
-- What access pattern does the application require (read/write/scan)?
-- What durability guarantees are needed?
-- How does the storage behave under failure or rescheduling?
-- What consistency model is required?
-- How does the storage scale with load?
-- What lifecycle operations (backup, restore, rotation) are required?
-- Is the storage colocated with compute or remote?
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck  
+- Whether the storage is authoritative or derived  
+- How consistency, durability, and latency guarantees differ  
+- How platform storage interacts with containers and orchestration  
+- Whether performance issues originate from modelling, indexing, or I/O  
+- How storage behaviour changes under load or failure  
 :::
+
+**What happens when:**
+
+- **Data grows** → indexing, partitioning, and storage tiering matter  
+- **Traffic increases** → read/write amplification, lock contention  
+- **Concurrency rises** → transaction conflicts, deadlocks, hotspots  
+- **Resources become constrained** → I/O saturation, slow queries, eviction  
 
 ---
 
@@ -143,252 +105,194 @@ Avoid application storage when:
 
 | Term | Definition |
 |------|------------|
-| Persistent Volume | Durable storage attached to workloads |
+| OLTP | Operational transactional processing |
+| Persistent Volume | Durable storage attached to containers |
 | Ephemeral Storage | Temporary storage tied to container lifecycle |
-| Object Storage | Key‑based storage for unstructured data |
-| Block Storage | Raw device exposed to the OS |
-| File Storage | Shared filesystem semantics |
-| Cache | Fast, in‑memory storage for hot data |
-| Search Index | Inverted index for full‑text search |
-| Archival Storage | Long‑term, low‑cost retention |
+| Index | Data structure enabling fast lookup |
+| Transaction | Atomic, consistent, isolated, durable operation |
+| Object Storage | Flat namespace storage for blobs |
 
 ---
 
 ## 🧬 Variants / Types
 
 <Tabs>
-<TabItem value="sqldatabases" label="SQL Databases">
 
-### SQL
+<TabItem value="databases" label="Databases">
 
-**Key Characteristics**
-- Authoritative, structured data
-- Strong consistency and integrity
-- Transactional guarantees
+### Databases
 
-**Core Concepts**
-- Storage engine
-- Indexing
-- Transactions
-- Concurrency control
-- Replication
-- Sharding
-
-**Behaviour**
-- Low‑latency reads/writes
-- Sensitive to schema and indexing
-- Requires careful scaling
-
-**Exceptions (Not Universal)**
-- Not all databases support full ACID
-- Some provide tunable consistency
-- Some scale horizontally by design
-
-</TabItem>
-<TabItem value="nosqldatabases" label="NoSQL Databases">
-
-### NoSQL
+**Purpose**  
+Provide authoritative, durable, structured storage for operational data.
 
 **Key Characteristics**
-- Schema‑flexible document or key/value storage
-- Low‑latency reads and writes
-- Automatic indexing on fields
-- Horizontal scaling through partitioning/sharding
+- ACID transactions  
+- Schema enforcement  
+- Indexing and constraints  
+- Strong consistency (varies by engine)  
 
-**Use When**
-- Application workloads require flexible schemas
-- High‑frequency operational reads/writes
-- Mobile or web apps need real‑time updates
-- Global replication or offline support is important
+**Behaviour**  
+Reliable reads/writes, predictable correctness.
 
-**Trade-offs**
-- Limited querying compared to relational databases
-- No joins; denormalisation required
-- Aggregations and scans are expensive
-- Not suitable for analytical workloads
+**Trade-offs**  
+Scaling writes is harder; schema evolution requires care.
 
 </TabItem>
-<TabItem value="platform" label="Container & Platform Storage">
 
-### Containers
+<TabItem value="platform" label="Platform Storage">
+
+### Platform Storage
+
+**Purpose**  
+Provide storage abstractions for containers and workloads.
 
 **Key Characteristics**
-- Platform‑managed persistent storage
-- Decouples data from container lifecycle
-- Provides filesystem or block‑device semantics
+- Persistent volumes (PVCs)  
+- Ephemeral storage  
+- Secrets and config stores  
+- Network‑attached storage  
 
-**Core Concepts**
-- Persistent vs ephemeral storage
-- Storage abstractions
-- Stateful workload identity
-- Declarative provisioning
+**Behaviour**  
+Supports runtime needs such as logs, state, and configuration.
 
-**Behaviour**
-- Durable across restarts
-- Latency depends on backend
-- May require node affinity
-
-**Trade-offs**
-- Durable and managed
-- Higher latency than local disk
-- Not a replacement for databases or caches
-
-**When to Use**
-- Stateful workloads in container platforms
-- Data must survive rescheduling
-- Applications require filesystem/block access
-
-**Avoid When**
-- Data is temporary
-- Querying or indexing is required
-- Low‑latency key access is needed
-
-**Exceptions (Not Universal)**
-- Some platforms do not guarantee volume portability
-- Some storage classes provide eventual consistency
+**Trade-offs**  
+Latency varies; misconfiguration can cause data loss.
 
 </TabItem>
+
 <TabItem value="fileobject" label="File & Object Storage">
 
-### Files
+### File & Object Storage
+
+**Purpose**  
+Store files, blobs, and unstructured data.
 
 **Key Characteristics**
-- Stores unstructured or semi‑structured data
-- Accessed via file paths or object keys
-- Scales horizontally
+- File shares (NFS, SMB)  
+- Block devices  
+- Object stores (S3, GCS, Azure Blob)  
+- High durability  
 
-**Core Concepts**
-- Block storage
-- File storage
-- Object storage
-- Snapshots and versioning
+**Behaviour**  
+Great for large objects, media, backups, and static assets.
 
-**Behaviour**
-- Higher latency than databases
-- Ideal for large files, logs, artifacts
-- Limited querying
-
-**Trade-offs**
-- Extremely scalable
-- No transactional semantics
-- Requires lifecycle management
-
-**When to Use**
-- Filesystem or object‑based access
-- Large unstructured datasets
-- Shared data across services
-
-**Avoid When**
-- Low‑latency key access is required
-- Complex querying is needed
-- ACID transactions are required
-
-**Exceptions (Not Universal)**
-- Some object stores provide strong consistency
-- Some file systems do not support concurrent writes
+**Trade-offs**  
+Higher latency; limited transactional semantics.
 
 </TabItem>
-<TabItem value="performance" label="Performance-Oriented Storage">
 
-### Caches
+<TabItem value="performance" label="Performance Storage">
+
+### Performance Storage
+
+**Purpose**  
+Accelerate hot paths and reduce load on primary databases.
 
 **Key Characteristics**
-- Optimised for speed and searchability
-- Not authoritative sources of truth
+- Caches (Redis, Memcached)  
+- Search indices (Elasticsearch, OpenSearch)  
+- In‑memory stores  
+- Materialised views  
 
-**Core Concepts**
-- Caches
-- In‑memory stores
-- Search indices
-- Materialised views
+**Behaviour**  
+Ultra‑fast reads; derived or denormalised data.
 
-**Behaviour**
-- Extremely fast reads
-- Requires invalidation or reindexing
-- Not durable by default
-
-**Trade-offs**
-- High performance
-- Requires careful lifecycle management
-
-**Exceptions (Not Universal)**
-- Some caches persist to disk
-- Some search engines support limited transactions
+**Trade-offs**  
+Staleness, invalidation complexity, eventual consistency.
 
 </TabItem>
+
 <TabItem value="archival" label="Archival Storage">
 
-### Archival
+### Archival Storage
+
+**Purpose**  
+Provide long‑term, low‑cost retention for compliance or audit.
 
 **Key Characteristics**
-- Long‑term retention
-- Very low cost
-- High retrieval latency
+- Cold storage tiers  
+- Write‑once‑read‑rarely  
+- High durability  
+- Long retrieval times  
 
-**Core Concepts**
-- Cold storage
-- Lifecycle policies
-- Retention and compliance
+**Behaviour**  
+Optimised for retention, not performance.
 
-**Behaviour**
-- Optimised for infrequent access
-- Retrieval may take minutes or hours
-
-**Exceptions (Not Universal)**
-- Some archival systems support expedited retrieval
-- Some enforce strict immutability
+**Trade-offs**  
+Slow access; limited queryability.
 
 </TabItem>
+
 </Tabs>
 
 ---
 
 ## 🧩 System Interactions
 
-Application storage interacts with:
+:::info How a TA Understands the System
+- How application storage interacts with compute, networking, and orchestration  
+- How storage behaviour changes under load, failure, or scaling  
+- What becomes a bottleneck as data or traffic grows  
+:::
 
-- **Compute** → stateful workloads, microservices
-- **Networking** → access latency, throughput
-- **Security** → secrets, encryption, access control
-- **Orchestration** → scheduling, rescheduling, failover
-- **Observability** → metrics, logs, health checks
+### Local Systems
 
-**TA insight:**
-Storage failures often appear as application failures — understanding the storage layer is essential for diagnosing incidents.
+- OS filesystem  
+- Runtime I/O  
+- Local caches  
+- Container ephemeral storage  
+
+### Remote Systems
+
+- Databases  
+- Object stores  
+- Persistent volumes  
+- Search clusters  
+- Caches  
+
+### Questions to ask during reviews or incidents
+
+- Is this storage authoritative or derived?  
+- Is the issue I/O, indexing, or modelling related?  
+- Are we hitting storage limits (IOPS, throughput, size)?  
+- Is the platform storage configured correctly?  
+- Are consistency guarantees aligned with application needs?  
 
 ---
 
-## 💥 Failure Modes
+## 💥 Outputs / Results
 
-- Data loss due to misconfigured persistence
-- Latency spikes from remote storage
-- Node affinity issues preventing rescheduling
-- Cache inconsistency
-- Search index drift
-- Volume exhaustion
-- Incorrect retention or lifecycle policies
+:::note Special Considerations
+Application storage must balance correctness, durability, and performance — trade‑offs vary by system.
+:::
 
----
+### Success Modes
 
-## 📊 What Results Normally Look Like
+| Result Type | Description |
+|-------------|-------------|
+| Durable State | Data survives restarts and failures |
+| Correctness | Schema and constraints enforce valid data |
+| Fast Operational Access | Indexed reads and efficient writes |
+| Platform Integration | Volumes, secrets, and config behave predictably |
 
-| Storage Type | Typical Output |
-|--------------|----------------|
-| Database | Rows/documents |
-| File Storage | Files, directories |
-| Object Storage | Blobs, keys |
-| Cache | Key/value entries |
-| Search Index | Ranked search results |
-| Archival | Cold files, snapshots |
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Data Loss | Misconfigured volumes or ephemeral storage misuse |
+| Slow Queries | Missing indexes, I/O saturation, poor modelling |
+| Consistency Errors | Race conditions, stale caches, replication lag |
+| Storage Exhaustion | Disk full, IOPS limits, runaway growth |
 
 ---
 
 ## 🔗 Related Runbook Concepts
 
-- PostgreSQL / MySQL — operational relational databases used for OLTP workloads
-- Firestore / DynamoDB / MongoDB — document and key‑value NoSQL stores
-- Redis (cache mode) — in‑memory caching for hot paths and performance
-- Elasticsearch / OpenSearch — search indices and relevance‑based querying
-- GCS / S3 Buckets — object storage for files, artifacts, and unstructured data
-- Kubernetes Persistent Volumes — platform‑managed durable storage for stateful workloads
-- Secret Manager / ConfigMaps — configuration and secrets storage
+- **PostgreSQL / MySQL / SQL Server**  
+- **MongoDB / DynamoDB / Cassandra**  
+- **Redis / Memcached**  
+- **Elasticsearch / OpenSearch**  
+- **Kubernetes Persistent Volumes (PVCs)**  
+- **AWS S3 / Azure Blob / GCS**  
+- **etcd / Consul**  
+
