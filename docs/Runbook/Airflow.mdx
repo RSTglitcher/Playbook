@@ -1,0 +1,273 @@
+---
+title: "🪂 Airflow"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Airflow
+Apache Airflow is an **orchestration platform** used to schedule, coordinate, and monitor data workflows.
+It solves problems related to **task dependencies, scheduling, retries, observability, and pipeline automation**.
+:::
+
+### Key Terms
+
+- **DAG:** Directed Acyclic Graph defining workflow structure
+- **Task:** A unit of work within a DAG (Python, Bash, SQL, etc.)
+- **Operator:** Pre‑built task type (PythonOperator, BashOperator, etc.)
+- **Sensor:** Task that waits for an external condition
+- **Executor:** Determines how tasks run (Local, Celery, Kubernetes)
+- **Scheduler:** Component that triggers DAG runs
+- **Worker:** Executes tasks (Celery/K8s)
+- **XCom:** Mechanism for passing small data between tasks
+
+### Knowing when to use **Airflow**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Complex multi‑step pipelines with dependencies | Real‑time streaming (use Kafka/Databricks) |
+| Scheduled ETL/ELT workflows | Simple SQL transformations (use dbt) |
+| Orchestration across multiple systems | Low‑latency event processing |
+| Retry logic, SLAs, and monitoring required | ML training pipelines (use Databricks/MLflow) |
+| Python‑based workflow logic | Heavy compute workloads (use Spark/Databricks) |
+
+---
+
+## 📘 About / Foundations
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+- Airflow defines workflows as **Python code** (DAGs)
+- The **scheduler** parses DAGs and triggers runs
+- The **executor** determines how tasks are executed
+- Tasks run on **workers** (Celery, Kubernetes, Local)
+- The **web UI** provides observability into DAG runs, logs, and failures
+- **XComs** allow tasks to pass metadata
+- **Connections** store credentials for external systems
+
+### System Contract
+
+Airflow enforces contracts through:
+
+- **DAG definitions** (schedule, dependencies, retries, owners)
+- **Operators** defining how tasks execute
+- **Connections** for external systems (DBs, APIs, warehouses)
+- **Environment configuration** (executor, workers, queues)
+- **SLAs** and retry policies
+
+### Key Strategies
+
+<Tabs>
+<TabItem value="orchestration" label="Orchestration Strategy">
+
+- Use DAGs to express dependencies explicitly
+- Keep tasks small and idempotent
+- Use sensors sparingly (prefer deferrable operators)
+- Responsibility: SWE + TA validation
+- Goal: reliable, observable workflows
+
+</TabItem>
+
+<TabItem value="scheduling" label="Scheduling Strategy">
+
+- Use cron or timedelta schedules
+- Avoid overlapping runs unless safe
+- Use `max_active_runs` to control concurrency
+- Responsibility: SWE
+- Goal: predictable, safe execution cadence
+
+</TabItem>
+
+<TabItem value="observability" label="Observability Strategy">
+
+- Monitor task duration, retries, and failures
+- Use SLAs for critical pipelines
+- Integrate with logging/alerting systems
+- Responsibility: TA + Platform
+- Goal: fast detection and recovery from failures
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- DAG run history (success, failed, skipped)
+- Task logs (stdout, stderr, operator logs)
+- XCom values
+- Scheduler logs
+- Worker metrics (Celery/K8s)
+- Gantt charts and dependency graphs
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Airflow user access (RBAC)
+- Connection credentials (DBs, APIs, warehouses)
+- Secret backend configuration (Vault, AWS Secrets Manager)
+
+#### Networking
+- Worker connectivity to external systems
+- VPC/subnet configuration (if self‑hosted)
+- Firewall rules for APIs and databases
+
+#### Architecture
+- Executor type (Local, Celery, Kubernetes)
+- Worker autoscaling strategy
+- DAG folder structure
+- Logging backend (S3, GCS, local)
+
+#### Data
+- Input/output data sources
+- Schema expectations for downstream systems
+- Data quality checks (dbt, SQL tests, custom logic)
+
+#### Operational Guarantees
+- Retry policies
+- SLAs
+- Idempotency of tasks
+- Backfill behaviour
+
+#### Observability Metrics
+- DAG run duration
+- Task retries/failures
+- Scheduler health
+- Worker queue length
+- SLA misses
+
+</details>
+
+:::info
+How to interact with this tool day‑to‑day:
+- Terminal (Airflow CLI)
+- UI (Airflow Webserver)
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
+
+```shell
+--------------
+How to set up credentials
+--------------
+
+# Set AIRFLOW_HOME
+export AIRFLOW_HOME=~/airflow
+
+# Initialize Airflow
+airflow db init
+
+# Create admin user
+airflow users create --username admin --password <pw> --role Admin --email admin@example.com
+
+--------------
+How to log-in via the terminal
+--------------
+
+# Start webserver
+airflow webserver
+
+# Start scheduler
+airflow scheduler
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify DAGs, tasks, and dependencies in scope
+- Confirm schedule, concurrency, and retry expectations
+- Validate external system connections
+- Confirm executor type and worker capacity
+- Determine CI/CD requirements for DAG deployment
+- Establish TA expectations for monitoring and triage
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# List DAGs
+airflow dags list
+
+# Trigger a DAG
+airflow dags trigger <dag_id>
+
+# Backfill a DAG
+airflow dags backfill <dag_id> --start-date 2024-01-01
+
+# List tasks in a DAG
+airflow tasks list <dag_id>
+
+# Run a task manually
+airflow tasks run <dag_id> <task_id> <execution_date>
+
+# View logs
+airflow tasks logs <dag_id> <task_id> <execution_date>
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Inspect DAG structure
+airflow dags show <dag_id>
+
+# Check DAG run history
+airflow dags list-runs -d <dag_id>
+
+# View task logs
+airflow tasks logs <dag_id> <task_id> <execution_date>
+
+# Check XCom values
+airflow tasks xcom-pull <dag_id> <task_id>
+
+# Validate schedule and next run time
+airflow dags next-execution <dag_id>
+
+# Identify long-running tasks
+airflow tasks list <dag_id> --tree
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🚨 Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage this:
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| DAG not running | Scheduler down or DAG parse error | Scheduler logs, DAG parse logs | Restart scheduler, fix DAG code |
+| Task stuck in queued | No available workers | Worker logs, executor config | Scale workers, fix executor |
+| Task failing repeatedly | Code error, bad connection, missing dependency | Task logs, connection config | Fix code, update connection, retry |
+| Slow DAG runs | Worker saturation, heavy tasks | Worker metrics, task duration | Increase worker capacity, refactor tasks |
+| XCom errors | Large payloads or serialization issues | XCom logs | Reduce XCom size, use storage instead |
+| Backfill failing | Missing data or dependency issues | Backfill logs, upstream tasks | Fix data, adjust dependencies |
+| Permission denied | Missing Airflow or external system access | RBAC roles, connection permissions | Update roles, fix credentials |

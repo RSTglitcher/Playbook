@@ -1,0 +1,304 @@
+---
+title: "🧱 Kubernetes"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Kubernetes  
+Kubernetes (K8s) is a **container orchestration platform** that automates deployment, scaling, and management of containerized applications.  
+It enables microservices architectures, declarative infrastructure, and resilient distributed systems.  
+:::
+
+### Key Terms
+
+- **Cluster:** A set of nodes running Kubernetes  
+- **Node:** A machine (VM or physical) that runs workloads  
+- **Pod:** The smallest deployable unit (one or more containers)  
+- **Deployment:** Manages stateless workloads  
+- **StatefulSet:** Manages stateful workloads  
+- **Service:** Stable networking endpoint for pods  
+- **Ingress:** External routing into the cluster  
+- **ConfigMap / Secret:** Configuration and sensitive data  
+- **HPA:** Horizontal Pod Autoscaler  
+- **Namespace:** Logical grouping of resources  
+- **Kubelet:** Node agent that runs pods  
+- **Control Plane:** API server, scheduler, controller manager  
+
+### Knowing when to use **Kubernetes**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Microservices architectures | Simple single‑service apps |
+| Autoscaling workloads | Batch jobs without orchestration needs |
+| Multi‑team shared infrastructure | Small teams without ops capacity |
+| Declarative infrastructure | Highly stateful monoliths |
+| CI/CD‑driven deployments | Apps requiring bare‑metal performance |
+
+---
+
+## 📘 About / Foundations  
+_Conceptual grounding for how the platform works._
+
+### How It Works (Conceptual Model)
+
+- Kubernetes manages workloads using **desired state**  
+- The **control plane** reconciles actual vs desired state  
+- **Pods** run containers; **Deployments** manage pods  
+- **Services** provide stable networking; **Ingress** exposes apps externally  
+- **ConfigMaps/Secrets** inject configuration  
+- **HPA** scales workloads based on metrics  
+- **Nodes** provide compute capacity  
+- **Events** surface cluster activity and issues  
+
+### System Contract
+
+Kubernetes enforces contracts through:
+
+- **YAML manifests** (Deployments, Services, Ingress, etc.)  
+- **RBAC** (roles, service accounts, permissions)  
+- **Resource requests/limits**  
+- **Probes** (liveness, readiness, startup)  
+- **Networking model** (CNI plugin)  
+- **Storage classes and PV/PVC binding**  
+
+### Key Strategies
+
+<Tabs>
+<TabItem value="workloads" label="Workload Strategy">
+
+- Use Deployments for stateless apps  
+- Use StatefulSets for stateful workloads  
+- Use ConfigMaps/Secrets for configuration  
+- Responsibility: SWE + TA  
+- Goal: predictable, resilient workloads  
+
+</TabItem>
+
+<TabItem value="scaling" label="Scaling Strategy">
+
+- Use HPA for CPU/memory‑based scaling  
+- Use VPA/Cluster Autoscaler for node scaling  
+- Monitor pod restarts and resource pressure  
+- Responsibility: Platform + SWE  
+- Goal: efficient, cost‑aware scaling  
+
+</TabItem>
+
+<TabItem value="networking" label="Networking Strategy">
+
+- Use Services for internal routing  
+- Use Ingress for external routing  
+- Validate network policies for security  
+- Responsibility: SWE + TA  
+- Goal: secure, reliable connectivity  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- Pod lists with status, restarts, age  
+- Deployment rollout status  
+- Node readiness and resource usage  
+- Logs and events for debugging  
+- PVC/PV binding and storage usage  
+- HPA scaling events  
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- kubeconfig access  
+- RBAC permissions  
+- Namespace‑level access  
+- Secret access rules  
+
+#### Networking
+- Cluster endpoint reachability  
+- CNI plugin behaviour  
+- Ingress and service routing  
+- Firewall/VPN requirements  
+
+#### Architecture
+- Cluster size and node roles  
+- Workload types (Deployments, StatefulSets, CronJobs)  
+- Storage classes and PV/PVC usage  
+- Autoscaling configuration  
+
+#### Data
+- ConfigMaps and Secrets  
+- Pod logs and events  
+- Resource definitions (YAML)  
+- Node metrics  
+
+#### Operational Guarantees
+- Pod restart policies  
+- HPA scaling rules  
+- Node readiness  
+- Storage binding behaviour  
+
+#### Observability Metrics
+- Pod restarts  
+- Node CPU/memory usage  
+- HPA scaling events  
+- Cluster events  
+- API server health  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (`kubectl`, `k9s`)  
+- UI (Lens, cloud provider dashboards)  
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
+
+```shell
+--------------
+Cluster Access
+--------------
+
+# View contexts
+kubectl config get-contexts
+
+# Switch context
+kubectl config use-context CONTEXT_NAME
+
+# Check cluster health
+kubectl cluster-info
+
+# List namespaces
+kubectl get ns
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Kubernetes**
+
+- Identify clusters and contexts requiring monitoring  
+- Confirm namespaces and workloads in scope  
+- Define required logs, metrics, and events  
+- Validate RBAC permissions for TA access  
+- Establish workflows for incident investigation  
+- Document expected triage steps for common issues  
+
+**What a TA needs to gather**
+
+- kubeconfig and context names  
+- Namespace ownership and workload lists  
+- Storage, autoscaling, and networking configuration  
+- Observability integrations (Prometheus, Grafana)  
+- Incident response workflows  
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this platform
+
+```shell
+--------------
+Workload Management
+--------------
+
+# Deploy workloads
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+# Inspect pods
+kubectl get pods -n NAMESPACE
+kubectl describe pod POD_NAME -n NAMESPACE
+
+# Debug workloads
+kubectl logs POD_NAME -n NAMESPACE
+kubectl exec -it POD_NAME -- sh
+
+# Scale workloads
+kubectl scale deployment/<name> --replicas=3
+
+# Manage rollouts
+kubectl rollout status deployment/<name>
+kubectl rollout undo deployment/<name>
+
+# Node health
+kubectl get nodes
+kubectl describe node NODE_NAME
+kubectl top nodes
+
+# Storage
+kubectl get pv
+kubectl get pvc -n NAMESPACE
+
+# Networking
+kubectl get svc -n NAMESPACE
+kubectl get ingress -n NAMESPACE
+kubectl get endpoints SERVICE_NAME -n NAMESPACE
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Common workflows and queries used by analysts when interpreting cluster state.
+
+```shell
+--------------
+Key Analyst Skills
+--------------
+
+# Inspect cluster state
+kubectl get pods -A
+kubectl get deployments -A
+kubectl get nodes
+
+# Validate scaling behaviour
+kubectl get hpa -A
+
+# Review storage usage
+kubectl get pvc -A
+kubectl get pv
+
+# Inspect logs and events
+kubectl logs POD_NAME -n NAMESPACE
+kubectl get events --all-namespaces
+
+# Check networking
+kubectl get svc -A
+kubectl get ingress -A
+
+# Observe autoscaling
+kubectl describe hpa HPA_NAME -n NAMESPACE
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🚨 Triage
+
+:::danger  
+Symptoms and issues with Kubernetes clusters and how to triage:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|---------|---------------------|---------------|-------------------|
+| Pod CrashLoopBackOff | Container crash or misconfig | `describe pod`, logs | Fix image/config, restart pod |
+| Node Not Ready | Node down or network issue | `get nodes`, node events | Restart node/kubelet |
+| Deployment Not Scaling | HPA misconfig or missing metrics | `describe hpa` | Adjust HPA or resource limits |
+| PersistentVolume Pending | Storage class or PV mismatch | `get pv,pvc`, events | Provision storage or fix binding |
+| Service Unreachable | Networking or service misconfig | svc, endpoints, network policies | Fix service/ingress config |
+| API Server Unresponsive | Control plane overload | API server logs | Scale control plane, validate RBAC |
+| ConfigMap/Secret Missing | Resource deleted or misconfigured | `get configmap/secret` | Restore or recreate resource |
+

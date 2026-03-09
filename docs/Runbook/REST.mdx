@@ -1,177 +1,254 @@
 ---
-title: "🔌REST APIs"
+title: "🔌 REST APIs"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip REST APIs
-REST APIs provide a standardized way for systems to communicate over HTTP using resource‑based endpoints. They enable applications to exchange data reliably, integrate services, and expose functionality in a scalable, language‑agnostic manner.
+:::tip REST APIs  
+REST APIs expose **resource‑based HTTP endpoints** that allow systems to communicate in a predictable, scalable, language‑agnostic way. They enable data exchange, service integration, and structured access to backend functionality.  
 :::
 
-```mermaid
-REST APIs
-├── Core Concepts
-│   ├── Resources & Endpoints
-│   ├── HTTP Methods (GET, POST, PUT, DELETE)
-│   ├── Status Codes & Error Handling
-│   └── Authentication & Authorization
-├── TA Skills
-│   ├── Review API Specs & Contracts
-│   ├── Validate Request/Response Structures
-│   ├── Check Environment, Auth & Headers
-│   └── Confirm Data Mapping & Edge Cases
-└── SWE Skills
-    ├── Design & Implement Endpoints
-    ├── Handle Routing, Validation & Errors
-    ├── Integrate with Datastores & Services
-    └── Monitor Performance & Logs
-```
+### Key Terms
+
+- **Resource:** A domain object exposed via an endpoint (e.g., `/users`, `/orders`)  
+- **Endpoint:** A URL + HTTP method combination representing an operation  
+- **Status Code:** Standardised HTTP response indicator (200, 400, 404, 500)  
+- **Payload:** JSON body sent or received in a request  
+- **Headers:** Metadata for auth, content type, caching, etc.  
+
+### Knowing when to use **REST APIs**
+
+| When to use | When not to use |
+|-------------|------------------|
+| Standard request–response communication | Real‑time bidirectional messaging (use WebSockets) |
+| CRUD operations on resources | High‑throughput streaming (use gRPC or event streams) |
+| Cross‑team integration | When strict schema enforcement is required (use GraphQL/OpenAPI‑first) |
+| Public or internal service interfaces | When latency must be extremely low |
+
+---
+
+## 📘 About / Foundations
+
+### How It Works (Conceptual Model)
+
+REST APIs use **HTTP methods** (GET, POST, PUT, DELETE) to operate on **resources**.  
+Clients send requests containing:
+
+- URL  
+- Method  
+- Headers  
+- Optional JSON body  
+
+Servers return:
+
+- Status code  
+- Headers  
+- Optional JSON body  
+
+REST is stateless: each request contains all necessary context.
+
+### System Contract
+
+REST APIs define a contract through:
+
+- **Endpoint structure**  
+- **Request/response schemas**  
+- **Status codes**  
+- **Authentication rules**  
+- **Versioning strategy**  
+- **Error formats**  
+
+Clients rely on this contract to integrate safely.
+
+### Key Strategies
+
+- Use **consistent naming** (`/users`, `/orders/{id}`)  
+- Use **correct HTTP methods** (GET for read, POST for create)  
+- Return **meaningful status codes**  
+- Provide **clear error messages**  
+- Version endpoints (`/v1/…`)  
+- Enforce **authentication and authorization**  
+- Log latency, payload size, and failures  
+
+### What Results Normally Look Like
+
+- JSON responses  
+- Structured error objects  
+- Status codes indicating success or failure  
+- Logs showing request/response cycles  
+- Metrics for latency, throughput, and error rates  
 
 ---
 
 ## 🧩 Technical Skills
 
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- API keys, OAuth tokens, service accounts  
+- TLS/HTTPS enforcement  
+- Role‑based access controls  
+
+#### Networking
+- Base URLs per environment  
+- CORS rules  
+- VPN or internal network access  
+
+#### Architecture
+- API gateway or load balancer  
+- Routing rules  
+- Versioning strategy  
+- Downstream dependencies  
+
+#### Data
+- Request/response schemas  
+- Field definitions and validation rules  
+- Pagination, filtering, sorting  
+
+#### Operational Guarantees
+- Rate limits  
+- Throttling behaviour  
+- Idempotency for PUT/PATCH  
+- Retry/backoff expectations  
+
+#### Observability Metrics
+- Latency (p50/p95/p99)  
+- Error rates (4xx/5xx)  
+- Request volume  
+- Payload size  
+- Authentication failures  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal (curl, httpie)  
+- UI (Postman, Insomnia, Swagger UI)  
+:::
+
 <Tabs>
-<TabItem value="skill" label="Skill">
+
+<TabItem value="access" label="Access">
 
 ```shell
 --------------
-How to use the tool/platform as TA
+How to set up credentials
 --------------
+# API key
+export API_KEY="your-key"
 
-# Reviewing an API spec
-- Check endpoint structure, parameters, and expected responses
-- Validate status codes and error formats
+# OAuth token
+export TOKEN=$(curl -X POST https://auth.example.com/oauth/token ...)
 
-# Testing endpoints
-curl -X GET https://api.example.com/v1/resource
-curl -X POST -H "Content-Type: application/json" \
-     -d '{"name": "example"}' \
-     https://api.example.com/v1/resource
-
-# Checking authentication
-- Confirm API keys, OAuth tokens, or session headers
-- Validate environment-specific base URLs
-
-# Mapping data flows
-- Trace request → service → datastore → response
+--------------
+How to log in via the terminal
+--------------
+curl -H "Authorization: Bearer $TOKEN" \
+     https://api.example.com/v1/users
 ```
 
 </TabItem>
+
 <TabItem value="requirements" label="Requirements">
 
 **How to formulate requirements when working with this platform**
 
-- Clarify the purpose of each endpoint and the business workflow it supports
-- Identify required inputs, optional parameters, and validation rules
-- Confirm authentication method and environment differences
-- Understand expected response formats and error handling
-- Capture edge cases, rate limits, and performance expectations
+- Clarify the business workflow behind each endpoint  
+- Identify required vs optional fields  
+- Confirm authentication method (API key, OAuth, JWT)  
+- Understand expected response shapes and error formats  
+- Capture edge cases, rate limits, and retry rules  
+- Validate environment differences (dev/stage/prod)  
 
 **Examples of use cases**
 
-- Integrating two internal systems
-- Supporting frontend development with backend endpoints
-- Validating data returned from external APIs
-- Documenting API behaviour for cross‑team alignment
+- Integrating backend services  
+- Supporting frontend UI development  
+- Validating external API behaviour  
+- Documenting API contracts for cross‑team alignment  
 
 **What a TA needs to gather**
 
-- API specification (OpenAPI/Swagger/Postman collection)
-- Authentication details and environment URLs
-- Request/response examples
-- Data mapping rules and transformation logic
-- Error scenarios and fallback expectations
+- API specification (OpenAPI/Swagger/Postman)  
+- Base URLs per environment  
+- Authentication details  
+- Request/response examples  
+- Data mapping rules  
+- Error scenarios and fallback logic  
 
 </TabItem>
-</Tabs>
 
----
+<TabItem value="engineering" label="Engineering">
 
-## Pre-Requisites
-
-| Action / Service       | What TA Needs to Gather / Confirm |
-|------------------------|-----------------------------------|
-| Set-up                 | API documentation, environment URLs, tools (Postman, curl) |
-| Access & Login         | API keys, OAuth tokens, service accounts, permissions |
-| API                    | Versioning, rate limits, throttling rules |
-| Other tool specific actions | Required headers, CORS rules, network/VPN requirements |
-
----
-
-## Engineering
-
-<Tabs>
-<TabItem value="skill" label="Skill">
+Common workflows and commands used by engineers when operating this tool
 
 ```shell
 --------------
-Common ways engineers use the tool/platform
+Key Terminal Commands
 --------------
 
-# Building endpoints
-- Define routes, handlers, and validation logic
+# GET resource
+curl -X GET https://api.example.com/v1/users
 
-# Integrating with services
-- Call downstream APIs or databases
+# POST create resource
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"name": "example"}' \
+     https://api.example.com/v1/users
 
-# Error handling
-return res.status(400).json({ error: "Invalid input" });
+# PUT update resource
+curl -X PUT -H "Content-Type: application/json" \
+     -d '{"name": "updated"}' \
+     https://api.example.com/v1/users/123
 
-# Logging & monitoring
-- Track latency, failures, and payload sizes
+# DELETE resource
+curl -X DELETE https://api.example.com/v1/users/123
 ```
 
 </TabItem>
-<TabItem value="engineering" label="Engineering">
 
-**How to formulate a plan for development**
+<TabItem value="analyst" label="Analyst">
 
-- Define endpoint structure, naming, and versioning
-- Identify validation rules and error handling patterns
-- Plan integration with downstream systems
-- Determine authentication and authorization strategy
-- Establish performance and reliability expectations
+Common workflows and queries used by analysts when interpreting data from this tool.
 
-**Examples of implementation**
+```shell
+--------------
+Key Terminal Commands
+--------------
 
-- CRUD endpoints for a new feature
-- API gateway routing and aggregation
-- Middleware for logging, auth, or rate limiting
-- Automated contract tests
+# Validate endpoint behaviour
+curl -I https://api.example.com/v1/orders
 
-**Engineering considerations**
+# Inspect response structure
+curl -s https://api.example.com/v1/orders/123 | jq .
 
-- Idempotency for PUT/PATCH
-- Pagination for large datasets
-- Consistent error formats
-- Backward‑compatible versioning
-- Observability (logs, metrics, tracing)
+# Check authentication issues
+curl -v https://api.example.com/v1/users
 
-**What a TA needs to provide for handover**
-
-- Clear business rules for each endpoint
-- Data models and field definitions
-- Edge cases and validation scenarios
-- Dependencies and integration points
-- Acceptance criteria for success
+# Compare environments
+diff <(curl -s https://dev.api/users/1) \
+     <(curl -s https://prod.api/users/1)
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-:::danger
-Symptoms and issues with this platform and how to triage this:
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
 :::
 
 | Symptom | TLDR of Root Cause | What to Check | Action to Propose |
 |---------|---------------------|---------------|-------------------|
-| 400 Bad Request | Invalid input or missing fields | Request body, params, validation rules | Fix payload or update validation |
-| 401/403 Errors | Auth failure or missing permissions | Tokens, headers, roles | Refresh token, update permissions |
-| 404 Not Found | Wrong endpoint or version | URL, path params, API version | Correct route or update spec |
-| 429 Too Many Requests | Rate limit exceeded | Rate limit headers | Add retries/backoff |
-| 500 Errors | Server-side failure | Logs, downstream dependencies | Escalate to engineering, check integrations |
+| **400 Bad Request** | Invalid input | Body, params, schema | Fix payload or update validation |
+| **401/403 Unauthorized** | Missing/invalid auth | Tokens, headers, roles | Refresh token, update permissions |
+| **404 Not Found** | Wrong endpoint or version | URL, path params, version | Correct route or update spec |
+| **429 Too Many Requests** | Rate limit exceeded | Rate limit headers | Add retries/backoff |
+| **500 Internal Server Error** | Server failure | Logs, downstream dependencies | Escalate, fix integration |
+| **503 Service Unavailable** | API overloaded or down | Health checks, gateway logs | Retry with backoff, escalate |
+| **Slow responses** | Latency in downstream services | Tracing, logs, payload size | Optimize queries, reduce payload |

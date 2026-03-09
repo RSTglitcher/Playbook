@@ -1,0 +1,188 @@
+---
+title: "Cloud Providers"
+---
+
+:::tip GCP vs AWS
+GCP and AWS are the two dominant cloud platforms used across modern data and engineering teams.
+This guide compares their **data**, **messaging**, **compute**, **security**, and **operational** models to help TAs and engineers choose the right service for the right workload.
+:::
+
+---
+
+## 📘 About / Foundations
+_Conceptual grounding for how the platforms differ._
+
+### How They Work (Conceptual Model)
+
+- **AWS** is service‑rich, deeply configurable, and offers granular control over infrastructure.
+- **GCP** is opinionated, simpler to operate, and optimised for analytics and ML workloads.
+- Both provide:
+  - Global infrastructure
+  - IAM‑based access control
+  - Managed data and messaging services
+  - Serverless compute
+  - Observability tooling
+
+But they differ in **philosophy**:
+
+| Cloud | Philosophy |
+|-------|------------|
+| **AWS** | “Everything is a service.” Highly configurable, broadest service catalog. |
+| **GCP** | “Simplicity + analytics first.” Strong defaults, fewer services, deeper integration. |
+
+---
+
+## 🧩 Core Comparison
+
+### Data Services
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Data Warehouse** | Redshift | **BigQuery** (serverless, industry‑leading) |
+| **Object Storage** | S3 | Cloud Storage |
+| **NoSQL Key‑Value** | DynamoDB | Firestore / Cloud Bigtable |
+| **Wide‑Column Store** | DynamoDB (key‑value) | **Bigtable** (HBase‑style) |
+| **Data Lake** | S3 + Glue + Lake Formation | Cloud Storage + **BigQuery external tables** |
+| **ETL/ELT** | Glue, EMR | Dataflow, Dataproc |
+
+**TA Insight:**
+GCP dominates analytics (BigQuery).
+AWS dominates operational NoSQL (DynamoDB).
+
+---
+
+### Messaging & Streaming
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Pub/Sub Messaging** | SNS + SQS | **Pub/Sub** (unified pub/sub model) |
+| **Streaming** | Kinesis | Pub/Sub + Dataflow |
+| **Event Routing** | EventBridge | Eventarc |
+
+**TA Insight:**
+GCP Pub/Sub is simpler and globally distributed.
+AWS offers more granular control (SNS fan‑out + SQS queues).
+
+---
+
+### Compute
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Serverless** | Lambda | Cloud Functions |
+| **Containers** | ECS, EKS | GKE (industry‑leading Kubernetes) |
+| **VMs** | EC2 | Compute Engine |
+| **Batch** | Batch | Batch / Dataflow |
+
+**TA Insight:**
+GCP leads in Kubernetes (GKE).
+AWS leads in VM flexibility and ecosystem depth.
+
+---
+
+### Security & IAM
+
+| Area | AWS | GCP |
+|------|-----|-----|
+| **IAM Model** | Role‑based, very granular | Role‑based, simpler hierarchy |
+| **Resource Hierarchy** | Account → OU → Resource | Org → Folder → Project → Resource |
+| **Secrets** | Secrets Manager | Secret Manager |
+| **Networking** | VPC, PrivateLink | VPC, Private Service Connect |
+
+**TA Insight:**
+GCP’s project hierarchy is easier to reason about.
+AWS IAM is more flexible but more complex.
+
+---
+
+### Observability
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Logging** | CloudWatch Logs | Cloud Logging |
+| **Metrics** | CloudWatch Metrics | Cloud Monitoring |
+| **Tracing** | X‑Ray | Cloud Trace |
+| **Dashboards** | CloudWatch Dashboards | Cloud Monitoring Dashboards |
+
+**TA Insight:**
+GCP’s observability tools are more integrated.
+AWS CloudWatch is powerful but requires more configuration.
+
+---
+
+## 🧭 Choosing Between GCP and AWS
+
+### When to choose **GCP**
+
+- Analytics‑heavy workloads
+- Machine learning pipelines
+- Global messaging with simple semantics
+- Kubernetes‑centric architectures
+- Teams that prefer opinionated defaults
+
+### When to choose **AWS**
+
+- Complex enterprise architectures
+- Fine‑grained control over infrastructure
+- High‑scale operational NoSQL (DynamoDB)
+- Deep integration with legacy systems
+- Broad service catalog requirements
+
+---
+
+## 🧩 Technical Skills (Cross‑Cloud)
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- IAM roles, service accounts, key rotation
+- Organization/folder/account structure
+- Secret management policies
+
+#### Networking
+- VPCs, subnets, firewall rules
+- Private endpoints (PrivateLink vs Private Service Connect)
+- Cross‑cloud connectivity (VPN, interconnect)
+
+#### Architecture
+- Data warehouse design (Redshift vs BigQuery)
+- Messaging patterns (SNS/SQS vs Pub/Sub)
+- Storage layout (S3 vs Cloud Storage)
+- Compute orchestration (Lambda/ECS vs Cloud Functions/GKE)
+
+#### Data
+- Table schemas, partitioning, clustering
+- Message formats and retention policies
+- Storage classes and lifecycle rules
+
+#### Operational Guarantees
+- SLAs and quotas
+- Delivery semantics (SQS vs Pub/Sub)
+- Consistency models (DynamoDB vs Bigtable)
+
+#### Observability Metrics
+- Query performance
+- Message backlog
+- Node/cluster health
+- Storage usage
+- IAM audit logs
+
+</details>
+
+---
+
+## 🚨 Triage (Cross‑Cloud)
+
+:::danger
+Common symptoms across both platforms and how to triage them:
+:::
+
+| Symptom | AWS Root Cause | GCP Root Cause | What to Check | Action |
+|--------|----------------|----------------|----------------|--------|
+| Query slow | Redshift cluster sizing | BigQuery slot contention | Query plan, partitioning | Optimize schema, adjust compute |
+| Messages delayed | SQS backlog, slow consumers | Pub/Sub ack deadline issues | Backlog, consumer logs | Scale consumers, tune ack deadlines |
+| Access denied | IAM role misconfig | IAM policy or project binding | IAM logs | Fix roles, update bindings |
+| API quota exceeded | Service limits | API quotas | Quotas dashboard | Request increase, throttle |
+| Storage errors | S3 bucket policy | Cloud Storage IAM | Bucket ACLs | Fix IAM, update policies |
+| No data flowing | SNS/SQS misconfig | Pub/Sub subscription misconfig | Topic/subscription config | Recreate or fix subscription |

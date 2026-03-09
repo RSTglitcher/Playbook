@@ -1,208 +1,246 @@
 ---
-title: "☁️AWS Cloud Platform"
+title: "☁️ AWS Cloud Platform"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip AWS Cloud Platform
-AWS provides a broad suite of **cloud services** including compute, storage, database, messaging, and analytics.
-This runbook focuses on key data and messaging services commonly used by engineers and monitored by TAs: ElastiCache, DynamoDB, Keyspaces, SQS, and SNS.
+:::tip AWS Cloud Platform  
+AWS provides a broad suite of **cloud services** including compute, storage, database, messaging, and analytics.  
+This runbook focuses on key data and messaging services commonly used by engineers and monitored by TAs: **ElastiCache, DynamoDB, Keyspaces, SQS, and SNS**.  
 :::
 
-```mermaid
-AWS
-├── Data Services
-│   ├── DynamoDB
-│   ├── Keyspaces
-│   └── ElastiCache
-├── Messaging Services
-│   ├── SQS
-│   └── SNS
-├── TA Skills
-│   ├── Inspect clusters, tables, queues, topics
-│   ├── Validate IAM roles and access
-│   ├── Check scaling and metrics
-│   └── Verify network/security config
-└── SWE Skills
-    ├── Insert/query/update data
-    ├── Connect to Redis or CQLSH
-    ├── Send/receive messages
-    └── Provision or modify resources
-````
+### Key Terms
+
+- **IAM Role:** Identity with permissions to access AWS services  
+- **VPC:** Virtual network boundary for AWS resources  
+- **Security Group:** Virtual firewall controlling inbound/outbound traffic  
+- **Region / AZ:** Physical locations where AWS resources run  
+- **Endpoint:** Network entry point for a service (e.g., DynamoDB, Keyspaces)  
+
+### Knowing when to use **AWS Cloud Platform**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| You need managed, scalable cloud services | You require full control over hardware or OS |
+| You need serverless or autoscaling data systems | You need strict on‑prem or air‑gapped environments |
+| You want managed messaging (SQS/SNS) | You need complex routing (use Kafka/ESB) |
+| You need low‑ops NoSQL storage (DynamoDB/Keyspaces) | You need relational joins or OLAP workloads |
 
 ---
 
-## Pre-Requisites
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
 
-| Action / Service     | What TA Needs to Gather / Confirm                                    |
-| -------------------- | -------------------------------------------------------------------- |
-| AWS Account          | Project/account access with billing enabled                          |
-| CLI Tools            | `awscli` installed and configured (`aws configure`)                  |
-| IAM Roles & Policies | Permissions for DynamoDB, Keyspaces, ElastiCache, SQS, SNS           |
-| Networking           | VPC, subnets, security groups, route tables                          |
-| Service Setup        | Ensure tables, clusters, caches, queues, topics exist for inspection |
+### How It Works (Conceptual Model)
+
+AWS provides **managed services** that abstract away infrastructure tasks such as scaling, patching, failover, and replication.  
+Key concepts:
+
+- **DynamoDB** → serverless NoSQL key‑value store  
+- **Keyspaces** → managed Apache Cassandra  
+- **ElastiCache** → managed Redis/Memcached  
+- **SQS** → distributed message queue  
+- **SNS** → pub/sub notification service  
+
+AWS services rely heavily on:
+
+- **IAM** for access control  
+- **VPC networking** for connectivity  
+- **CloudWatch** for metrics and logs  
+- **Endpoints** for regional access  
+
+### System Contract
+
+AWS services enforce contracts through:
+
+- **IAM policies** (who can do what)  
+- **Resource configuration** (tables, clusters, queues, topics)  
+- **Service‑specific APIs** (DynamoDB API, Redis protocol, SQS/SNS APIs)  
+- **Regional boundaries** (resources exist in a specific region)  
+
+### Key Strategies
+
+- Ensure IAM roles are scoped correctly (least privilege)  
+- Validate VPC, subnets, and security groups before debugging service issues  
+- Confirm service quotas (DynamoDB RCU/WCU, SQS throughput, SNS fan‑out)  
+- Use CloudWatch metrics for triage and performance analysis  
+- Ensure resources exist in the correct region and account  
+
+### What Results Normally Look Like
+
+- **DynamoDB:** table descriptions, throughput metrics, item counts  
+- **Keyspaces:** keyspace/table metadata, CQL query results  
+- **ElastiCache:** cluster/node status, memory usage, replication state  
+- **SQS:** queue attributes, message counts, visibility timeout  
+- **SNS:** topic ARNs, subscription lists, delivery status  
 
 ---
 
-## Engineering
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- IAM roles and policies for DynamoDB, Keyspaces, ElastiCache, SQS, SNS  
+- MFA or SSO access to AWS console  
+- KMS encryption policies (if applicable)
+
+#### Networking
+- VPC, subnets, route tables  
+- Security groups and NACLs  
+- VPC endpoints for DynamoDB/Keyspaces/SQS/SNS  
+- Redis port access for ElastiCache
+
+#### Architecture
+- Region and AZ selection  
+- Table/cluster/queue/topic naming conventions  
+- Scaling configuration (autoscaling, provisioned capacity)  
+- Replication and failover strategy
+
+#### Data
+- DynamoDB partition/sort key design  
+- Keyspaces schema (Cassandra model)  
+- Redis key patterns  
+- Message formats for SQS/SNS
+
+#### Operational Guarantees
+- DynamoDB consistency model (eventual vs strong)  
+- SQS delivery semantics (at‑least‑once)  
+- SNS fan‑out behaviour  
+- ElastiCache replication guarantees  
+- Keyspaces consistency levels
+
+#### Observability Metrics
+- CloudWatch metrics for each service  
+- DynamoDB RCU/WCU consumption  
+- SQS queue depth and age of oldest message  
+- SNS delivery failures  
+- ElastiCache CPU/memory/evictions  
+- Keyspaces read/write latency  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- Terminal  
+- UI (AWS Console, CloudWatch, VPC dashboards)  
+:::
 
 <Tabs>
-<TabItem value="elasticache" label="ElastiCache">
 
-<Tabs>
-<TabItem value="elasticacheTA" label="TA Skills">
+<TabItem value="access" label="Access">
 
 ```shell
-# List clusters and nodes
-aws elasticache describe-cache-clusters --show-cache-node-info
+--------------
+How to set up credentials
+--------------
 
-# Check cluster status
-aws elasticache describe-cache-clusters --query 'CacheClusters[*].[CacheClusterId,CacheClusterStatus]'
+# Configure AWS CLI
+aws configure
+# Provide Access Key, Secret Key, Region
 
-# Inspect replication group
-aws elasticache describe-replication-groups
+# Validate identity
+aws sts get-caller-identity
 
-# Validate security groups and IAM roles
-aws ec2 describe-security-groups --group-ids <sg-id>
+--------------
+How to log-in via the terminal
+--------------
+
+# List all services you have access to
+aws ssm get-parameters-by-path --path "/aws/service/global-infrastructure/regions"
 ```
 
 </TabItem>
-<TabItem value="swe-ec" label="SWE Skills">
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify which AWS service is needed (DynamoDB, SQS, SNS, etc.)  
+- Confirm region, account, and environment (dev/stage/prod)  
+- Validate IAM access requirements  
+- Confirm scaling expectations (throughput, message volume, cache size)  
+- Identify data model (keys, schema, message format)  
+- Confirm networking constraints (VPC, SGs, endpoints)  
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
 
 ```shell
-# Connect to Redis cluster
-redis-cli -h <primary-endpoint> -p <port>
+--------------
+Key Terminal Commands
+--------------
 
-# Inspect cache usage
-INFO all
+# DynamoDB: Put an item
+aws dynamodb put-item --table-name <table> --item '{"PK":{"S":"123"},"Value":{"S":"abc"}}'
 
-# Flush cache (use with caution)
-FLUSHALL
-```
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="dynamodb" label="DynamoDB">
-
-<Tabs>
-<TabItem value="dynamodbTA" label="TA Skills">
-
-```shell
-# List tables
-aws dynamodb list-tables
-
-# Describe table
-aws dynamodb describe-table --table-name <table-name>
-
-# Check table capacity and indexes
-aws dynamodb describe-table --table-name <table-name> --query 'Table.{Name:TableName,RCU:ProvisionedThroughput.ReadCapacityUnits,Indexes:GlobalSecondaryIndexes}'
-```
-
-</TabItem>
-<TabItem value="swe-dynamodb" label="SWE Skills">
-
-```shell
-# Put an item
-aws dynamodb put-item --table-name <table-name> --item '{"PK": {"S": "123"}, "Value": {"S": "abc"}}'
-
-# Query items
-aws dynamodb query --table-name <table-name> --key-condition-expression "PK = :v1" --expression-attribute-values '{":v1":{"S":"123"}}'
-
-# Scan table (use sparingly)
-aws dynamodb scan --table-name <table-name>
-```
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="keyspaces" label="Keyspaces">
-
-<Tabs>
-<TabItem value="keyspacesTA" label="TA Skills">
-
-```shell
-# List keyspaces
-aws keyspaces list-keyspaces
-
-# Describe keyspace
-aws keyspaces describe-keyspace --keyspace-name <name>
-
-# Check table status
-aws keyspaces list-tables --keyspace-name <name>
-```
-
-</TabItem>
-<TabItem value="swe-keyspaces" label="SWE Skills">
-
-```shell
-# CQLSH access to table
+# Keyspaces: Query via CQLSH
 cqlsh <host> 9142 -u <user> -p <password> --ssl
 
-# Query data
-SELECT * FROM keyspace.table LIMIT 10;
+# ElastiCache: Connect to Redis
+redis-cli -h <primary-endpoint> -p <port>
 
-# Create/alter table
-CREATE TABLE keyspace.table (id uuid PRIMARY KEY, value text);
-```
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="messaging" label="SQS/SNS">
-
-<Tabs>
-<TabItem value="sqsTA" label="TA Skills">
-
-```shell
-# List queues
-aws sqs list-queues
-
-# Describe queue
-aws sqs get-queue-attributes --queue-url <url> --attribute-names All
-
-# List topics
-aws sns list-topics
-
-# Inspect topic subscriptions
-aws sns list-subscriptions-by-topic --topic-arn <arn>
-```
-
-</TabItem>
-<TabItem value="sqsSWE" label="SWE Skills">
-
-```shell
-# Send message to SQS
+# SQS: Send a message
 aws sqs send-message --queue-url <url> --message-body "Hello World"
 
-# Receive messages
-aws sqs receive-message --queue-url <url> --max-number-of-messages 10
-
-# Publish to SNS
+# SNS: Publish a message
 aws sns publish --topic-arn <arn> --message "Alert message"
 ```
 
 </TabItem>
-</Tabs>
+
+<TabItem value="analyst" label="Analyst">
+
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Inspect DynamoDB table structure and throughput
+aws dynamodb describe-table --table-name <table>
+
+# Check DynamoDB capacity usage
+aws cloudwatch get-metric-statistics --namespace AWS/DynamoDB --metric-name ConsumedReadCapacityUnits
+
+# Inspect ElastiCache cluster health
+aws elasticache describe-cache-clusters --show-cache-node-info
+
+# Check Keyspaces table status
+aws keyspaces list-tables --keyspace-name <name>
+
+# Inspect SQS queue depth and attributes
+aws sqs get-queue-attributes --queue-url <url> --attribute-names All
+
+# Inspect SNS topic subscriptions
+aws sns list-subscriptions-by-topic --topic-arn <arn>
+```
 
 </TabItem>
+
 </Tabs>
 
 ---
 
-## Triage
+## 🚨 Triage
 
-| Symptom                    | TLDR of Root Cause                               | What to Check                                 | Action to Propose                       |
-| -------------------------- | ------------------------------------------------ | --------------------------------------------- | --------------------------------------- |
-| ElastiCache cluster down   | Node crash, network issue, or scaling limit      | Cluster status, node events, VPC connectivity | Restart node/cluster, check limits      |
-| DynamoDB table unavailable | Provisioned throughput exceeded or table deleted | Table status, CloudWatch metrics              | Scale table, recreate if missing        |
-| Keyspaces not reachable    | VPC/Security issue or endpoint misconfigured     | Describe keyspace, network configuration      | Fix network/security, restart endpoints |
-| SQS messages delayed/lost  | Consumer down or misconfigured queue             | Queue attributes, CloudWatch metrics          | Restart consumer, check permissions     |
-| SNS notifications not sent | Topic misconfigured, IAM or throttling           | Topic subscriptions, CloudWatch metrics       | Correct config, adjust IAM, retry       |
-| IAM access denied          | Missing permissions                              | IAM roles and policies                        | Grant required roles                    |
-| API quota exceeded         | Too many requests                                | Service quotas, CloudWatch logs               | Request increase or throttle usage      |
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| ElastiCache cluster down | Node crash, network issue, scaling limit | Cluster status, node events, VPC connectivity | Restart node/cluster, check limits |
+| DynamoDB table unavailable | Provisioned throughput exceeded or table deleted | Table status, CloudWatch metrics | Scale table, recreate if missing |
+| Keyspaces not reachable | VPC/Security issue or endpoint misconfigured | Describe keyspace, network configuration | Fix network/security, restart endpoints |
+| SQS messages delayed/lost | Consumer down or misconfigured queue | Queue attributes, CloudWatch metrics | Restart consumer, check permissions |
+| SNS notifications not sent | Topic misconfigured, IAM or throttling | Topic subscriptions, CloudWatch metrics | Correct config, adjust IAM, retry |
+| IAM access denied | Missing permissions | IAM roles and policies | Grant required roles |
+| API quota exceeded | Too many requests | Service quotas, CloudWatch logs | Request increase or throttle usage |
 
