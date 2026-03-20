@@ -1,0 +1,243 @@
+---
+title: Data Centre Architecture
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+A **data centre** is a specialised facility that provides large‑scale compute, storage, and networking capacity so organisations can run applications reliably, securely, and at global scale.
+:::
+
+**When to Use**
+
+- You need scalable compute or storage beyond what local machines can provide
+- You need high availability, redundancy, or disaster recovery
+- You need low‑latency access for users in specific geographic regions
+
+**When Not to Use**
+
+- When local processing is sufficient and latency must be near‑zero
+- When regulatory constraints prohibit remote data storage
+- When the system cannot tolerate network dependency or external outages
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Data centres solve the problem of **scalable, reliable, globally accessible computing**.
+They replace the limitations of local servers by providing:
+
+- Elastic compute and storage
+- Fault‑tolerant infrastructure
+- Geographic distribution for performance and resilience
+- Industrial‑grade power, cooling, and security
+- A foundation for cloud platforms (AWS, GCP, Azure)
+
+They enable modern distributed systems to operate continuously, even under load, failure, or global demand.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+
+- **Physical Infrastructure** → power, cooling, racks, physical security
+- **Compute Layer** → servers, GPUs, hypervisors
+- **Storage Layer** → block, object, distributed file systems
+- **Network Fabric** → fibre, switches, routers, load balancers
+- **Control Plane** → provisioning, orchestration, autoscaling
+- **Global Backbone** → inter‑region fibre, edge POPs, CDN layers
+
+### Axes of Variation
+
+- **Synchronous vs Asynchronous workloads**
+- **Single‑region vs Multi‑region architecture**
+- **On‑prem vs Cloud vs Hybrid**
+- **Latency‑sensitive vs Throughput‑heavy workloads**
+- **Availability Zone isolation levels**
+
+---
+
+### Typical Lifecycle or Flow
+
+```
+User Request
+    ↓
+Edge POP / CDN
+    ↓
+Regional Load Balancer
+    ↓
+Availability Zone
+    ↓
+Data Centre (Compute + Storage)
+    ↓
+Response returned via backbone or internet
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What guarantees does the data centre provide (availability, redundancy, latency)?
+- What happens when a rack, zone, or region fails?
+- How workloads scale under load or constrained resources
+- Whether the architecture is multi‑AZ or multi‑region
+- How data residency and compliance affect design
+:::
+
+**What happens when:**
+
+- **Data grows** → storage tiers, replication, sharding, cost scaling
+- **Traffic increases** → autoscaling, load balancing, network saturation
+- **Concurrency rises** → contention, queueing, throttling
+- **Resources become constrained** → degraded performance, failover, backpressure
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Region** | A geographic cluster of availability zones |
+| **Availability Zone (AZ)** | One or more isolated data centres within a region |
+| **Edge POP** | Local point of presence for routing and caching |
+| **Backbone Network** | Private fibre connecting global regions |
+| **Hyperscale** | Extremely large‑scale data centre used by cloud providers |
+| **Failover** | Automatic switch to redundant systems during failure |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+<TabItem value="hyperscale" label="Hyperscale Data Centres">
+
+### Hyperscale Data Centres
+
+**Purpose**
+Support cloud providers (AWS, GCP, Azure) with massive compute and storage capacity.
+
+**Key Characteristics**
+- Multi‑AZ redundancy
+- Automated provisioning and orchestration
+- Private global backbone networks
+
+**Behaviour**
+Serve millions of workloads across regions with elastic scaling.
+
+**Trade-offs**
+High complexity, high energy consumption, and dependency on provider reliability.
+
+</TabItem>
+
+<TabItem value="enterprise" label="Enterprise Data Centres">
+
+### Enterprise Data Centres
+
+**Purpose**
+Support a single organisation’s internal workloads.
+
+**Key Characteristics**
+- On‑prem or co‑located
+- Custom hardware and security
+- Limited geographic distribution
+
+**Behaviour**
+Stable, predictable workloads with controlled access.
+
+**Trade-offs**
+Lower elasticity, higher maintenance burden, limited global reach.
+
+</TabItem>
+
+<TabItem value="edge" label="Edge Data Centres">
+
+### Edge Data Centres
+
+**Purpose**
+Provide low‑latency compute close to end users.
+
+**Key Characteristics**
+- Small footprint
+- Located near population centres
+- Often used for caching or real‑time workloads
+
+**Behaviour**
+Reduce round‑trip latency by processing data locally.
+
+**Trade-offs**
+Limited capacity, not suitable for heavy compute or storage.
+
+</TabItem>
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- Data centres are the physical substrate for cloud compute, storage, and networking
+- They interact with orchestration systems, distributed storage, and global routing
+- Under pressure, bottlenecks appear in network fabric, cooling, or power
+:::
+
+### Local Systems
+
+- OS
+- Runtime
+- Network stack
+- Storage drivers
+- Concurrency primitives
+- Scaling mechanisms
+
+### Remote Systems
+
+- Pods / containers
+- Other data centres
+- Cloud control planes
+- Global backbone networks
+
+### Questions to ask during reviews or incidents
+
+- Is the workload multi‑AZ or single‑AZ?
+- What is the failover plan if the region becomes unavailable?
+- How does latency change across regions?
+- What happens if the control plane is degraded?
+- Are we relying on local state that cannot be replicated?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Data centre outputs depend on region, AZ design, and cloud provider guarantees.
+Latency, throughput, and availability vary by geography.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Low Latency** | Requests served from the nearest region or edge POP |
+| **High Availability** | Multi‑AZ redundancy prevents outages |
+| **Elastic Scaling** | Compute and storage expand automatically under load |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| **AZ Outage** | Partial service disruption; multi‑AZ systems fail over |
+| **Region Outage** | Major disruption; only multi‑region systems survive cleanly |
+| **Network Partition** | Timeouts, retries, inconsistent state |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Communication Patterns
+- Distributed Storage
+- Cloud Regions & Availability Zones
+- Load Balancing
+- Disaster Recovery & Failover

@@ -1,0 +1,268 @@
+---
+title: Cloud Architecture
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+**Cloud Architecture** is the design and organisation of distributed compute, storage, networking, and control‑plane systems that run on top of global data centres to deliver scalable, reliable, on‑demand services.
+:::
+
+**When to Use**
+
+- You need elastic compute or storage that scales with demand
+- You need global availability or multi‑region resilience
+- You want to offload infrastructure management to a cloud provider
+
+**When Not to Use**
+
+- Ultra‑low‑latency workloads requiring local processing
+- Highly regulated environments where data cannot leave a physical site
+- Systems that cannot tolerate network dependency or external outages
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Cloud architecture solves the problem of **building and operating large‑scale systems without owning physical infrastructure**.
+
+It provides:
+
+- **Elasticity** → scale up/down automatically
+- **Global reach** → serve users from the nearest region
+- **High availability** → multi‑AZ and multi‑region redundancy
+- **Managed services** → databases, queues, storage, compute
+- **Cost efficiency** → pay for what you use
+- **Operational offloading** → no hardware, power, cooling, or physical security to manage
+
+It enables companies to focus on **application logic**, not infrastructure.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Regions & Availability Zones**
+  Physical isolation boundaries for resilience and latency.
+
+- **Compute Layer**
+  VMs, containers, serverless functions, autoscaling groups.
+
+- **Storage Layer**
+  Object storage, block storage, distributed databases.
+
+- **Networking Layer**
+  VPCs, load balancers, gateways, backbone routing.
+
+- **Control Plane**
+  APIs for provisioning, scaling, identity, monitoring.
+
+- **Edge Layer**
+  POPs, CDNs, edge compute, global accelerators.
+
+### **Axes of Variation**
+
+- **Compute Model** → VM vs container vs serverless
+- **Deployment Model** → single‑region vs multi‑region
+- **Storage Model** → strongly consistent vs eventually consistent
+- **Network Model** → public vs private routing
+- **Operational Model** → managed vs self‑managed services
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+User Request
+    ↓
+Edge POP / CDN
+    ↓
+Global Load Balancer
+    ↓
+Cloud Region
+    ↓
+Availability Zone
+    ↓
+Compute (VM/Container/Function)
+    ↓
+Storage (DB/Object/Cache)
+    ↓
+Response returned via backbone or internet
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What guarantees the cloud architecture provides (availability, latency, durability)
+- How workloads behave under load, failure, or regional disruption
+- Whether the design is multi‑AZ or multi‑region
+- How data flows across regions and networks
+- What becomes a bottleneck (network, storage, control plane)
+:::
+
+**What happens when:**
+
+- **Data grows** → storage scaling, partitioning, replication
+- **Traffic increases** → autoscaling, throttling, load balancing
+- **Concurrency rises** → contention, queueing, rate limits
+- **Resources become constrained** → degraded performance, failover, backpressure
+
+**Cloud Providers:**
+
+- **Availability & Regions:** Choose AWS for fine‑grained AZ isolation; choose GCP for global routing simplicity.
+- **Networking:** Choose based on segmentation needs vs simplicity.
+- **Storage & Data Growth:** Match provider to workload type.
+- **Compute Model:** Choose based on compute diversity vs container‑native workloads.
+- **Control Plane:** Choose based on failure‑isolation vs global consistency.
+- **Cost & Scaling:** Match provider to workload shape.
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Region** | A geographic cluster of availability zones |
+| **Availability Zone (AZ)** | One or more isolated data centres within a region |
+| **VPC** | Virtual private network boundary for cloud workloads |
+| **Control Plane** | APIs and orchestration systems that manage cloud resources |
+| **Serverless** | Compute model where the provider manages scaling and runtime |
+| **Backbone Network** | Private fibre connecting global cloud regions |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+<TabItem value="iaas" label="IaaS">
+
+### Infrastructure as a Service (IaaS)
+
+**Purpose**
+Provide raw compute, storage, and networking primitives.
+
+**Key Characteristics**
+- VMs, block storage, load balancers
+- High control, high flexibility
+
+**Behaviour**
+Applications run on provisioned infrastructure with autoscaling and monitoring.
+
+**Trade-offs**
+More operational overhead than managed or serverless models.
+
+</TabItem>
+
+<TabItem value="paas" label="PaaS">
+
+### Platform as a Service (PaaS)
+
+**Purpose**
+Provide managed platforms for deploying applications.
+
+**Key Characteristics**
+- Managed runtimes, databases, queues
+- Simplified deployment and scaling
+
+**Behaviour**
+Developers focus on code; platform handles infrastructure.
+
+**Trade-offs**
+Less control; vendor‑specific constraints.
+
+</TabItem>
+
+<TabItem value="serverless" label="Serverless">
+
+### Serverless Architecture
+
+**Purpose**
+Run code without provisioning or managing servers.
+
+**Key Characteristics**
+- Event‑driven
+- Automatic scaling
+- Pay‑per‑execution
+
+**Behaviour**
+Functions run on demand; idle time costs nothing.
+
+**Trade-offs**
+Cold starts, execution limits, vendor lock‑in.
+
+</TabItem>
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+Cloud architecture is a **layered system** that interacts with compute, storage, networking, orchestration, and global routing.
+Under pressure, bottlenecks appear in network fabric, storage throughput, or control‑plane capacity.
+:::
+
+### Local Systems
+
+- OS
+- Runtime
+- Network stack
+- Storage drivers
+- Concurrency primitives
+- Scaling mechanisms
+
+### Remote Systems
+
+- Other regions
+- Other AZs
+- Edge POPs
+- Global backbone networks
+- Managed services (DBs, queues, caches)
+
+### Questions to ask during reviews or incidents
+
+- Is the system multi‑AZ or single‑AZ?
+- What happens if the region becomes unavailable?
+- How does the architecture handle cross‑region latency?
+- Are we relying on a single managed service with no failover?
+- What are the rate limits or quotas?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Cloud outputs depend on region, AZ design, and service guarantees.
+Latency, throughput, and availability vary by geography and provider.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| **Elastic Scaling** | Compute and storage expand automatically under load |
+| **High Availability** | Multi‑AZ redundancy prevents outages |
+| **Global Performance** | Users served from nearest region or edge POP |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| **AZ Outage** | Partial disruption; multi‑AZ systems fail over |
+| **Region Outage** | Major disruption; only multi‑region systems survive |
+| **Control Plane Failure** | Provisioning/scaling unavailable; running workloads may continue |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Data Centres
+- Communication Patterns
+- Distributed Storage
+- Load Balancing
+- Disaster Recovery & Multi‑Region Design
+- Autoscaling & Orchestration

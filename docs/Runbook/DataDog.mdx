@@ -1,0 +1,227 @@
+---
+title: DataDog
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Datadog
+A cloud‑based **observability platform** that unifies logs, metrics, traces, dashboards, alerts, and APM to help teams monitor distributed systems and diagnose issues in real time.
+:::
+
+### Key Terms
+
+- **APM:** Application Performance Monitoring — traces, spans, service maps.
+- **RUM:** Real User Monitoring — browser/app performance from the user’s perspective.
+- **Log Pipelines:** Rules that parse, enrich, and route logs.
+- **Monitors:** Alerting rules based on metrics, logs, or traces.
+- **Integrations:** Pre‑built connectors for AWS, GCP, Kubernetes, databases, etc.
+
+### Knowing when to use **Datadog**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| You need unified logs, metrics, traces, and dashboards | You only need basic metrics (CloudWatch/Stackdriver may suffice) |
+| You need cross‑service visibility in distributed systems | You cannot export data outside your environment for compliance reasons |
+| You need fast, intuitive alerting and dashboards | You need a low‑cost, minimal observability footprint |
+| You want deep APM insights without building tooling | You require full on‑prem observability with no SaaS |
+
+---
+
+## 📘 About / Foundations
+
+Datadog provides a **single pane of glass** for understanding system behaviour across infrastructure, applications, and user experience.
+It works by collecting telemetry from agents, cloud integrations, and SDKs, then correlating them into dashboards, traces, and alerts.
+
+### How It Works (Conceptual Model)
+
+- **Agents** run on hosts/containers and collect metrics, logs, and traces.
+- **Integrations** pull data from cloud providers (AWS/GCP/Azure).
+- **APM libraries** instrument applications to produce traces and spans.
+- **Log pipelines** parse and enrich logs before indexing.
+- **Monitors** evaluate conditions and trigger alerts.
+- **Dashboards** visualise metrics, logs, and traces in real time.
+
+### System Contract
+
+Datadog guarantees:
+
+- Near‑real‑time ingestion of logs/metrics/traces
+- High‑availability SaaS backend
+- Retention based on your plan (metrics vs logs vs traces)
+- API‑driven access to all telemetry
+- Integrations with major cloud providers and runtimes
+
+### Key Strategies
+
+- Use **tags** consistently (service, env, version) for filtering and correlation
+- Use **log pipelines** to reduce cost by controlling what gets indexed
+- Use **APM sampling** to balance cost vs visibility
+- Use **multi‑signal monitors** to reduce alert noise
+- Use **dashboards** for shared operational visibility
+
+### What Results Normally Look Like
+
+- Service maps showing dependencies
+- Dashboards showing latency, error rate, throughput
+- Traces showing request paths across microservices
+- Logs enriched with tags and context
+- Alerts firing on SLO breaches or anomalies
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+
+<summary>Pre-Requisites</summary>
+
+#### Security
+- API keys, app keys, RBAC, sensitive log redaction.
+
+#### Networking
+- Understanding of VPCs, load balancers, DNS, service‑to‑service calls.
+
+#### Architecture
+- Microservices, distributed tracing, container orchestration.
+
+#### Data
+- Log formats, metrics types (gauge, counter, histogram), sampling.
+
+#### Operational Guarantees
+- SLOs, SLIs, latency/error budgets, alerting thresholds.
+
+#### Observability Metrics
+- RED metrics (Rate, Errors, Duration)
+- USE metrics (Utilisation, Saturation, Errors)
+
+</details>
+
+:::info
+How to interact with this tool day‑to‑day:
+- **Terminal:** via Datadog CLI, agent commands, API calls
+- **UI:** dashboards, monitors, service maps, log explorer
+:::
+
+---
+
+<Tabs>
+
+<TabItem value="access" label="Access">
+
+```shell
+--------------
+Setting up credentials
+--------------
+# API key
+export DD_API_KEY="your-key"
+export DD_APP_KEY="your-app-key"
+
+# Agent installation (example: Debian/Ubuntu)
+DD_API_KEY=your-key DD_SITE="datadoghq.eu" bash -c \
+"$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
+
+--------------
+Logging in via terminal
+--------------
+# Using the Datadog CLI (if installed)
+datadog login --api-key $DD_API_KEY --app-key $DD_APP_KEY
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+### How to formulate requirements when working with Datadog
+
+- What signals do we need? (logs, metrics, traces, RUM)
+- What environments? (prod, staging, dev)
+- What tags must be applied? (service, env, version)
+- What SLOs or alert thresholds matter?
+- What retention period is required?
+- What integrations must be enabled? (AWS, GCP, Kubernetes)
+
+**Examples of use cases**
+
+- Investigating latency spikes
+- Monitoring error rates across microservices
+- Tracking deployments and version rollouts
+- Observing user behaviour via RUM
+- Building dashboards for SRE/TA visibility
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers.
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Check agent status
+sudo datadog-agent status
+
+# Restart agent
+sudo systemctl restart datadog-agent
+
+# Tail logs via agent
+sudo datadog-agent flare
+
+# Validate configuration
+sudo datadog-agent check <integration-name>
+
+# Send custom metric
+curl -X POST \
+  -H "DD-API-KEY: $DD_API_KEY" \
+  -H "DD-APP-KEY: $DD_APP_KEY" \
+  -d '{"series":[{"metric":"custom.metric","points":[[time(), 1]]}]}' \
+  "https://api.datadoghq.eu/api/v1/series"
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Common workflows and queries used by analysts.
+
+```shell
+--------------
+Key Analyst Queries
+--------------
+
+# Filter logs by service and error
+service:checkout AND status:error
+
+# View latency over time
+avg:trace.http.request.duration{service:api}.rollup(60)
+
+# Identify top error sources
+top(logs("service:payments AND status:error"), "message", 10)
+
+# Find slowest endpoints
+avg:trace.http.request.duration.by{resource_name}
+
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🚨 Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage them:
+:::
+
+| Symptom | TLDR Root Cause | What to Check | Action to Propose |
+|--------|------------------|---------------|-------------------|
+| Missing logs | Agent misconfigured or log pipeline dropped data | Agent status, log pipeline rules | Restart agent, fix pipeline, ensure correct tags |
+| Missing metrics | Agent not running or integration disabled | Agent health, integration config | Reinstall agent, enable integration |
+| High cardinality | Too many unique tags | Tag usage, dashboards, monitors | Reduce tag combinations, aggregate metrics |
+| Alert noise | Overly sensitive monitors | Monitor thresholds, multi‑signal alerts | Tune thresholds, add anomaly detection |
+| Slow dashboards | Excessive queries or high log volume | Dashboard widgets, query cost | Optimise queries, reduce time window |
+
