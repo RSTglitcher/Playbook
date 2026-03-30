@@ -1,0 +1,312 @@
+---
+title: "AI Patterns"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+AI Architecture Patterns describe **how AI systems structure data, models, inference, and feedback loops** to deliver reliable, scalable, and predictable intelligent behaviour.
+:::
+
+**When to Use**
+
+- When analysing how AI features behave under load, drift, or changing data
+- When reviewing designs involving models, embeddings, vector search, or pipelines
+- When diagnosing latency, accuracy, or cost issues in AI‑powered systems
+
+**When Not to Use**
+
+- When the system is purely deterministic or rule‑based
+- When no model training, inference, or retrieval is involved
+- When the issue is isolated to application logic rather than model behaviour
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+AI Architecture Patterns solve the problem of **how to design and operate AI systems that depend on probabilistic models, evolving data, and high‑cost compute**.
+They provide a structured way to reason about:
+
+- data flow
+- model lifecycle
+- inference pathways
+- retrieval and context assembly
+- monitoring, drift, and feedback loops
+
+This helps TAs diagnose issues, anticipate bottlenecks, and understand how AI components interact with the wider system.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+
+- **Data Layer** — raw data, features, embeddings, vector stores
+- **Model Layer** — training, fine‑tuning, evaluation, versioning
+- **Inference Layer** — real‑time or batch predictions
+- **Retrieval Layer** — vector search, context assembly, feature lookup
+- **Orchestration Layer** — pipelines, schedulers, retraining triggers
+- **Monitoring Layer** — drift detection, quality metrics, feedback loops
+- **Serving Layer** — APIs, gateways, caching, load balancing
+
+### Axes of Variation
+
+- Batch vs Real‑Time inference
+- Static vs Continually‑updated models
+- Single‑model vs Ensemble architectures
+- Retrieval‑augmented vs Pure model inference
+- Closed‑weight vs Open‑weight models
+- Centralised vs Edge deployment
+
+---
+
+### Typical Lifecycle or Flow
+
+**Diagram(s):**
+```
+User Request
+     |
+     v
+[Input Processing] --> [Embedding / Feature Generation] --> [Model Inference]
+     |                          |                                |
+     |                          v                                |
+     |                 [Vector Store / Retrieval] ---------------+
+     |
+     v
+[Post‑Processing] --> [Response] --> [Feedback Logging] --> [Monitoring / Retraining]
+```
+
+---
+
+## 🔍TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How inference behaves under load, drift, or stale data
+- How retrieval quality affects model accuracy
+- How pipelines, caching, or batching influence latency
+- Where failures originate: model, vector store, GPU, or orchestration
+- What risks emerge when data or traffic patterns shift
+:::
+
+**What happens when:**
+
+- **Data grows** → vector index rebuilds slow, embeddings become stale
+- **Traffic increases** → GPU saturation, queueing, batching delays
+- **Concurrency rises** → contention on vector stores, cold starts
+- **Resources become constrained** → fallback models activate, latency spikes
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Inference | Running a model to generate predictions or outputs |
+| Embedding | Vector representation of text, images, or data |
+| Vector Store | Database optimised for similarity search over embeddings |
+| Drift | Model performance degradation due to changing data |
+| RAG | Retrieval‑Augmented Generation: retrieval + model inference |
+| Fine‑Tuning | Adjusting a model on domain‑specific data |
+| Prompt Engineering | Structuring inputs to guide model behaviour |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="rag" label="Retrieval‑Augmented Generation (RAG)">
+
+### Retrieval‑Augmented Generation (RAG)
+
+**Purpose**
+Improve accuracy and reduce hallucinations by injecting retrieved context into model inference.
+
+**Key Characteristics**
+- Embeddings + vector search
+- Context assembly
+- Domain‑specific grounding
+
+**Behaviour**
+Model quality depends heavily on retrieval freshness and embedding quality.
+
+**Trade-offs**
+Higher latency; requires vector store maintenance and embedding updates.
+
+</TabItem>
+
+<TabItem value="pipeline" label="ML Pipelines">
+
+### ML Pipelines (Batch or Streaming)
+
+**Purpose**
+Automate data preparation, training, evaluation, and deployment.
+
+**Key Characteristics**
+- ETL/ELT stages
+- Scheduled or event‑driven retraining
+- Model versioning
+
+**Behaviour**
+Stable and predictable, but slower to adapt to new data.
+
+**Trade-offs**
+Operationally heavy; requires strong data governance.
+
+</TabItem>
+
+<TabItem value="realtime" label="Real‑Time Inference">
+
+### Real‑Time Inference
+
+**Purpose**
+Serve predictions with low latency for interactive applications.
+
+**Key Characteristics**
+- GPU/accelerator usage
+- Caching and batching
+- Autoscaling
+
+**Behaviour**
+Highly sensitive to traffic spikes and resource constraints.
+
+**Trade-offs**
+Expensive; requires fallback strategies and careful scaling.
+
+</TabItem>
+
+<TabItem value="ensemble" label="Ensemble Models">
+
+### Ensemble Models
+
+**Purpose**
+Combine multiple models to improve accuracy or robustness.
+
+**Key Characteristics**
+- Voting, stacking, or weighted blending
+- Multiple inference paths
+- Higher reliability
+
+**Behaviour**
+More stable predictions but higher compute cost.
+
+**Trade-offs**
+Complex to operate; debugging becomes harder.
+
+</TabItem>
+
+<TabItem value="edge" label="Edge / On‑Device AI">
+
+### Edge / On‑Device AI
+
+**Purpose**
+Run models locally for privacy, latency, or offline use.
+
+**Key Characteristics**
+- Quantised or distilled models
+- Limited compute
+- No server dependency
+
+**Behaviour**
+Fast and private but constrained by device capabilities.
+
+**Trade-offs**
+Lower accuracy; harder to update models.
+
+</TabItem>
+
+<TabItem value="other" label="Other">
+
+### Other Patterns
+
+**Purpose**
+Capture specialised or hybrid AI architectures.
+
+**Key Characteristics**
+- Multi‑agent systems
+- Hybrid symbolic + neural systems
+- Federated learning
+
+**Behaviour**
+Useful for niche or privacy‑sensitive scenarios.
+
+**Trade-offs**
+Complex coordination; specialised tooling.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How AI components interact with data pipelines, APIs, and storage
+- How inference interacts with caching, batching, and load balancing
+- How vector stores, GPUs, and orchestration layers behave under pressure
+- What becomes a bottleneck as models or datasets scale
+:::
+
+### Local Systems
+
+- OS
+- Runtime
+- Network
+- Storage
+- Concurrency
+- Scaling
+
+### Remote Systems
+
+- Pods
+- Data Centers
+
+### Questions to ask during reviews or incidents
+
+- Where is the bottleneck: model, vector store, network, or GPU
+- Is drift occurring
+- Are embeddings stale
+- Is inference latency rising due to batching or cold starts
+- Are fallback models or degraded modes in place
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+AI outputs are **probabilistic**, not deterministic. They depend on model weights, context, retrieval quality, and prompt structure.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Accurate Predictions | Outputs align with expected behaviour |
+| Stable Latency | Inference remains predictable under load |
+| Fresh Embeddings | Retrieval quality remains high |
+| Low Drift | Model performance remains consistent |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Drift | Model accuracy degrades over time |
+| Hallucinations | Model produces incorrect or fabricated outputs |
+| Latency Spikes | GPU saturation, batching delays, or vector store slowness |
+| Stale Retrieval | Old embeddings lead to irrelevant context |
+| Pipeline Failures | Retraining or feature generation breaks |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Vector Databases
+- Messaging Patterns
+- Distributed System Architecture
+- Observability
+- Data Pipelines
+- API Design
+
