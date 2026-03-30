@@ -153,35 +153,57 @@ Maintain multiple copies of data for availability and performance.
 
 **Key Characteristics**
 - Synchronous vs asynchronous replication  
-- Leader‑follower  
-- Multi‑leader  
-- Quorum reads/writes  
+- Leader–follower
+- Multi‑leader
+- Quorum reads/writes
 
-**Behaviour**  
+**Behaviour**
 Improves availability but introduces lag and conflict risks.
 
-**Trade-offs**  
+**Trade-offs**
 Synchronous = safer but slower; asynchronous = faster but inconsistent.
 
 </TabItem>
 
-<TabItem value="partitioning" label="Partitioning (Sharding) Patterns">
+<TabItem value="partitioning" label="Partitioning Patterns">
 
-### Partitioning (Sharding) Patterns
+### Partitioning Patterns
 
-**Purpose**  
-Split data or workload across nodes.
+**Purpose**
+Split data or workload into **independent segments** so the system can scale horizontally.
 
 **Key Characteristics**
-- Hash‑based sharding  
-- Range‑based sharding  
-- Directory‑based sharding  
+- Logical partitioning
+- Functional partitioning (by domain)
+- Vertical partitioning (by columns)
+- Horizontal partitioning (by rows)
 
-**Behaviour**  
-Improves scalability but risks hotspots and uneven load.
+**Behaviour**
+Improves scalability and isolation but requires careful routing.
 
-**Trade-offs**  
-Rebalancing is complex and expensive.
+**Trade-offs**
+Cross‑partition queries become more complex.
+
+</TabItem>
+
+<TabItem value="sharding" label="Sharding Patterns">
+
+### Sharding Patterns
+
+**Purpose**
+A **specific implementation** of horizontal partitioning where data is distributed across multiple nodes.
+
+**Key Characteristics**
+- Hash‑based sharding
+- Range‑based sharding
+- Directory‑based sharding
+- Consistent hashing
+
+**Behaviour**
+Allows large datasets to scale across many machines.
+
+**Trade-offs**
+Rebalancing is complex; hotspots can occur depending on shard key.
 
 </TabItem>
 
