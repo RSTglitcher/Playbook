@@ -1,0 +1,209 @@
+---
+title: "OpenAPI Migration"
+sidebar_position: 5
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip 📌 Executive Summary
+
+**Project Purpose**
+To improve API consistency, consumer understanding, and delivery efficiency by standardising the use of OpenAPI specifications as a shared contract between API producers and consumers across platform teams.
+
+**Problem Statement**
+APIs were being defined and documented inconsistently across teams, with specifications spread across Confluence, code annotations, and generated Swagger outputs, leading to misalignment between intent and implementation and increasing delivery and operational risk.
+
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+
+- **Skills:**
+  [Technical Analysis, Requirements Definition, Contract Modelling, Stakeholder Alignment]
+
+- **Tools:**
+  [OpenAPI, Confluence, GitHub, Documentation & Review Artefacts]
+
+- **Patterns:**
+  [API‑First Design, Contract‑Driven Development, Standardisation]
+
+---
+
+## 🧭 **Context & Background**
+
+This work was undertaken as part of a broader cross‑department initiative to improve API quality and developer experience through API‑First practices.
+
+- **Trigger / Catalyst**
+  Increasing API surface area and consumer demand exposed friction caused by mismatches between documented behaviour and actual implementation.
+
+- **Relevant History**
+  - APIs were often designed in Confluence and implemented in code‑first flows.
+  - OpenAPI specifications were generated after the fact, rather than treated as authoritative.
+  - Consumers relied on multiple, sometimes conflicting sources of truth.
+
+- **Domain Boundaries Involved**
+  Core Services, platform teams, downstream consumers, Technical Analysts
+
+- **Assumptions Already in Place**
+  - APIs act as contracts, not just integration points.
+  - Machine‑readable specifications enable better tooling and parallel work.
+
+- **Known Constraints**
+  - Existing services with legacy documentation
+  - Differing maturity levels across teams
+
+---
+
+## 🗺️ **Stakeholders & Ownership**
+
+- **Primary Stakeholders:**
+  API producers, API consumers, Technical Analysts, platform engineers
+
+- **Engineering Owner:**
+  Core Services engineering teams
+
+- **Product Owner:**
+  API and platform product stakeholders
+
+- **Data / Platform Dependencies:**
+  Internal APIs, service consumers, developer tooling
+
+- **External Partners:**
+  N/A
+
+---
+
+## 🧰 **Resources**
+
+- **Software:**
+  API services and consumer integrations
+
+- **Tools:**
+  OpenAPI (YAML/JSON), Confluence, GitHub
+
+- **Team:**
+  Engineers, Technical Analysts, architects
+
+- **Systems / Environments Touched:**
+  API gateways, backend services, consumer applications
+
+---
+
+## 🎯 **Scope**
+
+- **In Scope:**
+  - Standardising how OpenAPI specifications are authored and reviewed
+  - Promoting OpenAPI as the single source of truth for API contracts
+  - Improving documentation clarity and consistency
+
+- **Out of Scope:**
+  - Re‑writing all existing APIs
+  - Owning long‑term API governance
+
+- **Assumptions:**
+  Clear contracts reduce coordination and rework.
+
+- **Constraints:**
+  Legacy endpoints and established development workflows
+
+- **Non‑Goals:**
+  Enforcing standards without team buy‑in
+
+---
+
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+- Translating engineering concerns into contract‑level requirements
+- Challenging code‑first defaults with consumer‑centred reasoning
+- Aligning stakeholders across producer and consumer roles
+- Defining what “good” looks like for API contracts
+- Supporting adoption without blocking delivery
+
+---
+
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+
+- What is the authoritative source of truth for API behaviour?
+- How can contract clarity reduce downstream errors?
+- When should OpenAPI be introduced in the delivery lifecycle?
+- What standards are enforceable without slowing teams?
+
+### **Investigation Steps**
+
+- Review existing API documentation and generated specs
+- Map discrepancies between intent, spec, and implementation
+- Identify common pain points for API consumers
+- Align on API‑First principles and usage guidelines
+- Document standard patterns and expectations
+
+### **Artefacts Produced**
+
+- Standardised OpenAPI guidance
+- API‑First lifecycle descriptions
+- Review and discussion artefacts
+- Improved documentation entries
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+- **Communication Pattern Choices:**
+  Collaborative standards development rather than top‑down enforcement
+
+- **Integration Boundaries:**
+  Clear separation between contract definition and implementation
+
+- **Failure Modes Considered:**
+  - Contract drift
+  - Undocumented breaking changes
+  - Consumer misinterpretation
+
+- **Trade‑offs Considered:**
+  Up‑front design effort vs downstream delivery efficiency
+
+- **Alternatives Rejected (and why):**
+  Code‑only definitions, which obscure intent and delay consumer feedback
+
+---
+
+## 🚚 **Delivery Plan**
+
+- **Project Management:** Embedded into API design and review workflows
+- **Milestones:**
+  - Current‑state assessment
+  - Agreement on API‑First principles
+  - Guidance publication and adoption
+
+### Alignment Requirements (rough)
+
+- **Engineering effort:** Medium
+- **Stakeholder decisions:** Medium–High
+
+---
+
+## 🔄 **Handover Plan**
+
+- Clear guidance documented and accessible
+- Expectations aligned across producer and consumer teams
+- Open questions and adoption risks surfaced
+
+---
+
+## 📈 **Success Measures**
+
+- Reduced ambiguity in API behaviour
+- Improved consumer confidence and onboarding
+- Fewer integration issues caused by spec mismatch
+- OpenAPI used earlier in API design discussions
+
+---
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- API‑First Design
+- Contract‑Driven Development
+- Developer Experience (DX)
+- Platform Standards and Governance

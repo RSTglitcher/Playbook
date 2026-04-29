@@ -22,7 +22,6 @@ Get started:
 > - README
 > - Guide for the task
 > - Go to Chapter > Issues > New Issues > Get Started on the Chapter
-> - Add it to the gst-data-scala-school board (so they can track your progress and to your team's board)
 > - Can use branch + tags to assign who is doing what. Branch = GroupNumber-Name
 > - Ask in your Group slack channel for a review
 - Questions
