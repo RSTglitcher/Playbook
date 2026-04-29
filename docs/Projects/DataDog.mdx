@@ -1,0 +1,208 @@
+---
+title: "DataDog Migration"
+sidebar_position: 6
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip 📌 Executive Summary
+
+**Project Purpose**
+To support the migration to Datadog as the primary observability platform in order to improve visibility, resilience, and decision‑making during high‑traffic and failure scenarios, while reducing operational noise and inconsistency across services.
+
+**Problem Statement**
+Existing monitoring and logging approaches were fragmented and overly verbose, making it difficult to quickly understand system behaviour, diagnose issues during peak traffic events, and confidently prioritise remediation under pressure.
+
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+
+- **Skills:**
+  [Technical Analysis, Requirements Elicitation, Observability Design, Stakeholder Alignment]
+
+- **Tools:**
+  [Datadog, Logging & Metrics Dashboards, Confluence, Review Artefacts]
+
+- **Patterns:**
+  [Observability‑Driven Engineering, Signal‑to‑Noise Reduction, Resilience Monitoring]
+
+---
+
+## 🧭 **Context & Background**
+
+This work took place during a broader platform migration toward Datadog, following multiple incidents where limited observability increased time‑to‑understanding and recovery effort.
+
+- **Trigger / Catalyst**
+  High‑traffic events exposed gaps in monitoring and logging, where teams struggled to distinguish actionable signals from background noise.
+
+- **Relevant History**
+  - Services produced large volumes of logs with inconsistent tagging.
+  - Existing tooling made correlation between metrics, logs, and traces difficult.
+  - Incident investigations relied heavily on SME interpretation rather than shared visibility.
+
+- **Domain Boundaries Involved**
+  Platform engineering, service teams, performance engineering, on‑call responders
+
+- **Assumptions Already in Place**
+  - Observability is a shared platform concern, not a per‑service afterthought.
+  - Better signals improve both incident response and day‑to‑day delivery confidence.
+
+- **Known Constraints**
+  - Legacy logging practices
+  - Cost considerations related to log volume and retention
+
+---
+
+## 🗺️ **Stakeholders & Ownership**
+
+- **Primary Stakeholders:**
+  Engineering teams, on‑call responders, platform and reliability teams
+
+- **Engineering Owner:**
+  Platform engineering / reliability leadership
+
+- **Product Owner:**
+  Platform and service product stakeholders
+
+- **Data / Platform Dependencies:**
+  Application services, logging pipelines, metrics exporters
+
+- **External Partners:**
+  N/A
+
+---
+
+## 🧰 **Resources**
+
+- **Software:**
+  Datadog observability platform
+
+- **Tools:**
+  Service dashboards, log views, metrics and alerting configurations
+
+- **Team:**
+  Platform engineers, service owners, Technical Analysts
+
+- **Systems / Environments Touched:**
+  Backend services, logging and monitoring pipelines
+
+---
+
+## 🎯 **Scope**
+
+- **In Scope:**
+  - Supporting the migration to Datadog
+  - Clarifying what signals matter for services and incidents
+  - Improving consistency of logging and tagging practices
+
+- **Out of Scope:**
+  - Day‑to‑day alert tuning
+  - Long‑term operational ownership
+
+- **Assumptions:**
+  Observability should support decision‑making, not overwhelm it.
+
+- **Constraints:**
+  Existing log volume and inconsistent historical practices
+
+- **Non‑Goals:**
+  Treating observability as a one‑off migration rather than an ongoing capability
+
+---
+
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+- Framing observability as a product capability rather than a tooling change
+- Translating incident pain points into measurable observability requirements
+- Helping teams distinguish signal from noise
+- Aligning stakeholders on what “good observability” looks like
+- Supporting adoption without blocking delivery
+
+---
+
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+
+- What information is actually needed during an incident?
+- Which logs and metrics are actively used vs ignored?
+- How can tagging and structure improve correlation?
+- How should observability scale for peak‑traffic events?
+
+### **Investigation Steps**
+
+- Review existing logging and monitoring practices
+- Analyse incident retrospectives to identify recurring blind spots
+- Examine Datadog dashboards for clarity and consistency
+- Work with engineers to identify low‑value noise
+- Align on principles for signal quality and ownership
+
+### **Artefacts Produced**
+
+- Observability requirements and principles
+- Migration and alignment documentation
+- Recommendations for logging and metric hygiene
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+- **Communication Pattern Choices:**
+  Incident‑driven discussions rather than tooling evangelism
+
+- **Storage and Cost Considerations:**
+  Reducing unnecessary log volume where possible
+
+- **Failure Modes Considered:**
+  - Alert fatigue
+  - Hidden failure signals
+  - Over‑collection without insight
+
+- **Trade‑offs Considered:**
+  Granularity vs cost, completeness vs usability
+
+- **Alternatives Rejected (and why):**
+  Maintaining fragmented tooling that obscures cross‑service behaviour
+
+---
+
+## 🚚 **Delivery Plan**
+
+- **Project Management:** Embedded within platform and service initiatives
+- **Milestones:**
+  - Migration alignment
+  - Signal review and rationalisation
+  - Shared understanding across teams
+
+### Alignment Requirements (rough)
+
+- **Engineering effort:** Medium
+- **Stakeholder decisions:** Medium–High
+
+---
+
+## 🔄 **Handover Plan**
+
+- Observability principles documented
+- Shared language for incidents and signals
+- Open risks and next steps clearly captured
+
+---
+
+## 📈 **Success Measures**
+
+- Faster incident triage and diagnosis
+- Reduced reliance on individual SMEs
+- Clearer dashboards aligned to service behaviour
+- Lower log noise with higher signal confidence
+
+---
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- Observability vs Monitoring
+- Incident Response Design
+- Signal‑to‑Noise Ratio in Telemetry
+- Platform‑Level Reliability Practices

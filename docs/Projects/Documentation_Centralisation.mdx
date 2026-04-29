@@ -1,0 +1,234 @@
+---
+title: "Centralised Documentation Site"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip 📌 Executive Summary
+
+**Project Purpose**  
+To centralise, automate, and govern department documentation by creating a single, authoritative documentation experience
+that supports self‑service discovery, onboarding, issue investigation, and eventually is a source of truth for AI training.
+
+**Problem Statement**  
+Documentation is fragmented, manually maintained, and inconsistently owned, causing it to become outdated quickly,
+difficult to trust, and expensive to maintain, which slows investigations, onboarding, and effective self‑service.
+
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+
+- **Skills:**  
+  [Information Architecture, Documentation Strategy, Requirements Decomposition, Automation Design, Content Governance, Stakeholder Management]
+
+- **Tools:**  
+  [GitHub, Markdown (MDX), Docusaurus, Python, CI/CD Pipelines]
+
+- **Patterns:**  
+  [Docs‑as‑Code, Single Source of Truth, Automated Content Ingestion, Self‑Service Enablement]
+
+---
+
+## 🧭 **Context & Background**
+
+Capture the “why now?” and inherited constraints.
+
+- **Trigger or catalyst:**  
+  Increasing reliance on self‑service tooling (DataHub, platform services) and repeated user support questions highlighted gaps in documentation discoverability and freshness.
+
+- **Relevant history:**  
+  - 2023: Creation of the `gottdata` documentation site via automated scraping
+  > - Addition of a User Guide layer for accessibility
+  > - Identification of local build/launch as a usability barrier
+  - 2024: Decision to host documentation under Global Data Catalogue User Guides
+  > - Automate content refreshes with successful master branch rebuilds
+
+- **Domain boundaries involved:**  
+  Documentation, metadata, developer enablement, user support
+
+- **Assumptions already in place:**  
+  Documentation should be treated as a product, not a by‑product of delivery
+
+- **Known constraints:**  
+  Legacy documentation quality varies widely across teams
+
+---
+
+## 🗺️ **Stakeholders & Ownership**
+
+- **Primary Stakeholders:**  
+  Data engineers, analysts, business users, new joiners, data stewards
+
+- **Engineering Owner:**  
+  Platform engineering teams
+
+- **Product Owner:**  
+  Technical Analysts acting as product owners for department tooling
+
+- **Data / Platform Dependencies:**  
+  GitHub repositories, Global Data Catalogue UI, documentation pipelines
+
+- **External Partners:**  
+  Engineering teams maintaining source documentation
+
+---
+
+## 🧰 **Resources**
+
+- **Software:**  
+  Docusaurus, DataHub
+
+- **Tools:**  
+  GitHub, Python automation scripts, Markdown / MDX, React, JavaScript
+
+- **Team:**  
+  Technical Analysts, platform engineers, contributing teams
+
+- **Systems / Environments Touched:**  
+  GitHub repos, build pipelines, catalogue UI
+
+---
+
+## 🎯 **Scope**
+
+- **In Scope:**  
+  - department technical documentation  
+  - Automated documentation ingestion and generation  
+  - User Guides surfaced via the Global Data Catalogue  
+  - Ownership and approval workflow definitions  
+
+- **Out of Scope:**  
+  - Non‑department documentation  
+  - Non‑technical or business knowledge bases  
+
+- **Assumptions:**  
+  Engineering teams will push or allow documentation to be pulled from source repos
+
+- **Constraints:**  
+  Existing documentation must be rationalised and structured consistently
+
+- **Non‑Goals:**  
+  - Replacing GitHub as the documentation source  
+  - Creating bespoke documentation formats per team  
+
+---
+
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+
+- Documentation architecture & information design  
+- Automation and ingestion workflow design  
+- Requirements decomposition across user personas  
+- Ownership and governance modelling  
+- Risk surfacing around content decay and fragmentation  
+- Cross‑team coordination and enablement  
+
+---
+
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+
+- What documentation should be considered authoritative?
+- Where should documentation be authored vs discovered?
+- Who owns documentation accuracy and freshness?
+- How can updates be automated safely?
+
+### **Investigation Steps**
+
+- Audit existing documentation sources  
+- Identify duplication, gaps, and stale content  
+- Define content hierarchy and taxonomy  
+- Design opt‑in / opt‑out mechanisms  
+- Validate governance approach with stakeholders
+
+### **Artefacts Produced**
+
+- Documentation taxonomy  
+- Automation scripts  
+- Site structure and navigation  
+- Ownership and workflow definitions  
+- Decision records
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+Capture reasoning, not just conclusions.
+
+- **Communication pattern choices:**  
+  Pull‑based automation from source repositories
+
+- **Storage decisions:**  
+  GitHub retained as source of truth; presentation layers derived
+
+- **Integration boundaries:**  
+  Source documentation vs catalogue discovery
+
+- **Failure modes:**  
+  - Stale documentation  
+  - Unowned content  
+  - Fragmented publishing paths  
+
+- **Trade‑offs considered:**  
+  Manual curation vs automation; flexibility vs consistency
+
+- **Alternatives rejected (and why):**  
+  Fully manual maintenance due to sustainability risk
+
+---
+
+## 🚚 **Delivery Plan**
+
+- **Project Management:** GitHub / JIRA  
+- **Milestones:**  
+  - Documentation audit  
+  - Automation implementation  
+  - Catalogue integration  
+  - Ownership sign‑off  
+
+- **Dependencies:**  
+  Engineering team participation and repository access
+
+### Alignment Requirements (rough):
+
+- **Engineering effort:** Medium  
+- **Stakeholder decisions:** High (ownership, governance)
+
+---
+
+## 🔄 **Handover Plan**
+
+What engineering needs to begin delivery confidently.
+
+- Documentation structure agreed  
+- Automation scripts maintained  
+- Ownership documented  
+- Update and approval workflows defined  
+- BAU support expectations clarified  
+- Success criteria agreed  
+
+---
+
+## 📈 **Success Measures**
+
+- Reduced reliance on SMEs for common questions  
+- Improved discoverability of documentation  
+- Reduced duplication across teams  
+- Faster onboarding and investigations  
+- Clear ownership for all published content  
+
+---
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- Docs‑as‑Code  
+- Information Architecture  
+- Self‑Service Platforms  
+- Content Governance Models  
+- Onboarding & Enablement Runbooks
+

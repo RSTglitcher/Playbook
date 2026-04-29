@@ -1,0 +1,242 @@
+---
+title: "Board Formalisation"
+sidebar_position: 7
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+:::tip 📌 Executive Summary
+
+
+**Project Purpose**  
+To transform the Department Tech Backlog from a passive holding list into a formalised, decision‑ready board that supports 
+prioritisation, accountability, and predictable delivery of engineering‑led work, including technical debt.
+
+
+**Problem Statement**  
+The Tech Backlog is not a performative board: it accumulates work without clear intake criteria, ownership, or commitment 
+to delivery, and ceases to function during periods of constrained capacity, reducing visibility of technical risk and 
+undermining planning and predictability.
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+
+- **Skills:**  
+  [Problem Decomposition, Process Analysis, Data Analysis, Requirements Definition, Stakeholder Management]
+
+- **Tools:**  
+  [JIRA (JQL), IntelliJ, Augment, Excel, PowerPoint]
+
+- **Patterns:**  
+  [Decision‑Driven Backlogs, Lean Intake Control, Observable Process Health, Continuous Improvement]
+
+
+---
+
+
+## 🧭 **Context & Background**
+
+
+This work was initiated in response to growing concerns about the effectiveness of the Department Tech Backlog and its 
+ability to support engineering planning.
+
+
+- **Trigger / Catalyst**  
+  Persistent growth and ageing of the Tech Backlog with little evidence of delivery or prioritised decision‑making.
+
+
+- **Relevant History**  
+  - The Tech Backlog was introduced to capture engineering‑led work outside the product roadmap.  
+  - Over time, intake became permissive and ceremonies lapsed.  
+  - During busy Business  periods, the backlog increasingly functioned as storage rather than a delivery queue.
+
+
+- **Domain Boundaries**  
+  Data Engineering, Platform Engineering, Technical Analysts, Engineering Management
+
+
+- **Assumptions Already in Place**  
+  - ~10% departmental capacity was notionally allocated to Tech Backlog work.  
+  - Business boards represent the department’s primary intake mechanisms.
+
+
+- **Known Constraints**  
+  - Limited control over JIRA configuration and ticket creation behaviour  
+  - High ticket volume and historic accumulation  
+
+
+---
+
+
+## 🗺️ **Stakeholders & Ownership**
+
+
+- **Primary Stakeholders:**  
+  Engineering teams, Technical Analysts, Engineering Managers
+
+- **Engineering Owner:**  
+  Department Engineering Leadership
+
+- **Product Owner:**  
+  Technical Analysts acting as backlog and process owners
+
+- **Data / Platform Dependencies:**
+  JIRA (Business / Data / Capability projects), reporting dashboards, CSV exports
+
+- **External Partners:**  
+  Upstream business and platform teams raising demand
+
+---
+
+## 🧰 **Resources**
+
+- **Software:**  
+  JIRA, Augment
+
+- **Tools:**  
+  JQL, IntelliJ, Excel, PowerPoint
+
+- **Team:**  
+  Technical Analysts, Engineering Managers, Developers
+
+- **Systems / Environments Touched:**  
+  JIRA boards, local analysis environments, reporting artefacts
+
+---
+
+## 🎯 **Scope**
+
+- **In Scope:**  
+  - Analysis of Tech Backlog and department‑wide ticket behaviour  
+  - Definition of intake, prioritisation, ownership, and maintenance standards  
+  - Board cleanup and formalisation recommendations  
+
+- **Out of Scope:**  
+  - Delivery of individual backlog items  
+  - Changes to core JIRA administration or tooling
+
+- **Assumptions:**  
+  - Behaviour visible in JIRA reflects underlying process health  
+  - Improving decision hygiene will improve delivery outcomes
+
+- **Constraints:**  
+  - Admin restrictions on JIRA  
+  - Legacy tickets and inconsistent historical practices
+
+- **Non‑Goals:**  
+  - Re‑prioritising the entire product roadmap  
+  - Policing individual ticket authors  
+
+---
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+- Problem framing and hypothesis development  
+- JQL design and board‑level data extraction  
+- Quantitative backlog analysis (volume, age, flow, quality)  
+- Use of AI tooling (Augment) to accelerate analytical workflows  
+- Translation of complex data into executive‑ready visuals  
+- Process design grounded in observed behaviour, not theory  
+- Facilitation of shared understanding and decision‑making  
+
+---
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+- How much work is truly waiting to be actioned?  
+- Where and why does work get stuck?  
+- What signals indicate poor process health?  
+- Is backlog size or backlog behaviour the primary issue?  
+- What standards are missing for predictability and accountability?
+
+
+### **Investigation Steps**
+- Define broad JQL filters to avoid bias from existing labels  
+- Export board data to CSV for offline analysis  
+- Perform exploratory analysis using IntelliJ and custom prompts  
+- Use Augment to generate additional code and derived metrics  
+- Visualise findings in Excel for clarity and comparison  
+- Synthesize insights into management‑ready narratives
+
+
+### **Artefacts Produced**
+- CSV analysis datasets  
+- Graphs and charts (age, flow, quality, duplication)  
+- Slide decks (Phase 1 & Phase 2 analysis)  
+- Written recommendations and process proposals  
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+- **Communication Pattern Choices:**  
+  Data‑led storytelling rather than policy‑led enforcement
+
+- **Storage Decisions:**  
+  CSV‑based analysis to ensure transparency and repeatability
+
+- **Failure Modes Identified:**  
+  - Permissive intake  
+  - Optional ownership  
+  - Parking‑lot statuses  
+  - Lack of closure discipline  
+
+- **Trade‑offs Considered:**  
+  Strict upfront controls vs lightweight, enforceable standards
+
+- **Alternatives Rejected:**  
+  Further reporting without structural change to intake and ownership
+
+---
+
+## 🚚 **Delivery Plan**
+
+- **Project Management:** JIRA / Confluence / PowerPoint  
+- **Milestones:**  
+  - Phase 1: Analyse & clean up “dead wood”  
+  - Phase 2: Prepare the board for behavioural change
+
+- **Dependencies:**  
+  Leadership alignment, team willingness to adopt new norms
+
+### Alignment Requirements (rough)
+
+- **Engineering effort:** Low–Medium (process changes, not feature build)
+- **Stakeholder decisions:** High (ownership, prioritisation, enforcement)
+
+
+---
+
+## 🔄 **Handover Plan**
+
+- Clear definition of what belongs on the Tech Backlog  
+- Agreed intake and prioritisation criteria  
+- Ownership expectations made explicit  
+- Health metrics defined and observable  
+- Follow‑up cadence established  
+
+---
+
+
+## 📈 **Success Measures**
+
+- Reduced backlog ageing and stagnation  
+- Clear ownership on active items  
+- Fewer duplicates, clones, and low‑quality tickets  
+- Predictable movement through statuses  
+- Backlog used as a decision tool, not storage
+
+---
+
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- Kanban Flow and WIP Control  
+- Technical Debt Management  
+- Decision‑Centric Backlog Design  
+- Process Health Metrics  
+- Continuous Improvement Systems  
+- Lean Intake Governance

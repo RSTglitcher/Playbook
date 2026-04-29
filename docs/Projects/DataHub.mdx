@@ -1,0 +1,240 @@
+---
+title: "DataHub - Metadata Catalogue"
+sidebar_position: 2
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip 📌 Executive Summary
+**Project Purpose**
+- MVP: To design, plan, and deliver a Global Data Catalogue (GDC) capability using DataHub as the underlying platform, enabling
+consistent discovery, governance, lineage, and ownership of data assets across the department ecosystem.
+- Iterations: To evolve **DataHub** as the central capability for discovering, governing, and understanding data across the organisation
+by enabling consistent, trusted **metadata capture, publishing, and consumption** via a dedicated software engineering team.
+
+**Problem Statement**
+Metadata across platforms is inconsistent, fragmented, or implicit, making it difficult for users, systems, and governance
+processes to reliably understand what data exists, what it represents, and how it should be used and preventing the department
+from operating as a truly self‑service data platform.
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+- **Skills:**
+  [API Design & Contract Analysis, Metadata Modelling, Data Lineage Analysis, Requirements Decomposition, Stakeholder Management, Integration Planning, Data Product Planning, Owernship Planning, UX/UI Design - Discoverability, Product Discovery, Requirements Definition, Systems Thinking, Stakeholder Management, Delivery Planning]
+- **Tools:**
+  [DataHub, Confluence, JIRA, GraphQL, REST APIs, Kafka, GitHub, Grafana, MySQL DB, BigQuery, dbt]
+- **Patterns:**
+  [Event‑Driven Architecture, Messaging, Event Streams, Metadata Lifecycle Patterns, Platform Product Thinking, Metadata as a Product, Incremental Capability Delivery]
+---
+
+## 🧭 **Context & Background**
+This work spans **nearly two years** and represents a foundational capability for the department rather than a point solution.
+- **Trigger / Catalyst:**
+  Growth in data volume, producers, and consumers exposed the absence of a single, trusted way to understand *what data exists*, *where it comes from*, and *how it should be used*.
+- **Relevant History:**
+  - Early reliance on spreadsheets, wiki pages, and bespoke documentation
+  - Adoption of DataHub as an open‑source metadata platform
+  - Evolution toward a branded **Global Data Catalogue (GDC)** experience aligned to department needs
+  - Progressive delivery across multiple roadmap phases (2024–2026)
+- **Domain Boundaries Involved:**
+  Platform engineering, data producers, analytics consumers, governance and compliance
+- **Assumptions Already in Place:**
+  - Metadata is a pre‑requisite for trust and self‑service
+  - Producers are accountable for what they publish; consumers for how they use it
+
+- **Known Constraints:**
+  - Partial metadata availability from legacy systems
+  - Varied maturity across producer teams
+---
+
+## 🗺️ **Stakeholders & Ownership**
+
+Clearly separate *metadata producers*, *platform owners*, and *consumers*.
+- **Primary Stakeholders:**
+  Data producers, analysts, data scientists, platform users
+- **Engineering Owner:**
+  Internal dedicated engineering team
+- **Product Owner:**
+  department Technical Analysts and Product Management
+- **Data / Platform Dependencies:**
+  Source systems, ingestion services, DBT, governance tooling
+- **External Partners:**
+  Open‑source DataHub community
+---
+
+## 🧰 **Resources**
+
+What is touched or relied on by this DataHub work.
+
+- **Software:**
+  DataHub (Core), GDC UI Customisations, DataHub services
+
+- **Tools:**
+   Confluence (requirements & planning), JIRA (delivery), GitHub (configs & integrations)
+
+- **Team:**
+  Data Platform Engineers, Backend Engineers, Frontend Engineers, Technical Analyst, Product Managers
+
+- **Systems / Environments Touched:**
+  GraphQL APIs, event streams, BigQuery, dbt, Google Cloud Services, AWS Cloud Services, DataBricks, Kafka, REST APIs, GitHub, Grafana, CI/CD pipelines, Metadata ingestion pipelines, UI
+---
+
+## 🎯 **Scope**
+
+Make metadata boundaries explicit.
+
+- **In Scope:**
+    - Metadata discovery, search, and lineage
+    - Dataset ownership, categorisation, and documentation
+    - Feed registration and self‑service workflows
+    - Planning and phased rollout of GDC capabilities
+    - Integration patterns for metadata events
+
+- **Out of Scope:**
+  - Physical data transformation logic
+  - BI-layer metric definitions
+
+- **Assumptions:**
+  - Metadata can be treated as a product
+  - Consumers rely on GDC as the source of truth
+  - Metadata quality improves through enablement, not enforcement alone.
+
+- **Constraints:**
+  - Partial metadata availability from legacy sources
+  - Existing producer workflows and operational overhead
+
+- **Non‑Goals:**
+  - Replacing source systems
+  - Solving all data quality issues
+
+---
+
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+Applied specifically to DataHub work.
+
+- Ownership and accountability surfacing
+- Cross‑platform dependency mapping
+- Long‑term product discovery and vision shaping
+- Translating abstract platform goals into deliverable increments
+- Defining metadata requirements that balance flexibility and standardisation
+- Designing producer and consumer journeys
+- UI/UX design for persona aligned discovery journeys
+- Maintaining continuity across roadmap phases and team changes
+
+---
+
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+
+- What metadata must exist for DataHub consumers to trust the data?
+- Where should metadata be authored vs inferred?
+- How does metadata move between team platforms/tools and GDC?
+- What failure modes break discoverability or trust?
+- How do we enable self‑service without overwhelming producers?
+- Which capabilities must exist before governance can scale?
+- How should GDC evolve across roadmap phases?
+
+### **Investigation Steps**
+
+- Review existing metadata schemas and usage
+- Identify gaps, duplication, and ambiguity
+- Review existing metadata and documentation gaps
+- Define core entities, ownership models, and lineage expectations
+- Shape phased delivery plans aligned to roadmap constraints
+- Validate with stakeholders through demos and showcases
+
+### **Artefacts Produced**
+
+- Decision records
+- GDC vision and capability definitions
+- Requirements and planning documentation
+- Roadmap decks and phased delivery plans
+- Demo decks and stakeholder walkthroughs
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+- **Communication Pattern Choices:**
+  Progressive enablement via UI, APIs, and documentation
+
+- **Integration Boundaries:**
+  Clear separation between source systems and metadata platform
+
+- **Failure Modes Considered:**
+  - Catalogue as documentation graveyard
+  - Incomplete lineage reducing trust
+  - Producer disengagement
+
+- **Trade‑offs Considered:**
+  Speed of onboarding vs consistency of metadata
+
+- **Alternatives Rejected (and why):**
+  Bespoke, team‑specific catalogues that do not scale organisationally
+
+---
+
+## 🚚 **Delivery Plan**
+
+- Project Management: JIRA / Confluence / GitHub
+- Milestones:
+  - Metadata model alignment
+  - Integration enablement
+  - DataHub adoption and initial ingestion
+  - GDC UI and branding
+  - Consumer adoption
+  - Lineage, feed registration, data quality, metadata quality
+- Dependencies:
+  - Requirements from teams whose data/metadata is being surfaced
+  - GDC ingestion readiness
+
+### Alignment Requirements (rough)
+
+- Engineering effort: High for MVP, Decreases to BAU (platform & integration)
+- Stakeholder decisions: Required (ownership, standards, prioritisation)
+
+---
+
+## 🔄 **Handover Plan**
+
+What engineering needs to deliver DataHub enhancements safely.
+
+- Metadata requirements signed off
+- Metadata sources / Ingestion points confirmed
+- Diagrams and lineage complete
+- Known risks and edge cases documented
+- Ownership and BAU expectations agreed
+- Success measures clearly defined
+- Supported self‑service workflows / documentation
+
+---
+
+## 📈 **Success Measures**
+
+- Improved metadata completeness in GDC
+- Reduced ambiguity for data consumers
+- Increased dataset discoverability and reuse
+- Reduced dependency on SMEs for basic questions
+- Clear ownership and lineage visibility
+- Adoption of GDC as the default discovery experience
+- Ability to layer governance and quality at scale
+
+
+---
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- Metadata as a Product
+- Event-Driven Architecture
+- Data Lineage & Provenance
+- Catalogue Design Patterns
+- Observability for Metadata Pipelines
+- Data Platform Runbook Entries
+- Platform Product Management
+- Self‑Service Data Platforms
+- Incremental Capability Delivery
+- Governance Through Enablement

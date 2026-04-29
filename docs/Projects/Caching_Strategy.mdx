@@ -1,0 +1,209 @@
+---
+title: "Caching Strategy"
+sidebar_position: 4
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip 📌 Executive Summary
+
+**Project Purpose**  
+To assess and align on a caching strategy that improves service resilience and availability under high‑traffic conditions, while balancing complexity, cost, and delivery feasibility across platform teams.
+
+**Problem Statement**  
+High‑traffic “binge” events exposed database throttling and availability risks, but it was unclear whether additional caching (local or distributed) would meaningfully improve outcomes or introduce unnecessary architectural complexity.
+
+:::
+
+---
+
+## 🧠 **Domain Keywords/Tags**
+
+- **Skills:**  
+  [Technical Analysis, Requirements Decomposition, Trade‑off Analysis, Stakeholder Facilitation]
+
+- **Tools:**  
+  [Confluence, Grafana, JQL, Documentation & Design Artefacts]
+
+- **Patterns:**  
+  [Caching Strategies, Resilience Patterns, Cost‑vs‑Complexity Analysis]
+
+---
+
+## 🧭 **Context & Background**
+
+This work was undertaken during a Boomerang placement within the GPE Core Services / Lakitu ecosystem, following incidents triggered by traffic spikes.
+
+- **Trigger / Catalyst**  
+  A customer‑facing outage during a high‑demand event (e.g. NFL binge traffic) revealed read‑throttling limits in downstream databases.
+
+- **Relevant History**  
+  - Initial proposals focused on adding additional caching layers.  
+  - Discussion quickly broadened into whether a **local cache** or a **shared distributed cache** (e.g. Redis/Elasticache) was appropriate.  
+  - Multiple teams held different definitions of “simple” and “low risk”.
+
+- **Domain Boundaries Involved**  
+  Video, TM, SSE, platform and performance engineering teams.
+
+- **Assumptions Already in Place**  
+  - Caching should protect the database as a last line of defence.  
+  - Not all traffic patterns benefit equally from caching.
+
+- **Known Constraints**  
+  - Existing pod scaling and request patterns  
+  - Operational overhead of new infrastructure
+
+---
+
+## 🗺️ **Stakeholders & Ownership**
+
+- **Primary Stakeholders:**  
+  Platform engineers, service owners, performance engineering
+
+- **Engineering Owner:**  
+  GPE Core Services / Lakitu engineering leads
+
+- **Product Owner:**  
+  Platform and service product representatives
+
+- **Data / Platform Dependencies:**  
+  Databases, upstream services (e.g. Video), downstream service consumers
+
+- **External Partners:**  
+  N/A
+
+---
+
+## 🧰 **Resources**
+
+- **Software:**  
+  Backend services, caching libraries
+
+- **Tools:**  
+  Grafana dashboards, documentation repositories
+
+- **Team:**  
+  Platform engineers, performance specialists, architects
+
+- **Systems / Environments Touched:**  
+  TM, SSE, upstream request sources, downstream databases
+
+---
+
+## 🎯 **Scope**
+
+- **In Scope:**  
+  - Evaluation of caching strategies (local vs distributed)  
+  - Analysis of traffic behaviour (BAU vs binge)  
+  - Alignment workshop and recommendation  
+
+- **Out of Scope:**  
+  - Implementation of caching itself  
+  - Long‑term platform ownership  
+
+- **Assumptions:**  
+  The right solution depends on observed behaviour, not theoretical scalability.
+
+- **Constraints:**  
+  Delivery timelines and risk tolerance
+
+- **Non‑Goals:**  
+  Introducing new infrastructure without clear evidence of benefit
+
+---
+
+## 🧪 **Technical Analyst Skills Demonstrated**
+
+- Translating incidents into architectural questions  
+- Breaking down caching into distinct, testable concerns  
+- Facilitating cross‑team discussions with differing priorities  
+- Surfacing implicit assumptions and conflicting definitions  
+- Producing a clear, documented recommendation
+
+---
+
+## 🔍 **Analysis Plan**
+
+### **Key Questions to Resolve**
+
+- What traffic patterns actually justify caching?
+- Does cross‑pod cache sharing provide measurable benefit?
+- Is the added complexity of distributed caching justified?
+- What is the lowest‑risk improvement that meaningfully improves resilience?
+
+### **Investigation Steps**
+
+- Review Grafana data to understand request locality and hit/miss ratios  
+- Compare BAU vs binge behaviour across services  
+- Assess pod counts and database load characteristics  
+- Document pros/cons of local vs distributed cache options  
+- Facilitate a workshop to align stakeholders
+
+### **Artefacts Produced**
+
+- Caching strategy documentation  
+- Behaviour analysis summaries  
+- Trade‑off tables  
+- Alignment workshop outputs  
+
+---
+
+## 🧩 **Architecture & Design Notes**
+
+- **Communication Pattern Choices:**  
+  Workshop‑driven alignment rather than unilateral recommendation
+
+- **Storage Decisions:**  
+  Preference for per‑pod local caches where behaviour supports it
+
+- **Failure Modes Considered:**  
+  - Cache stampede  
+  - Cold‑start behaviour during deployments  
+  - Increased operational overhead
+
+- **Trade‑offs Considered:**  
+  Simplicity and delivery speed vs long‑term scalability
+
+- **Alternatives Rejected (and why):**  
+  Distributed caching introduced cost and complexity without clear benefit given observed traffic patterns.
+
+---
+
+## 🚚 **Delivery Plan**
+
+- **Project Management:** Embedded within host team workflows
+- **Milestones:**  
+  - Behaviour analysis  
+  - Strategy alignment  
+  - Recommendation sign‑off  
+
+### Alignment Requirements (rough)
+
+- **Engineering effort:** Medium (implementation dependent)  
+- **Stakeholder decisions:** High
+
+---
+
+## 🔄 **Handover Plan**
+
+- Clear recommendation documented  
+- Risks and assumptions explicit  
+- Engineering team aligned on next steps  
+
+---
+
+## 📈 **Success Measures**
+
+- Improved availability during traffic spikes  
+- Reduced database throttling risk  
+- Shared understanding of “when caching adds value”  
+- Avoidance of unnecessary infrastructure complexity
+
+---
+
+## 📚 **Related Theory & Runbook Concepts**
+
+- Caching Fundamentals  
+- Resilience and Availability Engineering  
+- Cost‑Effective Scalability  
+- Incident‑Driven Architecture Decisions
