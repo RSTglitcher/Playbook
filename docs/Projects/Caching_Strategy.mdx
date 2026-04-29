@@ -6,6 +6,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 :::tip 📌 Executive Summary
+**MM-YYYY:** Jan-2026 to Mar-2026
 
 **Project Purpose**  
 To assess and align on a caching strategy that improves service resilience and availability under high‑traffic conditions, while balancing complexity, cost, and delivery feasibility across platform teams.
@@ -13,6 +14,11 @@ To assess and align on a caching strategy that improves service resilience and a
 **Problem Statement**  
 High‑traffic “binge” events exposed database throttling and availability risks, but it was unclear whether additional caching (local or distributed) would meaningfully improve outcomes or introduce unnecessary architectural complexity.
 
+**Value Added:**
+- Separated concerns between BAU vs binge traffic, local vs distributed cache, and incident mitigation vs long-term platform strategy
+- Prevented premature architectural decisions by separating incident response from platform requirements
+- Translated incidents and friction into Explicit questions and trade-off analysis, Alignment workshops with clear outcomes,  Post-meeting notes with action items
+- Used observed hit/miss ratios, pod counts, and traffic locality to inform infrastructure decisions
 :::
 
 ---
