@@ -1,0 +1,281 @@
+---
+title: "Object-Oriented Programming"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🧠 Theory  
+Object‑Oriented Programming (OOP) provides a set of **conceptual tools** for modelling real‑world systems using objects, relationships, and behaviours.  
+Where **Workbench** languages implement these constructs, **Theory** explains *why they exist*, *what problems they solve*, and *how they behave under pressure*.
+
+OOP constructs help analysts and engineers:
+
+- structure systems around meaningful boundaries  
+- reduce accidental complexity  
+- model behaviour and state  
+- manage change safely  
+- reason about interactions between components  
+
+---
+
+:::tip Definition  
+A set of conceptual building blocks for modelling software using **objects**, **relationships**, and **behaviours**.  
+:::
+
+**When to Use**
+
+- When modelling domains with clear entities and behaviours  
+- When you need predictable structure and encapsulation  
+- When designing systems that evolve over time  
+
+**When Not to Use**
+
+- Highly functional or data‑flow‑oriented systems  
+- Purely stateless transformations  
+- Situations where inheritance introduces more complexity than value  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+OOP constructs solve the problem of **managing complexity** in large, evolving systems.  
+They provide a vocabulary for:
+
+- grouping related data and behaviour  
+- hiding internal details  
+- defining clear contracts  
+- modelling variation and extension  
+- controlling how components interact  
+
+They help Technical Analysts reason about **system boundaries**, **responsibilities**, and **change over time**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Encapsulation** — bundling data + behaviour, hiding internal details  
+- **Inheritance** — reusing and extending behaviour  
+- **Polymorphism** — treating different types through a common interface  
+- **Abstraction** — exposing only essential behaviour  
+- **Composition** — building complex behaviour by combining objects  
+- **Interfaces** — defining contracts without implementation  
+- **Classes vs Instances** — blueprint vs concrete object  
+- **Object Lifecycle** — creation → usage → destruction  
+- **SOLID Principles** — guidelines for maintainable OOP design  
+
+### **Axes of Variation**
+
+- Static vs dynamic typing  
+- Single vs multiple inheritance  
+- Interface‑based vs class‑based polymorphism  
+- Composition‑first vs inheritance‑first design  
+- Mutable vs immutable objects  
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+[Class Defined]
+      ↓
+[Instance Created]
+      ↓
+[State Mutated / Methods Called]
+      ↓
+[Interactions with Other Objects]
+      ↓
+[Object Becomes Unreachable]
+      ↓
+[GC / Destruction]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Does the abstraction reduce or increase complexity?
+- Are responsibilities clearly separated?
+- Is inheritance being used safely, or should composition replace it?
+- Are interfaces stable and well‑defined?
+- What happens when the system grows or changes?
+:::
+
+**What happens when:**
+
+- **Data grows** → object graphs deepen; memory pressure increases  
+- **Traffic increases** → polymorphic dispatch cost becomes visible  
+- **Concurrency rises** → shared mutable state becomes a bottleneck  
+- **Resources become constrained** → object lifecycle management matters  
+
+---
+
+## 📘 Key Terminology
+
+| **Term** | **Definition** | **Languages** |
+| --- | --- | --- |
+| **Class** | Blueprint defining structure + behaviour for objects. | Java, Scala, Kotlin, C#, Python, Ruby, Swift |
+| **Instance** | A concrete object created from a class. | All OOP languages |
+| **Interface** | Contract defining behaviour without implementation. | Java, C#, TypeScript, Go, Swift (protocols), Rust (traits) |
+| **Abstract Class** | Partially implemented class used for shared behaviour. | Java, Scala, Kotlin, C#, PHP |
+| (()Trait / Mixin** | Reusable behaviour unit; interface + optional implementation. | Scala (traits), Rust (traits), PHP (traits), Python (mixins), Ruby (modules), Swift (protocol extensions) |
+| **Enum** | Finite set of named values representing a closed type. | Java, Scala, Rust, Swift, C#, TypeScript |
+| **Encapsulation)** | Hiding internal state and exposing controlled operations. | All OOP languages |
+| **Inheritance** | Reusing and extending behaviour via parent–child relationships. | Java, Scala, C#, Kotlin, Python, Ruby |
+| **Composition** | Building behaviour by combining objects rather than inheriting. | All OOP languages |
+| **Polymorphism** | Treating different types through a shared interface. | All OOP languages |
+| **Abstraction** | Exposing only essential behaviour; hiding implementation details. | All OOP languages |
+| **Object Lifecycle** | Creation → usage → mutation → destruction/GC. | All languages with objects |
+| **SOLID Principles** | Design guidelines for maintainable OOP systems. | Language‑agnostic (applies across OOP ecosystems) |
+| **Instantiation** | The act of creating a new object from a class. | All OOP languages |
+| **Initialization**  | Setting up an object’s initial state after creation. | All OOP languages |
+---
+
+This table keeps your Theory page:
+
+- **language‑agnostic**
+- **conceptually clean**
+- **aligned with your documentation architecture**
+- **free from Scala‑specific constructs**
+
+If you want, I can now generate:
+
+- **A matching FP glossary table**
+- **A combined “Language Foundations Glossary” page**
+- **A sidebar entry for the new glossary**
+
+Just tell me which direction you want to go.
+
+
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="encapsulation" label="Encapsulation">
+
+### Encapsulation
+
+**Purpose**  
+Protect internal state and expose only safe operations.
+
+**Key Characteristics**  
+- Private fields  
+- Public methods  
+- Clear boundaries  
+
+**Behaviour**  
+Prevents accidental misuse and reduces coupling.
+
+**Trade-offs**  
+Too much hiding can reduce flexibility.
+
+</TabItem>
+
+<TabItem value="inheritance" label="Inheritance">
+
+### Inheritance
+
+**Purpose**  
+Reuse behaviour and model “is‑a” relationships.
+
+**Key Characteristics**  
+- Parent → child hierarchy  
+- Method overriding  
+
+**Behaviour**  
+Allows polymorphism but can create brittle hierarchies.
+
+**Trade-offs**  
+Often replaced by composition for safety.
+
+</TabItem>
+
+<TabItem value="composition" label="Composition">
+
+### Composition
+
+**Purpose**  
+Build behaviour by combining objects.
+
+**Key Characteristics**  
+- “Has‑a” relationships  
+- Delegation  
+
+**Behaviour**  
+More flexible and safer than inheritance.
+
+**Trade-offs**  
+Requires more explicit wiring.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How objects live in memory  
+- How dispatch works (dynamic vs static)  
+- How abstractions affect performance  
+- How inheritance chains impact maintainability  
+:::
+
+### Local Systems
+
+- **Runtime** — method dispatch, vtables, dynamic binding  
+- **Memory** — heap allocation, object graphs  
+- **Concurrency** — shared state, locking  
+- **Scaling** — deep hierarchies slow evolution  
+
+### Remote Systems
+
+Not typically applicable — OOP constructs are local to the runtime.
+
+### Questions to ask during reviews or incidents
+
+- Is inheritance hiding complexity or creating it?  
+- Are interfaces stable and versioned?  
+- Is shared state causing race conditions?  
+- Are objects too large or too tightly coupled?  
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+OOP constructs influence **design quality**, not runtime output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Clear boundaries | Classes have single responsibilities |
+| Stable contracts | Interfaces remain consistent over time |
+| Safe extension | New behaviour added without breaking old code |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Inheritance explosion | Deep hierarchies become unmaintainable |
+| Interface drift | Contracts change unpredictably |
+| Shared state bugs | Race conditions, inconsistent state |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- **Communication Patterns**  
+- **Project Architecture**  
+- **Data Pipeline Quality**  
+- **Observability**  
+- **Problem‑Solving Patterns**  

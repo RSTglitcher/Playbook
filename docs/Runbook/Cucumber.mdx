@@ -1,0 +1,231 @@
+---
+title: "Cucumber"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+:::tip Cucumber
+A test runner that executes **Gherkin scenarios** by mapping them to underlying automation code (UI, API, or service‑level tests).
+It ensures behaviour described in natural language is executed consistently and verifiably.
+:::
+
+### Key Terms
+
+- **Feature File:** A `.feature` file containing Gherkin scenarios.
+- **Step Definition:** Code that implements a Gherkin step.
+- **Glue Code:** The binding layer between Gherkin and automation.
+- **Hooks:** Before/After logic that runs around scenarios.
+- **Runner Class:** The entry point that triggers Cucumber execution.
+
+### Knowing when to use **Cucumber**
+
+|When to use|When not to use|
+|-----------|----------------|
+|When behaviour is best expressed in examples|When testing low‑level logic (unit tests)|
+|When multiple roles need shared understanding|When speed is critical (Cucumber is slower)|
+|When automating UI or API flows|When behaviour is too complex for natural language|
+|When acceptance criteria must be executable|When the team lacks discipline to maintain scenarios|
+
+---
+
+## 📘 About / Foundations
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+Cucumber executes behaviour in three layers:
+
+1. **Gherkin** describes behaviour in natural language.
+2. **Step Definitions** map each step to code.
+3. **Automation Layer** performs the actual work (Selenium, API clients, mocks, DB calls).
+
+Flow:
+
+```
+Feature File → Step Definition → Automation Code → Result
+```
+
+### System Contract
+
+Cucumber guarantees:
+
+- Every Gherkin step must map to exactly one step definition.
+- Steps execute in order.
+- Failures stop the scenario unless configured otherwise.
+- Hooks run before/after scenarios for setup/teardown.
+- Reports are generated for each run.
+
+### Key Strategies
+
+- Keep scenarios atomic (one behaviour each).
+- Keep step definitions reusable and modular.
+- Avoid UI‑specific language in Gherkin.
+- Use hooks for environment setup, not steps.
+- Keep automation logic out of step definitions (call services/helpers instead).
+
+### What Results Normally Look Like
+
+A normal Cucumber run shows:
+
+- **Green** steps (passed)
+- **Yellow** steps (skipped)
+- **Red** steps (failed)
+- A summary of scenarios passed/failed
+- A stack trace for failures
+- Optional HTML/JSON reports
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre-Requisites</summary>
+
+#### Security
+No special credentials required unless tests hit secured APIs or environments.
+
+#### Networking
+Understanding of endpoints, environments, routing, and test URLs.
+
+#### Architecture
+Awareness of where automation code lives (UI layer, API layer, service layer).
+
+#### Data
+Knowledge of test data setup, fixtures, and environment state.
+
+#### Operational Guarantees
+Cucumber does not guarantee speed or stability — underlying automation determines reliability.
+
+#### Observability Metrics
+- Scenario pass/fail rate
+- Step execution time
+- Flakiness indicators
+- Error logs and stack traces
+
+</details>
+
+---
+
+:::info
+How to interact with this tool day‑to‑day:
+- Terminal (Maven, npm, CLI runners)
+- IDE (IntelliJ, VSCode, Eclipse)
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
+
+```shell
+--------------
+Run Cucumber via Maven
+--------------
+mvn test
+
+--------------
+Run a specific feature file
+--------------
+mvn test -Dcucumber.features=src/test/resources/features/login.feature
+
+--------------
+Run with tags
+--------------
+mvn test -Dcucumber.filter.tags="@smoke"
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with Cucumber**
+
+- Define behaviour in Gherkin (Given/When/Then).
+- Keep scenarios small and atomic.
+- Avoid UI‑specific details unless UI is the behaviour.
+- Provide edge cases and alternative flows.
+- Ensure acceptance criteria are testable and deterministic.
+
+**What a TA needs to gather**
+
+- Preconditions (data, user state, environment)
+- Expected outcomes (success + failure)
+- Variants (different inputs, roles, permissions)
+- Dependencies (APIs, UI flows, services)
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+```shell
+--------------
+Common Cucumber Engineering Workflows
+--------------
+
+# Create a step definition
+@Given("a registered user exists")
+public void userExists() { ... }
+
+# Create a runner class
+@RunWith(Cucumber.class)
+@CucumberOptions(features="src/test/resources/features")
+public class RunCucumberTest {}
+
+# Use hooks
+@Before
+public void setUp() { ... }
+
+@After
+public void tearDown() { ... }
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Pattern 1: Step Not Found
+If Cucumber reports "Undefined Step":
+- The Gherkin changed
+- The step definition was deleted
+- The glue path is wrong
+
+# Pattern 2: Flaky Scenario
+If a scenario passes locally but fails in CI:
+- Check environment differences
+- Check timing issues (UI/API)
+- Check test data setup
+
+# Pattern 3: Behaviour Drift
+If scenarios no longer match reality:
+- Requirements changed
+- UI/API changed
+- Step definitions outdated
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🚨 Triage
+
+:::danger
+Symptoms and issues with this platform and how to triage them:
+:::
+
+| Symptom | TLDR Root Cause | What to Check | Action to Propose |
+|--------|------------------|---------------|-------------------|
+| **Undefined Step** | No matching step definition | Step text, glue path | Add/match step definition |
+| **Flaky Scenario** | Timing, async UI, environment drift | Waits, network, CI logs | Add waits, stabilise environment |
+| **Scenario always failing** | Behaviour changed | Requirements, UI/API changes | Update Gherkin or automation |
+| **Hooks not running** | Misconfigured runner | Runner annotations | Fix `@CucumberOptions` |
+| **Slow execution** | Too many UI tests | Test pyramid imbalance | Shift tests left (API/unit) |
+| **Tag filters not working** | Incorrect tag syntax | Tag names, runner config | Fix tag expressions |
+

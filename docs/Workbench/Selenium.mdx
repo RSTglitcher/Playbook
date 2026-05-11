@@ -1,0 +1,176 @@
+---
+title: "Selenium WebDriver"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Selenium WebDriver
+A browser automation framework that drives real user interactions — clicking, typing, navigating — to validate UI behaviour end‑to‑end.
+
+- **Year developed:** 2004 (Selenium), WebDriver standardised in 2012
+- **Primary purpose:** Automate browsers for testing
+- **Target problem:** Validate real user flows in a repeatable, automated way
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+- Created by Jason Huggins at ThoughtWorks (2004)
+- WebDriver introduced to overcome Selenium RC limitations
+- Became a W3C standard (2018)
+- Now widely used for UI automation across QA, SDET, and engineering teams
+
+### Strengths & Limitations
+
+**Strengths**
+- Automates real browsers
+- Validates true end‑to‑end behaviour
+- Multi‑language support
+- Integrates with CI/CD
+
+**Limitations**
+- Slow compared to unit/integration tests
+- Brittle when UI changes
+- Sensitive to timing and environment
+- Requires stable locators and predictable DOM
+
+### TA‑Relevant Insights
+Selenium helps analysts understand:
+
+- why UI tests fail
+- how DOM structure affects stability
+- how routing/templating frameworks impact automation
+- how front‑end and back‑end integrate
+- how to write testable requirements
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+Selenium simulates a **real user**:
+
+- loads the page
+- waits for DOM
+- finds elements
+- interacts
+- observes results
+
+If a human would struggle, Selenium will struggle more.
+
+### Ecosystem
+- **WebDriver** (automation API)
+- **Browser Drivers** (ChromeDriver, GeckoDriver)
+- **Test Runners** (JUnit, TestNG, PyTest)
+- **Frameworks** (Cucumber, Behave, SpecFlow)
+- **Front‑end frameworks** (React, Angular, Vue)
+- **Back‑end frameworks** (Spring, Flask, Laravel)
+- **Grid** (distributed execution)
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+```shell
+--------------
+Key WebDriver Operations
+--------------
+driver.findElement(By.id("username"))
+driver.findElement(By.cssSelector(".btn-login")).click()
+driver.get("https://example.com")
+new WebDriverWait(driver, 10)
+  .until(ExpectedConditions.visibilityOfElementLocated(By.id("dashboard")))
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+# Locator Stability
+Check ID > class > CSS > XPath
+
+# Timing Issues
+Look for async rendering, animations, API delays
+
+# Environment Drift
+Browser versions, viewport differences, network latency
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Prefer CSS selectors
+- Prefer IDs
+- Use explicit waits
+- Keep tests atomic
+- Use Page Object Model
+
+### Pitfalls
+- Dynamic IDs
+- Long brittle XPaths
+- Timing flakiness
+- Over‑testing UI
+- Environment drift
+
+---
+
+## 🧪 Examples
+
+### Example: Login Flow (Java)
+
+```java
+driver.get("https://example.com/login");
+driver.findElement(By.id("email")).sendKeys("user@example.com");
+driver.findElement(By.id("password")).sendKeys("password123");
+driver.findElement(By.cssSelector(".btn-primary")).click();
+```
+
+---
+
+## 🔗 Optional Integrations (BDD, Gherkin, Cucumber)
+
+Selenium is **not inherently tied** to BDD, but teams often pair them:
+
+- **Gherkin** describes behaviour
+- **Cucumber** runs the scenarios
+- **Selenium** automates the UI steps
+
+This pairing works well when analysts write behaviour‑focused scenarios.
+
+Example:
+
+```
+Scenario: Successful login
+  Given a registered user exists
+  When they enter valid credentials
+  Then they are logged in
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Definition |
+|------|------------|
+| WebDriver | API for controlling browsers |
+| Locator | Selector used to find DOM elements |
+| Explicit Wait | Waits for a condition |
+| POM | Page Object Model |
+| Flakiness | Unpredictable pass/fail behaviour |

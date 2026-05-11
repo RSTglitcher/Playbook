@@ -1,0 +1,200 @@
+---
+title: "Python"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Python
+Python is a high‑level, general‑purpose programming language designed for readability, rapid development, and broad ecosystem integration.
+
+- **Year developed:** 1991  
+- **Primary purpose:** General programming, automation, data processing, scripting  
+- **Target problem:** Fast iteration, clear syntax, rich libraries for almost any domain  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Python was created by **Guido van Rossum** with a focus on simplicity, readability, and developer happiness.  
+It has since become one of the most widely used languages across:
+
+- Data science  
+- Machine learning  
+- Backend development  
+- Automation & scripting  
+- DevOps & infrastructure  
+- Education  
+
+### Strengths & Limitations
+
+**Strengths**
+- Extremely readable syntax  
+- Massive ecosystem (PyPI)  
+- Strong data tooling (Pandas, NumPy, PySpark)  
+- Great for automation and glue code  
+- Fast development cycles  
+
+**Limitations**
+- Slower runtime than compiled languages  
+- Dynamic typing can hide bugs  
+- Packaging can be messy  
+- Not ideal for high‑performance, low‑latency systems  
+
+### TA‑Relevant Insights
+- Python is often used for **data pipelines**, **ETL**, **ML models**, and **backend services**  
+- Many engineering teams use Python for **prototyping** before rewriting in another language  
+- Understanding Python helps you interpret notebooks, scripts, and automation workflows  
+- Python is a common interface layer between systems (APIs, orchestration, CLI tools)  
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+- Python is **imperative** and **object‑oriented**, with optional functional patterns  
+- Everything is an **object**  
+- Code is executed **top‑to‑bottom**  
+- Readability is a core design principle  
+- Dynamic typing means “trust but verify”  
+
+### Ecosystem
+- **Package managers:** pip, Poetry, Conda  
+- **Frameworks:** Django, Flask, FastAPI  
+- **Data:** Pandas, NumPy, PySpark  
+- **ML:** TensorFlow, PyTorch, Scikit‑learn  
+- **DevOps:** Ansible, Fabric  
+- **Tooling:** Jupyter, VS Code, PyCharm  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this medium.
+
+```python
+# Define a function
+def greet(name):
+    return f"Hello, {name}"
+
+# Define a class
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+# List comprehension
+squares = [x*x for x in range(10)]
+
+# File operations
+with open("file.txt") as f:
+    data = f.read()
+
+# Virtual environment
+python3 -m venv venv
+source venv/bin/activate
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows and queries for analysts to read or interpret what the code or model is doing.
+
+```python
+# Inspect data structures
+type(obj)
+dir(obj)
+vars(obj)
+
+# Trace execution
+print("DEBUG:", value)
+
+# Understand data pipelines
+df = df.groupby("category").sum()
+
+# Identify API behaviour
+import requests
+requests.get("https://api.example.com/data")
+
+# Notebook workflow
+df.head()
+df.describe()
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- List/dict comprehensions  
+- Context managers (`with`)  
+- Duck typing  
+- Exceptions for control flow  
+- Iterators & generators  
+- Decorators for cross‑cutting concerns  
+- Virtual environments for isolation  
+
+### Pitfalls
+- Mutable default arguments  
+- Silent type issues due to dynamic typing  
+- Overusing global state  
+- Mixing tabs and spaces  
+- Forgetting to manage environments  
+- Catch‑all `except:` blocks hiding errors  
+
+---
+
+## 🧪 Examples
+
+### List Comprehension
+
+```python
+squares = [x*x for x in range(10)]
+```
+
+### **Dictionary Manipulation**
+
+```python
+person = {"name": "FirstName", "role": "TA"}
+person["location"] = "Gallifrey"
+```
+
+### **API Call**
+
+```python
+import requests
+response = requests.get("https://api.example.com")
+print(response.json())
+```
+
+### **Simple Class**
+
+```python
+class Greeter:
+    def greet(self, name):
+        return f"Hello, {name}"
+
+g = Greeter()
+g.greet("FirstName")
+```
+
+---
+
+## 📝 Glossary
+
+- **Virtual Environment** — isolated Python environment  
+- **PEP** — Python Enhancement Proposal (language standards)  
+- **Comprehension** — compact syntax for building lists/dicts/sets  
+- **Decorator** — function wrapper for adding behaviour  
+- **Module** — a Python file  
+- **Package** — a directory of modules  

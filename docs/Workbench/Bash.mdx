@@ -1,0 +1,248 @@
+---
+title: "Bash"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Bash
+Bash is one of the most foundational mediums for interacting with Unix‑based systems, automating workflows, and orchestrating scripts.
+
+- **Year developed:** 1989  
+- **Primary purpose:** Command execution, automation, shell scripting  
+- **Target problem:** Interacting with the OS, automating tasks, manipulating files, running pipelines  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Bash (“Bourne Again SHell”) was created by **Brian Fox** for the **GNU Project** as a free replacement for the Bourne Shell.  
+Today it is the default shell on most Linux systems and macOS (pre‑Catalina), and remains the most widely used scripting shell in the world.
+
+### Strengths & Limitations
+
+**Strengths**
+- Ubiquitous on Unix systems  
+- Excellent for automation and orchestration  
+- Simple syntax for file manipulation  
+- Integrates seamlessly with system tools (`grep`, `awk`, `sed`, etc.)  
+
+**Limitations**
+- Syntax is fragile and whitespace‑sensitive  
+- Poor error handling compared to modern languages  
+- Hard to scale to large programs  
+- Debugging can be painful  
+
+### TA‑Relevant Insights
+- Bash is often the *glue* between systems — pipelines, cron jobs, deployments  
+- Many production issues surface first in logs or shell scripts  
+- Understanding Bash helps you interpret CI/CD pipelines, Docker entrypoints, and cloud init scripts  
+- Great for quick prototypes or validating assumptions  
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+- Bash is **procedural**: do X, then Y, then Z  
+- Everything is a **string**  
+- Commands are **composable** via pipes  
+- Whitespace matters  
+- Exit codes drive flow control  
+
+### Ecosystem
+- Core utilities: `grep`, `awk`, `sed`, `cut`, `sort`, `uniq`  
+- Execution environments: Terminal, SSH, CI/CD runners  
+- Script runners: cron, systemd, Docker ENTRYPOINT  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this medium.
+
+```shell
+# Make a script executable
+chmod +x script.sh
+
+# Run a script
+./script.sh
+
+# Print variables
+echo $VARIABLE
+
+# Read input
+read name
+
+# Loops
+for i in {1..10}; do echo $i; done
+
+# Conditionals
+if [ "$x" -gt 10 ]; then echo "big"; fi
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows and queries for analysts to read or interpret what the code or model is doing.
+
+```shell
+# Understand what a script does
+cat script.sh
+
+# Trace execution
+bash -x script.sh
+
+# Check exit codes
+echo $?
+
+# Inspect environment variables
+env | sort
+
+# Follow logs
+tail -f /var/log/system.log
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### **Idioms and Typical Approaches**
+- `for` loops for iteration  
+- `while` loops for long‑running tasks  
+- `if` statements for branching  
+- `case` for menu‑style choices  
+- `read` for interactive scripts  
+- `$(command)` for substitution  
+
+### Pitfalls
+- Missing spaces around `[` and `]`  
+- Using `=` instead of `==` in numeric comparisons  
+- Forgetting `chmod +x`  
+- Infinite loops due to incorrect condition syntax  
+- Using `count = 0` instead of `count=0`  
+
+---
+
+## 🧪 Examples
+
+### **Basic Bash Example**
+
+```shell
+xed hello.sh
+echo Hello $1
+chmod +x hello.sh
+./hello.sh
+./hello.sh FirstName
+./hello.sh FirstName Surname
+```
+
+---
+
+### **Script 1 — Prompts & Variables (Corrected)**
+
+```shell
+#!/bin/bash
+
+echo -n "Hello, what is your name? "
+read firstname
+
+echo -n "Thank you, and what is your surname? "
+read surname
+
+clear
+
+if [ "$firstname" == "FirstName" ] && [ "$surname" == "Surname" ]; then
+  echo "Great name, $firstname $surname"
+else
+  echo "Hello $firstname $surname, how are you on this fine $(date +%A)?"
+fi
+```
+
+---
+
+### **Script 2 — Conditionals & Loops (Corrected)**
+
+```shell
+#!/bin/bash
+
+count=0
+
+while [ $count -lt 100 ]; do
+  echo $count
+  count=$((count+1))
+done
+
+for count in {0..100}; do
+  echo $count
+done
+
+until [ $count -gt 100 ]; do
+  echo $count
+  count=$((count+1))
+done
+
+for count in {0..10}; do
+  mkdir Folder$count
+done
+
+for count in {0..100..5}; do
+  echo $count
+done
+```
+
+---
+
+### **Script 3 — Choices & Loops (Corrected)**
+
+```shell
+#!/bin/bash
+
+choice=4
+
+echo "1. Lemon"
+echo "2. is"
+echo "3. sour"
+echo -n "Please choose an option (1, 2, or 3): "
+
+while [ $choice -eq 4 ]; do
+
+  read choice
+
+  if [ $choice -eq 1 ]; then
+    echo "You have chosen: Lemon"
+  elif [ $choice -eq 2 ]; then
+    echo "You have chosen: Is"
+  elif [ $choice -eq 3 ]; then
+    echo "You have chosen: Awesome"
+  else
+    echo "Please make a choice between 1 to 3"
+    echo "1. Lemon"
+    echo "2. is"
+    echo "3. sour"
+    echo -n "Please choose an option (1, 2, or 3): "
+    choice=4
+  fi
+done
+```
+
+---
+
+## 📝 Glossary
+
+- **Shebang (`#!/bin/bash`)** — tells the OS which interpreter to use  
+- **Executable bit** — permission that allows a script to run  
+- **Pipe (`|`)** — passes output of one command to another  
+- **Subshell (`$(...)`)** — runs a command and returns its output  
+- **Exit code** — numeric status of the last command  
+
+

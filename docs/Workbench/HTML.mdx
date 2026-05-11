@@ -1,0 +1,216 @@
+---
+title: "HTML"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip HTML
+HTML (HyperText Markup Language) is the foundational medium for structuring content on the web.  
+It defines *what* appears on a page — not how it looks or behaves.
+
+- **Year developed:** 1993  
+- **Primary purpose:** Document structure and semantic meaning  
+- **Target problem:** Representing content in a machine‑readable, accessible format  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+HTML was created by **Tim Berners‑Lee** as the core language of the World Wide Web.  
+It has evolved through multiple versions, with **HTML5** becoming the modern standard.
+
+HTML is used everywhere:
+
+- Websites  
+- Web apps  
+- Documentation systems  
+- Emails  
+- Browser‑rendered UIs  
+- Embedded views in mobile apps  
+
+### Strengths & Limitations
+
+**Strengths**
+- Simple, declarative structure  
+- Semantic meaning improves accessibility  
+- Universally supported  
+- Forms the foundation of all web interfaces  
+- Works seamlessly with CSS and JavaScript  
+
+**Limitations**
+- Not a programming language  
+- No logic or computation  
+- Layout requires CSS  
+- Behaviour requires JavaScript  
+
+### TA‑Relevant Insights
+- HTML reveals the **structure** and **intent** of a UI  
+- Understanding HTML helps you interpret React, Angular, and server‑rendered templates  
+- Accessibility, SEO, and semantics all begin with HTML  
+- Many frontend bugs originate from incorrect structure or missing attributes  
+
+---
+
+## 🧠 Mental Model
+
+### **How to think in this environment**
+- HTML is **hierarchical** — elements nest inside each other  
+- It is **semantic** — tags describe meaning, not appearance  
+- The browser builds a **DOM tree** from HTML  
+- Attributes modify behaviour and metadata  
+- HTML is the **skeleton**; CSS is the skin; JS is the brain  
+
+### Ecosystem
+- **DOM** — Document Object Model  
+- **HTML5 APIs** — video, audio, canvas, forms  
+- **Accessibility** — ARIA roles, alt text, semantic tags  
+- **Templating** — JSX, Handlebars, EJS, Jinja  
+- **Rendering** — SSR, CSR, hydration  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and structures used by engineers when operating this medium.
+
+```html
+<!-- Basic document -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello</title>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <p>This is a paragraph.</p>
+  </body>
+</html>
+
+<!-- Links -->
+<a href="/about">About</a>
+
+<!-- Images -->
+<img src="image.png" alt="Description" />
+
+<!-- Lists -->
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+</ul>
+
+<!-- Forms -->
+<form>
+  <input type="text" name="name" />
+  <button type="submit">Submit</button>
+</form>
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows for analysts to interpret what the UI or template is doing.
+
+```html
+<!-- Identify structure -->
+<div class="card">
+  <h2>{{title}}</h2>
+  <p>{{description}}</p>
+</div>
+
+<!-- Spot dynamic placeholders -->
+<span id="username">{{ user.name }}</span>
+
+<!-- Understand data binding -->
+<input value="{{model.value}}" />
+
+<!-- Recognise component boundaries -->
+<Header />
+<Sidebar />
+<MainContent />
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Semantic tags (`<header>`, `<main>`, `<footer>`)
+- Accessibility attributes (`aria-*`)
+- Forms with labels for usability
+- Using `<button>` instead of clickable `<div>`
+- Structuring content with `<section>` and `<article>`
+- Keeping HTML clean and minimal
+
+### **⚠️ Pitfalls**
+- Missing `alt` text on images
+- Overusing `<div>` instead of semantic tags
+- Incorrect nesting (e.g., `<p>` inside `<ul>`)
+- Forgetting `label` for form inputs
+- Using inline styles instead of CSS
+- Relying on HTML for layout instead of CSS
+
+---
+
+## 🧪 Examples
+
+### **Semantic Layout**
+
+```html
+<header>
+  <h1>My Site</h1>
+</header>
+
+<main>
+  <article>
+    <h2>Blog Post</h2>
+    <p>Content goes here.</p>
+  </article>
+</main>
+
+<footer>
+  <p>© 2026 Rebecca</p>
+</footer>
+```
+
+### **Accessible Form**
+
+```html
+<form>
+  <label for="email">Email</label>
+  <input id="email" type="email" />
+  <button type="submit">Submit</button>
+</form>
+```
+
+### **Media**
+
+```html
+<video controls>
+  <source src="video.mp4" type="video/mp4" />
+</video>
+```
+
+---
+
+## 📝 Glossary
+
+- **Element** — a building block of HTML (`<div>`, `<p>`)
+- **Attribute** — metadata on an element (`class`, `id`, `href`)
+- **Semantic HTML** — tags that convey meaning (`<nav>`, `<article>`)
+- **DOM** — browser representation of the document
+- **Accessibility (a11y)** — making content usable for everyone
+- **HTML5** — modern standard with new APIs and tags
+

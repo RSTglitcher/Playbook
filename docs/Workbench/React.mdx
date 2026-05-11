@@ -1,0 +1,221 @@
+---
+title: "React"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip React
+React is a component‑based JavaScript library for building interactive user interfaces using declarative rendering and state management.
+
+- **Year developed:** 2013
+- **Primary purpose:** Building dynamic, reactive UI components
+- **Target problem:** Managing complex UI state and rendering efficiently
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+React was created by **Jordan Walke** at Facebook to solve the challenge of updating complex UIs efficiently.
+Its introduction of the **virtual DOM**, **component model**, and later **hooks** reshaped modern frontend development.
+
+React is now used across:
+
+- Web applications
+- Mobile apps (React Native)
+- Desktop apps (Electron)
+- Design systems
+- Interactive dashboards
+
+### Strengths & Limitations
+
+**Strengths**
+- Declarative UI model
+- Component‑based architecture
+- Huge ecosystem (Next.js, Redux, React Query)
+- Strong community and tooling
+- Excellent for modular, scalable UIs
+
+**Limitations**
+- Requires build tooling (Vite, Webpack)
+- State management can become complex
+- JSX can feel unfamiliar at first
+- Many competing patterns (hooks, context, Redux, signals)
+
+### TA‑Relevant Insights
+- React components often reflect **domain boundaries**
+- Understanding React helps you interpret frontend behaviour, API usage, and user flows
+- Many product issues surface in React layers (state, props, API calls)
+- React is central to modern design systems and UI architecture
+
+---
+
+## 🧠 Mental Model
+
+### **How to think in this environment**
+- React is **declarative**: “describe what the UI should look like”
+- Components are **functions of state**
+- State changes trigger **re‑renders**
+- Data flows **top‑down** via props
+- Hooks encapsulate **behaviour + lifecycle**
+
+### Ecosystem
+- **Frameworks:** Next.js, Remix, Gatsby
+- **State:** React Context, Redux, Zustand, Jotai
+- **Data fetching:** React Query, SWR
+- **Styling:** CSS Modules, Styled Components, Tailwind
+- **Tooling:** Vite, Webpack, Babel, ESLint
+- **Testing:** Jest, React Testing Library
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and patterns used by engineers when operating this medium.
+
+```jsx
+// Basic component
+function Hello({ name }) {
+  return <h1>Hello, {name}</h1>;
+}
+
+// State
+const [count, setCount] = useState(0);
+
+// Effect
+useEffect(() => {
+  console.log("Component mounted");
+}, []);
+
+// Fetching data
+useEffect(() => {
+  fetch("/api/data")
+    .then(res => res.json())
+    .then(setData);
+}, []);
+
+// Event handler
+<button onClick={() => setCount(count + 1)}>Increment</button>
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows for analysts to interpret what the UI is doing.
+
+```jsx
+// Identify data flow
+<Dashboard data={apiResponse} />
+
+// Understand state transitions
+const [status, setStatus] = useState("loading");
+
+// Spot API interactions
+useEffect(() => {
+  fetch("/api/orders")
+    .then(res => res.json())
+    .then(setOrders);
+}, []);
+
+// Trace conditional rendering
+{isLoggedIn ? <Profile /> : <Login />}
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Functional components
+- Hooks (`useState`, `useEffect`, `useMemo`, `useCallback`)
+- Controlled components for forms
+- Lifting state up
+- Prop drilling vs Context
+- Composition over inheritance
+- Declarative rendering
+
+### **⚠️ Pitfalls**
+- Infinite re‑render loops in `useEffect`
+- Overusing global state
+- Unnecessary re‑renders due to unstable dependencies
+- Mixing controlled and uncontrolled inputs
+- Large components instead of composable ones
+- Forgetting cleanup functions in effects
+
+---
+
+## 🧪 Examples
+
+### **Counter Component**
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Count: {count}
+    </button>
+  );
+}
+```
+
+### **Fetching Data**
+
+```jsx
+function Users() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then(res => res.json())
+      .then(setUsers);
+  }, []);
+
+  return users.map(u => <div key={u.id}>{u.name}</div>);
+}
+```
+
+### **Conditional Rendering**
+
+```jsx
+{isAdmin ? <AdminPanel /> : <UserDashboard />}
+```
+
+### **Form Handling**
+
+```jsx
+function Form() {
+  const [value, setValue] = useState("");
+
+  return (
+    <input
+      value={value}
+      onChange={e => setValue(e.target.value)}
+    />
+  );
+}
+```
+
+---
+
+## 📝 Glossary
+
+- **Component** — reusable UI building block
+- **JSX** — syntax combining JavaScript + HTML
+- **Props** — data passed into components
+- **State** — internal component data
+- **Effect** — side‑effects triggered by state changes
+- **Virtual DOM** — lightweight representation of the UI
+- **Hydration** — attaching React to server‑rendered HTML

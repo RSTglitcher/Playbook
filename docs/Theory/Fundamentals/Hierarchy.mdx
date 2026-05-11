@@ -1,0 +1,311 @@
+---
+title: "Frameworks-->Libraries-->Code"
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+A **framework**, **library**, and **code** represent three layers of abstraction in software development.
+They differ in **control**, **responsibility**, and **how much structure they impose**.
+
+This page explains:
+
+- what each layer *is*
+- why each layer exists
+- how they relate
+- how to choose between them
+- how they shape system behaviour
+
+---
+
+## 🧠 Theory
+
+Frameworks, libraries, and code form a **hierarchy of abstraction**:
+
+### **Framework → Library → Code**
+
+- A **framework** provides structure, conventions, and inversion of control.
+- A **library** provides reusable functions you call when needed.
+- **Code** is your application logic — the part you own.
+
+Frameworks solve **common problems** by providing pre‑built solutions.
+Libraries solve **specific problems** by providing reusable components.
+Code solves **your domain problem**.
+
+---
+
+:::tip Definition
+A **framework** is a pre‑packaged set of solutions that solves common development problems through **inversion of control**.
+:::
+
+**When to Use**
+
+- When the problem domain is well‑understood (web apps, APIs, security, UI)
+- When you want conventions, structure, and guardrails
+- When you need rapid development with predictable patterns
+
+**When Not to Use**
+
+- Highly bespoke systems
+- Low‑level performance‑critical code
+- Domains where the framework’s constraints become limiting
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Frameworks and libraries exist to solve **recurring engineering problems**:
+
+- routing
+- templating
+- authentication
+- state management
+- dependency injection
+- concurrency
+- persistence
+- testing
+- configuration
+
+Without them, every team would rebuild the same infrastructure repeatedly.
+
+Frameworks provide **structure**.
+Libraries provide **capability**.
+Code provides **business value**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Framework** — owns the flow; you fill in the gaps
+- **Library** — you call it when needed
+- **Code** — your domain logic
+- **Inversion of Control** — framework calls *your* code
+- **Dependency Injection** — externalising object creation
+- **Convention over Configuration** — predictable defaults
+
+### **Axes of Variation**
+
+- Opinionated ↔ Unopinionated
+- Heavyweight ↔ Lightweight
+- Declarative ↔ Imperative
+- Convention‑driven ↔ Configuration‑driven
+- Full‑stack ↔ Single‑purpose
+
+---
+
+### Typical Lifecycle or Flow
+
+```
+[Framework Bootstraps App]
+          ↓
+[Framework Handles Routing / Events]
+          ↓
+[Framework Calls Your Code]
+          ↓
+[Your Code Calls Libraries]
+          ↓
+[Libraries Perform Specific Tasks]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What the framework controls vs what the team controls
+- Whether the framework’s constraints help or hinder
+- How libraries interact with the framework lifecycle
+- How dependency injection affects testability
+- Whether the abstraction leaks under load
+:::
+
+**What happens when:**
+
+- **Traffic increases** → framework routing & middleware become bottlenecks
+- **Concurrency rises** → DI containers, thread pools, event loops matter
+- **Data grows** → ORM frameworks may become limiting
+- **Complexity increases** → framework conventions either help or constrain
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Framework** | A structured environment that controls application flow. |
+| **Library** | A reusable set of functions you call directly. |
+| **Code** | Your domain logic; the part you own. |
+| **Inversion of Control** | The framework calls your code, not the other way around. |
+| **Dependency Injection** | Externalising object creation to improve modularity and testability. |
+| **Convention over Configuration** | Sensible defaults reduce boilerplate. |
+| **Middleware** | Components that intercept and process requests. |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="frontend" label="Front‑End">
+
+### Front‑End Frameworks
+
+**Purpose**
+Solve routing, templating, state management, and UI rendering.
+
+**Examples**
+React, Angular, Vue, Svelte
+
+**Behaviour**
+Provide component models, virtual DOMs, and rendering pipelines.
+
+**Trade‑offs**
+Opinionated state management; steep learning curves.
+
+---
+
+### Front‑End Libraries
+
+**Purpose**
+Provide reusable UI components, styling systems, form helpers, validation, and utility functions.
+
+**Examples**
+Ant Design, Material UI (MUI), Chakra UI, Tailwind CSS, React Hook Form, Zod, Lodash
+
+**Behaviour**
+Enhance or extend the capabilities of frameworks without owning the full application lifecycle.
+
+**Trade‑offs**
+Can introduce design constraints, bundle size overhead, or inconsistent patterns if mixed carelessly.
+
+</TabItem>
+
+<TabItem value="backend" label="Back‑End Frameworks">
+
+### Back‑End Frameworks
+
+**Purpose**
+Handle routing, controllers, DI, persistence, and security.
+
+**Examples**
+Spring (Java), Flask (Python), Django (Python), Express (Node)
+
+**Behaviour**
+Own the request lifecycle; call your handlers.
+
+**Trade‑offs**
+Heavyweight frameworks can constrain architecture.
+
+---
+
+### Back‑End Libraries
+
+**Purpose**
+Provide reusable utilities for persistence, messaging, validation, serialization, and service integration.
+
+**Examples**
+Hibernate (ORM), JPA (Persistence API), Jackson (JSON serialization), Gson, Apache Kafka Client, AWS SDK, Retrofit (HTTP client), Feign (HTTP client), MapStruct (object mapping), Log4j / SLF4J (logging)
+
+**Behaviour**
+Extend backend capabilities without controlling the application lifecycle.
+
+**Trade‑offs**
+Can introduce hidden complexity, version conflicts, or tight coupling if overused.
+
+</TabItem>
+
+<TabItem value="security" label="Security Frameworks">
+
+### Security Frameworks
+
+**Purpose**
+Provide authentication, authorization, encryption, and verification.
+
+**Examples**
+Spring Security, Laravel Auth, OAuth libraries
+
+**Behaviour**
+Centralise security logic and enforce policies.
+
+**Trade‑offs**
+Complex configuration; steep learning curves.
+
+</TabItem>
+
+</Tabs>
+
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- Frameworks define the application lifecycle
+- Libraries plug into that lifecycle
+- Code must respect framework conventions
+:::
+
+### Local Systems
+
+- **Runtime** — DI containers, event loops, thread pools
+- **Storage** — ORMs, JDBC, repositories
+- **Network** — routing, middleware, filters
+- **Concurrency** — async frameworks, actors, coroutines
+
+### Remote Systems
+
+- API gateways
+- Microservices
+- Databases
+- Message brokers
+
+### Questions to ask during reviews or incidents
+
+- Where does the framework take control?
+- Are we misusing the DI container?
+- Is the ORM causing performance issues?
+- Are conventions being followed or overridden?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Frameworks influence **architecture**, not output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Rapid development | Framework handles boilerplate |
+| Consistent architecture | Conventions enforce structure |
+| High testability | DI and modularity improve isolation |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Framework lock‑in | Hard to migrate away |
+| Abstraction leakage | Framework internals surface in code |
+| Performance bottlenecks | Middleware, ORMs, DI containers |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- **Project Architecture**
+- **Communication Patterns**
+- **Storage Systems**
+- **Problem‑Solving Patterns**
+
+---
+
+If you want, I can also generate:
+
+- **A Theory page for Inversion of Control**
+- **A Theory page for Dependency Injection**
+- **A Theory page for MVC**
+- **A Theory page for ORMs**

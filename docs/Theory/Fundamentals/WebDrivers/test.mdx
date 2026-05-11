@@ -1,0 +1,233 @@
+Coming from tax and being an analyst now, I think it's clear that I come with a planning approach to my work. I want to envision it and understand the steps before starting. However, I absolutely struggled when learning this as a developer as it seems that trying, failing, and genuine exploration was what was needed.
+
+These are some of my notes, you can see there are questions listed reflecting what I was trying to understand. I was starting by learning Java, hence the focus in this direction. Can you help me write a "How to start coding guide" from a planning perspective that fits into this overall project. Please ensure any examples are Java based as this is my primary language of familiariyt.
+
+---
+title: "Java"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="install" label="Install">
+
+<details>
+<summary>1. Start up</summary>
+How do you know what you need to get started?
+
+1. [Download the JDK](https://www.oracle.com/java/technologies/downloads/)
+2. [Java Versions](https://www.oracle.com/java/technologies/downloads/archive/)
+3. Installer: Windows / MacOS / Linux
+4. Install the JDK and verify
+```shell
+open ~/.bash_profile or open ~/.zshrc
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/<jdk_version>/Contents/Home
+java -version
+```
+</details>
+
+<details>
+<summary>2. Server Connections</summary>
+
+sudo: "Superuser Do" (Administrator level - be careful! The default keystore password is typically 'changeit.')
+
+```shell
+sudo keytool -import -alias your_alias -file /path/to/your/certificate.crt -keystore /path/to/your/keystore.jks
+```
+
+| Tool                    | Function                                                | Why                                                                                                      | Example                                                                                                                                 | Example                                                                                |
+|-------------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| **Java keystore files** | Store Trusted CA (certificate authority) certificates.  | Certify the authenticity of SSL/TLS certificates presented by servers during secure connections (HTTPS). | Java application connects to a server using SSL/TLS and signed by a custom CA. Import CA certificate to establish a secure connection.  | Server uses a self-signed SSL certificate. Import on client side to trust the server.  |
+|**Nexus Repository Manager**| Store and manage artifacts (e.g. Java libraries) in a central repository.| Nexus Certificates are SSL/TLS certificates used by NRM.                                                 |If NRM uses HTTPS, you need an SSL/TLS certificate. Needs to be trusted by clients (build tools/developers' machines) to establish secure connections.|If Nexus server uses a custom SSL/TLS certificate you might need to import the certificate into the keystore on the client side to establish a secure connection.|
+
+</details>
+
+
+Questions to Answer:
+
+- How you know what types you need? e.g. Customer?
+- How do you know when you need a constructor?
+- How do you make a constructor?
+- How do you make a method?
+- What is static? What does this mean?
+- What is a static class vs non-static class?
+- What is a static method vs non-static method?
+- How do you know how to choose between these?
+- How is a constructor different from a method?
+- How do you assign a fixed value to an item?
+  > - Set up a class > declare Getters/Setters
+- How do you check quantity of an item?
+  > - Set up list
+  > - Fill list
+  > - Return
+
+#### Inheritance
+- WHat must each class do?
+- What must they all do?
+- What needs to change for their separate actions to work?
+- What do the musts have in common?
+- What is @override?
+
+#### Testing
+
+- Why can't you test private/static classes directly? How should you do it instead?
+- Can indirectly test by calling a public method from a private class - How?
+- Randomizes testing to ensure 1 test is not depdendent on another
+- JUNIT create new objects per test
+
+</TabItem>
+<TabItem value="basics" label="Basics">
+
+## Text Methods
+
+- How do you know what methods you are looking for?
+
+| Methods             | Example            | Description                                                       |
+|---------------------|--------------------|-------------------------------------------------------------------|
+| .find               | name.find          | Returns index of the character(s) you are looking for in a string |
+| .replace            | name.replace       | Replace this value, Use this value instead                        |
+| .upper/.toUpperCase | name.upper         | converts to upper case                                            |
+| .lower/.tolowerCase | name.lower         | converts to lower case                                            |
+| .count              | name.count         | count how frequently a value appears                              |
+| .split              | name.split         | split a string by this value                                      |
+| .contains           | name.contains(x);  | check if String contains value x                                  |
+| .length             | name.length        | check length of String                                            |
+| .remove             | name.remove(x);    | remove value from  String                                         |
+
+
+## List Methods
+
+Lists are objects - so you can have lists of methods of actions available.
+
+
+| Methods     | Example                            | Description                                          |
+|-------------|------------------------------------|------------------------------------------------------|
+| .append     | listName.append                    | adds to the end of the list                          |
+| .insert     | listName.insert(index,value);      | insert a value at a specific point                   |
+| .remove     | listName.remove                    | removes specific values from list                    |
+| .clear      | listName.clear                     | clears the whole list                                |
+| .len        | listName.len                       | count items in list                                  |
+| .range      | listName.range(lower,upper,steps); | for any object that represents a sequence of objects |
+| .join       | listName.join                      | joins item in a list to make a string                |
+| .add        | listName.add                       | add item to a list                                   |
+| .size       | listName.size                      | check the length of a list                           |
+| .contains   | listName.contains(x);              | check if a list contains value x                     |
+
+
+### Arrays
+
+
+.indexOf
+.lastIndexOf
+.get
+
+---
+
+### Mathematics
+BODMAS: Brackets Operator Division Multiplication Addition Subtraction
+
+| BODMAS                | Example           | Description            |
+|-----------------------|-------------------|------------------------|
+| orders                | print(x**y)       | returns orders         |
+| division              | print(x%y)        | returns remainder      |
+| multiplication        | print(x*y)        | returns multiplication |
+| augmented addition    | print(x+=y)       | x=x+3                  |
+| augmented subtraction | print(x-=y)       | x=x-3                  |
+| integer               | print(x//y)       | returns integer        |
+| float                 | print(x/y)        | returns float          |
+| sqrt                  | math.sqrt(this)   |                        |
+
+</TabItem>
+<TabItem value="tools" label="Tools">
+
+How do you know what is available to you? How do you choose the right one to use?
+
+## LinkedList
+## ArrayList
+## HashSet
+## HashMap
+## TreeMap
+
+
+</TabItem>
+<TabItem value="pattern" label="Design Patterns">
+
+How do you start writing code with a design pattern in mind?
+- Creational?
+- Singleton
+- Structural?
+- Factory?
+- etc.
+
+</TabItem>
+<TabItem value="thread" label="Thread">
+
+How do you know you are creating a thread?
+How can you tell if they'll run into each other and lock?
+How do you plan your code to prevent this happening? I would probably run it, break it, then try to figure out how to fix it.
+
+##  THREAD
+
+Timeslicing allows multiple threads to run. Goes from 8Ghz (8things) at the same time to having 100s of things going on.
+
+
+//Create a thread
+Public class myThread extends Thread
+// (Running)Make thread run
+Public void run()
+
+//(RUN)Call start to activate run method above
+MyThread mythread = new MyThread();
+// (RUNNABLE/READY) Make thread available to run
+mythread.start();
+// (Terminated/Dead) Finish the thread
+mythread.run()finished;
+
+Methods
+
+    Start
+    Run
+    Sleep: finishes sleep then joins thread queue
+    Join
+
+
+HAZARDS: Race Conditions
+
+
+    Deadlock
+
+    2 threads, both of which are holding a key the other thread wants
+
+
+    Livelock
+
+    Similar to a deadlock, except that the state of the 2 processes involved in the livelock constantly changes with regards
+    to the other process.
+
+
+    Starvation
+
+    Process is perpetually denied necessary resources. Without those resources, the program can never finish its task.
+    Starvation is related to deadlock.
+
+
+
+Solutions
+
+    Locks
+    Lock an object for you to use then make it available to other threads when done.
+
+    Synchronization
+    Blocks other threads/method from calling the thread. Use where a shared object contains multiple variables whose
+    values are independent of each other.
+
+    Atomic Operations
+
+    Wait/Notify
+    When a thread is working and it has a lock, the thread can be paused, the lock can be handed temporarily to another
+    thread until it calls notify and unpauses the other thread.
+
+</TabItem>
+</Tabs>

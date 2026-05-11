@@ -1,0 +1,241 @@
+---
+title: "HTTP"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip HTTP
+HTTP (HyperText Transfer Protocol) is the foundational communication protocol of the web.  
+It defines *how* clients and servers exchange requests and responses.
+
+- **Year developed:** 1991  
+- **Primary purpose:** Client–server communication  
+- **Target problem:** Standardising how resources are requested, transferred, and represented  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+HTTP was created by **Tim Berners‑Lee** alongside HTML as part of the original web architecture.  
+It evolved through:
+
+- **HTTP/0.9** — simple GET requests  
+- **HTTP/1.1** — persistent connections, headers, caching  
+- **HTTP/2** — multiplexing, binary framing  
+- **HTTP/3** — QUIC transport, faster and more reliable  
+
+|Code   |Status Meaning |
+|------|-------------------------------------------------------------|
+| **1xx** | Informational — Continue / Switching Protocols / Processing  |
+| **2xx** | Success — OK / Created / Accepted / No Content / Multi‑Status / etc. |
+| **3xx** | Redirection — Multiple Choices / Moved Permanently / Found / See Other / etc. |
+| **4xx** | Client Error — Bad Request / Unauthorized / Forbidden / Not Found / etc. |
+| **5xx** | Server Error — Internal Server Error / Not Implemented / Bad Gateway / Service Unavailable / etc. |
+
+HTTP underpins:
+
+- Web browsers  
+- APIs  
+- Microservices  
+- Mobile apps  
+- IoT devices  
+- Cloud services  
+
+### Strengths & Limitations
+
+**Strengths**
+- Simple, universal, well‑understood  
+- Stateless (scales horizontally)  
+- Flexible payloads (JSON, HTML, binary)  
+- Extensible via headers  
+- Works across all platforms  
+
+**Limitations**
+- Statelessness requires additional mechanisms for sessions  
+- Latency can be high in HTTP/1.1  
+- Verb semantics are often misused  
+- Caching behaviour can be complex  
+
+### TA‑Relevant Insights
+- HTTP reveals **how systems communicate**  
+- Understanding HTTP helps you debug APIs, microservices, and integrations  
+- Many issues surface in headers, status codes, or payloads  
+- HTTP is the backbone of REST, GraphQL, and most modern service architectures  
+
+---
+
+## 🧠 Mental Model
+
+### **How to think in this environment**
+- HTTP is **request → response**  
+- Clients initiate; servers respond  
+- Everything is a **resource**  
+- Methods express **intent** (GET, POST, PUT, DELETE)  
+- Headers carry **metadata**  
+- Status codes express **outcome**  
+- Bodies carry **data**  
+
+### Ecosystem
+- **Methods:** GET, POST, PUT, PATCH, DELETE  
+- **Status codes:** 2xx, 3xx, 4xx, 5xx  
+- **Headers:** Content‑Type, Authorization, Accept  
+- **Payloads:** JSON, XML, HTML, binary  
+- **Auth:** OAuth, JWT, API keys  
+- **Transport:** TCP (HTTP/1.1, HTTP/2), QUIC (HTTP/3)  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+```http
+GET /users/123 HTTP/1.1
+Host: api.example.com
+Accept: application/json
+Authorization: Bearer <token>
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "id": 123,
+  "name": "Rebecca"
+}
+```
+
+### **Common Methods**
+
+- **GET** — retrieve a resource
+- **POST** — create or trigger an action
+- **PUT** — replace a resource
+- **PATCH** — partially update
+- **DELETE** — remove a resource
+
+### **Common Headers**
+
+- `Content-Type` — format of the body
+- `Accept` — what formats the client wants
+- `Authorization` — credentials
+- `Cache-Control` — caching rules
+- `User-Agent` — client identity
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+```http
+# Identify the endpoint
+GET /orders?customerId=42
+
+# Understand the response
+HTTP/1.1 404 Not Found
+
+# Spot auth issues
+HTTP/1.1 401 Unauthorized
+
+# Recognise rate limits
+HTTP/1.1 429 Too Many Requests
+
+# Inspect payload structure
+{
+  "orderId": 987,
+  "status": "pending",
+  "items": [...]
+}
+```
+
+### **Analyst Patterns**
+
+- Query parameters reveal **filtering logic**
+- Status codes reveal **system behaviour**
+- Headers reveal **auth, caching, and content negotiation**
+- JSON structure reveals **domain modelling**
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- RESTful resource naming
+- JSON as the default payload
+- Stateless interactions
+- Pagination via query params
+- Versioning via headers or URL
+- Caching with `ETag` and `Cache-Control`
+
+### **⚠️ Pitfalls**
+- Misusing POST for everything
+- Returning 200 OK for errors
+- Missing or incorrect `Content-Type`
+- Overloaded endpoints with unclear semantics
+- Leaking sensitive data in responses
+- Ignoring idempotency rules
+
+---
+
+## 🧪 Examples
+
+### **RESTful Resource**
+
+```http
+GET /products/42
+```
+
+### **Create Resource**
+
+```http
+POST /products
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "price": 1200
+}
+```
+
+### **Partial Update**
+
+```http
+PATCH /products/42
+Content-Type: application/json
+
+{
+  "price": 1100
+}
+```
+
+### **Error Response**
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "error": "Missing required field: name"
+}
+```
+
+---
+
+## 📝 Glossary
+
+- **Request** — client → server message
+- **Response** — server → client message
+- **Header** — metadata for request/response
+- **Status Code** — numeric indicator of outcome
+- **Payload** — body of the message
+- **Idempotent** — same request → same result (GET, PUT, DELETE)
+- **Stateless** — server stores no client session
+

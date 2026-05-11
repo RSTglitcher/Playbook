@@ -305,6 +305,39 @@ Client
 
 </details>
 
+### MVC (Model–View–Controller)
+
+<details>
+<summary>Mental Map</summary>
+
+**Intent:**
+Separate data, presentation, and input handling into distinct components to reduce coupling and improve maintainability.
+
+**Use When:**
+- You need a clear separation between UI, business logic, and data
+- Multiple views depend on the same underlying model
+- You want testable business logic independent of UI
+- You’re building interactive applications (web, desktop, mobile)
+
+```mermaid
+flowchart LR
+    Model --> Controller
+    Controller --> Model
+    Controller --> View
+    View --> Controller
+    View --> Model
+```
+
+**Trade-offs:**
+- ✔ Clear separation of concerns
+- ✔ Easier to test business logic
+- ✔ Multiple views can share the same model
+- ✘ Can become complex if boundaries blur
+- ✘ Controllers can grow large (“God Controller”)
+- ✘ Requires discipline to maintain structure
+
+</details>
+
 </TabItem>
 
 <TabItem value="behavioral" label="Behavioral Patterns">

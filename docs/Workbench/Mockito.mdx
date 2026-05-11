@@ -1,0 +1,228 @@
+---
+title: "Mockito"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🛠️ Workbench
+This **Workbench** entry captures **Mockito** as a technical medium for isolating behaviour, modelling dependencies, and reasoning about system interactions during unit testing.
+
+Where **Theory** explains TDD and dependency inversion,
+**Workbench explains how Mockito shapes the way you *think* about collaboration, contracts, and behaviour under test.**
+
+Mockito is not just a mocking library — it is a **simulation environment** for understanding how components interact.
+
+---
+
+## 🧩 Mockito
+
+:::tip Mockito
+A Java mocking framework used to simulate dependencies, control behaviour, and isolate units of logic during testing.
+
+- **Year developed:** 2008
+- **Primary purpose:** Create mock objects and verify interactions
+- **Target problem:** Test logic in isolation without relying on real dependencies
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+- Created by Szczepan Faber as a simpler alternative to EasyMock
+- Designed to make mocking *natural*, *fluent*, and *behaviour‑driven*
+- Became the standard mocking library in Java ecosystems
+- Deeply integrated into JUnit, Spring, and modern microservice testing
+
+### Strengths & Limitations
+
+**Strengths**
+- Simple, expressive API
+- Encourages behaviour‑focused tests
+- Allows precise control of dependency behaviour
+- Supports verification of interactions
+- Works seamlessly with JUnit and Spring
+
+**Limitations**
+- Can be overused (leading to brittle tests)
+- Not suitable for integration testing
+- Does not validate real system behaviour
+- Requires discipline to avoid mocking implementation details
+
+### TA‑Relevant Insights
+Mockito helps analysts understand:
+
+- how components collaborate
+- which dependencies matter for behaviour
+- how logic behaves under different conditions
+- how failures propagate through interactions
+- how to interpret tests that verify calls, arguments, and flows
+
+Mockito is a **thinking environment for dependency behaviour**, not just a utility.
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+Mockito models **collaboration**, not state.
+
+You think in terms of:
+
+- **What does this dependency do?**
+- **What should it return?**
+- **What should never happen?**
+- **What interactions define correctness?**
+
+Mockito enables:
+
+- **stubbing** → controlling behaviour
+- **verification** → checking interactions
+- **argument matching** → validating inputs
+- **spying** → observing real objects
+
+Mockito is the mental model for **isolated behaviour**.
+
+### Ecosystem
+Mockito interacts with:
+
+- **JUnit** (test runner)
+- **Spring Test** (dependency injection)
+- **AssertJ / Hamcrest** (assertions)
+- **Java interfaces & services**
+- **REST clients, repositories, DAOs**
+- **Test doubles (mocks, spies, stubs)**
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers.
+
+```java
+--------------
+Create a Mock
+--------------
+EmailService email = mock(EmailService.class);
+```
+
+```java
+--------------
+Stub Behaviour
+--------------
+when(email.send("rebecca@example.com")).thenReturn(true);
+```
+
+```java
+--------------
+Verify Interaction
+--------------
+verify(email).send("rebecca@example.com");
+```
+
+```java
+--------------
+Argument Matching
+--------------
+verify(repo).save(any(User.class));
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful interpretation patterns for analysts.
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Pattern 1: Behaviour Isolation
+If a test uses mocks:
+- The goal is to test *only* the logic in the class under test
+- Dependencies are simulated
+
+# Pattern 2: Interaction Verification
+If verify() fails:
+- The expected call never happened
+- The flow or branching logic changed
+
+# Pattern 3: Stubbing Failures
+If a stubbed method returns null:
+- The stub was not configured
+- The argument matcher was incorrect
+- The dependency contract changed
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms and Typical Approaches
+- Mock dependencies, not the class under test
+- Stub only what you need
+- Verify meaningful interactions
+- Use argument matchers for flexibility
+- Use spies for partial real behaviour
+- Keep mocks focused on behaviour, not implementation
+
+### Pitfalls
+- Over‑mocking (tests become brittle)
+- Mocking concrete classes instead of interfaces
+- Verifying too many interactions
+- Using mocks for integration tests
+- Stubbing methods that should not be stubbed
+- Confusing spies with mocks
+
+---
+
+## 🧪 Examples
+
+### Example: Service with Mocked Dependency
+
+```java
+@Test
+void sendsWelcomeEmail() {
+    EmailService email = mock(EmailService.class);
+    Registration reg = new Registration(email);
+
+    reg.register("rebecca@example.com");
+
+    verify(email).sendWelcome("rebecca@example.com");
+}
+```
+
+### Example: Stubbing Behaviour
+
+```java
+when(repo.findById(1)).thenReturn(Optional.of(new User("Rebecca")));
+```
+
+### Example: Argument Matching
+
+```java
+verify(repo).save(argThat(user -> user.getName().equals("Rebecca")));
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Definition |
+|------|------------|
+| **Mock** | A simulated dependency with controlled behaviour. |
+| **Stub** | A predefined return value for a method call. |
+| **Verify** | Assert that a specific interaction occurred. |
+| **Spy** | A partial mock that wraps a real object. |
+| **Argument Matcher** | A rule for matching method arguments. |
+| **Test Double** | Any fake object used in testing (mock, stub, fake, spy). |

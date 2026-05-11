@@ -1,0 +1,253 @@
+
+---
+title: "CSS"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip CSS
+CSS (Cascading Style Sheets) is the styling language of the web.  
+It defines *how* content looks — layout, colour, spacing, typography, and responsiveness.
+
+- **Year developed:** 1996  
+- **Primary purpose:** Visual styling and layout  
+- **Target problem:** Separating content (HTML) from presentation  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+CSS was introduced by **Håkon Wium Lie** to solve a fundamental problem:  
+HTML was never meant to handle visual design.
+
+CSS evolved through:
+
+- **CSS1** — basic styling  
+- **CSS2** — layout, positioning  
+- **CSS3** — modular features (flexbox, grid, animations)  
+- **Modern CSS** — variables, container queries, logical properties  
+
+CSS is used everywhere:
+
+- Websites  
+- Web apps  
+- Design systems  
+- Mobile web views  
+- Component libraries (React, Vue, Angular)  
+
+### Strengths & Limitations
+
+**Strengths**
+- Declarative and predictable  
+- Powerful layout systems (Flexbox, Grid)  
+- Responsive design built‑in  
+- Works across all browsers  
+- Integrates with all frontend frameworks  
+
+**Limitations**
+- Global cascade can cause conflicts  
+- Hard to scale without conventions  
+- Browser quirks still exist  
+- No logic (until CSS variables + calc)  
+
+### TA‑Relevant Insights
+- CSS reveals **structure**, **hierarchy**, and **intent** of UI components  
+- Many UI bugs originate from CSS (layout, overflow, z‑index)  
+- Understanding CSS helps you interpret React/HTML templates  
+- Design systems rely heavily on CSS architecture  
+
+---
+
+## 🧠 Mental Model
+
+### **How to think in this environment**
+- CSS is **declarative** — describe the final appearance  
+- The **cascade** determines which rules apply  
+- **Specificity** resolves conflicts  
+- Layout is controlled by **flow**, **flexbox**, and **grid**  
+- CSS is **stateful** via pseudo‑classes (`:hover`, `:focus`)  
+- CSS is **contextual** — parent elements influence children  
+
+### Ecosystem
+- **Layout:** Flexbox, Grid, Positioning  
+- **Styling:** Variables, selectors, pseudo‑classes  
+- **Architecture:** BEM, utility classes, design tokens  
+- **Tools:** Sass, PostCSS, Tailwind, CSS Modules  
+- **Rendering:** Browser engines (Blink, WebKit, Gecko)  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and patterns used by engineers when operating this medium.
+
+```css
+/* Basic styling */
+h1 {
+  color: #333;
+  font-size: 2rem;
+}
+
+/* Flexbox layout */
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Hover state */
+button:hover {
+  background: #eee;
+}
+
+/* CSS variables */
+:root {
+  --primary: #4a90e2;
+}
+
+button {
+  color: var(--primary);
+}
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows for analysts to interpret what the UI is doing.
+
+```css
+/* Identify component boundaries */
+.card {
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Understand responsive behaviour */
+@media (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+/* Spot layout issues */
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Recognise design tokens */
+:root {
+  --spacing-md: 16px;
+  --color-accent: #ff4081;
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Flexbox for 1‑dimensional layout
+- Grid for 2‑dimensional layout
+- CSS variables for theming
+- BEM naming for scalability
+- Utility classes for consistency
+- Media queries for responsiveness
+- Pseudo‑classes for interaction
+
+### **⚠️ Pitfalls**
+- Overusing `position: absolute`
+- Fighting the natural document flow
+- Misunderstanding specificity
+- Using fixed widths instead of flexible units
+- Forgetting mobile‑first design
+- Z‑index stacking context confusion
+
+---
+
+## 🧪 Examples
+
+### **Flexbox Centering**
+
+```css
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+### **Responsive Grid**
+
+```css
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+```
+
+### **Button States**
+
+```css
+button {
+  background: #222;
+  color: white;
+  padding: 0.5rem 1rem;
+}
+
+button:hover {
+  background: #444;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+```
+
+### **Dark Mode with Variables**
+
+```css
+:root {
+  --bg: white;
+  --text: black;
+}
+
+[data-theme="dark"] {
+  --bg: #111;
+  --text: #eee;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+```
+
+---
+
+## 📝 Glossary
+
+- **Cascade** — rule ordering system
+- **Specificity** — priority of selectors
+- **Flexbox** — layout model for rows/columns
+- **Grid** — 2D layout system
+- **Pseudo‑class** — element state (`:hover`, `:focus`)
+- **Media Query** — responsive rules
+- **CSS Variable** — reusable custom property

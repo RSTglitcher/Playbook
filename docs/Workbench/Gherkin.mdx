@@ -1,0 +1,205 @@
+---
+title: "Gherkin"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Gherkin
+A structured, human‑readable language for describing system behaviour using examples.
+
+- **Year developed:** 2008
+- **Primary purpose:** Define behaviour in a shared language
+- **Target problem:** Remove ambiguity between analysts, developers, QA, and stakeholders
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+- Created as part of the Cucumber project (Aslak Hellesøy)
+- Designed to bridge business and technical language
+- Adopted widely in BDD practices
+- Now used across product, QA, engineering, and analysis teams
+
+### Strengths & Limitations
+
+**Strengths**
+- Shared language across roles
+- Clear, example‑driven behaviour
+- Easy to read and reason about
+- Encourages testability and modularity
+
+**Limitations**
+- Can become verbose if misused
+- Can drift into UI‑level detail
+- Requires discipline to keep scenarios atomic
+- Not inherently tied to automation
+
+### TA‑Relevant Insights
+Gherkin is one of the most powerful mediums for a TA because it:
+
+- forces clarity
+- exposes ambiguity
+- reveals missing edge cases
+- aligns teams on behaviour
+- creates testable requirements
+- supports both manual and automated testing
+
+It is a **thinking tool**, not a testing tool.
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+Gherkin expresses **behaviour**, not implementation.
+
+- “What should happen?”
+- “What should never happen?”
+- “What does success look like?”
+- “What does failure look like?”
+
+It is declarative, not procedural.
+
+### Ecosystem
+Gherkin is often paired with:
+
+- **Cucumber** (automation runner)
+- **SpecFlow** (.NET)
+- **Behave** (Python)
+- **Jest + Cucumber** (JavaScript)
+- **Selenium / Playwright** (UI automation)
+
+But it can also be used **without automation** as a requirements tool.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+```shell
+--------------
+Common Gherkin Structures
+--------------
+Feature: High-level capability
+Scenario: Single behaviour
+Given: Initial context
+When: Action or event
+Then: Expected outcome
+And/But: Additional steps
+```
+
+```shell
+--------------
+Automation Mapping (Cucumber)
+--------------
+# Step definitions map Gherkin to code
+Given("a user exists", () -> { ... });
+When("they log in", () -> { ... });
+Then("they see the dashboard", () -> { ... });
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+# Pattern 1: Behaviour, not UI
+Avoid "click button X"
+Prefer "the user submits valid credentials"
+
+# Pattern 2: One behaviour per scenario
+If you need "if/else", split into multiple scenarios.
+
+# Pattern 3: Edge-case surfacing
+Use scenarios to expose missing rules:
+- invalid inputs
+- boundary conditions
+- alternative flows
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms and Typical Approaches
+- Keep scenarios short
+- Use business language
+- Avoid implementation details
+- Use examples to clarify rules
+- Separate “happy path” and “edge cases”
+- Use Scenario Outlines for data-driven behaviour
+
+### Pitfalls
+- Over‑specifying UI interactions
+- Mixing multiple behaviours in one scenario
+- Using Gherkin as documentation instead of behaviour
+- Writing scenarios too large to automate
+- Using conditional logic inside scenarios
+
+---
+
+## 🧪 Examples
+
+### Good (Behaviour‑Focused)
+
+```
+Scenario: Successful login
+  Given a registered user exists
+  When they enter valid credentials
+  Then they are logged in
+  And they see their dashboard
+```
+
+### Bad (UI‑Focused)
+
+```
+Scenario: Login
+  Given the user clicks the username field
+  And types "user@example.com"
+  And clicks the password field
+  And types "password123"
+  And clicks the blue login button
+  Then the system logs them in
+```
+
+### Scenario Outline (Data‑Driven)
+
+```
+Scenario Outline: Invalid login attempts
+  Given a registered user exists
+  When they enter <email> and <password>
+  Then they see an error message
+
+  Examples:
+    | email              | password   |
+    | user@example.com   | wrongpass  |
+    | wrong@example.com  | password1  |
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Definition |
+|------|------------|
+| **Feature** | A high‑level capability or requirement. |
+| **Scenario** | A single behaviour expressed as an example. |
+| **Given** | The initial context or precondition. |
+| **When** | The action or event. |
+| **Then** | The expected outcome. |
+| **Step Definition** | Code that maps Gherkin to automation. |
+| **Scenario Outline** | Template for data‑driven scenarios. |
+| **Background** | Shared setup for all scenarios in a feature. |
