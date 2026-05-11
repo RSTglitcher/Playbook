@@ -1,0 +1,217 @@
+---
+title: "Augment"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Augment
+**What it is:**
+A repo‑aware AI assistant that analyses your local codebase and executes tasks through a CLI.
+
+- **Year developed:** 2023–2024
+- **Primary purpose:** Deep code understanding, refactoring, and architectural reasoning
+- **Target problem:** “I need to understand or change a large codebase quickly and safely.”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Augment was created to solve a gap left by IDE‑based assistants:
+**LLMs can generate code, but they cannot *understand* your codebase.**
+
+Augment introduced:
+
+- a local context engine
+- repository‑wide embeddings
+- CLI‑driven workflows
+- PR generation
+- code navigation and explanation
+
+It is now used by engineers and analysts to accelerate onboarding, refactoring, and architectural exploration.
+
+### Strengths
+- Deep understanding of your entire repo
+- Strong at refactoring and multi‑file changes
+- Excellent for onboarding to unfamiliar systems
+- Can run commands and generate PRs
+- High‑quality architectural explanations
+- Works with any language or framework
+
+### Limitations
+- Requires local setup
+- Dependent on repository indexing
+- Not a general conversational model
+- Not ideal for creative or non‑code tasks
+- Requires careful review of generated PRs
+
+### TA‑Relevant Insights
+Augment is uniquely powerful for Technical Analysts because it:
+
+- reveals hidden dependencies
+- surfaces implicit architecture
+- explains flows across multiple files
+- accelerates understanding of legacy systems
+- helps validate feasibility and impact
+- supports cross‑team communication with precise code references
+
+It is the closest thing to “reading the system’s mind.”
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Augment
+Augment is not a chatbot.
+It is a **codebase interpreter**.
+
+Think of it as:
+
+- a search engine
+- a static analysis tool
+- a documentation generator
+- a refactoring assistant
+- a reasoning partner
+
+All fused into one environment.
+
+You don’t “prompt” Augment — you **interrogate the system**.
+
+### Ecosystem
+Augment interacts with:
+
+- your local filesystem
+- Git
+- your IDE
+- your terminal
+- your repo’s structure
+- your build tools
+- your test suite
+
+It becomes part of your **development workflow**, not a separate tool.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Index the repository
+augment index .
+
+# Ask a question about the codebase
+augment ask "How does authentication work?"
+
+# Generate a refactor
+augment refactor "Extract payment logic into its own service"
+
+# Create a PR
+augment pr "Add validation to user registration"
+
+# Explain a file or function
+augment explain src/main/UserService.java
+```
+
+These workflows allow engineers to perform multi‑file reasoning and safe refactoring.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Understand a system boundary
+augment ask "Which components depend on the OrderService?"
+
+# Trace a flow
+augment ask "Show me the end-to-end flow for creating a booking."
+
+# Identify risks
+augment ask "What parts of the system will break if we change the pricing model?"
+
+# Validate feasibility
+augment ask "How hard would it be to support multiple currencies?"
+
+# Compare implementations
+augment ask "How does the new API differ from the legacy one?"
+```
+
+These patterns help analysts reason about architecture, dependencies, and impact.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Explain this file” → onboarding
+- “Trace this flow” → system reasoning
+- “Refactor this logic” → safe change
+- “Generate a PR” → implementation
+- “List dependencies” → impact analysis
+- “Summarise this module” → documentation
+- “Find similar code” → duplication detection
+
+### Pitfalls
+- Over‑trusting generated PRs
+- Asking vague questions without file context
+- Forgetting to re‑index after major changes
+- Using Augment for tasks better suited to Claude/ChatGPT
+- Assuming it understands runtime behaviour (it doesn’t)
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Understanding a Flow
+```shell
+augment ask "Walk me through the checkout flow from controller to database."
+```
+
+### Example 2 — Identifying Impact
+```shell
+augment ask "What breaks if we remove the legacy discount engine?"
+```
+
+### Example 3 — Refactoring
+```shell
+augment refactor "Extract email sending into NotificationService."
+```
+
+### Example 4 — Documentation
+```shell
+augment ask "Summarise the architecture of the payment module."
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Indexing** | Building embeddings of your repo for semantic search |
+| **Context Engine** | Local system that feeds code into the model |
+| **Refactor Task** | Multi‑file code transformation |
+| **PR Generation** | Creating a pull request with changes |
+| **Flow Tracing** | Following logic across files and layers |
+| **Dependency Mapping** | Identifying what depends on what |
+

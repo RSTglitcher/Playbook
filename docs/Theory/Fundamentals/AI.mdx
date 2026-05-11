@@ -1,0 +1,358 @@
+---
+title: "Artifical Intelligence"
+sidebar_position: 8
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🧠 Theory
+AI & ML Foundations provide a set of **conceptual tools** for understanding how modern systems learn from data, generate predictions, and adapt over time.
+Where traditional software is *deterministic and rule‑driven*, AI systems are *probabilistic and data‑driven*.
+
+AI & ML concepts help analysts and engineers:
+
+- reason about systems that behave differently under changing data
+- understand how models, embeddings, and retrieval shape outputs
+- diagnose issues rooted in drift, latency, or stale context
+- evaluate the lifecycle of data, training, inference, and monitoring
+- anticipate bottlenecks in GPU usage, vector search, or orchestration
+- design predictable, reliable AI‑powered features in complex systems
+
+---
+
+:::tip Definition  
+**Artificial Intelligence (AI)** refers to systems that use statistical models to generate predictions, decisions, or content based on patterns learned from data.  
+Unlike deterministic logic, AI systems are **probabilistic**, meaning outputs vary depending on context, data, and model behaviour.  
+:::
+
+**When to Use**
+
+- When analysing features that rely on models, embeddings, or retrieval  
+- When reviewing designs involving inference, vector search, or pipelines  
+- When diagnosing issues related to accuracy, drift, latency, or cost  
+- When understanding how AI interacts with APIs, storage, and distributed systems  
+
+**When Not to Use**
+
+- When the system is purely rule‑based or deterministic  
+- When no model, retrieval, or inference is involved  
+- When the issue is isolated to application logic rather than model behaviour  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+AI Foundations helps you understand **how intelligent behaviour is produced** in modern systems.
+
+It provides a structured way to reason about:
+
+- how models learn from data  
+- how embeddings represent meaning  
+- how inference produces outputs  
+- how retrieval augments model knowledge  
+- how pipelines maintain model freshness  
+- how drift, latency, and scaling affect behaviour  
+
+This enables TAs to:
+
+- diagnose issues  
+- anticipate bottlenecks  
+- evaluate designs  
+- understand trade‑offs  
+- ask the right questions  
+
+AI is not magic — it is a system with components, flows, and constraints.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+
+- **Data Layer** — raw data, features, embeddings, vector stores  
+- **Model Layer** — training, fine‑tuning, evaluation, versioning  
+- **Inference Layer** — real‑time or batch predictions  
+- **Retrieval Layer** — vector search, context assembly, feature lookup  
+- **Orchestration Layer** — pipelines, schedulers, retraining triggers  
+- **Monitoring Layer** — drift detection, quality metrics, feedback loops  
+- **Serving Layer** — APIs, gateways, caching, load balancing  
+
+These components behave like a distributed system — but with probabilistic outputs.
+
+---
+
+### Axes of Variation
+
+- Batch vs Real‑Time inference  
+- Static vs Continually‑updated models  
+- Single‑model vs Ensemble architectures  
+- Retrieval‑augmented vs Pure model inference  
+- Closed‑weight vs Open‑weight models  
+- Centralised vs Edge deployment  
+- Deterministic vs Probabilistic pathways  
+
+These axes define how AI systems behave under different constraints.
+
+---
+
+## 🔄 Typical Lifecycle or Flow
+
+```
+User Request
+     |
+     v
+[Input Processing] --> [Embedding / Feature Generation] --> [Model Inference]
+     |                          |                                |
+     |                          v                                |
+     |                 [Vector Store / Retrieval] ---------------+
+     |
+     v
+[Post‑Processing] --> [Response] --> [Feedback Logging] --> [Monitoring / Retraining]
+```
+
+This lifecycle mirrors your existing Theory pages:  
+**input → transformation → processing → output → feedback**.
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck  
+- How inference behaves under load, drift, or stale data  
+- How retrieval quality affects model accuracy  
+- How pipelines, caching, or batching influence latency  
+- Where failures originate: model, vector store, GPU, or orchestration  
+- What risks emerge when data or traffic patterns shift  
+:::
+
+**What happens when:**
+
+- **Data grows** → vector index rebuilds slow, embeddings become stale  
+- **Traffic increases** → GPU saturation, queueing, batching delays  
+- **Concurrency rises** → contention on vector stores, cold starts  
+- **Resources become constrained** → fallback models activate, latency spikes  
+
+This is the same diagnostic mindset you use for distributed systems — applied to AI.
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Inference** | Running a model to generate predictions or outputs |
+| **Embedding** | Vector representation of text, images, or data |
+| **Vector Store** | Database optimised for similarity search over embeddings |
+| **Drift** | Model performance degradation due to changing data |
+| **RAG** | Retrieval‑Augmented Generation: retrieval + model inference |
+| **Fine‑Tuning** | Adjusting a model on domain‑specific data |
+| **Prompt Engineering** | Structuring inputs to guide model behaviour |
+| **Tokenisation** | Breaking text into units the model can process |
+| **Context Window** | Maximum amount of input a model can consider at once |
+| **Model Weights** | Learned parameters that encode knowledge |
+
+These terms will appear throughout your AI Patterns and Workbench pages.
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="rag" label="Retrieval‑Augmented Generation (RAG)">
+
+### Retrieval‑Augmented Generation (RAG)
+
+**Purpose**  
+Improve accuracy and reduce hallucinations by injecting retrieved context into model inference.
+
+**Key Characteristics**  
+- Embeddings + vector search  
+- Context assembly  
+- Domain‑specific grounding  
+
+**Behaviour**  
+Model quality depends heavily on retrieval freshness and embedding quality.
+
+**Trade-offs**  
+Higher latency; requires vector store maintenance and embedding updates.
+
+</TabItem>
+
+<TabItem value="pipeline" label="ML Pipelines">
+
+### ML Pipelines (Batch or Streaming)
+
+**Purpose**  
+Automate data preparation, training, evaluation, and deployment.
+
+**Key Characteristics**  
+- ETL/ELT stages  
+- Scheduled or event‑driven retraining  
+- Model versioning  
+
+**Behaviour**  
+Stable and predictable, but slower to adapt to new data.
+
+**Trade-offs**  
+Operationally heavy; requires strong data governance.
+
+</TabItem>
+
+<TabItem value="realtime" label="Real‑Time Inference">
+
+### Real‑Time Inference
+
+**Purpose**  
+Serve predictions with low latency for interactive applications.
+
+**Key Characteristics**  
+- GPU/accelerator usage  
+- Caching and batching  
+- Autoscaling  
+
+**Behaviour**  
+Highly sensitive to traffic spikes and resource constraints.
+
+**Trade-offs**  
+Expensive; requires fallback strategies and careful scaling.
+
+</TabItem>
+
+<TabItem value="ensemble" label="Ensemble Models">
+
+### Ensemble Models
+
+**Purpose**  
+Combine multiple models to improve accuracy or robustness.
+
+**Key Characteristics**  
+- Voting, stacking, or weighted blending  
+- Multiple inference paths  
+- Higher reliability  
+
+**Behaviour**  
+More stable predictions but higher compute cost.
+
+**Trade-offs**  
+Complex to operate; debugging becomes harder.
+
+</TabItem>
+
+<TabItem value="edge" label="Edge / On‑Device AI">
+
+### Edge / On‑Device AI
+
+**Purpose**  
+Run models locally for privacy, latency, or offline use.
+
+**Key Characteristics**  
+- Quantised or distilled models  
+- Limited compute  
+- No server dependency  
+
+**Behaviour**  
+Fast and private but constrained by device capabilities.
+
+**Trade-offs**  
+Lower accuracy; harder to update models.
+
+</TabItem>
+
+<TabItem value="other" label="Other">
+
+### Other Patterns
+
+**Purpose**  
+Capture specialised or hybrid AI architectures.
+
+**Key Characteristics**  
+- Multi‑agent systems  
+- Hybrid symbolic + neural systems  
+- Federated learning  
+
+**Behaviour**  
+Useful for niche or privacy‑sensitive scenarios.
+
+**Trade-offs**  
+Complex coordination; specialised tooling.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How AI components interact with data pipelines, APIs, and storage  
+- How inference interacts with caching, batching, and load balancing  
+- How vector stores, GPUs, and orchestration layers behave under pressure  
+- What becomes a bottleneck as models or datasets scale  
+:::
+
+### Local Systems
+
+- OS  
+- Runtime  
+- Network  
+- Storage  
+- Concurrency  
+- Scaling  
+
+### Remote Systems
+
+- Pods  
+- Data Centers  
+- Distributed vector stores  
+- GPU clusters  
+
+### Questions to ask during reviews or incidents
+
+- Where is the bottleneck: model, vector store, network, or GPU?  
+- Is drift occurring?  
+- Are embeddings stale?  
+- Is inference latency rising due to batching or cold starts?  
+- Are fallback models or degraded modes in place?  
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations  
+AI outputs are **probabilistic**, not deterministic.  
+They depend on model weights, context, retrieval quality, and prompt structure.  
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Accurate Predictions | Outputs align with expected behaviour |
+| Stable Latency | Inference remains predictable under load |
+| Fresh Embeddings | Retrieval quality remains high |
+| Low Drift | Model performance remains consistent |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Drift | Model accuracy degrades over time |
+| Hallucinations | Model produces incorrect or fabricated outputs |
+| Latency Spikes | GPU saturation, batching delays, or vector store slowness |
+| Stale Retrieval | Old embeddings lead to irrelevant context |
+| Pipeline Failures | Retraining or feature generation breaks |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Vector Databases  
+- Messaging Patterns  
+- Distributed System Architecture  
+- Observability  
+- Data Pipelines  
+- API Design  

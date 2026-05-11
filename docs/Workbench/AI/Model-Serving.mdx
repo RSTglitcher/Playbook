@@ -1,0 +1,238 @@
+---
+title: "Model Serving"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Model Serving
+**What it is:**
+The infrastructure and processes that expose a trained model as an API or service.
+
+- **Year developed:** 2015–present
+- **Primary purpose:** Run models reliably at scale
+- **Target problem:** “How do we turn a trained model into a production system?”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Model serving evolved from early ML scripts into full production systems:
+
+- Early ML → cron jobs, batch scoring
+- Microservices era → model APIs
+- Cloud ML → managed endpoints (SageMaker, Vertex AI)
+- Modern AI → GPU‑accelerated, multi‑model, low‑latency serving
+
+Today, model serving powers:
+
+- recommendation engines
+- fraud detection
+- personalisation
+- ranking and scoring
+- real‑time predictions
+- RAG pipelines
+- LLM inference
+
+### Strengths
+- Enables real‑time predictions
+- Scales with traffic
+- Supports versioning and rollback
+- Integrates with monitoring and observability
+- Can run on CPU, GPU, or specialised hardware
+
+### Limitations
+- Requires careful optimisation
+- Sensitive to latency and load
+- Needs robust monitoring
+- Can be expensive at scale
+- Requires coordination with data pipelines
+
+### TA‑Relevant Insights
+Model serving matters for Technical Analysts because it:
+
+- determines how predictions reach downstream systems
+- explains latency, throughput, and reliability constraints
+- reveals how models interact with APIs, queues, and pipelines
+- exposes failure modes like drift, stale features, or cold starts
+- helps evaluate feasibility of ML‑powered features
+- informs design decisions around sync vs async predictions
+
+Model serving is the **runtime reality** of ML systems.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Model Serving
+Model serving is not training — it is **systems engineering**.
+
+Think of model serving as:
+
+- a microservice
+- that loads a model
+- receives requests
+- runs inference
+- returns predictions
+- under strict latency and reliability constraints
+
+It is where:
+
+- ML meets distributed systems
+- predictions meet SLAs
+- data freshness meets performance
+- scaling meets cost
+
+### Ecosystem
+Model serving interacts with:
+
+- feature stores
+- data pipelines
+- APIs
+- queues
+- GPUs/CPUs
+- monitoring systems
+- autoscaling
+- caching layers
+- model registries
+
+It is the **operational backbone** of ML.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Model Serving Workflows
+--------------
+
+# Deploy a model endpoint
+POST /deploy
+{
+  "model": "fraud-model-v12",
+  "hardware": "gpu",
+  "autoscale": true
+}
+
+# Query the model
+POST /predict
+{
+  "features": { ... }
+}
+
+# Check model health
+GET /health
+
+# Roll back to previous version
+POST /rollback
+{
+  "model": "fraud-model-v11"
+}
+```
+
+These workflows underpin real‑time inference.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Understand latency
+"Why does this model take 300ms to respond?"
+
+# Diagnose failures
+"What happens if the model endpoint is unavailable?"
+
+# Evaluate scaling
+"How does the system handle traffic spikes?"
+
+# Interpret versioning
+"Which version of the model is currently serving predictions?"
+
+# Assess feasibility
+"Can this model run synchronously in the checkout flow?"
+```
+
+These patterns help analysts reason about runtime behaviour and system impact.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Serve as an API…” → real‑time inference
+- “Batch scoring…” → offline predictions
+- “Shadow deployment…” → safe rollout
+- “A/B testing…” → model comparison
+- “Autoscaling…” → traffic handling
+- “Caching…” → reduce latency
+- “GPU serving…” → heavy models
+
+### Pitfalls
+- Cold starts causing latency spikes
+- Serving stale models or features
+- Missing monitoring → silent failures
+- Overloading GPUs/CPUs
+- Using sync serving where async is needed
+- Not versioning models properly
+- Ignoring drift and degradation
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Real‑Time API
+```text
+Client → Model Endpoint → Prediction → Downstream System
+```
+
+### Example 2 — Batch Scoring
+```text
+Nightly job → Score all users → Store results in DB
+```
+
+### Example 3 — Shadow Deployment
+```text
+New model receives traffic but does not affect users
+```
+
+### Example 4 — A/B Testing
+```text
+50% of users → model v11
+50% of users → model v12
+Compare performance
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Inference** | Running a model to generate predictions |
+| **Endpoint** | API exposing the model |
+| **Cold Start** | Delay when a model loads for the first time |
+| **Autoscaling** | Automatically adjusting compute based on load |
+| **Shadow Deployment** | Testing a model without affecting users |
+| **Model Registry** | Version control for models |
+| **Feature Store** | System for managing model inputs |
+

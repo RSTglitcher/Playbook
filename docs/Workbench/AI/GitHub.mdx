@@ -1,0 +1,217 @@
+---
+title: "GitHub"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Copilot
+**What it is:**
+An AI coding assistant that predicts and generates code inside your IDE.
+
+- **Year developed:** 2021–2024
+- **Primary purpose:** Accelerate coding by turning intent into implementation
+- **Target problem:** “I know what I want to build — help me write it quickly and correctly.”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Copilot was created by GitHub and Microsoft to bring AI directly into the developer workflow.
+It evolved from:
+
+- simple autocomplete →
+- context‑aware suggestions →
+- multi‑line generation →
+- test generation →
+- chat‑based reasoning →
+- repo‑aware extensions
+
+It is now a standard tool in modern engineering teams.
+
+### Strengths
+- Excellent at boilerplate and repetitive code
+- Strong at test generation
+- Great at filling in patterns and idioms
+- Works seamlessly in IDEs (VSCode, JetBrains)
+- Fast, low‑friction, always available
+- Helps maintain flow and reduce cognitive load
+
+### Limitations
+- Limited understanding of large repos
+- Not ideal for architectural reasoning
+- Can hallucinate APIs or methods
+- Needs human review for correctness
+- Not suitable for multi‑file refactors (use Augment instead)
+
+### TA‑Relevant Insights
+Copilot is powerful for Technical Analysts because it:
+
+- helps prototype ideas quickly
+- reveals idiomatic patterns in unfamiliar languages
+- accelerates test writing for validation
+- supports exploratory coding during analysis
+- reduces friction when switching languages
+- helps communicate intent through code sketches
+
+It is a **thinking accelerator**, not a replacement for engineering judgement.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Copilot
+Copilot is not a chatbot.
+It is a **pattern recogniser** that predicts what you want based on:
+
+- the code around your cursor
+- the file you’re in
+- the comment you just wrote
+- the patterns in your repo
+- the conventions of the language
+
+Think of it as:
+
+- autocomplete on steroids
+- a pair‑programmer who finishes your sentences
+- a pattern‑based code generator
+- a fast prototyping partner
+
+### Ecosystem
+Copilot interacts with:
+
+- your IDE
+- your local file context
+- your language server
+- your test runner
+- your version control workflow
+
+It becomes part of your **coding environment**, not a separate tool.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Key Copilot Actions
+--------------
+
+# Generate code from a comment
+// Write a function to validate email addresses
+
+# Generate tests
+// Write unit tests for the UserService class
+
+# Complete code patterns
+public record User(
+    String name,
+    String email,
+    // Copilot will suggest the rest
+);
+
+# Suggest refactors
+// Refactor this method for readability
+
+# Explore APIs
+// Show me how to use the HttpClient in Java
+```
+
+These workflows help engineers stay in flow and reduce mechanical effort.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Prototype logic
+// Sketch the algorithm for calculating loyalty points
+
+# Explore unfamiliar languages
+// Show an example of a Scala case class
+
+# Validate feasibility
+// Draft a function that transforms this payload into our domain model
+
+# Compare approaches
+// Show two ways to implement pagination in SQL
+
+# Generate documentation
+// Summarise what this class does
+```
+
+These patterns help analysts reason about systems through executable examples.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Write a function that…” → implementation
+- “Generate tests for…” → validation
+- “Refactor this…” → clarity
+- “Show an example of…” → exploration
+- “Explain this code…” → onboarding
+- “Suggest improvements…” → quality
+
+### Pitfalls
+- Accepting suggestions without review
+- Letting Copilot drift into incorrect patterns
+- Using Copilot for multi‑file reasoning (use Augment instead)
+- Over‑relying on comments instead of clear intent
+- Forgetting that Copilot predicts — it does not understand
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Intent → Code
+```java
+// Write a function to calculate total order value with discounts
+```
+
+### Example 2 — Test Generation
+```java
+// Write JUnit tests for the calculateTotal method
+```
+
+### Example 3 — API Exploration
+```typescript
+// Show how to call a REST endpoint using fetch with error handling
+```
+
+### Example 4 — Refactoring
+```python
+# Refactor this function to be more readable
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Inline Suggestion** | Copilot’s greyed‑out code prediction |
+| **Ghost Text** | The preview of Copilot’s suggestion |
+| **Trigger Comment** | A comment that instructs Copilot to generate code |
+| **Context Window** | The amount of code Copilot can “see” |
+| **Pattern Completion** | Copilot finishing idiomatic code structures |
+| **Chat View** | Copilot’s conversational interface in the IDE |
