@@ -1,0 +1,281 @@
+---
+title: "Machine Learning"
+sidebar_position: 9
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🧠 Theory  
+Machine Learning provides a set of **conceptual tools** for enabling systems to learn patterns from data and make predictions without being explicitly programmed.  
+Where traditional software encodes *rules*, ML systems learn *relationships*.
+
+ML concepts help analysts and engineers:
+
+- understand how predictive systems behave  
+- reason about data‑driven decision‑making  
+- identify risks like drift, bias, and overfitting  
+- evaluate model quality and reliability  
+- collaborate effectively with data scientists  
+- diagnose issues in data pipelines and model outputs  
+
+Machine Learning is not a single technique — it is a **family of approaches** for turning data into predictions, scores, or classifications.
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Machine Learning solves problems where:
+
+- rules are too complex to hand‑code  
+- patterns are hidden in large datasets  
+- predictions must adapt to changing behaviour  
+- personalisation or ranking is required  
+- decisions depend on probability, not certainty  
+
+Examples relevant to a Data Processing department:
+
+- customer segmentation  
+- personalised recommendations  
+- churn prediction  
+- fraud detection  
+- anomaly detection  
+- demand forecasting  
+- ranking and scoring models  
+
+ML provides a structured way to build systems that **improve with data**.
+
+---
+
+## 🧠 Conceptual Model
+
+Machine Learning systems revolve around three core ideas:
+
+### **1. Data → Features**  
+Raw data is transformed into **features** — measurable attributes the model can learn from.
+
+Examples:  
+- number of logins in 30 days  
+- product category  
+- time since last purchase  
+- average session duration  
+
+### **2. Learning → Model**  
+The model learns patterns from labelled or unlabelled data.
+
+Types of learning:
+
+- **Supervised** — learn from labelled examples  
+- **Unsupervised** — find structure without labels  
+- **Reinforcement** — learn through feedback and reward  
+
+### **3. Prediction → Output**  
+The trained model produces:
+
+- a score  
+- a probability  
+- a classification  
+- a ranking  
+- a recommendation  
+
+This output is then used by downstream systems.
+
+---
+
+## 🔄 Typical Lifecycle or Flow
+
+```
+Raw Data
+   |
+   v
+[Feature Engineering] --> [Training] --> [Evaluation] --> [Deployment]
+   |                          |              |               |
+   |                          v              |               |
+   |                 [Model Versioning]      |               |
+   |                                         v               |
+   +----------------------------------> [Monitoring] <-------+
+```
+
+This lifecycle mirrors your existing Theory pages:  
+**input → transformation → processing → output → feedback**.
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What data the model depends on  
+- How features are created and refreshed  
+- How the model is trained, validated, and deployed  
+- What metrics define “good” performance  
+- How drift or stale data affects predictions  
+- How the model interacts with pipelines, APIs, and storage  
+:::
+
+**What happens when:**
+
+- **Data changes** → model accuracy drops  
+- **Traffic increases** → inference latency rises  
+- **Features break** → predictions become unstable  
+- **Retraining stops** → drift accumulates  
+- **Labels are wrong** → model learns incorrect patterns  
+
+ML systems behave like distributed systems — but with **probabilistic outputs**.
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Feature** | A measurable attribute used by the model |
+| **Label** | The correct answer the model learns to predict |
+| **Training** | Teaching the model using historical data |
+| **Validation** | Testing the model on unseen data |
+| **Test Set** | Final evaluation dataset |
+| **Overfitting** | Model memorises training data instead of learning patterns |
+| **Underfitting** | Model is too simple to capture patterns |
+| **Drift** | Model performance degrades as real‑world data changes |
+| **Feature Store** | Centralised system for managing features |
+| **Model Registry** | Version control for models |
+| **Inference** | Running the model to generate predictions |
+
+These terms appear throughout ML pipelines and personalisation systems.
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="supervised" label="Supervised Learning">
+
+### Supervised Learning  
+**Purpose**  
+Learn from labelled examples to predict outcomes.
+
+**Examples**  
+- churn prediction  
+- fraud detection  
+- classification  
+- regression  
+
+**Trade-offs**  
+Requires labelled data; sensitive to label quality.
+
+</TabItem>
+
+<TabItem value="unsupervised" label="Unsupervised Learning">
+
+### Unsupervised Learning  
+**Purpose**  
+Find structure in unlabelled data.
+
+**Examples**  
+- customer segmentation  
+- clustering  
+- anomaly detection  
+
+**Trade-offs**  
+Interpretability can be difficult.
+
+</TabItem>
+
+<TabItem value="reinforcement" label="Reinforcement Learning">
+
+### Reinforcement Learning  
+**Purpose**  
+Learn through trial, error, and reward.
+
+**Examples**  
+- recommendation ranking  
+- dynamic pricing  
+- optimisation problems  
+
+**Trade-offs**  
+Complex to train; requires feedback loops.
+
+</TabItem>
+
+<TabItem value="deep" label="Deep Learning">
+
+### Deep Learning  
+**Purpose**  
+Learn complex patterns using neural networks.
+
+**Examples**  
+- image recognition  
+- speech processing  
+- advanced personalisation  
+
+**Trade-offs**  
+High compute cost; harder to interpret.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How ML pipelines interact with data engineering  
+- How features flow through ETL/ELT systems  
+- How models are deployed and versioned  
+- How inference interacts with APIs and services  
+- How monitoring detects drift or degradation  
+:::
+
+### Local Systems  
+- Feature engineering scripts  
+- Training environments  
+- Local validation tools  
+
+### Remote Systems  
+- Feature stores  
+- Model registries  
+- Batch/streaming pipelines  
+- Inference services  
+- Monitoring dashboards  
+
+### Questions to ask during reviews or incidents  
+- What features does the model depend on?  
+- How often are features refreshed?  
+- What data changes could cause drift?  
+- How is the model evaluated?  
+- What is the fallback if the model fails?  
+
+---
+
+## 💥 Outputs / Results
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Accurate Predictions | Model performs well on real data |
+| Stable Performance | No drift; consistent behaviour |
+| Reliable Features | Up‑to‑date and correct inputs |
+| Low Latency | Predictions served quickly |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Drift | Real‑world data changes; model degrades |
+| Overfitting | Model memorises training data |
+| Underfitting | Model too simple; poor accuracy |
+| Feature Breakage | Missing or stale features |
+| Label Leakage | Model accidentally learns future information |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- Data Pipelines  
+- Feature Stores  
+- Model Serving  
+- Monitoring & Observability  
+- Data Quality  
+- API Design  

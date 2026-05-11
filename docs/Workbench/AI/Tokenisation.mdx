@@ -1,0 +1,230 @@
+---
+title: "Tokenisation"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Tokenisation
+**What it is:**
+The process of converting text into tokens — the atomic units models operate on.
+
+- **Year developed:** 2012–present
+- **Primary purpose:** Convert text into a numerical form models can process
+- **Target problem:** “How can a model understand and compute over human language?”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Tokenisation evolved alongside NLP:
+
+- Early NLP → whitespace tokenisation
+- Word2Vec era → word‑level tokens
+- BPE (Byte Pair Encoding) → subword tokens
+- SentencePiece → language‑agnostic tokenisation
+- Modern LLMs → byte‑level and multimodal tokenisation
+
+Today, tokenisation is central to:
+
+- LLM inference
+- RAG
+- embeddings
+- cost estimation
+- context window management
+- multilingual processing
+
+### Strengths
+- Efficient representation of text
+- Handles rare or unknown words
+- Works across languages
+- Enables compression of long text
+- Predictable cost and context usage
+
+### Limitations
+- Not human‑interpretable
+- Different models use different tokenisers
+- Token boundaries can be surprising
+- Tokenisation errors can break meaning
+- Impacts cost and latency significantly
+
+### TA‑Relevant Insights
+Tokenisation matters for Technical Analysts because it:
+
+- determines how much text fits in a context window
+- affects cost and performance of AI features
+- influences retrieval quality in RAG
+- explains why some prompts behave unexpectedly
+- reveals why certain languages cost more to process
+- helps diagnose truncation, overflow, and hallucination risks
+
+Tokenisation is the **computational substrate** of LLMs.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Tokenisation
+Tokenisation is not about words — it is about **units of meaning the model can predict**.
+
+Think of tokenisation as:
+
+- the “alphabet” of the model
+- the smallest building blocks of its internal language
+- the units it counts, prices, and reasons over
+
+Examples:
+
+- “authentication” → may become 3–5 tokens
+- “login” → often 1 token
+- emojis → often 1 token
+- rare words → many tokens
+- code → highly token‑dense
+
+### Ecosystem
+Tokenisation interacts with:
+
+- embeddings
+- vector stores
+- RAG pipelines
+- prompt engineering
+- model serving
+- cost estimation
+- context windows
+
+It is the **entry point** to all LLM computation.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Tokenisation Workflows
+--------------
+
+# Count tokens in a prompt
+POST /tokenize
+{
+  "model": "gpt-4o",
+  "input": "Explain the checkout flow."
+}
+
+# Estimate cost
+tokens * price_per_token
+
+# Detect truncation
+if (tokens > context_window) {
+  throw "Context overflow"
+}
+
+# Compress text
+"Summarise this to reduce token count"
+```
+
+These workflows underpin cost, latency, and context management.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Diagnose overflow
+"Why did the model ignore the last section of my prompt?"
+
+# Evaluate compression
+"How many tokens can we save by summarising this?"
+
+# Understand behaviour
+"Why does the model treat these two phrases differently?"
+
+# Compare languages
+"Why does this French text use more tokens than the English version?"
+
+# Optimise prompts
+"Rewrite this to be shorter but preserve meaning."
+```
+
+These patterns help analysts reason about model behaviour and cost.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Count tokens…” → cost estimation
+- “Compress this…” → context optimisation
+- “Rewrite shorter…” → prompt efficiency
+- “Detect overflow…” → debugging
+- “Compare token counts…” → multilingual analysis
+- “Chunk text…” → RAG preparation
+
+### Pitfalls
+- Assuming tokens = words
+- Mixing tokenisers across models
+- Ignoring token limits
+- Overloading prompts with unnecessary text
+- Forgetting that code is token‑dense
+- Assuming all languages tokenise equally
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Token Density
+```text
+"authentication" → 4 tokens
+"auth" → 1 token
+```
+
+### Example 2 — Multilingual
+```text
+English: "Hello, how are you?" → ~6 tokens
+Japanese: "こんにちは、お元気ですか？" → ~12 tokens
+```
+
+### Example 3 — Code
+```python
+def calculate_total(items):
+    total = sum(items)
+    return total
+```
+→ often 20–40 tokens
+
+### Example 4 — Compression
+```text
+Original: 500 tokens
+Summarised: 120 tokens
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Token** | The smallest unit of text a model processes |
+| **Tokeniser** | The algorithm that splits text into tokens |
+| **BPE** | Byte Pair Encoding, a common tokenisation method |
+| **Context Window** | Maximum number of tokens a model can handle |
+| **Token Density** | How many tokens a piece of text produces |
+| **Compression** | Reducing token count while preserving meaning |
+

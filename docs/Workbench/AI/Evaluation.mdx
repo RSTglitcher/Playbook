@@ -1,0 +1,252 @@
+---
+title: "Evaluation"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🛠️ Workbench
+**Evaluation** is the discipline of measuring how well a model performs — not just during training, but continuously in production.
+It is the quality‑assurance layer of AI and ML systems, ensuring predictions are **accurate**, **reliable**, **stable**, and **aligned with real‑world behaviour**.
+
+Evaluation strengthens your ability to:
+
+- understand model quality
+- diagnose drift and degradation
+- compare models and versions
+- validate RAG and retrieval behaviour
+- assess hallucination risk
+- interpret metrics and trade‑offs
+- support design and decision‑making
+
+Evaluation is not training — it is **measurement, monitoring, and judgement**.
+
+---
+
+## 🧩 Medium Definition
+
+:::tip Evaluation
+**What it is:**
+The process of measuring model performance using metrics, tests, datasets, and real‑world feedback.
+
+- **Year developed:** 2010–present
+- **Primary purpose:** Ensure models behave correctly and reliably
+- **Target problem:** “How do we know if this model is good — and stays good?”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Evaluation evolved alongside ML and AI:
+
+- Early ML → accuracy, precision, recall
+- Deep learning → confusion matrices, ROC curves
+- Modern ML → drift detection, fairness, calibration
+- LLM era → hallucination tests, RAG evaluation, grounding checks
+
+Today, evaluation is essential for:
+
+- ML models (classification, regression, ranking)
+- LLMs (reasoning, generation, retrieval)
+- RAG systems (context relevance, grounding)
+- Personalisation (ranking quality, engagement)
+- Safety and reliability
+
+### Strengths
+- Provides objective measurement
+- Enables comparison across models
+- Detects drift and degradation
+- Supports safe deployment
+- Helps diagnose failure modes
+
+### Limitations
+- Metrics can be misleading
+- Hard to evaluate open‑ended outputs
+- Requires high‑quality labelled data
+- Needs continuous monitoring
+- Can miss rare or long‑tail failures
+
+### TA‑Relevant Insights
+Evaluation matters for Technical Analysts because it:
+
+- reveals whether a model is fit for purpose
+- explains why predictions degrade over time
+- informs design decisions and trade‑offs
+- exposes risks in RAG and LLM systems
+- supports stakeholder communication
+- helps diagnose issues in production
+
+Evaluation is the **evidence layer** of AI systems.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Evaluation
+Evaluation is not about “is the model good?”
+It is about **how the model behaves under different conditions**.
+
+Think of evaluation as:
+
+- a test suite
+- a measurement framework
+- a monitoring system
+- a risk detector
+- a comparison tool
+
+Evaluation answers:
+
+- How accurate is the model?
+- How reliable is it?
+- How does it behave on edge cases?
+- How does it degrade over time?
+- How does it compare to alternatives?
+
+### Ecosystem
+Evaluation interacts with:
+
+- training datasets
+- validation/test sets
+- production logs
+- monitoring dashboards
+- drift detectors
+- human feedback
+- RAG retrieval metrics
+- hallucination tests
+
+It is the **quality‑assurance backbone** of AI.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Evaluation Workflows
+--------------
+
+# Evaluate classification model
+precision, recall, f1 = evaluate(model, test_set)
+
+# Compute regression error
+rmse = sqrt(mean((y_pred - y_true)^2))
+
+# Compare model versions
+compare(model_v11, model_v12)
+
+# Evaluate RAG retrieval
+retrieval_precision = relevant_docs / retrieved_docs
+
+# Monitor drift
+drift_score = drift_detector(current_data, baseline_data)
+```
+
+These workflows underpin ML and RAG evaluation.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Understand trade-offs
+"Why does increasing recall reduce precision?"
+
+# Diagnose drift
+"How has the model's performance changed over the last 30 days?"
+
+# Evaluate RAG
+"Are the retrieved documents relevant to the query?"
+
+# Assess hallucination risk
+"Which parts of the output are unsupported by the context?"
+
+# Compare models
+"Which version performs better on edge cases?"
+```
+
+These patterns help analysts reason about model quality and risk.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Precision vs recall…” → classification trade‑offs
+- “RMSE/MAE…” → regression error
+- “Top‑k accuracy…” → ranking
+- “Relevance scoring…” → RAG
+- “Grounding checks…” → hallucination detection
+- “Drift monitoring…” → production reliability
+- “A/B testing…” → model comparison
+
+### Pitfalls
+- Over‑optimising for a single metric
+- Ignoring edge cases
+- Using test data that doesn’t match production
+- Missing drift until it’s too late
+- Evaluating only offline, not in production
+- Assuming high accuracy = good model
+- Forgetting that LLM evaluation is probabilistic
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Classification
+```text
+Precision: 0.92
+Recall: 0.61
+Interpretation: Model is cautious — misses many positives.
+```
+
+### Example 2 — Regression
+```text
+RMSE: 4.2
+Interpretation: Predictions deviate by ~4 units on average.
+```
+
+### Example 3 — RAG
+```text
+Retrieved 5 documents
+Only 2 were relevant
+Retrieval precision = 40%
+```
+
+### Example 4 — Drift
+```text
+Model accuracy dropped from 88% → 72% after data distribution changed.
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Precision** | How many predicted positives were correct |
+| **Recall** | How many actual positives were found |
+| **F1 Score** | Harmonic mean of precision and recall |
+| **RMSE** | Root Mean Square Error for regression |
+| **Drift** | Model performance degrades as data changes |
+| **Grounding** | Ensuring LLM outputs are supported by retrieved context |
+| **Hallucination** | LLM output that is incorrect or unsupported |
+| **A/B Testing** | Comparing two model versions in production |
+

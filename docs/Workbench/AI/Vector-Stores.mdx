@@ -1,0 +1,232 @@
+---
+title: "Vector Stores"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Vector Stores
+**What they are:**
+Databases optimised for storing embeddings and performing similarity search.
+
+- **Year developed:** 2018–present
+- **Primary purpose:** Fast retrieval of semantically similar items
+- **Target problem:** “How can we search by meaning instead of keywords?”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Vector stores emerged as embeddings became central to AI systems:
+
+- Early ANN (Approximate Nearest Neighbour) libraries → FAISS, Annoy
+- First vector databases → Pinecone, Milvus
+- Modern integrated stores → Weaviate, Chroma, Elasticsearch vector search
+
+They now power:
+
+- RAG
+- semantic search
+- recommendation systems
+- anomaly detection
+- clustering
+- personalisation
+- knowledge retrieval
+
+### Strengths
+- Extremely fast similarity search
+- Scales to millions or billions of vectors
+- Supports metadata filtering
+- Integrates with RAG pipelines
+- Enables semantic search and ranking
+
+### Limitations
+- Requires embeddings of consistent dimension
+- Sensitive to embedding quality
+- Needs careful indexing and tuning
+- Harder to debug than keyword search
+- Retrieval quality depends on vector density and distribution
+
+### TA‑Relevant Insights
+Vector stores matter for Technical Analysts because they:
+
+- determine which documents an AI system retrieves
+- explain why certain results appear (or don’t)
+- influence the quality of RAG responses
+- reveal how personalisation systems match users to content
+- expose issues like drift, stale embeddings, or poor indexing
+- help diagnose relevance, ranking, and retrieval failures
+
+Vector stores are the **semantic backbone** of AI systems.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Vector Stores
+Vector stores are not relational databases.
+They are **geometric search engines**.
+
+Think of a vector store as:
+
+- a map of meaning
+- where each item is a point in high‑dimensional space
+- and search is “find the closest points to this meaning”
+
+Similarity is measured using:
+
+- cosine similarity
+- dot product
+- Euclidean distance
+
+Vector stores let AI systems:
+
+- retrieve relevant documents
+- match users to items
+- cluster similar content
+- detect anomalies
+- power semantic search
+
+### Ecosystem
+Vector stores interact with:
+
+- embeddings
+- RAG pipelines
+- LLMs
+- metadata filters
+- ranking algorithms
+- caching layers
+- ETL pipelines
+
+They are the **retrieval layer** of AI systems.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Vector Store Workflows
+--------------
+
+# Insert a vector
+INSERT INTO vector_store (id, vector, metadata);
+
+# Query by similarity
+SELECT *
+FROM vector_store
+ORDER BY vector <-> query_embedding
+LIMIT 5;
+
+# Filter by metadata
+SELECT *
+FROM vector_store
+WHERE metadata.category = 'payments'
+ORDER BY vector <-> query_embedding;
+
+# Update embeddings
+UPDATE vector_store
+SET vector = new_embedding
+WHERE id = 'doc_123';
+```
+
+These workflows underpin semantic search and RAG retrieval.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Diagnose retrieval
+"Why did the system retrieve these items instead of others?"
+
+# Evaluate relevance
+"Are these retrieved documents semantically aligned with the query?"
+
+# Understand ranking
+"Explain why this item ranked higher than the others."
+
+# Identify drift
+"Which embeddings are outdated or inconsistent with the new model?"
+
+# Validate personalisation
+"How does the user embedding compare to recommended items?"
+```
+
+These patterns help analysts reason about retrieval behaviour.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Find similar items…” → semantic search
+- “Retrieve context…” → RAG
+- “Cluster these…” → grouping
+- “Match user to content…” → personalisation
+- “Rank by similarity…” → relevance scoring
+- “Filter by metadata…” → hybrid search
+
+### Pitfalls
+- Mixing embeddings from different models
+- Using vector search without metadata filters
+- Forgetting to re‑embed after data changes
+- Assuming vector search is deterministic
+- Using vector stores for exact matching
+- Ignoring embedding drift over time
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Semantic Search
+```text
+Query: "How do I reset my password?"
+Vector store retrieves: authentication, login, MFA docs
+```
+
+### Example 2 — Personalisation
+```text
+User embedding ≈ embeddings of items they are likely to engage with
+```
+
+### Example 3 — RAG Retrieval
+```text
+Query embedding → vector store → top 5 relevant documents → LLM
+```
+
+### Example 4 — Metadata Filtering
+```text
+Retrieve only documents tagged with "billing" AND semantically similar
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Vector** | A list of numbers representing meaning |
+| **Embedding** | A vector that encodes semantic information |
+| **ANN Search** | Approximate nearest neighbour search |
+| **Cosine Similarity** | A measure of vector similarity |
+| **Hybrid Search** | Combining metadata filters + vector search |
+| **RAG** | Retrieval‑Augmented Generation |

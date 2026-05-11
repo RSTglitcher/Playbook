@@ -1,0 +1,233 @@
+---
+title: "Embeddings"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Embeddings
+**What they are:**
+High‑dimensional vectors that represent the meaning of text, images, or data.
+
+- **Year developed:** 2013–present
+- **Primary purpose:** Encode semantic meaning in a machine‑interpretable form
+- **Target problem:** “How can a system understand similarity, relationships, and meaning?”
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Embeddings emerged from early NLP research:
+
+- Word2Vec (2013) → word embeddings
+- GloVe (2014) → global co‑occurrence
+- BERT embeddings (2018) → contextual meaning
+- Modern LLM embeddings (2020s) → sentence, document, multimodal embeddings
+
+They now power:
+
+- semantic search
+- RAG
+- recommendation systems
+- clustering
+- classification
+- anomaly detection
+- personalisation
+
+### Strengths
+- Capture semantic meaning
+- Enable similarity search
+- Work across languages and domains
+- Efficient to store and compare
+- Foundation of RAG and vector search
+
+### Limitations
+- Dependent on model quality
+- Sensitive to domain mismatch
+- Hard to interpret directly
+- Require vector stores for scale
+- Not suitable for exact matching
+
+### TA‑Relevant Insights
+Embeddings matter for Technical Analysts because they:
+
+- explain why RAG retrieves certain documents
+- reveal how AI systems “understand” meaning
+- help diagnose retrieval failures
+- underpin personalisation and recommendation logic
+- influence ranking, clustering, and similarity scoring
+- determine how well AI systems connect concepts
+
+Embeddings are the **semantic substrate** of AI systems.
+
+---
+
+## 🧠 Mental Model
+
+### How to Think in Embeddings
+Embeddings are not code or prompts.
+They are **coordinates in meaning‑space**.
+
+Think of embeddings as:
+
+- a map of concepts
+- where similar ideas cluster together
+- and unrelated ideas drift apart
+
+Examples:
+
+- “cat” is close to “kitten”
+- “invoice” is close to “billing”
+- “authentication” is close to “login”
+- “refund” is far from “authentication”
+
+Embeddings let AI systems reason about:
+
+- similarity
+- relevance
+- relationships
+- clustering
+- semantic distance
+
+### Ecosystem
+Embeddings interact with:
+
+- vector stores
+- RAG pipelines
+- search engines
+- recommendation systems
+- clustering algorithms
+- classification models
+
+They are the **connective tissue** of AI systems.
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+### Engineering Workflows
+
+```shell
+--------------
+Embedding Workflows
+--------------
+
+# Generate an embedding for text
+POST /embeddings
+{
+  "model": "text-embedding-3-large",
+  "input": "User cancelled subscription due to pricing"
+}
+
+# Compare similarity
+cosine_similarity(embeddingA, embeddingB)
+
+# Store in vector DB
+INSERT INTO vector_store (id, vector, metadata)
+
+# Query by similarity
+SELECT * FROM vector_store
+ORDER BY vector <-> query_embedding
+LIMIT 5;
+```
+
+These workflows underpin semantic search and RAG.
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+### Analyst Interpretation Patterns
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Understand retrieval behaviour
+"Why did the system retrieve these documents instead of others?"
+
+# Diagnose RAG issues
+"Which parts of the query embedding are mismatched with the corpus?"
+
+# Evaluate similarity
+"Are these two pieces of text semantically close?"
+
+# Interpret clusters
+"What themes do these grouped items represent?"
+
+# Validate personalisation
+"Why is this user being recommended these items?"
+```
+
+These patterns help analysts reason about semantic behaviour.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms & Typical Approaches
+- “Find similar items…” → semantic search
+- “Cluster these…” → grouping
+- “Rank by relevance…” → retrieval
+- “Match user to content…” → personalisation
+- “Retrieve context for LLM…” → RAG
+- “Detect anomalies…” → outlier detection
+
+### Pitfalls
+- Using embeddings for exact matching
+- Mixing embeddings from different models
+- Using embeddings without normalisation
+- Ignoring domain mismatch
+- Assuming embeddings are interpretable
+- Forgetting that embeddings drift over time
+
+---
+
+## 🧪 Examples
+
+### Example 1 — Similarity
+```text
+Embedding("refund policy") is close to Embedding("returns and exchanges")
+```
+
+### Example 2 — Retrieval
+```text
+Query: "How do I reset my password?"
+Retrieved: documents about authentication, login, MFA
+```
+
+### Example 3 — Clustering
+```text
+Cluster 1: payments, billing, invoices
+Cluster 2: login, authentication, MFA
+Cluster 3: shipping, delivery, tracking
+```
+
+### Example 4 — Personalisation
+```text
+User embedding ≈ embeddings of items they are likely to engage with
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Vector** | A list of numbers representing meaning |
+| **Embedding** | A vector that encodes semantic information |
+| **Cosine Similarity** | A measure of how similar two vectors are |
+| **Vector Store** | A database for storing and searching embeddings |
+| **Semantic Search** | Search based on meaning, not keywords |
+| **RAG** | Retrieval‑Augmented Generation, powered by embeddings |
