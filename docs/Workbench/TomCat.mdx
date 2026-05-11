@@ -1,0 +1,224 @@
+---
+title: "Tomcat (Java Web Server)"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🛠️ Workbench
+This **Workbench** entry captures **Tomcat** as a technical medium used to understand how Java web applications run, how HTTP requests are processed, and how server‑side components behave.
+
+Where **Theory** explains HTTP, state, and request lifecycles,  
+**Workbench** explains *how Tomcat behaves as an environment* — the mental model engineers use when deploying, debugging, or reasoning about server‑side execution.
+
+---
+
+## 🧩 Medium: Tomcat
+
+:::tip Tomcat  
+A lightweight Java web server and servlet container used to run Java‑based web applications.
+
+- **Year developed:** 1999  
+- **Primary purpose:** Execute Java Servlets, JSPs, and web applications  
+- **Target problem:** Provide a runtime for handling HTTP requests and generating server‑side responses  
+:::
+
+---
+
+## 🗺️ Context
+
+### History  
+- Originally developed by Sun Microsystems and donated to Apache  
+- Became the reference implementation for Java Servlets and JSP  
+- Widely used in enterprise Java before embedded servers (Spring Boot) became common  
+- Still used for legacy systems, education, and lightweight deployments  
+
+### Strengths & Limitations
+
+**Strengths**  
+- Clear, transparent request lifecycle  
+- Easy to reason about server‑side behaviour  
+- Lightweight and stable  
+- Good for understanding HTTP, sessions, and state  
+
+**Limitations**  
+- Not a full Java EE server  
+- Manual configuration for scaling/clustering  
+- Limited built‑in observability  
+- Less common in modern microservices  
+
+### TA‑Relevant Insights  
+Tomcat helps analysts understand:
+
+- **Request vs Session scope**  
+  - *Request scope:*  
+    A request comes in → server processes → response returns → **state is forgotten**.  
+  - *Session scope:*  
+    Server issues a **SessionID**, allowing the user to be **remembered across requests**.
+
+- **Why GET is insecure for credentials**  
+  GET exposes parameters in the URL → visible in logs, browser history, proxies.  
+  POST avoids this → safer for login flows.
+
+- **HTTP is stateless**  
+  Tomcat must explicitly manage state using:  
+  - cookies  
+  - session attributes  
+  - server memory  
+  - distributed session stores (in large deployments)
+
+- **Commercial reality**  
+  In production, there may be **hundreds or thousands of servers**.  
+  Session management becomes a scaling concern (sticky sessions vs distributed caches).
+
+- **Importance of session attributes**  
+  Storing only *minimal* user information (e.g., username, userId) prevents:  
+  - memory bloat  
+  - stale data  
+  - security issues  
+
+Tomcat is a **thinking environment** for understanding server‑side execution, not just a tool.
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment  
+Tomcat is a **request processor**:
+
+1. Receives HTTP request  
+2. Routes to a servlet/controller  
+3. Executes business logic  
+4. Interacts with databases/services  
+5. Generates HTML/JSON/XML  
+6. Manages session state  
+7. Returns response  
+
+Think of Tomcat as:
+
+- a **traffic controller** (routing)  
+- a **runtime container** (executing Java code)  
+- a **state manager** (sessions, cookies)  
+- a **resource manager** (threads, connections)  
+
+### Ecosystem  
+Tomcat interacts with:
+
+- **JSP** (server‑side rendering)  
+- **Servlets**  
+- **Spring MVC**  
+- **JDBC / JPA**  
+- **Reverse proxies** (Nginx, Apache HTTPD)  
+- **Load balancers**  
+- **WAR files**  
+- **Logging frameworks**  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Start Tomcat
+./catalina.sh start
+
+# Stop Tomcat
+./catalina.sh stop
+
+# View logs
+tail -f logs/catalina.out
+
+# Deploy a WAR file
+cp myapp.war webapps/
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+```shell
+--------------
+Analyst Interpretation Patterns
+--------------
+
+# Pattern 1: Request vs Session Scope
+If behaviour resets unexpectedly:
+- Check if data is stored in request scope instead of session scope.
+
+# Pattern 2: Login Issues
+If login fails:
+- Check GET vs POST usage
+- Check session attribute creation
+- Check session timeout
+
+# Pattern 3: Statelessness Problems
+If user state is lost across servers:
+- Check load balancer sticky sessions
+- Check distributed session store
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms and Typical Approaches  
+- Use **POST** for sensitive operations  
+- Use **session attributes** sparingly  
+- Use **filters** for cross‑cutting concerns  
+- Deploy as **WAR files**  
+- Use **context.xml** for environment config  
+- Use **Spring MVC** for modern apps  
+
+### Pitfalls  
+- Using GET for login  
+- Storing too much in session  
+- Misconfigured thread pools  
+- Incorrect servlet mappings  
+- Memory leaks in long‑running apps  
+- Session loss in multi‑server environments  
+
+---
+
+## 🧪 Examples
+
+### Example: Login Servlet (GET vs POST)
+
+```java
+protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    String username = request.getParameter("username");
+    request.getSession().setAttribute("user", username);
+}
+```
+
+### Example: Session Attribute
+
+```java
+HttpSession session = request.getSession();
+session.setAttribute("username", "Rebecca");
+```
+
+---
+
+## 📝 Glossary
+
+| Term | Definition |
+|------|------------|
+| **Servlet** | Java class that handles HTTP requests. |
+| **JSP** | Java Server Page — server‑side HTML templating. |
+| **SessionID** | Unique identifier for tracking a user session. |
+| **Request Scope** | Data lives only for a single request. |
+| **Session Scope** | Data persists across multiple requests. |
+| **WAR file** | Packaged web application deployed to Tomcat. |
+| **Catalina** | Tomcat’s internal servlet container. |
+

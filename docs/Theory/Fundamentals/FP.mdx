@@ -1,0 +1,258 @@
+---
+title: "Functional Programming"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🧠 Theory  
+Functional Programming provides a set of **conceptual tools** for modelling software as transformations of data through pure, predictable functions.  
+Where OOP models *objects and behaviour*, FP models *data and transformations*.
+
+FP constructs help analysts and engineers:
+
+- reason about systems without hidden state  
+- avoid side‑effect‑driven bugs  
+- design predictable, testable flows  
+- scale concurrency safely  
+- simplify complex transformations  
+
+---
+
+:::tip Definition  
+A set of conceptual building blocks for modelling software using **pure functions**, **immutable data**, and **predictable transformations**.  
+:::
+
+**When to Use**
+
+- When correctness and predictability matter  
+- When concurrency or parallelism is required  
+- When transformations dominate behaviour  
+- When avoiding shared mutable state is beneficial  
+
+**When Not to Use**
+
+- Highly stateful, object‑rich domains  
+- Systems requiring heavy mutation or lifecycle modelling  
+- Environments where recursion or immutability is costly  
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+FP constructs solve the problem of **unpredictability caused by mutable state and side effects**.  
+They provide a vocabulary for:
+
+- expressing logic as pure transformations  
+- eliminating hidden dependencies  
+- enabling safe concurrency  
+- simplifying reasoning about system behaviour  
+- reducing accidental complexity  
+
+They help Technical Analysts reason about **data flow**, **state transitions**, and **deterministic behaviour**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Pure Functions** — same input → same output, no side effects  
+- **Immutability** — data cannot be changed, only transformed  
+- **Higher‑Order Functions** — functions that take or return functions  
+- **Function Composition** — building pipelines of transformations  
+- **Recursion** — looping via self‑reference  
+- **Side Effects** — interactions with the outside world  
+- **Monads** — structured handling of effects  
+- **Referential Transparency** — expressions can be replaced with their values  
+
+### **Axes of Variation**
+
+- Strict vs lazy evaluation  
+- Pure vs impure languages  
+- Immutable‑first vs mutable‑allowed  
+- Recursion vs iteration  
+- Expression‑oriented vs statement‑oriented  
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+[Input Data]
+      ↓
+[Pure Function]
+      ↓
+[Transformed Data]
+      ↓
+[Composed with Other Functions]
+      ↓
+[Final Output]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Does the transformation pipeline remain predictable?
+- Are side effects isolated and controlled?
+- Is immutability helping or hindering performance?
+- Are functions small, composable, and testable?
+- What happens when concurrency increases?
+:::
+
+**What happens when:**
+
+- **Data grows** → recursion depth, memory pressure  
+- **Traffic increases** → pure functions scale horizontally  
+- **Concurrency rises** → immutability prevents race conditions  
+- **Resources become constrained** → copying immutable data becomes expensive  
+
+---
+
+## 📘 Key Terminology
+
+| **Term** | **Definition** | **Languages** |
+| --- | --- | --- |
+| **Pure Function** | A function with no side effects; same input → same output. | Haskell, Scala, F#, Elm, OCaml, JavaScript (FP style), Python (FP style) |
+| **Immutability** | Data cannot be changed after creation; new values are produced instead. | Haskell, Scala, Clojure, Elm, F#, Rust (by default), Java/Kotlin (optional) |
+| **Higher‑Order Function** | A function that takes other functions as arguments or returns them. | All FP languages; also JavaScript, Python, Java (lambdas), C# |
+| **Function Composition** | Combining functions so the output of one becomes the input of another. | Haskell, Scala, F#, Elm, JavaScript (FP style), Python (FP style) |
+| **Referential Transparency** | An expression can be replaced with its value without changing program behaviour. | Haskell, Elm, FP‑first Scala, F# |
+| **Side Effect** | Any interaction with the outside world (I/O, mutation, logging) that breaks purity. | All languages (conceptual) |
+| **Monad** | A structure for sequencing computations with controlled effects. | Haskell, Scala (Cats/ZIO), F#, Elm |
+| **Functor** | A structure that can be mapped over (supports ``map``). | Haskell, Scala, F#, Elm |
+| **Applicative** | A structure that applies wrapped functions to wrapped values. | Haskell, Scala (Cats/ZIO), F# |
+| **Algebraic Data Type (ADT)** | A type formed by combining other types (sum + product types). | Haskell, Scala, Rust, Elm, F# |
+| **Pattern Matching** | A mechanism for destructuring and branching on ADTs. | Scala, Haskell, Rust, F#, OCaml, Elm |
+| **Recursion** | A function that calls itself to process data. | All FP languages; also Python, JS, Java |
+| **Lazy Evaluation** | Expressions are evaluated only when needed. | Haskell (default), Scala (optional), Clojure (optional) |
+| **Currying** | Transforming a function of multiple arguments into a chain of single‑argument functions. | Haskell, Scala, F#, Elm, JavaScript (FP style) |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="pure" label="Pure Functions">
+
+### Pure Functions
+
+**Purpose**  
+Ensure predictable, testable behaviour.
+
+**Key Characteristics**  
+- No side effects  
+- Deterministic output  
+
+**Behaviour**  
+Easy to test, reason about, and parallelise.
+
+**Trade-offs**  
+Side effects must be handled elsewhere.
+
+</TabItem>
+
+<TabItem value="immutability" label="Immutability">
+
+### Immutability
+
+**Purpose**  
+Prevent accidental state changes.
+
+**Key Characteristics**  
+- Data is copied, not mutated  
+- Thread‑safe by default  
+
+**Behaviour**  
+Enables safe concurrency and predictable flows.
+
+**Trade-offs**  
+Copying large structures can be expensive.
+
+</TabItem>
+
+<TabItem value="composition" label="Composition">
+
+### Function Composition
+
+**Purpose**  
+Build complex behaviour from simple functions.
+
+**Key Characteristics**  
+- Pipeline‑style transformations  
+- No shared state  
+
+**Behaviour**  
+Highly modular and reusable.
+
+**Trade-offs**  
+Can become abstract or hard to debug.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How pure functions scale horizontally  
+- How immutability affects memory and performance  
+- How effect systems model real‑world interactions  
+- How FP simplifies concurrency  
+:::
+
+### Local Systems
+
+- **Runtime** — recursion, stack usage, lazy evaluation  
+- **Memory** — persistent data structures, copying  
+- **Concurrency** — no shared state → fewer race conditions  
+- **Scaling** — pure functions parallelise naturally  
+
+### Remote Systems
+
+Not directly applicable — FP constructs are conceptual, not distributed.
+
+### Questions to ask during reviews or incidents
+
+- Are side effects isolated and controlled?  
+- Is immutability causing performance issues?  
+- Are transformations too abstract to debug?  
+- Is recursion safe for expected data sizes?  
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+FP constructs influence **predictability, correctness, and concurrency safety**, not output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Predictable behaviour | Pure functions behave consistently |
+| Safe concurrency | No shared mutable state |
+| Modular pipelines | Functions compose cleanly |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Excessive copying | Immutability causes memory pressure |
+| Deep recursion | Stack overflows on large inputs |
+| Abstract pipelines | Hard to debug transformations |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- **Data Pipeline Quality**  
+- **Communication Patterns**  
+- **Project Architecture**  
+- **Observability**  

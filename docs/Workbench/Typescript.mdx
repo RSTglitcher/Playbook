@@ -1,0 +1,241 @@
+---
+title: "TypeScript"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip TypeScript
+TypeScript is a statically‑typed superset of JavaScript that adds type safety, tooling, and developer ergonomics while compiling down to plain JavaScript.
+
+- **Year developed:** 2012
+- **Primary purpose:** Safer, more maintainable JavaScript for large applications
+- **Target problem:** Preventing runtime errors through static analysis and strong typing
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+TypeScript was created by **Microsoft** to address the scaling challenges of large JavaScript codebases.
+Its key innovations include:
+
+- A powerful static type system
+- Gradual typing (opt‑in)
+- Modern JavaScript features before they land in browsers
+- Excellent tooling (IntelliSense, refactoring, autocomplete)
+
+TypeScript is now the default choice for:
+
+- React applications
+- Node.js backends
+- Design systems
+- API clients
+- Enterprise frontends
+
+### Strengths & Limitations
+
+**Strengths**
+- Strong static typing
+- Excellent IDE support
+- Safer refactoring
+- Interoperable with JavaScript
+- Great for large, complex codebases
+
+**Limitations**
+- Requires a build step
+- Type system can become complex
+- Some runtime errors still possible
+- Learning curve for advanced types
+
+### TA‑Relevant Insights
+- TypeScript reveals **domain models** through interfaces and types
+- Understanding TypeScript helps you interpret React, Node, and API client code
+- Many frontend/backend integration issues surface in TypeScript types
+- TypeScript is often the “contract layer” between UI and API
+
+---
+
+## 🧠 Mental Model
+
+### **How to think in this environment**
+- TypeScript is **JavaScript + types**
+- Types describe **shape**, **constraints**, and **intent**
+- The compiler catches errors before runtime
+- Interfaces and types model **domain concepts**
+- Type narrowing and unions express **real‑world variability**
+
+### Ecosystem
+- **Build tools:** tsc, Vite, Webpack, SWC
+- **Frameworks:** React, Next.js, Remix, NestJS
+- **Runtime:** Node.js, Deno, Bun
+- **Tooling:** ESLint, Prettier, ts-node
+- **Package managers:** npm, pnpm, yarn
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and patterns used by engineers when operating this medium.
+
+```ts
+// Basic type annotation
+let count: number = 0;
+
+// Interface
+interface User {
+  id: number;
+  name: string;
+}
+
+// Function with types
+function greet(user: User): string {
+  return `Hello, ${user.name}`;
+}
+
+// Union type
+type Status = "loading" | "success" | "error";
+
+// Generics
+function wrap<T>(value: T): T[] {
+  return [value];
+}
+
+// Async/await
+async function fetchData() {
+  const res = await fetch("/api/data");
+  return res.json();
+}
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows for analysts to interpret what the code or model is doing.
+
+```ts
+// Understand domain models
+type Order = {
+  id: number;
+  amount: number;
+  status: "pending" | "paid";
+};
+
+// Trace API usage
+async function getOrders() {
+  const res = await fetch("/api/orders");
+  return res.json();
+}
+
+// Identify branching logic
+function getLabel(status: Status) {
+  switch (status) {
+    case "loading": return "Loading…";
+    case "success": return "Done";
+    case "error":   return "Error";
+  }
+}
+
+// Spot type narrowing
+function printId(id: number | string) {
+  if (typeof id === "string") {
+    console.log(id.toUpperCase());
+  } else {
+    console.log(id.toFixed(0));
+  }
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Interfaces for domain modelling
+- Union types for state machines
+- Generics for reusable logic
+- Type narrowing (`typeof`, `in`, `instanceof`)
+- Utility types (`Partial`, `Pick`, `Record`)
+- Async/await for asynchronous flows
+- Modules + imports for structure
+
+### **⚠️ Pitfalls**
+- Confusing `type` vs `interface`
+- Overly complex generics
+- Any‑typing (`any`) hiding errors
+- Incorrectly inferred `undefined` or `null`
+- Type widening (e.g., `let x = []`)
+- Mismatched API response types
+
+---
+
+## 🧪 Examples
+
+### **Interface + Function**
+
+```ts
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+function format(p: Product) {
+  return `${p.name} (£${p.price})`;
+}
+```
+
+### **Union Types**
+
+```ts
+type Mode = "view" | "edit" | "delete";
+
+function setMode(mode: Mode) {
+  console.log("Mode:", mode);
+}
+```
+
+### **Generics**
+
+```ts
+function identity<T>(value: T): T {
+  return value;
+}
+
+const x = identity<string>("hello");
+```
+
+### **React + TypeScript Example**
+
+```tsx
+type Props = {
+  name: string;
+};
+
+function Hello({ name }: Props) {
+  return <h1>Hello, {name}</h1>;
+}
+```
+
+---
+
+## 📝 Glossary
+
+- **Interface** — describes the shape of an object
+- **Type Alias** — defines unions, primitives, or complex types
+- **Union Type** — value can be one of several options
+- **Generic** — reusable type parameter
+- **Narrowing** — refining a type at runtime
+- **Declaration File (`.d.ts`)** — type definitions for JS libraries
+- **tsconfig.json** — compiler configuration
+

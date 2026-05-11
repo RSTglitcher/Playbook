@@ -1,0 +1,120 @@
+---
+title: "Writing Prompts"
+sidebar_position: 8
+---
+
+## 🧠 Purpose
+This guide explains the **engineering‑grade thought process** behind writing prompts that produce reliable, structured, high‑quality outputs from AI systems.
+
+It is:
+
+- language‑agnostic
+- planning‑first
+- aligned with your TA craft
+- designed for the new era where **prompting is a core engineering skill**
+- structured in the same table format as your “How Engineers Turn a Problem Into Code” guide
+
+Where **Theory** explains how AI models behave
+and **Workbench** explains how to use tools,
+**this guide explains the *process* of going from intent → prompt → output → refinement.**
+
+
+## 🧭 Workflow Overview
+
+| Step No. | Step | Thought Process (Language‑Agnostic) | Example A: Simple Domain | Example B: Backend / Platform |
+|---------|------|--------------------------------------|---------------------------|-------------------------------|
+| **1** | **Start with the Intent** | Identify the *goal*, *audience*, and *format*. A prompt is a specification. | “Explain how an order total is calculated.” | “Generate a Kafka event schema for ProductUpdatedEvent.” |
+| **2** | **Extract the Core Entities** | Identify the nouns: what the prompt is *about*. | Order, Product, Discount | Event, Producer, Consumer, Schema, Topic |
+| **3** | **Define the Required Output Shape** | Decide the structure: list, table, code, explanation, diagram. | “Provide a step‑by‑step explanation.” | “Return JSON schema + example payload + validation rules.” |
+| **4** | **Specify Constraints** | Add boundaries: length, tone, format, exclusions, assumptions. | “Keep it under 200 words.” | “Use Avro schema; include backward‑compatibility notes.” |
+| **5** | **Provide Context** | Give the model the information it needs to reason correctly. | “Assume products have price and quantity.” | “Assume Kafka topic is partitioned by productId.” |
+| **6** | **Define the Role or Perspective** | Tell the model *how* to think: TA, engineer, architect, PM. | “Explain as if teaching a junior developer.” | “Explain as a senior backend engineer designing event contracts.” |
+| **7** | **Add Examples (Few‑Shot Prompting)** | Show the model what “good” looks like. | Provide a sample order → expected total. | Provide a sample event → expected consumer behaviour. |
+| **8** | **Ask for the Output** | Make the request explicit and unambiguous. | “Now generate the explanation.” | “Now generate the schema + consumer contract.” |
+| **9** | **Review the Output** | Check for correctness, completeness, and alignment with intent. | Does the explanation match the domain? | Does the schema match platform constraints? |
+| **10** | **Refine with Iterative Prompts** | Prompting is iterative: adjust, clarify, constrain. | “Rewrite with simpler language.” | “Add idempotency rules + retry semantics.” |
+| **11** | **Add Edge Cases** | Ensure the model handles non‑happy paths. | “What if the product list is empty?” | “What if the event is replayed or arrives out of order?” |
+| **12** | **Integrate with the Wider System** | Connect the prompt output to documentation, code, or architecture. | Add explanation to onboarding docs. | Add schema to OpenAPI, DataHub, or event catalog. |
+
+
+---
+
+# 🔍 Deep Dive: The Prompting Mindset (Analyst → Engineer → AI)
+
+### **Prompting is not “asking a question.”**
+It is **specifying a system behaviour**.
+
+A good prompt is:
+
+- a **requirements document**
+- a **design spec**
+- a **test case**
+- a **contract**
+- a **context provider**
+- a **role assignment**
+- a **formatting instruction**
+
+
+---
+
+# 🧩 Prompting Patterns (Reusable Templates)
+
+Below are reusable patterns you can embed in your Workbench.
+
+### **Pattern: Structured Output**
+```
+You are a senior backend engineer.
+Produce the output in the following structure:
+1. Summary
+2. Components
+3. Flow
+4. Risks
+5. Example
+```
+
+### **Pattern: Code Generation**
+```
+Generate Java code for X.
+Constraints:
+- Use interfaces for Y
+- Use composition, not inheritance
+- Include unit tests
+```
+
+### **Pattern: Schema Design**
+```
+Generate an Avro schema for ProductUpdatedEvent.
+Include:
+- field descriptions
+- example payload
+- backward compatibility notes
+```
+
+### **Pattern: Architecture Reasoning**
+```
+Explain the trade-offs between local caching and distributed caching
+in the context of high-read, low-write workloads.
+```
+
+---
+
+# 🧪 Prompt Testing (TDD for Prompts)
+
+Just like code, prompts should be tested.
+
+### **Test for:**
+- correctness
+- completeness
+- hallucination risk
+- alignment with constraints
+- formatting stability
+- edge case handling
+
+### **Example A**
+“Rewrite the explanation assuming the product list is empty.”
+
+### **Example B**
+“Regenerate the schema assuming the event is replayed out of order.”
+
+Prompt testing is the new unit testing.
+

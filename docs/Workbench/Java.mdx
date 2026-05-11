@@ -1,0 +1,620 @@
+---
+title: "Java"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Java
+Java is a statically‑typed, object‑oriented programming language designed for portability, reliability, and large‑scale systems.
+
+- **Year developed:** 1995
+- **Primary purpose:** Enterprise applications, backend services, large distributed systems
+- **Target problem:** Building robust, maintainable, cross‑platform software
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Java was created by **James Gosling** at Sun Microsystems with the philosophy:
+
+> “Write once, run anywhere.”
+
+Its JVM‑based architecture made it the dominant language for:
+
+- Enterprise systems
+- Banking & finance
+- Android development
+- Distributed backend services
+- High‑reliability systems
+
+### Strengths & Limitations
+
+**Strengths**
+- Strong static typing
+- Mature ecosystem and tooling
+- JVM performance and stability
+- Huge enterprise adoption
+- Excellent for long‑lived systems
+
+**Limitations**
+- Verbose syntax
+- Slower iteration compared to dynamic languages
+- Requires more boilerplate
+- Functional features arrived later (Java 8+)
+
+### TA‑Relevant Insights
+- Java codebases often reflect **enterprise architecture patterns**
+- Understanding Java helps you interpret Spring Boot services, microservices, and backend APIs
+- Many large organisations still rely heavily on Java for mission‑critical systems
+- Java’s type system reveals domain boundaries and invariants clearly
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+- Java is **class‑centric** — everything lives inside a class
+- Types define **contracts**, **constraints**, and **behaviour**
+- Execution is **imperative** and **object‑oriented**
+- The JVM abstracts away hardware differences
+- Concurrency is explicit (threads, executors, futures)
+
+### Ecosystem
+- **Build tools:** Maven, Gradle
+- **Frameworks:** Spring Boot, Jakarta EE, Micronaut
+- **Data:** JDBC, JPA, Hibernate
+- **Android:** Kotlin + Java interop
+- **Tooling:** IntelliJ, Eclipse, VS Code
+- **JVM:** HotSpot, OpenJDK
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this medium.
+
+```java
+// Define a class
+public class Person {
+    private String name;
+
+    public Person(String name) {
+        this.name = name;
+    }
+}
+
+// Static method
+public static int add(int a, int b) {
+    return a + b;
+}
+
+// Collections
+List<String> names = new ArrayList<>();
+names.add("Rebecca");
+
+// Streams (Java 8+)
+names.stream()
+     .filter(n -> n.startsWith("R"))
+     .forEach(System.out::println);
+
+// Build & run (Maven)
+mvn clean install
+mvn spring-boot:run
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows and queries for analysts to read or interpret what the code or model is doing.
+
+```java
+// Understand domain models
+@Entity
+public class Order {
+    @Id
+    private Long id;
+    private Double amount;
+}
+
+// Trace service logic
+public Order getOrder(Long id) {
+    return repository.findById(id).orElseThrow();
+}
+
+// Identify API endpoints
+@GetMapping("/orders/{id}")
+public Order getOrder(@PathVariable Long id) {
+    return service.getOrder(id);
+}
+
+// Spot data access patterns
+List<Order> orders = repository.findByCustomerId(customerId);
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- POJOs (Plain Old Java Objects)
+- Interfaces + implementations
+- Dependency injection (Spring)
+- Builder pattern
+- Streams for functional operations
+- DTOs for API boundaries
+- Annotations for metadata (`@Entity`, `@Service`, `@RestController`)
+
+### Pitfalls
+- Excessive boilerplate
+- NullPointerExceptions (pre‑Optional)
+- Over‑engineering with patterns
+- Misconfigured dependency injection
+- Threading issues without proper synchronisation
+
+---
+
+## 🧪 Examples
+
+### **Simple Class + Method**
+
+```java
+public class Greeter {
+    public String greet(String name) {
+        return "Hello, " + name;
+    }
+}
+```
+
+### **Stream Pipeline**
+
+```java
+List<Integer> nums = List.of(1, 2, 3, 4);
+
+List<Integer> evens =
+    nums.stream()
+        .filter(n -> n % 2 == 0)
+        .toList();
+```
+
+### **Spring Boot Controller**
+
+```java
+@RestController
+public class HelloController {
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello world";
+    }
+}
+```
+
+### **JPA Entity**
+
+```java
+@Entity
+public class Customer {
+    @Id
+    private Long id;
+
+    private String name;
+}
+```
+
+<Tabs>
+<TabItem value="conditionals" label="Conditionals">
+
+## Conditionals
+
+Java uses **curly braces `{}`** to define code blocks.
+Conditionals allow your program to **make decisions** — a core interview topic.
+
+---
+
+### IF Statements
+
+#### 1‑Way IF
+**Why used:** To run logic only when a condition is true.
+**Example:** *Check if a shopping basket is empty before checkout.*
+
+```java
+if (basket.isEmpty()) {
+    System.out.println("Your basket is empty.");
+}
+```
+
+---
+
+#### 2‑Way IF / ELSE
+**Why used:** To choose between two mutually exclusive outcomes.
+**Example:** *Apply free shipping if order total exceeds £50.*
+
+```java
+if (orderTotal >= 50) {
+    System.out.println("Free shipping applied.");
+} else {
+    System.out.println("Shipping cost: £4.99");
+}
+```
+
+---
+
+#### Multi‑Way IF / ELSE IF / ELSE
+**Why used:** To handle multiple possible states.
+**Example:** *Categorise user login attempts.*
+
+```java
+if (attempts == 0) {
+    System.out.println("First attempt");
+} else if (attempts < 3) {
+    System.out.println("Retry allowed");
+} else {
+    System.out.println("Account locked");
+}
+```
+
+---
+
+### Loops
+
+#### FOR Loop (Index‑Based)
+**Why used:** When you need the index or want precise control.
+**Example:** *Iterate through product IDs by index.*
+
+```java
+for (int i = 0; i < productIds.size(); i++) {
+    System.out.println(productIds.get(i));
+}
+```
+
+---
+
+#### FOR‑EACH Loop
+**Why used:** When you want clean iteration without managing indexes.
+**Example:** *Print all items in a shopping basket.*
+
+```java
+for (String item : basket) {
+    System.out.println(item);
+}
+```
+
+---
+
+#### FOR‑EACH with HashMap
+**Why used:** To iterate through key/value pairs.
+**Example:** *Display product → quantity in a basket.*
+
+```java
+for (Map.Entry<String, Integer> entry : basket.entrySet()) {
+    System.out.println(entry.getKey() + ": " + entry.getValue());
+}
+```
+
+---
+
+#### IF + FOR Combined
+**Why used:** To apply conditional logic to each element.
+**Example:** *Identify discounted products in a list.*
+
+```java
+for (Product p : products) {
+    if (p.isDiscounted()) {
+        applyDiscount(p);
+    }
+}
+```
+
+---
+
+### WHILE Loop
+**Why used:** When you loop until a condition changes.
+**Example:** *Retry API call until success or timeout.*
+
+```java
+int retries = 0;
+
+while (!apiCallSuccess && retries < 3) {
+    apiCallSuccess = callApi();
+    retries++;
+}
+```
+
+---
+
+### DO‑WHILE Loop
+**Why used:** When the logic must run at least once.
+**Example:** *Prompt user for input until valid.*
+
+```java
+String input;
+
+do {
+    input = scanner.nextLine();
+} while (!isValid(input));
+```
+
+</TabItem>
+<TabItem value="comparable" label="Comparables">
+
+## Sorting
+
+Sorting is a common interview topic.
+These interfaces define **how objects should be ordered**.
+
+---
+
+### Comparable
+**Why used:** To define a class’s *natural ordering* (e.g., alphabetical).
+**Example:** *Sort books alphabetically by title.*
+
+```java
+public class Book implements Comparable<Book> {
+    private String title;
+
+    @Override
+    public int compareTo(Book other) {
+        return this.title.compareTo(other.title);
+    }
+}
+```
+
+Usage:
+```java
+Collections.sort(bookList);
+```
+
+---
+
+### Comparator
+**Why used:** To define *custom* or *multiple* sorting strategies.
+**Example:** *Sort products by price.*
+
+```java
+public class ProductByPrice implements Comparator<Product> {
+    @Override
+    public int compare(Product p1, Product p2) {
+        return Double.compare(p1.getPrice(), p2.getPrice());
+    }
+}
+```
+
+Usage:
+```java
+Collections.sort(products, new ProductByPrice());
+```
+
+</TabItem>
+<TabItem value="generic" label="Generics">
+
+## Generics
+
+**Why used:** To make collections type‑safe and prevent runtime casting errors.
+**Example:** *Ensure a list only contains Product objects.*
+
+---
+
+### Generic Class Example
+```java
+public class Box<T> {
+    private T value;
+
+    public Box(T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return value;
+    }
+}
+```
+
+Usage:
+```java
+Box<String> stringBox = new Box<>("Hello");
+Box<Integer> intBox = new Box<>(42);
+```
+
+---
+
+### Bounded Generics (`extends`)
+**Why used:** To restrict a generic type to a specific hierarchy.
+**Example:** *Allow only numeric types for a statistics calculator.*
+
+```java
+public class NumberBox<T extends Number> {
+    private T number;
+
+    public NumberBox(T number) {
+        this.number = number;
+    }
+}
+```
+
+Usage:
+```java
+NumberBox<Integer> box = new NumberBox<>(10);
+```
+
+</TabItem>
+<TabItem value="optional" label="Optionals">
+
+## Optionals
+
+**Why used:** To avoid `NullPointerException` and represent “value may or may not exist.”
+**Example:** *Handle missing user email.*
+
+---
+
+### Creating Optionals
+```java
+Optional<String> email = Optional.of("user@example.com");
+Optional<String> empty = Optional.empty();
+```
+
+---
+
+### Using Optionals
+```java
+email.ifPresent(e -> System.out.println("Email: " + e));
+
+String result = email.orElse("No email provided");
+```
+
+---
+
+### Avoiding Null Checks
+```java
+String value = optionalValue
+        .map(String::toUpperCase)
+        .orElse("DEFAULT");
+```
+
+</TabItem>
+<TabItem value="IO" label="File IO">
+
+## File I/O
+
+File I/O is used to **read and write data**, common in backend systems.
+
+---
+
+### Reading a File (BufferedReader)
+**Why used:** Efficient for reading large files line‑by‑line.
+**Example:** *Process a CSV of product data.*
+
+```java
+try (BufferedReader reader = new BufferedReader(new FileReader("products.csv"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+---
+
+### Reading a File (Scanner)
+**Why used:** Simple API for reading tokens or lines.
+**Example:** *Read configuration values from a text file.*
+
+```java
+try (Scanner scanner = new Scanner(new File("config.txt"))) {
+    while (scanner.hasNextLine()) {
+        System.out.println(scanner.nextLine());
+    }
+} catch (FileNotFoundException e) {
+    e.printStackTrace();
+}
+```
+
+---
+
+### Writing to a File
+**Why used:** To persist data or generate output files.
+**Example:** *Export order summary to a file.*
+
+```java
+try (FileWriter writer = new FileWriter("order-summary.txt")) {
+    writer.write("Order Total: £120.00\n");
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+</TabItem>
+<TabItem value="logging" label="Logging">
+
+## Logging (SLF4J Example)
+
+**Why used:** Logging is essential for debugging, observability, and production monitoring.
+**Example:** *Log API request failures.*
+
+```java
+private static final Logger log = LoggerFactory.getLogger(ApiClient.class);
+
+public void callApi() {
+    try {
+        // API call
+    } catch (Exception e) {
+        log.error("API call failed", e);
+    }
+}
+```
+
+</TabItem>
+<TabItem value="streams" label="Streams">
+
+## Streams API
+
+**Why used:** Streams allow functional‑style operations on collections.
+**Example:** *Filter products above a certain price.*
+
+---
+
+### Basic Stream Example
+```java
+List<String> names = List.of("Alice", "Bob", "Charlie");
+
+names.stream()
+     .filter(n -> n.startsWith("A"))
+     .map(String::toUpperCase)
+     .forEach(System.out::println);
+```
+
+---
+
+### Stream Reduce
+**Why used:** To combine elements into a single result.
+**Example:** *Calculate total basket quantity.*
+
+```java
+int total = quantities.stream()
+                      .reduce(0, Integer::sum);
+```
+
+---
+
+### Stream Collect
+**Why used:** To transform a stream back into a collection.
+**Example:** *Convert product names to uppercase list.*
+
+```java
+List<String> upper =
+    names.stream()
+         .map(String::toUpperCase)
+         .collect(Collectors.toList());
+```
+
+</TabItem>
+
+</Tabs>
+
+
+
+---
+
+## 📝 Glossary
+
+- **JVM** — Java Virtual Machine
+- **JDK** — Java Development Kit
+- **POJO** — Plain Old Java Object
+- **JPA** — Java Persistence API
+- **Spring Boot** — Java framework for microservices
+- **Maven/Gradle** — build tools
+- **Annotation** — metadata that influences behaviour (`@Service`, `@Entity`)
+

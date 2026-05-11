@@ -1,0 +1,307 @@
+---
+title: "Language Theory"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Definition
+A **programming language** is a formal system of syntax and semantics that allows humans to express computations in a way that machines can execute.
+:::
+
+**When to Use**
+
+- Evaluating a new language or framework
+- Reasoning about performance, safety, or correctness
+- Comparing paradigms or execution models
+- Diagnosing runtime or memory behaviour
+
+**When Not to Use**
+
+- Tool‑specific behaviour (Workbench)
+- Operational instructions (Runbook)
+- Project‑specific implementation details
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Programming languages solve the problem of **expressing computation** in a structured, unambiguous, machine‑interpretable way.
+
+They provide:
+
+- **syntax** for expressing logic
+- **semantics** that define meaning
+- **paradigms** that shape how problems are modelled
+- **type systems** that constrain or validate behaviour
+- **execution models** that determine performance and safety
+- **memory models** that define how data is stored and accessed
+- **computational power** (Turing completeness)
+
+A Technical Analyst must understand these forces to reason about architecture, performance, correctness, and system behaviour.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+
+- **Syntax** — the grammar and structure of the language
+- **Semantics** — the meaning of syntactic constructs
+- **Paradigms** — the mental models the language supports
+- **Type System** — how values are classified and validated
+- **Execution Model** — compilation, interpretation, JIT, VM
+- **Runtime Environment** — the system executing the code
+- **Memory Model** — how memory is allocated, shared, and reclaimed
+- **Turing Completeness** — whether the language can express all computations a Turing machine can perform
+
+### Axes of Variation
+
+- Static vs dynamic typing
+- Strong vs weak typing
+- Compiled vs interpreted
+- Managed vs unmanaged memory
+- Functional vs imperative vs OO vs logic paradigms
+- Single‑threaded vs multi‑threaded runtimes
+- Turing complete vs non‑Turing complete languages
+
+---
+
+### Typical Lifecycle or Flow
+
+```
+Human Intent
+     ↓
+Language Syntax (source code)
+     ↓
+Parsing → AST (Abstract Syntax Tree)
+     ↓
+Semantic Analysis (types, scope, correctness)
+     ↓
+Execution Model:
+   - Compilation → Machine Code
+   - Interpretation → Runtime Execution
+   - JIT → Hybrid
+     ↓
+Runtime Environment
+     ↓
+Memory Model (stack, heap, GC)
+     ↓
+Program Behaviour
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How the language behaves under load
+- How the runtime manages memory and concurrency
+- What guarantees the type system provides
+- What risks arise from the execution model
+:::
+
+**What happens when:**
+
+- **Data grows** → memory pressure, GC churn, type coercion issues
+- **Traffic increases** → runtime scheduling, event loops, thread pools
+- **Concurrency rises** → race conditions, locks, visibility issues
+- **Resources become constrained** → GC pauses, stack overflows, OOM errors
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Syntax** | The grammar and structure of a language. |
+| **Semantics** | The meaning of syntactic constructs. |
+| **Paradigm** | A style of programming (functional, OO, imperative). |
+| **Type System** | Rules for classifying and validating values. |
+| **Runtime** | The environment executing the program. |
+| **Memory Model** | Rules for allocation, access, and concurrency. |
+| **Garbage Collection** | Automatic memory reclamation. |
+| **Turing Completeness** | Ability to express any computation a Turing machine can perform. |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="syntax" label="Syntax vs Semantics">
+
+### Syntax vs Semantics
+
+**Purpose**
+Distinguish between *how code looks* and *what code means*.
+
+**Key Characteristics**
+- Syntax = structure
+- Semantics = behaviour
+
+**Behaviour**
+Syntax errors prevent parsing; semantic errors prevent correct execution.
+
+**Trade-offs**
+Strict syntax improves tooling; flexible syntax improves expressiveness.
+
+</TabItem>
+
+<TabItem value="paradigms" label="Paradigms">
+
+### Programming Paradigms
+
+**Purpose**
+Provide mental models for structuring computation.
+
+**Key Characteristics**
+- Imperative: step‑by‑step instructions
+- Declarative: describe desired outcomes
+- Functional: pure functions, immutability
+- Object‑Oriented: objects, encapsulation
+- Logic: inference, constraints
+
+**Behaviour**
+Paradigms shape architecture, testability, and reasoning.
+
+**Trade-offs**
+Each paradigm optimises for different cognitive and performance goals.
+
+</TabItem>
+
+<TabItem value="types" label="Type Systems">
+
+### Type Systems
+
+**Purpose**
+Define how values are classified and validated.
+
+**Key Characteristics**
+- Static vs dynamic
+- Strong vs weak
+- Nominal vs structural
+
+**Behaviour**
+Types catch errors early or allow flexibility at runtime.
+
+**Trade-offs**
+Safety vs speed vs expressiveness.
+
+</TabItem>
+
+<TabItem value="execution" label="Execution Models">
+
+### Execution Models & Turing Completeness
+
+**Purpose**
+Define how source code becomes executable behaviour and what computations the language can express.
+
+**Key Characteristics**
+- Compiled → machine code
+- Interpreted → executed line‑by‑line
+- JIT → hybrid
+- **Turing Complete languages** → can express any computation given enough time and memory
+
+**Behaviour**
+Execution model affects performance, startup time, portability, and computational limits.
+
+**Trade-offs**
+Compilation = speed
+Interpretation = flexibility
+JIT = balance
+Turing completeness = maximum expressiveness but no guarantee of termination
+
+</TabItem>
+
+<TabItem value="memory" label="Memory Models">
+
+### Memory Models & Garbage Collection
+
+**Purpose**
+Define how memory is allocated, shared, and reclaimed.
+
+**Key Characteristics**
+- Stack vs heap
+- Manual vs automatic memory management
+- GC algorithms (mark‑sweep, generational, reference counting)
+
+**Behaviour**
+Memory models determine concurrency safety and performance.
+
+**Trade-offs**
+GC simplifies development but introduces pauses; manual memory is fast but risky.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How language theory shapes runtime behaviour
+- How type systems influence API design
+- How memory models affect performance under load
+- How execution models determine scaling characteristics
+:::
+
+### Local Systems
+
+- OS scheduling
+- CPU architecture
+- Memory allocation
+- Threading model
+- File I/O
+- Event loops
+
+### Remote Systems
+
+- Distributed runtimes
+- Containers
+- Serverless platforms
+- Multi‑node concurrency
+
+### Questions to ask during reviews or incidents
+
+- What is the runtime doing?
+- How does the memory model behave under pressure?
+- Are type assumptions being violated?
+- Is the execution model appropriate for the workload?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Language behaviour affects performance, correctness, and safety.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Predictable Execution | Code behaves consistently across environments. |
+| Type Safety | Errors caught early or prevented entirely. |
+| Efficient Memory Use | Minimal leaks, stable GC behaviour. |
+
+### Failure Modes
+
+| Failure Type | Description|
+|-------------|-------------|
+| Runtime Errors | Nulls, type coercion, undefined behaviour. |
+| Memory Leaks | Unreleased references, GC pressure. |
+| Concurrency Bugs | Race conditions, deadlocks, visibility issues. |
+
+---
+
+## 🔗 Related Runbook Concepts
+
+- JDK / JVM Runtime
+- Node.js Runtime
+- Memory Profiling
+- Garbage Collection Diagnostics
+- Compiler / Build Toolchains
+

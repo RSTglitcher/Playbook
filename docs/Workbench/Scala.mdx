@@ -1,0 +1,199 @@
+---
+title: "Scala"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Scala
+Scala is a hybrid functional–object‑oriented programming language designed for expressiveness, safety, and concurrency.
+
+- **Year developed:** 2004  
+- **Primary purpose:** High‑level application development with strong type safety  
+- **Target problem:** Building scalable, concurrent, and expressive systems on the JVM  
+:::
+
+---
+
+## 🗺️ Context
+
+### History
+Scala was created by **Martin Odersky** at EPFL as a modern alternative to Java, combining:
+
+- Object‑oriented programming  
+- Functional programming  
+- Strong static typing  
+- JVM interoperability  
+
+It is widely used in:
+
+- Distributed systems  
+- Data engineering (Spark)  
+- Backend services  
+- Domain‑driven design  
+- Concurrency‑heavy applications  
+
+### Strengths & Limitations
+
+**Strengths**
+- Strong static type system  
+- Interoperable with Java  
+- Functional + OOP hybrid  
+- Excellent for concurrency (Akka, Futures, ZIO, Cats Effect)  
+- Great for data engineering (Spark)  
+
+**Limitations**
+- Steeper learning curve  
+- Complex syntax for beginners  
+- Tooling can be slower than Java  
+- Multiple paradigms can confuse newcomers  
+
+### TA‑Relevant Insights
+- Scala codebases often mix FP + OOP — understanding both is essential  
+- Many enterprise Scala systems rely on **case classes**, **traits**, and **pattern matching**  
+- Scala is common in **event‑driven** and **data‑intensive** architectures  
+- Knowing Scala helps you interpret Spark jobs, Akka actors, and functional pipelines  
+
+---
+
+## 🧠 Mental Model
+
+### How to think in this environment
+- Scala encourages **immutability**  
+- Functions are **first‑class citizens**  
+- Types encode **behaviour and constraints**  
+- Pattern matching replaces complex branching  
+- Companion objects act as **namespaces + factories**  
+
+### Ecosystem
+- **Build tools:** SBT, Mill  
+- **Libraries:** Akka, Cats, ZIO, Skuber  
+- **Data:** Spark, Delta Lake  
+- **Tooling:** IntelliJ, Metals  
+- **JVM interop:** Java libraries, JDBC, Spring  
+
+---
+
+## 📚 Core Concepts
+
+<Tabs>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this medium.
+
+```scala
+// Define a class
+class Person(val name: String, val age: Int)
+
+// Define a case class
+case class User(id: Int, name: String)
+
+// Pattern matching
+val u = User(1, "User")
+u match {
+  case User(id, name) => println(s"$name has id $id")
+}
+
+// Companion object factory
+object Person {
+  def apply(name: String) = new Person(name, 0)
+}
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Useful workflows and queries for analysts to read or interpret what the code or model is doing.
+
+```scala
+// Understand data models
+case class Order(id: Int, amount: Double)
+
+// Trace transformations
+val amounts = orders.map(_.amount)
+
+// Identify branching logic
+value match {
+  case x if x > 10 => "High"
+  case _           => "Low"
+}
+
+// Spot concurrency patterns
+import scala.concurrent.Future
+Future { computeSomething() }
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🔁 Common Patterns
+
+### Idioms
+- Case classes for modelling data
+- Pattern matching for branching
+- Companion objects for factories
+- Traits for modular behaviour
+- Immutability by default
+- Higher‑order functions (`map`, `flatMap`, `filter`)
+- For‑comprehensions for sequencing effects
+
+### Pitfalls
+- Overusing implicits (Scala 2)
+- Confusing FP/OOP mixing
+- Mutable state inside functional code
+- Complex type signatures
+- SBT performance issues
+
+---
+
+## 🧪 Examples
+
+### **Case Class + Pattern Matching**
+
+```scala
+case class User(name: String, age: Int)
+
+val u = User("User", 30)
+
+u match {
+  case User(n, a) => println(s"$n is $a years old")
+}
+```
+
+### **Trait + Implementation**
+
+```scala
+trait Greeter {
+  def greet(name: String): String
+}
+
+object FriendlyGreeter extends Greeter {
+  def greet(name: String) = s"Hello, $name!"
+}
+```
+
+### **For‑Comprehension**
+
+```scala
+val result =
+  for {
+    a <- Future(10)
+    b <- Future(20)
+  } yield a + b
+```
+
+---
+
+## 📝 Glossary
+
+- **Case Class** — immutable data model with auto‑generated methods
+- **Trait** — behaviour contract, mixable into classes
+- **Companion Object** — singleton object paired with a class
+- **Pattern Matching** — expressive branching mechanism
+- **SBT** — Scala’s build tool
+- **Sealed Trait** — restricts inheritance to the same file

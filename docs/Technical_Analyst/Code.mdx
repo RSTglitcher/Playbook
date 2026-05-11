@@ -1,0 +1,42 @@
+---
+title: "Writing Code"
+sidebar_position: 7
+---
+
+## 🧠 Purpose  
+This guide explains the **engineering thought process** behind turning a problem statement into working code — in a way that is:
+
+- language‑agnostic  
+- planning‑first  
+- engineering‑accurate  
+- aligned with backend, distributed, and data‑platform systems  
+- cross‑linked to Workbench pages  
+
+Where **Theory** explains concepts  
+and **Workbench** explains tools,  
+**this guide explains the *process* of going from problem → design → code → tests.**
+
+
+## 🧭 Workflow Overview
+
+Each step includes:
+
+- **Thought Process** (language‑agnostic)  
+- **Example A** (simple domain)  
+- **Example B** (backend/platform — Kafka, APIs, caching, concurrency, etc.)  
+
+
+| Step No. | Step | Thought Process (Language‑Agnostic) | Example A: Simple Domain | Example B: Backend / Platform |
+|---------|------|--------------------------------------|---------------------------|-------------------------------|
+| **1** | **Start with the Problem Statement** | Identify the *intent*, *actors*, and *outcomes*. Engineers begin with the same artefact analysts produce. | “A customer can place an order containing multiple products.” | “When a product is updated, publish an event to Kafka so downstream systems can update their state.” |
+| **2** | **Extract Domain Concepts (Nouns → Entities)** | Nouns become **classes**, **components**, or **services**. | Customer, Order, Product | ProductUpdatedEvent, CatalogService, KafkaProducer, SearchIndexUpdater |
+| **3** | **Extract Behaviours (Verbs → Methods / Responsibilities)** | Verbs become **methods**, **handlers**, or **operations**. | placeOrder(), calculateTotal() | publishEvent(), handleEvent(), updateIndex(), recalculateRecommendations() |
+| **4** | **Identify Required Data (Attributes → Fields / Schemas)** | Determine what each entity needs to store to perform its behaviour. | Product → name, price; Order → List`<Product`> | Event → productId, timestamp, changedFields; Cache → productSnapshot |
+| **5** | **Choose Structure (Class / Interface / Inheritance / Component)** | Decide how to model the domain: identity, capability, or specialisation. | Product → class; Discountable → interface | Event → immutable class; Producer/Consumer → interfaces; Handlers → concrete classes |
+| **6** | **Choose Data Structures (List / Set / Map / Queue / Stream)** | Choose based on behaviour: ordering, uniqueness, lookup, streaming. | Order.products → List`<Product`> | Kafka → distributed queue; Cache → Map`<Id, Snapshot>`; Search → inverted index |
+| **7** | **Define Object Lifecycle (Constructors, DI, Factories)** | Ensure objects/components start in a valid state. | new Product(name, price) | new ProductUpdatedEvent(productId, timestamp); DI for KafkaProducer |
+| **8** | **Build the First Working Slice (Walking Skeleton)** | Build the smallest end‑to‑end flow that works. | Create order → add product → calculate total | CatalogService publishes event → KafkaProducer sends → one consumer handles |
+| **9** | **Test as You Build (Unit → Integration → Contract → E2E)** | Validate behaviour incrementally. Tests guide design. | JUnit test for calculateTotal() | Unit tests for handlers; Contract tests for schemas; Integration tests for Kafka; E2E for search index update |
+| **10** | **Iterate: Build → Run → Observe → Adjust** | Engineers plan one small step, run it, adjust. This *is* the plan. | Add discounts → test → refine | Add retries, DLQs, idempotency, caching → test each layer |
+| **11** | **Expand the Model Safely (Features, Edge Cases, Errors)** | Add complexity only after the core works. | Add validation, error handling | Add schema evolution, observability, concurrency controls |
+| **12** | **Integrate with the Wider System (Architecture Thinking)** | Consider interactions, failure modes, performance, contracts. | Order system integrates with payment, inventory | Event flows integrate with search, recommendations, analytics, caches, APIs |
