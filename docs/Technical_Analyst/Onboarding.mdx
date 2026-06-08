@@ -1,0 +1,336 @@
+---
+title: "🗺️ Onboarding"
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+Onboarding as a **Technical Analyst** is the process of building a clear, accurate mental model of a new department.
+The goal is not to memorise details, but to understand **purpose, systems, workflows, data, constraints, and operational realities**.
+
+This guide provides a structured, repeatable method for onboarding into any department, enabling a TA to become effective quickly and confidently.
+:::
+
+---
+
+# 🧭 Onboards to any Department
+
+A TA’s onboarding journey follows a predictable pattern:
+
+1. **Understand the purpose**
+2. **Map the systems**
+3. **Trace the workflows**
+4. **Understand the data**
+5. **Identify constraints and risks**
+6. **Learn how the team works**
+7. **Form the mental model**
+
+Each step below explains **what you’re trying to understand**, **why it matters**, **how to approach it**, and **what good looks like**.
+
+---
+
+## 1. Department’s Purpose
+
+### Objective
+The mission, responsibilities, and outcomes the department exists to deliver.
+
+**Why it matters**
+Purpose shapes everything: architecture, workflows, priorities, constraints, and decision‑making.
+Without understanding purpose, analysis becomes disconnected from reality.
+
+### Approach
+- Review department charters, OKRs, or strategy documents
+- Speak with leads about what “success” means
+- Identify the domains and capabilities the team owns
+- Understand how the department fits into the wider organisation
+
+**What good looks like**
+You can summarise the department’s purpose in **two sentences**, and explain how its work contributes to organisational goals.
+
+### Output
+- Purpose summary
+- Map of owned domains/capabilities
+- List of success measures
+
+---
+
+## 2. Map the Systems & Architecture
+
+<Tabs>
+<TabItem value="inventory" label="System Inventory">
+
+### Objective
+What systems, services, and repositories exist — and why they exist.
+
+**Why it matters**
+A TA must know the landscape before analysing behaviour or identifying risks.
+
+### Approach
+- Catalogue systems and repos
+- Capture the purpose of each in one sentence
+- Identify core vs supporting systems
+
+**What good looks like**
+A clear, concise inventory that explains the system landscape at a glance.
+
+### Output
+- System inventory
+- Purpose summaries
+- Ownership map
+
+</TabItem>
+
+<TabItem value="architecture" label="Architecture">
+
+### Objective
+How systems fit together and how data, events, and responsibilities flow between them.
+
+**Why it matters**
+Architecture reveals boundaries, dependencies, and potential failure points.
+
+### Approach
+- Review architecture diagrams (if they exist)
+- Trace interactions between components
+- Identify internal and external dependencies
+- Understand integration points
+
+**What good looks like**
+A high‑level architecture diagram you can explain without hesitation.
+
+### Output
+- High‑level architecture map
+- Dependency list
+- Integration overview
+
+</TabItem>
+</Tabs>
+
+---
+
+## 3. Trace the Core Workflows
+
+<Tabs>
+<TabItem value="flows" label="End‑to‑End Flows">
+
+### Objective
+The key workflows the department supports and how work moves through the system.
+
+**Why it matters**
+Workflows reveal intent, behaviour, and operational expectations.
+
+### Approach
+- Identify primary workflows
+- Understand triggers (events, schedules, requests)
+- Identify inputs and outputs
+- Identify consumers
+
+**What good looks like**
+You can walk someone through a workflow from trigger → processing → output.
+
+### Output
+- Workflow diagrams
+- Trigger → output mapping
+
+</TabItem>
+
+<TabItem value="behaviour" label="Behaviour & Variants">
+
+### Objective
+How workflows behave under different conditions.
+
+**Why it matters**
+Edge cases and variants often reveal the real complexity.
+
+### Approach
+- Identify happy path vs edge cases
+- Understand latency, throughput, and scaling behaviour
+- Identify known failure modes
+
+**What good looks like**
+A clear understanding of how workflows behave in normal and exceptional scenarios.
+
+### Output
+- Behaviour notes
+- Failure mode list
+
+</TabItem>
+</Tabs>
+
+---
+
+## 4. Communication Patterns
+
+### Objective
+How systems talk to each other and what guarantees those interactions rely on.
+
+**Why it matters**
+Communication patterns define reliability, coupling, and operational risk.
+
+### Approach
+- Identify integration methods (APIs, events, queues, batch jobs, file drops)
+- Review data contracts and schemas
+- Identify upstream and downstream systems
+- Understand reliability guarantees (ordering, retries, durability)
+
+**What good looks like**
+You can explain how information moves through the system and where it might fail.
+
+### Output
+- Integration map
+- Contract summaries
+- Upstream/downstream list
+
+---
+
+## 5. Data & Domain
+
+<Tabs>
+<TabItem value="domain" label="Domain Concepts">
+
+### Objective
+The key domain objects and the rules that govern them.
+
+**Why it matters**
+Domain understanding is essential for shaping requirements and identifying problems.
+
+### Approach
+- Identify core entities
+- Understand what each represents
+- Identify invariants and rules
+- Map state transitions
+
+**What good looks like**
+You can explain the domain in simple, accurate language.
+
+### Output
+- Domain glossary
+- Entity/state diagrams
+
+</TabItem>
+
+<TabItem value="dataflows" label="Data Flows">
+
+### Objective
+Where data comes from, how it changes, and where it goes.
+
+**Why it matters**
+Data flows reveal dependencies, risks, and operational constraints.
+
+### Approach
+- Identify data sources
+- Understand transformations
+- Identify sinks and destinations
+- Review validation and persistence logic
+
+**What good looks like**
+A clear understanding of how data moves through the system.
+
+### Output
+- Data flow diagrams
+- Transformation notes
+
+</TabItem>
+</Tabs>
+
+---
+
+## 6. Operational Context
+
+### Objective
+How the system behaves in production and what operational realities shape it.
+
+**Why it matters**
+Operational context reveals constraints, risks, and priorities.
+
+### Approach
+- Review SLAs and SLOs
+- Explore dashboards, alerts, and logs
+- Review incident history
+- Identify runbooks and procedures
+- Understand performance and cost considerations
+
+**What good looks like**
+You understand how the system behaves when things go right — and wrong.
+
+### Output
+- Operational notes
+- Incident patterns
+- Observability overview
+
+---
+
+## 7. Identify Constraints & Risks
+
+<Tabs>
+<TabItem value="constraints" label="Constraints">
+
+### Objective
+The limitations that shape design and behaviour.
+
+**Why it matters**
+Constraints define what is possible, feasible, and safe.
+
+### Approach
+- Identify architectural constraints
+- Identify regulatory or compliance requirements
+- Identify operational constraints
+
+**What good looks like**
+A clear understanding of what cannot change — and why.
+
+### Output
+- Constraint list
+- Compliance notes
+
+</TabItem>
+
+<TabItem value="risks" label="Risks">
+
+### Objective
+Where the system is fragile or exposed.
+
+**Why it matters**
+Risks guide prioritisation, design choices, and operational readiness.
+
+### Approach
+- Identify known risks
+- Identify critical dependencies
+- Identify assumptions
+- Identify bottlenecks or single points of failure
+
+**What good looks like**
+A risk map that highlights where attention is needed.
+
+### Output
+- Risk register
+- Dependency map
+
+</TabItem>
+</Tabs>
+
+---
+
+## 8. Learn the Team’s Ways of Working
+
+### Objective
+How the team collaborates, communicates, and makes decisions.
+
+**Why it matters**
+A TA must integrate into the team’s rhythm to be effective.
+
+### Approach
+- Identify roles and responsibilities
+- Understand ceremonies (standups, planning, refinement, reviews)
+- Understand decision‑making patterns
+- Review documentation standards
+- Establish communication channels
+
+**What good looks like**
+You know who to speak to, when, and for what.
+
+### Output
+- Team map
+- Ceremony notes
+- Communication plan
