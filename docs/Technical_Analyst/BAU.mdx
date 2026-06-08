@@ -1,0 +1,156 @@
+---
+title: "🔄 BAU"
+sidebar_position: 3
+---
+
+:::tip Concept Overview
+This page describes how a Technical Analyst operates across the full delivery lifecycle.
+Each Kanban stage is presented as a structured table showing how a TA thinks, behaves, collaborates, and contributes to delivery.
+:::
+
+---
+
+<details>
+<summary>🛎️ Ceremonies</summary>
+
+| **Category** | **Purpose** |
+|--------------|-------------|
+| **TO** | Create shared understanding across engineering and stakeholders; provide structured opportunities for technical alignment; reduce ambiguity through evidence and constraints; surface risks early; support predictable delivery through clear decision‑making moments; strengthen communication loops across product, engineering, and operations |
+| **DO** | Define the purpose; prepare inputs; facilitate neutrally; surface risks early; document outcomes |
+| **BE** | Consistent; clear; neutral; accountable; focussed |
+
+</details>
+
+<details>
+<summary>📐 Principles</summary>
+
+| **What You Observe** | **What It Reveals About Principles** | **TA Interpretation / What It Means** |
+| --- | --- | --- |
+| **How decisions are made** | What arguments win, what concerns block progress, what trade‑offs are acceptable | Reveals decision‑making principles: risk tolerance, bias toward speed vs safety, preference for simplicity vs flexibility |
+| **How work flows** | Whether the team uses Kanban, Scrum, big‑batch releases, high/low WIP | Reveals delivery principles: flow efficiency, iteration, predictability, throughput, batching |
+| **What engineers push back on** | Ambiguity, complexity, coupling, lack of observability | Reveals engineering principles: simplicity, separation of concerns, resilience, clarity |
+| **What gets escalated** | Performance issues, data quality, operational risk, predictability | Reveals organisational priorities: reliability, correctness, governance, delivery commitments |
+| **What gets praised** | Simplicity, speed, robustness, autonomy | Reveals cultural principles: craftsmanship, velocity, ownership, quality mindset |
+
+</details>
+
+---
+
+## 🔎 Discovery
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Vague request, symptom, observation, stakeholder concern |
+| **Ceremonies** | Informal discovery chats; early triage discussions; **Technical Discovery Sessions** |
+| **Principles in Play** | Evidence‑first, Simplicity, Systems awareness |
+| **TA Role** | **Leading** — TA drives clarity and determines whether work should progress |
+| **TA Thoughts** | Curious, neutral, validating whether a real problem exists; pattern‑spotting |
+| **TA Behaviour** | Gathers context, identifies stakeholders, confirms reproducibility, captures signals |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Discovery notes; initial problem framing; discovery summary |
+
+
+
+## 🧠 Analysis
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Discovery signals, logs, metrics, stakeholder context |
+| **Ceremonies** | Deep‑dives with engineers; stakeholder clarification sessions |
+| **Principles in Play** | KISS, Separation of Concerns, Flow efficiency |
+| **TA Role** | **Leading** — TA owns investigation and shapes the problem |
+| **TA Thoughts** | Separates symptoms from expected behaviour; validates assumptions; maps dependencies |
+| **TA Behaviour** | Investigates deeply, clarifies assumptions, identifies edge cases |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Clear **Problem Statement**; draft **Requirements**; identified **Parameters**; clarified assumptions |
+
+
+
+## 📥 Backlog
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Shaped analysis, draft ticket components |
+| **Ceremonies** | Backlog refinement; prioritisation discussions; **Requirements Workshops** |
+| **Principles in Play** | Iterative delivery, Testability, Alignment |
+| **TA Role** | **Leading → Supporting** — leads refinement, supports prioritisation |
+| **TA Thoughts** | Ensures work is valuable, feasible, testable |
+| **TA Behaviour** | Refines requirements, validates with PM/engineering, clarifies dependencies |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Fully formed **Ticket**; refined requirements; prioritisation notes; workshop outputs |
+
+
+
+## 📝 To Do
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Ready ticket, aligned requirements |
+| **Ceremonies** | **Sprint Planning** — clarify requirements, highlight risks, ensure feasibility |
+| **Principles in Play** | Predictability, Clarity, Outcome orientation |
+| **TA Role** | **Supporting** — ensures readiness and clarity |
+| **TA Thoughts** | Ensures no ambiguity remains before work begins |
+| **TA Behaviour** | Provides clarification, prepares supporting documentation |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Confirmed scope; sprint‑ready ticket; planning notes |
+
+
+
+## 🔧 In Progress
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Active development work, engineering questions |
+| **Ceremonies** | Daily stand‑up; ad‑hoc technical discussions; **Design Clarification Sessions**; **Design Reviews** |
+| **Principles in Play** | Resilience, Boundaries, Traceability |
+| **TA Role** | **Supporting** — engineering leads; TA unblocks and clarifies |
+| **TA Thoughts** | Focuses on unblocking, ensuring alignment with requirements |
+| **TA Behaviour** | Answers questions quickly, clarifies edge cases, updates parameters |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Clarifications; updated ticket details; design review notes; decision documentation |
+
+
+
+## 🔍 In Review
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Completed development, logs, metrics |
+| **Ceremonies** | Code review discussions; QA handover; **Technical Decision Reviews** |
+| **Principles in Play** | Contracts, Correctness, Testability |
+| **TA Role** | **Leading** — validates behaviour against requirements |
+| **TA Thoughts** | Validates behaviour, not implementation; checks against checklist |
+| **TA Behaviour** | Reviews logs/metrics, confirms acceptance criteria, flags gaps |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Verified behaviour; updated checklist; decision review outputs |
+
+
+
+## 🧪 In UAT
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | UAT results, stakeholder feedback |
+| **Ceremonies** | UAT review sessions; stakeholder demos |
+| **Principles in Play** | Outcome orientation, Real‑world validation |
+| **TA Role** | **Supporting → Leading** — supports PM/QA, then leads validation |
+| **TA Thoughts** | Focuses on user/business value; confirms the problem is resolved |
+| **TA Behaviour** | Validates real‑world scenarios, checks regressions |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Confirmed success criteria; UAT notes; sign‑off recommendations |
+
+
+
+## ✅ Done
+
+| **Dimension** | **Description** |
+|--------------|-----------------|
+| **Inputs** | Completed work, monitoring data, incident signals |
+| **Ceremonies** | Sprint retrospective; post‑implementation review; **Incident Analysis / Post‑Incident Reviews** |
+| **Principles in Play** | Continuous improvement, Reliability, Governance |
+| **TA Role** | **Leading** — ensures closure, documentation, and learning |
+| **TA Thoughts** | Reflects on learnings; identifies patterns for improvement |
+| **TA Behaviour** | Updates documentation, ensures monitoring/alerts, contributes to retros |
+| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
+| **Outputs** | Updated documentation; monitoring updates; retrospective insights; incident reports |
+

@@ -1,0 +1,108 @@
+---
+title: "📝 Tickets"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Concept Overview
+A **Requirement** defines what a solution must achieve for a problem to be considered resolved.
+For a Technical Analyst, requirements translate a clear problem statement into actionable, testable expectations that guide engineering, QA, and stakeholders.
+
+Strong requirements:
+- Describe *what* must be true, not *how* to implement it
+- Provide clarity and alignment across roles
+- Are testable, feasible, and traceable to the problem
+- Reduce ambiguity and prevent rework
+:::
+
+---
+
+<Tabs>
+<TabItem value="template" label="Template">
+
+## ❗**Problem Statement**
+
+**In [context], the [system/feature] is [observed behaviour] instead of [expected behaviour], which impacts [who/what] by [impact].
+Evidence shows [key logs/metrics/examples].
+The issue is resolved when [success criteria].**
+
+### Anatomy of a Good Problem Statement
+
+- **Context** — where and when the issue occurs
+- **Symptoms** — what is happening vs what should happen
+- **Impact** — who or what is affected
+- **Constraints** — technical or business limitations
+- **Evidence** — logs, metrics, traces, data
+- **Success criteria** — what “resolved” looks like
+
+---
+
+## ✅ **Requirement**
+
+**The system must [desired behaviour] when [conditions], so that [user/business outcome].
+
+### Anatomy of a Good Requirement
+
+- **Desired behaviour** — what the system must do
+- **Conditions** — when or under what inputs the behaviour applies
+- **Outcome** — why this behaviour matters (user or business value)
+- **Acceptance criteria** — measurable, testable confirmation
+- **Constraints** — limits that shape feasibility (optional but useful)
+
+| **Method** | **How You Gather Requirements** | **How You Validate Them** |
+| --- | --- | --- |
+| **User & Stakeholder Input** | Interview users to understand goals, pain points, expectations; clarify what “success” means; surface assumptions; validate terminology | Check that requirements reflect real user needs, are aligned with stakeholder goals, and avoid ambiguous or conflicting interpretations |
+| **Systems & Technical Analysis** | Review logs, metrics, system behaviour; analyse dependencies; identify technical constraints; confirm architectural feasibility | Validate that requirements are technically possible, fit within system boundaries, and do not contradict existing behaviour or constraints |
+| **Workflow & Process Review** | Map the workflow end‑to‑end; identify where the requirement fits; understand edge cases; assess cross‑team/system impact | Ensure requirements work across all steps of the workflow, handle edge cases, and do not introduce new bottlenecks or regressions |
+| **Evidence & Validation** | Use data to confirm the requirement is necessary; validate assumptions with reproducible tests; compare expected vs actual behaviour | Confirm requirements directly address the problem statement, are supported by evidence, and can be objectively tested |
+
+---
+
+### ⚙️ Parameters
+- [Condition under which the behaviour must occur]
+- [Inputs/outputs]
+- [Constraints or limits]
+- [Edge cases]
+- [Non‑functional expectations, if relevant]
+
+---
+
+### 📋 Completion Checklist
+The task is complete when all of the following are true:
+
+- [ ] Behaviour occurs under defined conditions
+- [ ] Inputs/outputs match expected format
+- [ ] Edge cases are handled
+- [ ] Constraints are respected
+- [ ] Success criteria met: **[measurable acceptance criteria]**
+
+</TabItem>
+<TabItem value="example" label="Example">
+
+## 🧪 Example (Filled In)
+
+### ❗ Problem Statement
+In production during peak hours, the Orders API returns p95 latency of 2.5s instead of the expected `<500ms`, causing Checkout timeouts for ~12% of users.
+Evidence: latency dashboards, timeout logs from 2026‑06‑01 to 2026‑06‑07.
+
+### ✅ Requirement
+The system must maintain stable checkout performance under peak load.
+
+### ⚙️ Parameters
+- Applies when Orders API receives up to 200 RPS
+- Expected p95 latency `<500ms`
+- Checkout timeout rate `<1%`
+- Must avoid retry storms or cascading failures
+- Applies to production only
+
+### 📋 Completion Checklist
+- [ ] p95 latency `<500ms `at 200 RPS
+- [ ] Checkout timeout rate `<1%`
+- [ ] No retry storms observed in logs
+- [ ] Monitoring stable for 30 minutes under load
+- [ ] All success criteria met
+
+</TabItem>
+</Tabs>
