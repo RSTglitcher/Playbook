@@ -41,15 +41,13 @@ The issue is resolved when [success criteria].**
 
 ## ✅ **Requirement**
 
-**The system must [desired behaviour] when [conditions], so that [user/business outcome].
+The system must [desired behaviour] when [conditions], so that [user/business outcome].
 
 ### Anatomy of a Good Requirement
 
 - **Desired behaviour** — what the system must do
 - **Conditions** — when or under what inputs the behaviour applies
 - **Outcome** — why this behaviour matters (user or business value)
-- **Acceptance criteria** — measurable, testable confirmation
-- **Constraints** — limits that shape feasibility (optional but useful)
 
 | **Method** | **How You Gather Requirements** | **How You Validate Them** |
 | --- | --- | --- |
@@ -69,7 +67,7 @@ The issue is resolved when [success criteria].**
 
 ---
 
-### 📋 Completion Checklist
+### 📋 Acceptance Criteria
 The task is complete when all of the following are true:
 
 - [ ] Behaviour occurs under defined conditions
@@ -97,7 +95,7 @@ The system must maintain stable checkout performance under peak load.
 - Must avoid retry storms or cascading failures
 - Applies to production only
 
-### 📋 Completion Checklist
+### 📋 Acceptance Criteria
 - [ ] p95 latency `<500ms `at 200 RPS
 - [ ] Checkout timeout rate `<1%`
 - [ ] No retry storms observed in logs
