@@ -193,7 +193,6 @@ gcloud services list
 - Establish TA expectations for monitoring and triage  
 
 </TabItem>
-
 <TabItem value="engineering" label="Engineering">
 
 Common workflows and commands used by engineers when operating this tool
@@ -217,30 +216,95 @@ gsutil cp file.txt gs://bucket/
 ```
 
 </TabItem>
-
 <TabItem value="analyst" label="Analyst">
 
 Common workflows and queries used by analysts when interpreting data from this tool.
 
 ```shell
 --------------
-Key Terminal Commands (mapped to analyst skills)
+Key Terminal Commands
 --------------
 
 # Inspect BigQuery table schema
-bq show --schema --format=prettyjson dataset.table
+bq show --schema --format=prettyjson <project>:<dataset>.<table>
+
+# Inspect full metadata (type, partitioning, clustering, view SQL)
+bq show --format=prettyjson <project>:<dataset>.<table> | less
+
+# Preview table (fast orientation)
+bq head -n 5 <project>:<dataset>.<table>
+
+# Preview via SQL (more readable)
+bq query --use_legacy_sql=false --format=prettyjson '
+SELECT *
+FROM `<project>.<dataset>.<table>`
+LIMIT 5'
+
+# List datasets in a project
+bq ls --project_id=<project>
+
+# List tables in a dataset
+bq ls <project>:<dataset>
 
 # Check BigQuery job history
 bq ls -j --max_results=20
 
-# Inspect Pub/Sub subscription backlog
-gcloud pubsub subscriptions describe SUBSCRIPTION_NAME
-
-# Inspect BigTable tables
-gcloud bigtable tables list --instance INSTANCE_NAME
-
 # Explore Cloud Storage bucket
 gsutil ls gs://bucket/
+
+# Inspect Pub/Sub subscription backlog
+gcloud pubsub subscriptions describe <subscription>
+
+# Inspect BigTable tables
+gcloud bigtable tables list --instance <instance>
+
+--------------
+Exploration SQL (repeatable analyst workflow)
+--------------
+
+-- 1. Preview shape
+SELECT * FROM `<table>` LIMIT 5;
+
+-- 2. Size of dataset
+SELECT COUNT(*) AS row_count FROM `<table>`;
+
+-- 3. Grain (row meaning)
+SELECT
+  COUNT(*) AS row_count,
+  COUNT(DISTINCT <id>) AS distinct_ids
+FROM `<table>`;
+
+-- 4. Distribution (business states)
+SELECT <status_col>, COUNT(*) AS row_count
+FROM `<table>`
+GROUP BY <status_col>
+ORDER BY row_count DESC;
+
+-- 5. Lifecycle (freshness)
+SELECT MIN(<date_col>) AS earliest, MAX(<date_col>) AS latest
+FROM `<table>`;
+
+-- 6. Null checks (quality)
+SELECT
+  COUNT(*) AS row_count,
+  COUNTIF(<col1> IS NULL) AS col1_nulls,
+  COUNTIF(<col2> IS NULL) AS col2_nulls
+FROM `<table>`;
+
+-- 7. Duplicate detection
+SELECT <key_col>, COUNT(*) AS row_count
+FROM `<table>`
+GROUP BY <key_col>
+HAVING COUNT(*) > 1
+ORDER BY row_count DESC
+LIMIT 20;
+
+-- 8. Journey / filtering
+SELECT *
+FROM `<table>`
+WHERE <col> = 'value'
+LIMIT 10;
+
 ```
 
 </TabItem>

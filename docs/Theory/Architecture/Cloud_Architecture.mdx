@@ -29,12 +29,12 @@ Cloud architecture solves the problem of **building and operating large‑scale 
 
 It provides:
 
-- **Elasticity** → scale up/down automatically
-- **Global reach** → serve users from the nearest region
-- **High availability** → multi‑AZ and multi‑region redundancy
-- **Managed services** → databases, queues, storage, compute
-- **Cost efficiency** → pay for what you use
-- **Operational offloading** → no hardware, power, cooling, or physical security to manage
+- **Elasticity** → scale up/down automatically  
+- **Global reach** → serve users from the nearest region  
+- **High availability** → multi‑AZ and multi‑region redundancy  
+- **Managed services** → databases, queues, storage, compute  
+- **Cost efficiency** → pay for what you use  
+- **Operational offloading** → no hardware, power, cooling, or physical security to manage  
 
 It enables companies to focus on **application logic**, not infrastructure.
 
@@ -44,31 +44,31 @@ It enables companies to focus on **application logic**, not infrastructure.
 
 ### **Core Components**
 
-- **Regions & Availability Zones**
+- **Regions & Availability Zones**  
   Physical isolation boundaries for resilience and latency.
 
-- **Compute Layer**
+- **Compute Layer**  
   VMs, containers, serverless functions, autoscaling groups.
 
-- **Storage Layer**
+- **Storage Layer**  
   Object storage, block storage, distributed databases.
 
-- **Networking Layer**
+- **Networking Layer**  
   VPCs, load balancers, gateways, backbone routing.
 
-- **Control Plane**
+- **Control Plane**  
   APIs for provisioning, scaling, identity, monitoring.
 
-- **Edge Layer**
+- **Edge Layer**  
   POPs, CDNs, edge compute, global accelerators.
 
 ### **Axes of Variation**
 
-- **Compute Model** → VM vs container vs serverless
-- **Deployment Model** → single‑region vs multi‑region
-- **Storage Model** → strongly consistent vs eventually consistent
-- **Network Model** → public vs private routing
-- **Operational Model** → managed vs self‑managed services
+- **Compute Model** → VM vs container vs serverless  
+- **Deployment Model** → single‑region vs multi‑region  
+- **Storage Model** → strongly consistent vs eventually consistent  
+- **Network Model** → public vs private routing  
+- **Operational Model** → managed vs self‑managed services  
 
 ---
 
@@ -106,19 +106,127 @@ Response returned via backbone or internet
 
 **What happens when:**
 
-- **Data grows** → storage scaling, partitioning, replication
-- **Traffic increases** → autoscaling, throttling, load balancing
-- **Concurrency rises** → contention, queueing, rate limits
-- **Resources become constrained** → degraded performance, failover, backpressure
+- **Data grows** → storage scaling, partitioning, replication  
+- **Traffic increases** → autoscaling, throttling, load balancing  
+- **Concurrency rises** → contention, queueing, rate limits  
+- **Resources become constrained** → degraded performance, failover, backpressure  
 
-**Cloud Providers:**
+---
 
-- **Availability & Regions:** Choose AWS for fine‑grained AZ isolation; choose GCP for global routing simplicity.
-- **Networking:** Choose based on segmentation needs vs simplicity.
-- **Storage & Data Growth:** Match provider to workload type.
-- **Compute Model:** Choose based on compute diversity vs container‑native workloads.
-- **Control Plane:** Choose based on failure‑isolation vs global consistency.
-- **Cost & Scaling:** Match provider to workload shape.
+### **Cloud Providers (GCP vs AWS)**
+
+AWS is service‑rich, deeply configurable, and offers granular control over infrastructure.  
+GCP is opinionated, simpler to operate, and optimised for analytics and ML workloads.
+
+Both provide:
+
+- Global infrastructure  
+- IAM‑based access control  
+- Managed data and messaging services  
+- Serverless compute  
+- Observability tooling  
+
+#### **Quick provider heuristics**
+
+- **Availability & Regions:** Choose AWS for fine‑grained AZ isolation; choose GCP for global routing simplicity.  
+- **Networking:** Choose based on segmentation needs vs simplicity.  
+- **Storage & Data Growth:** Match provider to workload type.  
+- **Compute Model:** Choose based on compute diversity vs container‑native workloads.  
+- **Control Plane:** Choose based on failure‑isolation vs global consistency.  
+- **Cost & Scaling:** Match provider to workload shape.  
+
+---
+
+### **Philosophy**
+
+| Cloud | Philosophy |
+|-------|------------|
+| **AWS** | “Everything is a service.” Highly configurable, broadest service catalog. |
+| **GCP** | “Simplicity + analytics first.” Strong defaults, fewer services, deeper integration. |
+
+---
+
+### **Data Services**
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Data Warehouse** | Redshift | BigQuery (serverless, industry‑leading) |
+| **Object Storage** | S3 | Cloud Storage |
+| **NoSQL Key‑Value** | DynamoDB | Firestore / Cloud Bigtable |
+| **Wide‑Column Store** | DynamoDB (key‑value) | Bigtable (HBase‑style) |
+| **Data Lake** | S3 + Glue + Lake Formation | Cloud Storage + BigQuery external tables |
+| **ETL/ELT** | Glue, EMR | Dataflow, Dataproc |
+
+**TA Insight:** GCP dominates analytics (BigQuery). AWS dominates operational NoSQL (DynamoDB).
+
+---
+
+### **Messaging & Streaming**
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Pub/Sub Messaging** | SNS + SQS | Pub/Sub (unified pub/sub model) |
+| **Streaming** | Kinesis | Pub/Sub + Dataflow |
+| **Event Routing** | EventBridge | Eventarc |
+
+**TA Insight:** GCP Pub/Sub is simpler and globally distributed. AWS offers more granular control (SNS fan‑out + SQS queues).
+
+---
+
+### **Compute**
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Serverless** | Lambda | Cloud Functions |
+| **Containers** | ECS, EKS | GKE (industry‑leading Kubernetes) |
+| **VMs** | EC2 | Compute Engine |
+| **Batch** | Batch | Batch / Dataflow |
+
+**TA Insight:** GCP leads in Kubernetes (GKE). AWS leads in VM flexibility and ecosystem depth.
+
+---
+
+### **Security & IAM**
+
+| Area | AWS | GCP |
+|------|-----|-----|
+| **IAM Model** | Role‑based, very granular | Role‑based, simpler hierarchy |
+| **Resource Hierarchy** | Account → OU → Resource | Org → Folder → Project → Resource |
+| **Secrets** | Secrets Manager | Secret Manager |
+| **Networking** | VPC, PrivateLink | VPC, Private Service Connect |
+
+**TA Insight:** GCP's project hierarchy is easier to reason about. AWS IAM is more flexible but more complex.
+
+---
+
+### **Observability**
+
+| Capability | AWS | GCP |
+|-----------|-----|-----|
+| **Logging** | CloudWatch Logs | Cloud Logging |
+| **Metrics** | CloudWatch Metrics | Cloud Monitoring |
+| **Tracing** | X‑Ray | Cloud Trace |
+| **Dashboards** | CloudWatch Dashboards | Cloud Monitoring Dashboards |
+
+**TA Insight:** GCP's observability tools are more integrated. AWS CloudWatch is powerful but requires more configuration.
+
+---
+
+### **Choosing Between GCP and AWS**
+
+#### **When to choose GCP**
+- Analytics‑heavy workloads  
+- Machine learning pipelines  
+- Global messaging with simple semantics  
+- Kubernetes‑centric architectures  
+- Teams that prefer opinionated defaults  
+
+#### **When to choose AWS**
+- Complex enterprise architectures  
+- Fine‑grained control over infrastructure  
+- High‑scale operational NoSQL (DynamoDB)  
+- Deep integration with legacy systems  
+- Broad service catalog requirements  
 
 ---
 
@@ -142,17 +250,17 @@ Response returned via backbone or internet
 
 ### Infrastructure as a Service (IaaS)
 
-**Purpose**
+**Purpose**  
 Provide raw compute, storage, and networking primitives.
 
 **Key Characteristics**
-- VMs, block storage, load balancers
-- High control, high flexibility
+- VMs, block storage, load balancers  
+- High control, high flexibility  
 
-**Behaviour**
+**Behaviour**  
 Applications run on provisioned infrastructure with autoscaling and monitoring.
 
-**Trade-offs**
+**Trade-offs**  
 More operational overhead than managed or serverless models.
 
 </TabItem>
@@ -161,17 +269,17 @@ More operational overhead than managed or serverless models.
 
 ### Platform as a Service (PaaS)
 
-**Purpose**
+**Purpose**  
 Provide managed platforms for deploying applications.
 
 **Key Characteristics**
-- Managed runtimes, databases, queues
-- Simplified deployment and scaling
+- Managed runtimes, databases, queues  
+- Simplified deployment and scaling  
 
-**Behaviour**
+**Behaviour**  
 Developers focus on code; platform handles infrastructure.
 
-**Trade-offs**
+**Trade-offs**  
 Less control; vendor‑specific constraints.
 
 </TabItem>
@@ -180,18 +288,18 @@ Less control; vendor‑specific constraints.
 
 ### Serverless Architecture
 
-**Purpose**
+**Purpose**  
 Run code without provisioning or managing servers.
 
 **Key Characteristics**
-- Event‑driven
-- Automatic scaling
-- Pay‑per‑execution
+- Event‑driven  
+- Automatic scaling  
+- Pay‑per‑execution  
 
-**Behaviour**
+**Behaviour**  
 Functions run on demand; idle time costs nothing.
 
-**Trade-offs**
+**Trade-offs**  
 Cold starts, execution limits, vendor lock‑in.
 
 </TabItem>
@@ -202,45 +310,45 @@ Cold starts, execution limits, vendor lock‑in.
 ## 🧩 System Interactions
 
 :::info How a TA Understands the System
-Cloud architecture is a **layered system** that interacts with compute, storage, networking, orchestration, and global routing.
+Cloud architecture is a **layered system** that interacts with compute, storage, networking, orchestration, and global routing.  
 Under pressure, bottlenecks appear in network fabric, storage throughput, or control‑plane capacity.
 :::
 
-### Local Systems
+### **Local Systems**
 
-- OS
-- Runtime
-- Network stack
-- Storage drivers
-- Concurrency primitives
-- Scaling mechanisms
+- OS  
+- Runtime  
+- Network stack  
+- Storage drivers  
+- Concurrency primitives  
+- Scaling mechanisms  
 
-### Remote Systems
+### **Remote Systems**
 
-- Other regions
-- Other AZs
-- Edge POPs
-- Global backbone networks
-- Managed services (DBs, queues, caches)
+- Other regions  
+- Other AZs  
+- Edge POPs  
+- Global backbone networks  
+- Managed services (DBs, queues, caches)  
 
-### Questions to ask during reviews or incidents
+### **Questions to ask during reviews or incidents**
 
-- Is the system multi‑AZ or single‑AZ?
-- What happens if the region becomes unavailable?
-- How does the architecture handle cross‑region latency?
-- Are we relying on a single managed service with no failover?
-- What are the rate limits or quotas?
+- Is the system multi‑AZ or single‑AZ?  
+- What happens if the region becomes unavailable?  
+- How does the architecture handle cross‑region latency?  
+- Are we relying on a single managed service with no failover?  
+- What are the rate limits or quotas?  
 
 ---
 
 ## 💥 Outputs / Results
 
 :::note Special Considerations
-Cloud outputs depend on region, AZ design, and service guarantees.
+Cloud outputs depend on region, AZ design, and service guarantees.  
 Latency, throughput, and availability vary by geography and provider.
 :::
 
-### Success Modes
+### **Success Modes**
 
 | Result Type | Description |
 |-------------|-------------|
@@ -248,7 +356,7 @@ Latency, throughput, and availability vary by geography and provider.
 | **High Availability** | Multi‑AZ redundancy prevents outages |
 | **Global Performance** | Users served from nearest region or edge POP |
 
-### Failure Modes
+### **Failure Modes**
 
 | Failure Type | Description |
 |-------------|-------------|
@@ -258,11 +366,26 @@ Latency, throughput, and availability vary by geography and provider.
 
 ---
 
+## 🔥 Provider Triage (Cross‑Cloud)
+
+Common symptoms across both platforms and how to triage them:
+
+| Symptom | AWS Root Cause | GCP Root Cause | What to Check | Action |
+|---------|----------------|----------------|----------------|--------|
+| **Query slow** | Redshift cluster sizing | BigQuery slot contention | Query plan, partitioning | Optimize schema, adjust compute |
+| **Messages delayed** | SQS backlog, slow consumers | Pub/Sub ack deadline issues | Backlog, consumer logs | Scale consumers, tune ack deadlines |
+| **Access denied** | IAM role misconfig | IAM policy or project binding | IAM logs | Fix roles, update bindings |
+| **API quota exceeded** | Service limits | API quotas | Quotas dashboard | Request increase, throttle |
+| **Storage errors** | S3 bucket policy | Cloud Storage IAM | Bucket ACLs | Fix IAM, update policies |
+| **No data flowing** | SNS/SQS misconfig | Pub/Sub subscription misconfig | Topic/subscription config | Recreate or fix subscription |
+
+---
+
 ## 🔗 Related Runbook Concepts
 
-- Data Centres
-- Communication Patterns
-- Distributed Storage
-- Load Balancing
-- Disaster Recovery & Multi‑Region Design
-- Autoscaling & Orchestration
+- Data Centres  
+- Communication Patterns  
+- Distributed Storage  
+- Load Balancing  
+- Disaster Recovery & Multi‑Region Design  
+- Autoscaling & Orchestration  
