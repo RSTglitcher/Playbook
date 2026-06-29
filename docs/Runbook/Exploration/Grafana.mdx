@@ -1,0 +1,264 @@
+---
+title: "Grafana"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip
+Grafana is a **visualization and observability platform** used to explore metrics, logs, and traces from multiple data sources.  
+It solves problems related to **monitoring, alerting, dashboarding, and operational insights** across distributed systems.  
+:::
+
+### Key Terms
+
+- **Dashboard:** A collection of visualizations  
+- **Panel:** A single chart, table, or visualization  
+- **Data Source:** Backend providing metrics/logs (Prometheus, Loki, Elasticsearch, CloudWatch, etc.)  
+- **Alert Rule:** Condition that triggers notifications  
+- **Annotation:** Marker on a graph for events or deployments  
+- **Folder:** Logical grouping of dashboards  
+- **Variables:** Dynamic parameters used in dashboards  
+
+### Knowing when to use **Grafana**
+
+| When to use | When not to use |
+|-------------|-----------------|
+| Metrics visualization and dashboards | Heavy log search (use Kibana/Loki) |
+| Alerting on metrics or thresholds | Complex analytics (use BigQuery/Snowflake) |
+| Multi‑source observability | Real‑time event processing |
+| SRE/TA operational monitoring | Business intelligence dashboards (use Looker/PowerBI) |
+| Time‑series exploration | Schema‑driven reporting |
+
+---
+
+## 📘 About / Foundations  
+_Conceptual grounding for how the tool works._
+
+### How It Works (Conceptual Model)
+
+- Grafana connects to **data sources** (Prometheus, Loki, CloudWatch, Elasticsearch, InfluxDB, etc.)  
+- Dashboards are composed of **panels** that query data sources  
+- **Alert rules** evaluate queries on a schedule  
+- **Annotations** overlay events on charts  
+- **Variables** allow dynamic filtering  
+- **Folders** organize dashboards by team or domain  
+- Grafana does **not** store metrics — it visualizes them  
+
+### System Contract
+
+Grafana enforces contracts through:
+
+- **Data source configuration** (URLs, credentials, query language)  
+- **Dashboard JSON models**  
+- **Folder and dashboard permissions**  
+- **Alerting rules and notification channels**  
+- **Provisioning files** (optional, for GitOps)  
+
+### Key Strategies
+
+<Tabs>
+<TabItem value="dashboards" label="Dashboard Strategy">
+
+- Use variables for reusable dashboards  
+- Group dashboards by domain (infra, application, messaging, storage)  
+- Use consistent naming and tagging  
+- Responsibility: SWE + TA  
+- Goal: clear, actionable operational visibility  
+
+</TabItem>
+
+<TabItem value="alerting" label="Alerting Strategy">
+
+- Use multi‑condition alerts (threshold + absence)  
+- Route alerts by severity (Slack, PagerDuty, email)  
+- Use silence windows for deployments  
+- Responsibility: TA + Platform  
+- Goal: reduce noise, increase signal  
+
+</TabItem>
+
+<TabItem value="data" label="Data Strategy">
+
+- Choose the right data source for the right workload  
+- Use Prometheus for metrics, Loki for logs, Elasticsearch for search  
+- Ensure retention and scrape intervals match SLOs  
+- Responsibility: SWE + TA  
+- Goal: reliable, performant observability  
+
+</TabItem>
+</Tabs>
+
+### What Results Normally Look Like
+
+- Time‑series charts (CPU, memory, latency, throughput)  
+- Heatmaps, histograms, and tables  
+- Alert notifications  
+- Dashboard JSON exports  
+- Query inspector output  
+- Variable‑driven dashboards  
+
+---
+
+## 🧩 Technical Skills
+
+<details>
+<summary>Pre‑Requisites</summary>
+
+#### Security
+- Grafana login credentials  
+- Folder‑level permissions  
+- Data source credentials (Prometheus, Loki, CloudWatch, etc.)  
+- SSO/SSO integration (OAuth, SAML)
+
+#### Networking
+- Access to data source endpoints  
+- Firewall/VPC rules for Prometheus, Loki, Elasticsearch  
+- Public vs private Grafana URLs  
+
+#### Architecture
+- Folder structure  
+- Dashboard provisioning (optional)  
+- Data source configuration  
+- Alerting and notification channels  
+
+#### Data
+- Query languages (PromQL, LogQL, CloudWatch Metrics, Elasticsearch DSL)  
+- Metric naming conventions  
+- Labels and tags  
+- Retention and scrape intervals  
+
+#### Operational Guarantees
+- Alert evaluation intervals  
+- Dashboard refresh intervals  
+- Data source availability  
+- SLO/SLA monitoring  
+
+#### Observability Metrics
+- Query latency  
+- Panel load times  
+- Alert firing frequency  
+- Data source health  
+- Grafana server logs  
+
+</details>
+
+:::info  
+How to interact with this tool day‑to‑day:  
+- UI (Dashboards, Explore, Alerting, Data Sources)  
+- Terminal (via data source CLIs like Prometheus, Loki, CloudWatch)  
+:::
+
+<Tabs>
+
+<TabItem value="access" label="Access">
+
+```shell
+--------------
+How to set up credentials
+--------------
+
+# Log in via Grafana UI
+https://<grafana-host>
+
+# Validate data source connectivity (Prometheus example)
+curl http://<prometheus-host>:9090/-/ready
+
+--------------
+How to log-in via the terminal
+--------------
+
+# Query Prometheus directly
+curl http://<prometheus-host>:9090/api/v1/query?query=up
+
+# Query Loki logs
+curl -G -s "http://<loki-host>:3100/loki/api/v1/query" --data-urlencode 'query={app="service"}'
+```
+
+</TabItem>
+
+<TabItem value="requirements" label="Requirements">
+
+**How to formulate requirements when working with this platform**
+
+- Identify dashboards, panels, or alerts in scope  
+- Confirm data sources and their query languages  
+- Validate access to folders and dashboards  
+- Confirm alerting channels and severity levels  
+- Determine retention and refresh expectations  
+- Establish TA expectations for monitoring and triage  
+
+</TabItem>
+
+<TabItem value="engineering" label="Engineering">
+
+Common workflows and commands used by engineers when operating this tool
+
+```shell
+--------------
+Key Terminal Commands
+--------------
+
+# Prometheus: Query a metric
+curl "http://<prometheus>/api/v1/query?query=rate(http_requests_total[5m])"
+
+# Loki: Query logs
+curl -G "http://<loki>/loki/api/v1/query" --data-urlencode 'query={job="api"}'
+
+# CloudWatch: Get metric data
+aws cloudwatch get-metric-data --metric-data-queries file://queries.json
+
+# Elasticsearch: Query logs for dashboards
+curl -X GET "<es>/_search" -H 'Content-Type: application/json' -d '{
+  "query": { "match": { "message": "error" } }
+}'
+```
+
+</TabItem>
+
+<TabItem value="analyst" label="Analyst">
+
+Common workflows and queries used by analysts when interpreting data from this tool.
+
+```shell
+--------------
+Key Terminal Commands (mapped to analyst skills)
+--------------
+
+# Inspect panel queries (PromQL example)
+curl "http://<prometheus>/api/v1/query?query=up"
+
+# Validate alert rule conditions
+curl "http://<prometheus>/api/v1/rules"
+
+# Explore logs (Loki)
+curl -G "http://<loki>/loki/api/v1/query" --data-urlencode 'query={app="service"}'
+
+# Check dashboard JSON
+curl -H "Authorization: Bearer <token>" \
+  https://<grafana>/api/dashboards/uid/<uid>
+
+# Inspect data source health
+curl https://<grafana>/api/datasources
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🚨 Triage
+
+:::danger  
+Symptoms and issues with this platform and how to triage this:  
+:::
+
+| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
+|--------|---------------------|---------------|-------------------|
+| Dashboard slow to load | Heavy queries, large time range | Query inspector, panel queries | Reduce time range, optimize queries |
+| No data in panel | Data source misconfig or query error | Data source status, query inspector | Fix query, update data source |
+| Alerts not firing | Wrong condition or data source down | Alert rule logs, data source health | Fix rule, restore data source |
+| High query latency | Prometheus overload, Loki slow | Prometheus metrics, Loki logs | Scale Prometheus, optimize labels |
+| Missing dashboards | Folder permissions or deleted objects | Folder ACLs, dashboard JSON | Restore from backup, fix permissions |
+| Grafana not loading | Server down or network issue | Server logs, network path | Restart Grafana, fix networking |
