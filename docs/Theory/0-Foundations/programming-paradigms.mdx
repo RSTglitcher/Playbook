@@ -1,0 +1,1533 @@
+---
+## "Functional Programming"
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 🧠 Theory
+Functional Programming provides a set of **conceptual tools** for modelling software as transformations of data through pure, predictable functions.
+Where OOP models *objects and behaviour*, FP models *data and transformations*.
+
+FP constructs help analysts and engineers:
+
+- reason about systems without hidden state
+- avoid side‑effect‑driven bugs
+- design predictable, testable flows
+- scale concurrency safely
+- simplify complex transformations
+
+---
+
+:::tip Definition
+A set of conceptual building blocks for modelling software using **pure functions**, **immutable data**, and **predictable transformations**.
+:::
+
+**When to Use**
+
+- When correctness and predictability matter
+- When concurrency or parallelism is required
+- When transformations dominate behaviour
+- When avoiding shared mutable state is beneficial
+
+**When Not to Use**
+
+- Highly stateful, object‑rich domains
+- Systems requiring heavy mutation or lifecycle modelling
+- Environments where recursion or immutability is costly
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+FP constructs solve the problem of **unpredictability caused by mutable state and side effects**.
+They provide a vocabulary for:
+
+- expressing logic as pure transformations
+- eliminating hidden dependencies
+- enabling safe concurrency
+- simplifying reasoning about system behaviour
+- reducing accidental complexity
+
+They help Technical Analysts reason about **data flow**, **state transitions**, and **deterministic behaviour**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Pure Functions** — same input → same output, no side effects
+- **Immutability** — data cannot be changed, only transformed
+- **Higher‑Order Functions** — functions that take or return functions
+- **Function Composition** — building pipelines of transformations
+- **Recursion** — looping via self‑reference
+- **Side Effects** — interactions with the outside world
+- **Monads** — structured handling of effects
+- **Referential Transparency** — expressions can be replaced with their values
+
+### **Axes of Variation**
+
+- Strict vs lazy evaluation
+- Pure vs impure languages
+- Immutable‑first vs mutable‑allowed
+- Recursion vs iteration
+- Expression‑oriented vs statement‑oriented
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+[Input Data]
+      ↓
+[Pure Function]
+      ↓
+[Transformed Data]
+      ↓
+[Composed with Other Functions]
+      ↓
+[Final Output]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Does the transformation pipeline remain predictable?
+- Are side effects isolated and controlled?
+- Is immutability helping or hindering performance?
+- Are functions small, composable, and testable?
+- What happens when concurrency increases?
+:::
+
+**What happens when:**
+
+- **Data grows** → recursion depth, memory pressure
+- **Traffic increases** → pure functions scale horizontally
+- **Concurrency rises** → immutability prevents race conditions
+- **Resources become constrained** → copying immutable data becomes expensive
+
+---
+
+## 📘 Key Terminology
+
+| **Term** | **Definition** | **Languages** |
+| --- | --- | --- |
+| **Pure Function** | A function with no side effects; same input → same output. | Haskell, Scala, F#, Elm, OCaml, JavaScript (FP style), Python (FP style) |
+| **Immutability** | Data cannot be changed after creation; new values are produced instead. | Haskell, Scala, Clojure, Elm, F#, Rust (by default), Java/Kotlin (optional) |
+| **Higher‑Order Function** | A function that takes other functions as arguments or returns them. | All FP languages; also JavaScript, Python, Java (lambdas), C# |
+| **Function Composition** | Combining functions so the output of one becomes the input of another. | Haskell, Scala, F#, Elm, JavaScript (FP style), Python (FP style) |
+| **Referential Transparency** | An expression can be replaced with its value without changing program behaviour. | Haskell, Elm, FP‑first Scala, F# |
+| **Side Effect** | Any interaction with the outside world (I/O, mutation, logging) that breaks purity. | All languages (conceptual) |
+| **Monad** | A structure for sequencing computations with controlled effects. | Haskell, Scala (Cats/ZIO), F#, Elm |
+| **Functor** | A structure that can be mapped over (supports ``map``). | Haskell, Scala, F#, Elm |
+| **Applicative** | A structure that applies wrapped functions to wrapped values. | Haskell, Scala (Cats/ZIO), F# |
+| **Algebraic Data Type (ADT)** | A type formed by combining other types (sum + product types). | Haskell, Scala, Rust, Elm, F# |
+| **Pattern Matching** | A mechanism for destructuring and branching on ADTs. | Scala, Haskell, Rust, F#, OCaml, Elm |
+| **Recursion** | A function that calls itself to process data. | All FP languages; also Python, JS, Java |
+| **Lazy Evaluation** | Expressions are evaluated only when needed. | Haskell (default), Scala (optional), Clojure (optional) |
+| **Currying** | Transforming a function of multiple arguments into a chain of single‑argument functions. | Haskell, Scala, F#, Elm, JavaScript (FP style) |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="pure" label="Pure Functions">
+
+### Pure Functions
+
+**Purpose**
+Ensure predictable, testable behaviour.
+
+**Key Characteristics**
+- No side effects
+- Deterministic output
+
+**Behaviour**
+Easy to test, reason about, and parallelise.
+
+**Trade-offs**
+Side effects must be handled elsewhere.
+
+</TabItem>
+
+<TabItem value="immutability" label="Immutability">
+
+### Immutability
+
+**Purpose**
+Prevent accidental state changes.
+
+**Key Characteristics**
+- Data is copied, not mutated
+- Thread‑safe by default
+
+**Behaviour**
+Enables safe concurrency and predictable flows.
+
+**Trade-offs**
+Copying large structures can be expensive.
+
+</TabItem>
+
+<TabItem value="composition" label="Composition">
+
+### Function Composition
+
+**Purpose**
+Build complex behaviour from simple functions.
+
+**Key Characteristics**
+- Pipeline‑style transformations
+- No shared state
+
+**Behaviour**
+Highly modular and reusable.
+
+**Trade-offs**
+Can become abstract or hard to debug.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How pure functions scale horizontally
+- How immutability affects memory and performance
+- How effect systems model real‑world interactions
+- How FP simplifies concurrency
+:::
+
+### Local Systems
+
+- **Runtime** — recursion, stack usage, lazy evaluation
+- **Memory** — persistent data structures, copying
+- **Concurrency** — no shared state → fewer race conditions
+- **Scaling** — pure functions parallelise naturally
+
+### Remote Systems
+
+Not directly applicable — FP constructs are conceptual, not distributed.
+
+### Questions to ask during reviews or incidents
+
+- Are side effects isolated and controlled?
+- Is immutability causing performance issues?
+- Are transformations too abstract to debug?
+- Is recursion safe for expected data sizes?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+FP constructs influence **predictability, correctness, and concurrency safety**, not output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Predictable behaviour | Pure functions behave consistently |
+| Safe concurrency | No shared mutable state |
+| Modular pipelines | Functions compose cleanly |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Excessive copying | Immutability causes memory pressure |
+| Deep recursion | Stack overflows on large inputs |
+| Abstract pipelines | Hard to debug transformations |
+
+
+
+---
+## "Object-Oriented Programming"
+
+---
+
+
+## 🧠 Theory
+Object‑Oriented Programming (OOP) provides a set of **conceptual tools** for modelling real‑world systems using objects, relationships, and behaviours.
+Where **Workbench** languages implement these constructs, **Theory** explains *why they exist*, *what problems they solve*, and *how they behave under pressure*.
+
+OOP constructs help analysts and engineers:
+
+- structure systems around meaningful boundaries
+- reduce accidental complexity
+- model behaviour and state
+- manage change safely
+- reason about interactions between components
+
+---
+
+:::tip Definition
+A set of conceptual building blocks for modelling software using **objects**, **relationships**, and **behaviours**.
+:::
+
+**When to Use**
+
+- When modelling domains with clear entities and behaviours
+- When you need predictable structure and encapsulation
+- When designing systems that evolve over time
+
+**When Not to Use**
+
+- Highly functional or data‑flow‑oriented systems
+- Purely stateless transformations
+- Situations where inheritance introduces more complexity than value
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+OOP constructs solve the problem of **managing complexity** in large, evolving systems.
+They provide a vocabulary for:
+
+- grouping related data and behaviour
+- hiding internal details
+- defining clear contracts
+- modelling variation and extension
+- controlling how components interact
+
+They help Technical Analysts reason about **system boundaries**, **responsibilities**, and **change over time**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Encapsulation** — bundling data + behaviour, hiding internal details
+- **Inheritance** — reusing and extending behaviour
+- **Polymorphism** — treating different types through a common interface
+- **Abstraction** — exposing only essential behaviour
+- **Composition** — building complex behaviour by combining objects
+- **Interfaces** — defining contracts without implementation
+- **Classes vs Instances** — blueprint vs concrete object
+- **Object Lifecycle** — creation → usage → destruction
+- **SOLID Principles** — guidelines for maintainable OOP design
+
+### **Axes of Variation**
+
+- Static vs dynamic typing
+- Single vs multiple inheritance
+- Interface‑based vs class‑based polymorphism
+- Composition‑first vs inheritance‑first design
+- Mutable vs immutable objects
+
+---
+
+### **Typical Lifecycle or Flow**
+
+```
+[Class Defined]
+      ↓
+[Instance Created]
+      ↓
+[State Mutated / Methods Called]
+      ↓
+[Interactions with Other Objects]
+      ↓
+[Object Becomes Unreachable]
+      ↓
+[GC / Destruction]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Does the abstraction reduce or increase complexity?
+- Are responsibilities clearly separated?
+- Is inheritance being used safely, or should composition replace it?
+- Are interfaces stable and well‑defined?
+- What happens when the system grows or changes?
+:::
+
+**What happens when:**
+
+- **Data grows** → object graphs deepen; memory pressure increases
+- **Traffic increases** → polymorphic dispatch cost becomes visible
+- **Concurrency rises** → shared mutable state becomes a bottleneck
+- **Resources become constrained** → object lifecycle management matters
+
+---
+
+## 📘 Key Terminology
+
+| **Term** | **Definition** | **Languages** |
+| --- | --- | --- |
+| **Class** | Blueprint defining structure + behaviour for objects. | Java, Scala, Kotlin, C#, Python, Ruby, Swift |
+| **Instance** | A concrete object created from a class. | All OOP languages |
+| **Interface** | Contract defining behaviour without implementation. | Java, C#, TypeScript, Go, Swift (protocols), Rust (traits) |
+| **Abstract Class** | Partially implemented class used for shared behaviour. | Java, Scala, Kotlin, C#, PHP |
+| (()Trait / Mixin** | Reusable behaviour unit; interface + optional implementation. | Scala (traits), Rust (traits), PHP (traits), Python (mixins), Ruby (modules), Swift (protocol extensions) |
+| **Enum** | Finite set of named values representing a closed type. | Java, Scala, Rust, Swift, C#, TypeScript |
+| **Encapsulation)** | Hiding internal state and exposing controlled operations. | All OOP languages |
+| **Inheritance** | Reusing and extending behaviour via parent–child relationships. | Java, Scala, C#, Kotlin, Python, Ruby |
+| **Composition** | Building behaviour by combining objects rather than inheriting. | All OOP languages |
+| **Polymorphism** | Treating different types through a shared interface. | All OOP languages |
+| **Abstraction** | Exposing only essential behaviour; hiding implementation details. | All OOP languages |
+| **Object Lifecycle** | Creation → usage → mutation → destruction/GC. | All languages with objects |
+| **SOLID Principles** | Design guidelines for maintainable OOP systems. | Language‑agnostic (applies across OOP ecosystems) |
+| **Instantiation** | The act of creating a new object from a class. | All OOP languages |
+| **Initialization**  | Setting up an object’s initial state after creation. | All OOP languages |
+---
+
+This table keeps your Theory page:
+
+- **language‑agnostic**
+- **conceptually clean**
+- **aligned with your documentation architecture**
+- **free from Scala‑specific constructs**
+
+If you want, I can now generate:
+
+- **A matching FP glossary table**
+- **A combined “Language Foundations Glossary” page**
+- **A sidebar entry for the new glossary**
+
+Just tell me which direction you want to go.
+
+
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="encapsulation" label="Encapsulation">
+
+### Encapsulation
+
+**Purpose**
+Protect internal state and expose only safe operations.
+
+**Key Characteristics**
+- Private fields
+- Public methods
+- Clear boundaries
+
+**Behaviour**
+Prevents accidental misuse and reduces coupling.
+
+**Trade-offs**
+Too much hiding can reduce flexibility.
+
+</TabItem>
+
+<TabItem value="inheritance" label="Inheritance">
+
+### Inheritance
+
+**Purpose**
+Reuse behaviour and model “is‑a” relationships.
+
+**Key Characteristics**
+- Parent → child hierarchy
+- Method overriding
+
+**Behaviour**
+Allows polymorphism but can create brittle hierarchies.
+
+**Trade-offs**
+Often replaced by composition for safety.
+
+</TabItem>
+
+<TabItem value="composition" label="Composition">
+
+### Composition
+
+**Purpose**
+Build behaviour by combining objects.
+
+**Key Characteristics**
+- “Has‑a” relationships
+- Delegation
+
+**Behaviour**
+More flexible and safer than inheritance.
+
+**Trade-offs**
+Requires more explicit wiring.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How objects live in memory
+- How dispatch works (dynamic vs static)
+- How abstractions affect performance
+- How inheritance chains impact maintainability
+:::
+
+### Local Systems
+
+- **Runtime** — method dispatch, vtables, dynamic binding
+- **Memory** — heap allocation, object graphs
+- **Concurrency** — shared state, locking
+- **Scaling** — deep hierarchies slow evolution
+
+### Remote Systems
+
+Not typically applicable — OOP constructs are local to the runtime.
+
+### Questions to ask during reviews or incidents
+
+- Is inheritance hiding complexity or creating it?
+- Are interfaces stable and versioned?
+- Is shared state causing race conditions?
+- Are objects too large or too tightly coupled?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+OOP constructs influence **design quality**, not runtime output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Clear boundaries | Classes have single responsibilities |
+| Stable contracts | Interfaces remain consistent over time |
+| Safe extension | New behaviour added without breaking old code |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Inheritance explosion | Deep hierarchies become unmaintainable |
+| Interface drift | Contracts change unpredictably |
+| Shared state bugs | Race conditions, inconsistent state |
+
+
+---
+## "Language Theory"
+---
+
+:::tip
+### Definition
+A **programming language** is a formal system of syntax and semantics that allows humans to express computations in a way that machines can execute.
+:::
+
+**When to Use**
+
+- Evaluating a new language or framework
+- Reasoning about performance, safety, or correctness
+- Comparing paradigms or execution models
+- Diagnosing runtime or memory behaviour
+
+**When Not to Use**
+
+- Tool‑specific behaviour (Workbench)
+- Operational instructions (Runbook)
+- Project‑specific implementation details
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Programming languages solve the problem of **expressing computation** in a structured, unambiguous, machine‑interpretable way.
+
+They provide:
+
+- **syntax** for expressing logic
+- **semantics** that define meaning
+- **paradigms** that shape how problems are modelled
+- **type systems** that constrain or validate behaviour
+- **execution models** that determine performance and safety
+- **memory models** that define how data is stored and accessed
+- **computational power** (Turing completeness)
+
+A Technical Analyst must understand these forces to reason about architecture, performance, correctness, and system behaviour.
+
+---
+
+## 🧠 Conceptual Model
+
+### Core Components
+
+- **Syntax** — the grammar and structure of the language
+- **Semantics** — the meaning of syntactic constructs
+- **Paradigms** — the mental models the language supports
+- **Type System** — how values are classified and validated
+- **Execution Model** — compilation, interpretation, JIT, VM
+- **Runtime Environment** — the system executing the code
+- **Memory Model** — how memory is allocated, shared, and reclaimed
+- **Turing Completeness** — whether the language can express all computations a Turing machine can perform
+
+### Axes of Variation
+
+- Static vs dynamic typing
+- Strong vs weak typing
+- Compiled vs interpreted
+- Managed vs unmanaged memory
+- Functional vs imperative vs OO vs logic paradigms
+- Single‑threaded vs multi‑threaded runtimes
+- Turing complete vs non‑Turing complete languages
+
+---
+
+### Typical Lifecycle or Flow
+
+```
+Human Intent
+     ↓
+Language Syntax (source code)
+     ↓
+Parsing → AST (Abstract Syntax Tree)
+     ↓
+Semantic Analysis (types, scope, correctness)
+     ↓
+Execution Model:
+   - Compilation → Machine Code
+   - Interpretation → Runtime Execution
+   - JIT → Hybrid
+     ↓
+Runtime Environment
+     ↓
+Memory Model (stack, heap, GC)
+     ↓
+Program Behaviour
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What changes, what stays constant, what becomes a bottleneck
+- How the language behaves under load
+- How the runtime manages memory and concurrency
+- What guarantees the type system provides
+- What risks arise from the execution model
+:::
+
+**What happens when:**
+
+- **Data grows** → memory pressure, GC churn, type coercion issues
+- **Traffic increases** → runtime scheduling, event loops, thread pools
+- **Concurrency rises** → race conditions, locks, visibility issues
+- **Resources become constrained** → GC pauses, stack overflows, OOM errors
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Syntax** | The grammar and structure of a language. |
+| **Semantics** | The meaning of syntactic constructs. |
+| **Paradigm** | A style of programming (functional, OO, imperative). |
+| **Type System** | Rules for classifying and validating values. |
+| **Runtime** | The environment executing the program. |
+| **Memory Model** | Rules for allocation, access, and concurrency. |
+| **Garbage Collection** | Automatic memory reclamation. |
+| **Turing Completeness** | Ability to express any computation a Turing machine can perform. |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="syntax" label="Syntax vs Semantics">
+
+### Syntax vs Semantics
+
+**Purpose**
+Distinguish between *how code looks* and *what code means*.
+
+**Key Characteristics**
+- Syntax = structure
+- Semantics = behaviour
+
+**Behaviour**
+Syntax errors prevent parsing; semantic errors prevent correct execution.
+
+**Trade-offs**
+Strict syntax improves tooling; flexible syntax improves expressiveness.
+
+</TabItem>
+
+<TabItem value="paradigms" label="Paradigms">
+
+### Programming Paradigms
+
+**Purpose**
+Provide mental models for structuring computation.
+
+**Key Characteristics**
+- Imperative: step‑by‑step instructions
+- Declarative: describe desired outcomes
+- Functional: pure functions, immutability
+- Object‑Oriented: objects, encapsulation
+- Logic: inference, constraints
+
+**Behaviour**
+Paradigms shape architecture, testability, and reasoning.
+
+**Trade-offs**
+Each paradigm optimises for different cognitive and performance goals.
+
+</TabItem>
+
+<TabItem value="types" label="Type Systems">
+
+### Type Systems
+
+**Purpose**
+Define how values are classified and validated.
+
+**Key Characteristics**
+- Static vs dynamic
+- Strong vs weak
+- Nominal vs structural
+
+**Behaviour**
+Types catch errors early or allow flexibility at runtime.
+
+**Trade-offs**
+Safety vs speed vs expressiveness.
+
+</TabItem>
+
+<TabItem value="execution" label="Execution Models">
+
+### Execution Models & Turing Completeness
+
+**Purpose**
+Define how source code becomes executable behaviour and what computations the language can express.
+
+**Key Characteristics**
+- Compiled → machine code
+- Interpreted → executed line‑by‑line
+- JIT → hybrid
+- **Turing Complete languages** → can express any computation given enough time and memory
+
+**Behaviour**
+Execution model affects performance, startup time, portability, and computational limits.
+
+**Trade-offs**
+Compilation = speed
+Interpretation = flexibility
+JIT = balance
+Turing completeness = maximum expressiveness but no guarantee of termination
+
+</TabItem>
+
+<TabItem value="memory" label="Memory Models">
+
+### Memory Models & Garbage Collection
+
+**Purpose**
+Define how memory is allocated, shared, and reclaimed.
+
+**Key Characteristics**
+- Stack vs heap
+- Manual vs automatic memory management
+- GC algorithms (mark‑sweep, generational, reference counting)
+
+**Behaviour**
+Memory models determine concurrency safety and performance.
+
+**Trade-offs**
+GC simplifies development but introduces pauses; manual memory is fast but risky.
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How language theory shapes runtime behaviour
+- How type systems influence API design
+- How memory models affect performance under load
+- How execution models determine scaling characteristics
+:::
+
+### Local Systems
+
+- OS scheduling
+- CPU architecture
+- Memory allocation
+- Threading model
+- File I/O
+- Event loops
+
+### Remote Systems
+
+- Distributed runtimes
+- Containers
+- Serverless platforms
+- Multi‑node concurrency
+
+### Questions to ask during reviews or incidents
+
+- What is the runtime doing?
+- How does the memory model behave under pressure?
+- Are type assumptions being violated?
+- Is the execution model appropriate for the workload?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Language behaviour affects performance, correctness, and safety.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Predictable Execution | Code behaves consistently across environments. |
+| Type Safety | Errors caught early or prevented entirely. |
+| Efficient Memory Use | Minimal leaks, stable GC behaviour. |
+
+### Failure Modes
+
+| Failure Type | Description|
+|-------------|-------------|
+| Runtime Errors | Nulls, type coercion, undefined behaviour. |
+| Memory Leaks | Unreleased references, GC pressure. |
+| Concurrency Bugs | Race conditions, deadlocks, visibility issues. |
+
+--
+
+## "Frameworks & Libraries"
+
+
+A **framework**, **library**, and **code** represent three layers of abstraction in software development.
+They differ in **control**, **responsibility**, and **how much structure they impose**.
+
+This page explains:
+
+- what each layer *is*
+- why each layer exists
+- how they relate
+- how to choose between them
+- how they shape system behaviour
+
+---
+
+## 🧠 Theory
+
+Frameworks, libraries, and code form a **hierarchy of abstraction**:
+
+### **Framework → Library → Code**
+
+- A **framework** provides structure, conventions, and inversion of control.
+- A **library** provides reusable functions you call when needed.
+- **Code** is your application logic — the part you own.
+
+Frameworks solve **common problems** by providing pre‑built solutions.
+Libraries solve **specific problems** by providing reusable components.
+Code solves **your domain problem**.
+
+---
+
+:::tip
+### Definition
+A **framework** is a pre‑packaged set of solutions that solves common development problems through **inversion of control**.
+:::
+
+**When to Use**
+
+- When the problem domain is well‑understood (web apps, APIs, security, UI)
+- When you want conventions, structure, and guardrails
+- When you need rapid development with predictable patterns
+
+**When Not to Use**
+
+- Highly bespoke systems
+- Low‑level performance‑critical code
+- Domains where the framework’s constraints become limiting
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Frameworks and libraries exist to solve **recurring engineering problems**:
+
+- routing
+- templating
+- authentication
+- state management
+- dependency injection
+- concurrency
+- persistence
+- testing
+- configuration
+
+Without them, every team would rebuild the same infrastructure repeatedly.
+
+Frameworks provide **structure**.
+Libraries provide **capability**.
+Code provides **business value**.
+
+---
+
+## 🧠 Conceptual Model
+
+### **Core Components**
+
+- **Framework** — owns the flow; you fill in the gaps
+- **Library** — you call it when needed
+- **Code** — your domain logic
+- **Inversion of Control** — framework calls *your* code
+- **Dependency Injection** — externalising object creation
+- **Convention over Configuration** — predictable defaults
+
+### **Axes of Variation**
+
+- Opinionated ↔ Unopinionated
+- Heavyweight ↔ Lightweight
+- Declarative ↔ Imperative
+- Convention‑driven ↔ Configuration‑driven
+- Full‑stack ↔ Single‑purpose
+
+---
+
+### Typical Lifecycle or Flow
+
+```
+[Framework Bootstraps App]
+          ↓
+[Framework Handles Routing / Events]
+          ↓
+[Framework Calls Your Code]
+          ↓
+[Your Code Calls Libraries]
+          ↓
+[Libraries Perform Specific Tasks]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- What the framework controls vs what the team controls
+- Whether the framework’s constraints help or hinder
+- How libraries interact with the framework lifecycle
+- How dependency injection affects testability
+- Whether the abstraction leaks under load
+:::
+
+**What happens when:**
+
+- **Traffic increases** → framework routing & middleware become bottlenecks
+- **Concurrency rises** → DI containers, thread pools, event loops matter
+- **Data grows** → ORM frameworks may become limiting
+- **Complexity increases** → framework conventions either help or constrain
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| **Framework** | A structured environment that controls application flow. |
+| **Library** | A reusable set of functions you call directly. |
+| **Code** | Your domain logic; the part you own. |
+| **Inversion of Control** | The framework calls your code, not the other way around. |
+| **Dependency Injection** | Externalising object creation to improve modularity and testability. |
+| **Convention over Configuration** | Sensible defaults reduce boilerplate. |
+| **Middleware** | Components that intercept and process requests. |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="frontend" label="Front‑End">
+
+### Front‑End Frameworks
+
+**Purpose**
+Solve routing, templating, state management, and UI rendering.
+
+**Examples**
+React, Angular, Vue, Svelte
+
+**Behaviour**
+Provide component models, virtual DOMs, and rendering pipelines.
+
+**Trade‑offs**
+Opinionated state management; steep learning curves.
+
+---
+
+### Front‑End Libraries
+
+**Purpose**
+Provide reusable UI components, styling systems, form helpers, validation, and utility functions.
+
+**Examples**
+Ant Design, Material UI (MUI), Chakra UI, Tailwind CSS, React Hook Form, Zod, Lodash
+
+**Behaviour**
+Enhance or extend the capabilities of frameworks without owning the full application lifecycle.
+
+**Trade‑offs**
+Can introduce design constraints, bundle size overhead, or inconsistent patterns if mixed carelessly.
+
+</TabItem>
+
+<TabItem value="backend" label="Back‑End Frameworks">
+
+### Back‑End Frameworks
+
+**Purpose**
+Handle routing, controllers, DI, persistence, and security.
+
+**Examples**
+Spring (Java), Flask (Python), Django (Python), Express (Node)
+
+**Behaviour**
+Own the request lifecycle; call your handlers.
+
+**Trade‑offs**
+Heavyweight frameworks can constrain architecture.
+
+---
+
+### Back‑End Libraries
+
+**Purpose**
+Provide reusable utilities for persistence, messaging, validation, serialization, and service integration.
+
+**Examples**
+Hibernate (ORM), JPA (Persistence API), Jackson (JSON serialization), Gson, Apache Kafka Client, AWS SDK, Retrofit (HTTP client), Feign (HTTP client), MapStruct (object mapping), Log4j / SLF4J (logging)
+
+**Behaviour**
+Extend backend capabilities without controlling the application lifecycle.
+
+**Trade‑offs**
+Can introduce hidden complexity, version conflicts, or tight coupling if overused.
+
+</TabItem>
+
+<TabItem value="security" label="Security Frameworks">
+
+### Security Frameworks
+
+**Purpose**
+Provide authentication, authorization, encryption, and verification.
+
+**Examples**
+Spring Security, Laravel Auth, OAuth libraries
+
+**Behaviour**
+Centralise security logic and enforce policies.
+
+**Trade‑offs**
+Complex configuration; steep learning curves.
+
+</TabItem>
+
+</Tabs>
+
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- Frameworks define the application lifecycle
+- Libraries plug into that lifecycle
+- Code must respect framework conventions
+:::
+
+### Local Systems
+
+- **Runtime** — DI containers, event loops, thread pools
+- **Storage** — ORMs, JDBC, repositories
+- **Network** — routing, middleware, filters
+- **Concurrency** — async frameworks, actors, coroutines
+
+### Remote Systems
+
+- API gateways
+- Microservices
+- Databases
+- Message brokers
+
+### Questions to ask during reviews or incidents
+
+- Where does the framework take control?
+- Are we misusing the DI container?
+- Is the ORM causing performance issues?
+- Are conventions being followed or overridden?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Frameworks influence **architecture**, not output formats.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Rapid development | Framework handles boilerplate |
+| Consistent architecture | Conventions enforce structure |
+| High testability | DI and modularity improve isolation |
+
+### Failure Modes
+
+| Failure Type | Description |
+|-------------|-------------|
+| Framework lock‑in | Hard to migrate away |
+| Abstraction leakage | Framework internals surface in code |
+| Performance bottlenecks | Middleware, ORMs, DI containers |
+
+
+## "Data Structures"
+
+
+:::tip
+### Definition
+Data Structures & Conditionals describe how software organises information and makes decisions, forming the foundation of performance, correctness, and system behaviour.
+:::
+
+**When to Use**
+
+- Understanding performance characteristics
+- Evaluating system behaviour under load
+- Reviewing logic, branching, or data access patterns
+- Debugging slow or incorrect behaviour
+- Designing flows, pipelines, or decision rules
+
+**When Not to Use**
+
+- When discussing storage systems (use Storage Theory instead)
+- When modelling domain entities (use Data Modelling)
+- When evaluating distributed behaviour (use Communication Patterns)
+- When logic belongs in state machines or workflow engines
+
+---
+
+## 🎯 What Problem Does This Solve?
+
+Data Structures & Conditionals solve the problem of **how systems organise information and choose actions**.
+They give Technical Analysts the mental models needed to:
+
+- Predict performance and scaling behaviour
+- Understand why systems slow down or misbehave
+- Evaluate branching logic for correctness
+- Identify bottlenecks caused by repeated scans or poor structure
+- Communicate clearly with engineers using shared vocabulary
+
+---
+
+## 🧠 Conceptual Model
+
+Software behaviour emerges from two primitives:
+
+### Core Components
+
+#### **1. Data Structures**
+How data is *organised* and *accessed*.
+
+#### **2. Conditionals**
+How decisions are *made* based on that data.
+
+Together, they determine:
+
+- What the system *knows*
+- How it *chooses*
+- How it *scales*
+- How it *responds* under load
+
+### Axes of Variation
+
+- **Ordered vs Unordered** (lists vs sets)
+- **Indexed vs Keyed** (arrays vs maps)
+- **Linear vs Hierarchical** (lists vs trees)
+- **Deterministic vs Branching** (simple vs nested conditionals)
+- **Constant‑time vs Linear‑time** (O(1) vs O(n))
+
+---
+
+### Typical Lifecycle or Flow
+
+```mermaid
+flowchart TD
+    A[Input Data] --> B[Choose Data Structure]
+    B --> C[Apply Conditional Logic]
+    C --> D[Perform Operation (lookup/insert/traverse)]
+    D --> E[Return Result or Trigger Action]
+    E --> F[Performance Changes as Data Grows]
+```
+
+---
+
+## 🔍 TA Lens
+
+:::info How a TA Evaluates This Concept
+- Identify the **problem shape** and map it to the right structure
+- Look for repeated linear scans (O(n))
+- Evaluate branching logic for clarity and completeness
+- Understand how structure and logic behave under load
+- Surface risks around ordering, uniqueness, or lookup speed
+:::
+
+**What happens when:**
+
+- **Data grows** → linear scans become bottlenecks
+- **Traffic increases** → branching logic becomes hot paths
+- **Concurrency rises** → shared structures become contention points
+- **Resources become constrained** → inefficient structures degrade sharply
+
+---
+
+## 📘 Key Terminology
+
+| Term | Definition |
+|------|------------|
+| Collection | A group of values (list, set, map) |
+| Graph | Nodes connected by edges representing relationships |
+| Tree | Hierarchical structure with parent/child relationships |
+| Big‑O | Approximation of algorithmic scaling behaviour |
+| Branch | A conditional path the system may take |
+| Predicate | A condition that evaluates to true/false |
+
+---
+
+## 🧬 Variants / Types
+
+<Tabs>
+
+<TabItem value="collections" label="Collections">
+
+### Collections
+
+#### Arrays / Lists
+
+```
+Index → 0  1  2  3
+        [A][B][C][D]
+```
+
+**Purpose**
+Ordered, index‑based storage.
+
+**Key Characteristics**
+- Fast indexed access
+- Good for scans
+- Slow inserts/deletes
+
+**Behaviour**
+Performance degrades linearly as size grows.
+
+**Trade-offs**
+Simple and predictable, but costly for mutation.
+
+---
+
+#### Sets
+
+```
+{ A, B, C }   // No duplicates
+```
+
+**Purpose**
+Uniqueness and fast membership checks.
+
+**Key Characteristics**
+- O(1) lookup
+- No ordering
+
+**Behaviour**
+Ideal for deduplication and “contains?” checks.
+
+**Trade-offs**
+Hashing overhead; no positional access.
+
+---
+
+#### Maps / Dictionaries
+
+```
+Key → Value
+A   → 1
+B   → 2
+```
+
+**Purpose**
+Fast lookup by key.
+
+**Key Characteristics**
+- O(1) access
+- Natural modelling of relationships
+
+**Behaviour**
+Excellent for caching, indexing, and routing.
+
+**Trade-offs**
+Memory overhead; collisions degrade performance.
+
+---
+
+#### Queues (FIFO)
+
+```
+Front → [A][B][C] → Back
+```
+
+**Purpose**
+Ordered processing.
+
+**Use When**
+Task scheduling, message processing.
+
+---
+
+#### Stacks (LIFO)
+
+```
+Top → [C]
+       [B]
+       [A]
+```
+
+**Purpose**
+Last‑in, first‑out behaviour.
+
+**Use When**
+Undo operations, DFS traversal.
+
+</TabItem>
+
+<TabItem value="trees" label="Trees & Graphs">
+
+### Trees
+
+```
+      A
+     / \
+    B   C
+```
+
+**Purpose**
+Hierarchical modelling.
+
+**Key Characteristics**
+- Fast search when balanced
+- Depth affects lookup
+
+**Behaviour**
+Used in indexing, routing, and file systems.
+
+**Trade-offs**
+Unbalanced trees degrade to linear behaviour.
+
+---
+
+### Graphs
+
+```
+A — B — C
+ \     /
+   D
+```
+
+**Purpose**
+Model relationships and networks.
+
+**Key Characteristics**
+- Flexible structure
+- Supports cycles
+
+**Behaviour**
+Used in routing, dependencies, social graphs.
+
+**Trade-offs**
+Traversal cost varies; cycles complicate logic.
+
+</TabItem>
+
+<TabItem value="bigo" label="Big‑O Intuition">
+
+### Big‑O (TA Edition)
+
+You don’t need formulas — you need **shapes**.
+
+| Operation | Array/List | Set | Map |
+|-----------|------------|-----|-----|
+| Lookup | O(n) | O(1) | O(1) |
+| Insert | O(n) | O(1) | O(1) |
+| Delete | O(n) | O(1) | O(1) |
+
+:::note TA Takeaway
+Repeated linear scans (O(n)) are the root cause of many performance issues.
+:::
+
+</TabItem>
+
+<TabItem value="conditionals" label="Conditionals & Control Flow">
+
+### Conditionals
+
+#### IF / ELSE — Binary Decisions
+
+**Purpose**
+Choose between two behaviours.
+
+**Key Characteristics**
+- Simple branching
+- Clear fallback path
+
+**Behaviour**
+```
+WHEN <condition>
+THEN <action>
+ELSE <fallback>
+```
+
+---
+
+#### Multi‑branch (IF / ELIF / ELSE)
+
+**Purpose**
+Choose between multiple paths.
+
+**Behaviour**
+```
+WHEN <A> → <action A>
+WHEN <B> → <action B>
+ELSE → <fallback>
+```
+
+---
+
+#### CASE / SWITCH — Category Decisions
+
+**Purpose**
+Match categories or types.
+
+**Behaviour**
+```
+WHEN <category1> → <action1>
+WHEN <category2> → <action2>
+OTHERWISE → <fallback>
+```
+
+---
+
+#### Loops — Repeated Conditional Behaviour
+
+**FOR** → known iteration count
+**WHILE** → repeat while condition is true
+**UNTIL** → repeat until condition becomes true
+
+---
+
+#### Functions — Encapsulated Logic
+
+**Purpose**
+Group conditional logic into reusable units.
+
+**Behaviour**
+```
+DEFINE function:
+    WHEN <condition>
+    THEN <action>
+    ELSE <fallback>
+```
+
+</TabItem>
+
+</Tabs>
+
+---
+
+## 🧩 System Interactions
+
+:::info How a TA Understands the System
+- How data structures interact with memory, CPU, and storage
+- How branching logic interacts with runtime and concurrency
+- What becomes a bottleneck as data or traffic grows
+:::
+
+### Local Systems
+
+- Memory layout
+- CPU cache behaviour
+- Runtime data access
+- Concurrency and locking
+- Sorting and traversal
+
+### Remote Systems
+
+- Distributed graphs
+- Query engines
+- Caches and indexes
+- Message queues
+
+### Questions to ask during reviews or incidents
+
+- What structure is being used, and is it appropriate?
+- Are we scanning repeatedly?
+- Are conditions complete and non‑contradictory?
+- What happens when data doubles?
+- Are we missing edge cases?
+
+---
+
+## 💥 Outputs / Results
+
+:::note Special Considerations
+Performance issues often arise from structure/logic mismatches rather than code bugs.
+:::
+
+### Success Modes
+
+| Result Type | Description |
+|-------------|-------------|
+| Predictable Performance | Operations scale as expected |
+| Clear Decision Logic | Branching is explicit and correct |
+| Efficient Access Patterns | Minimal scanning or unnecessary work |
+| Stable Behaviour Under Load | No sudden degradation |
+
+### Failure Modes
+
+| Failure Type | Description |
+|--------------|-------------|
+| Linear Scan Bottlenecks | Repeated O(n) operations |
+| Incorrect Branching | Missing or contradictory conditions |
+| Explosive Traversal | Graph cycles or deep recursion |
+| Unnecessary Sorting | Wasted computation in pipelines |
+
+
+
+
