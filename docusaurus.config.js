@@ -42,10 +42,6 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/RSTglitcher/Playbook',
-          //Ensure markdown config uses standard directive handling
-          markdown:{
-            format: 'detect',
-          }
         },
         theme: {
           customCss: './src/css/custom.css',
