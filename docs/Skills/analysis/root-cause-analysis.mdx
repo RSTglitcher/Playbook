@@ -1,0 +1,108 @@
+---
+id: root-cause-analysis
+title: Root Cause Analysis (RCA)
+sidebar_label: Root Cause Analysis
+description: Framework and standard procedure for investigating system failures, identifying root causes, and preventing recurrence.
+sidebar_position: 1
+---
+
+:::tip
+> **Operational Purpose:** Methodically trace unexpected system behaviors, defects, or service outages to their underlying primary cause, producing an actionable post-mortem report and preventive action items.
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** Following a production incident, recurring bug report, data discrepancy, or unexpected SLA breach.
+* **Inputs needed:** System/application logs, error stack traces, telemetry metrics, user incident reports, deployment timestamps, and API response payloads.
+* **Expected Output:** A completed RCA Document, identified root cause hypothesis, and logged remediation tickets (corrective/preventive actions).
+
+---
+
+## 2. Standard Operating Procedure
+
+1. **Phase 1: Incident Containment & Symptom Logging**
+   * Confirm system stability is restored (failover, rollback, or patch applied) before diving deep into analysis.
+   * Document exact symptom timestamps: *When did the failure start? When was it detected? When was it resolved?*
+   * Isolate the scope: Identify affected services, endpoints, data pipelines, or user cohorts.
+
+2. **Phase 2: Data Gathering & Timeline Construction**
+   * Collect log streams, APM metrics (latency, error rate spikes), and cloud resource usage graphs around the incident window.
+   * Cross-reference incident timestamps against deployment histories, config updates, or scheduled cron jobs.
+   * Construct a chronological event timeline from initial trigger to symptom manifestation.
+
+3. **Phase 3: The 5-Whys Investigation**
+   * Apply the **5-Whys Method** to drill past surface-level symptoms down to structural or process failures.
+   * Formulate testable hypotheses (e.g., *Was it a network timeout, or an unhandled exception in the connection pool?*).
+   * Validate or disprove each hypothesis using hard telemetry data or code path analysis.
+
+4. **Phase 4: Action Item Assignment & Documentation**
+   * Draft preventive items categorized by type: **Fix** (immediate patch), **Prevent** (architectural guardrail), and **Detect** (new alert/monitoring).
+   * File remediation Jira tickets with clear ownership and priority.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### 5-Whys RCA Post-Mortem Template
+
+```text
+# Root Cause Analysis: [Incident Title]
+**Date:** YYYY-MM-DD
+**Author:** Technical Analyst
+**Severity:** [P1 / P2 / P3]
+**Impact Summary:** [Brief description of affected users/systems and duration]
+
+## Incident Timeline
+- HH:MM UTC - Incident triggered by [Event/Deployment]
+- HH:MM UTC - Alert fired / Incident reported
+- HH:MM UTC - Mitigation applied ([Rollback/Restart])
+- HH:MM UTC - System stabilized
+
+## 5-Whys Analysis
+1. Why did the service fail?
+   -> The database connection pool exhausted.
+2. Why did the connection pool exhaust?
+   -> A surge in API requests held database connections open indefinitely.
+3. Why were connections held open indefinitely?
+   -> The query lacked a statement timeout config during third-party API latency.
+4. Why was there no timeout configured?
+   -> The database client library was upgraded without validating default timeout settings.
+5. Why was it not caught in testing?
+   -> Staging integration tests do not simulate third-party latency.
+
+## Root Cause Summary
+[Concise summary of the fundamental system/process flaw]
+
+## Action Items
+- [ ] [FIX] Implement explicit 5s query timeout in DB client config (Owner: DevTeam)
+- [ ] [PREVENT] Add synthetic latency testing to staging pipeline (Owner: QA/DevOps)
+- [ ] [DETECT] Add alert threshold for DB connection pool usage >80% (Owner: Ops)
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Timeline verified against server logs and APM telemetry timestamps
+* [ ] Root cause isolates a system or process flaw (not individual human error)
+* [ ] Action items contain explicit owners, Jira ticket links, and target completion dates
+* [ ] RCA document shared with relevant engineering and stakeholder channels
+
+---
+
+:::warning Pitfalls & Edge Cases
+
+* **Common Mistake:** Stopping at symptom level (e.g., "The server ran out of memory") rather than answering *why* it ran out of memory.
+* **Pro Tip:** Focus on systems and processes rather than blame. Replace "Engineer X deployed bad code" with "Deployment pipeline allowed untested config changes to bypass integration checks."
+
+:::
+
+---
+
+## Related Playbook References
+
+* **Theory:** System Reliability & Failure Domains
+* **Practice:** Datadog & Log Inspection Workbench

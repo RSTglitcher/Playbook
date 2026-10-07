@@ -1,0 +1,105 @@
+---
+id: engineering-refinement
+title: Engineering Refinement & Backlog Grooming
+sidebar_label: Engineering Refinement
+description: Process for reviewing technical scope with engineering teams, estimating effort, and ensuring work is definition-of-ready.
+sidebar_position: 3
+---
+
+# Engineering Refinement & Backlog Grooming
+
+:::tip
+
+**Operational Purpose:** Lead collaborative sessions with engineering, QA, and product stakeholders to unpack upcoming requirements, resolve technical ambiguities, estimate complexity, and ensure user stories meet the "Definition of Ready" before sprint planning.
+
+:::
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** Weekly or bi-weekly prior to sprint planning, or ad-hoc when scoping major architectural or feature shifts.
+* **Inputs needed:** Draft user stories, initial technical requirement specs (TRDs), system dependency maps, and design/UX wireframes.
+* **Expected Output:** Fully estimated tickets (story points/t-shirt sizes), clarified technical scope, identified dependencies, and tickets marked as **Ready for Development**.
+
+---
+
+## 2. Standard Operating Procedure
+
+1. **Phase 1: Pre-Refinement Preparation (24h Prior)**
+   * Audit candidate backlog items for minimum completeness (must have a clear goal and initial acceptance criteria).
+   * Group related tickets into logical technical themes or epics to maintain context during the session.
+   * Highlight key open technical questions (e.g., *"Do we have an endpoint for this, or does it require a schema change?"*).
+
+2. **Phase 2: Context Setting & Story Walkthrough**
+   * Present the business context and objective of the ticket to the team (focus on *why* and *what*).
+   * Walk through the functional requirements and user flows step-by-step.
+   * Invite engineers to challenge assumptions, point out edge cases, and suggest simpler technical alternatives.
+
+3. **Phase 3: Technical Unpacking & Task Decomposition**
+   * Break down large feature requests into smaller, testable sub-tasks or vertical slices.
+   * Explicitly document technical implementation details raised during discussion (e.g., specific DB tables to modify, API fields, feature flags).
+   * Identify cross-team dependencies and log external blocking tickets if necessary.
+
+4. **Phase 4: Estimation & Readiness Sign-off**
+   * Facilitate team estimation (e.g., Planning Poker / Story Points) based on complexity, risk, and effort.
+   * Resolve divergence in estimates (e.g., why one engineer estimated 2 points and another estimated 8 points).
+   * Confirm the ticket meets the **Definition of Ready (DoR)** checklist.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Definition of Ready (DoR) Checklist Template
+
+```text
+## Definition of Ready (DoR) Checklist
+
+- [ ] **User Value / Objective:** Clear user story statement (As a... I want... So that...)
+- [ ] **Acceptance Criteria:** Given/When/Then scenarios explicitly defined
+- [ ] **Technical Scope:** Implementation approach or architectural bounds agreed upon
+- [ ] **Dependencies:** External APIs, design assets, or database changes identified and linked
+- [ ] **Testability:** QA team agrees on how the feature will be verified
+- [ ] **Estimated:** Pointed/sized by the development team
+
+```
+
+### Refinement Notes Boilerplate (To Paste into Tickets)
+
+```text
+### 📝 Refinement Notes ([YYYY-MM-DD])
+- **Technical Approach:** [Brief note on agreed solution, e.g., Add `status` column to `orders` table and update POST /v1/orders endpoint]
+- **Key Edge Cases Discussed:**
+  - [Edge case 1: Payload missing mandatory header -> return 400 Bad Request]
+- **Dependencies / Blockers:**
+  - Blocked by: [Jira Key / Link] (Platform team updating Auth middleware)
+- **QA / Test Strategy:** [e.g., Integration test required for timeout handling]
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Ticket scope is small enough to be completed within a single sprint iteration
+* [ ] Acceptance criteria leave no room for subjective interpretation
+* [ ] Implementation notes capture the consensus reached during the engineering discussion
+* [ ] Estimates reflect team consensus rather than a single lead developer's opinion
+
+---
+
+:::warning
+
+## Pitfalls & Edge Cases
+
+* **Common Mistake:** Dictating the exact code implementation to engineers rather than presenting the problem/spec and letting the team drive the technical solution.
+* **Pro Tip:** If a ticket sparks more than 10–15 minutes of architectural debate without resolution, stop the discussion, convert the ticket into a **Technical Spike**, and assign one engineer to investigate offline before re-refining.
+
+:::
+
+---
+
+## Related Playbook References
+
+* **Skills:** Technical Requirements & Functional Specs | Ticket Specifications & User Stories
+* **Theory:** Agile & Scrum Delivery Frameworks
+* **Practice:** Jira & Backlog Management Workbench
