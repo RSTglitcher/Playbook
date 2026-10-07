@@ -1,0 +1,122 @@
+---
+id: retrospectives
+title: Sprint Retrospectives & Continuous Improvement
+sidebar_label: Sprint Retrospectives
+description: Framework for facilitating sprint retrospectives, gathering team feedback, and driving actionable process improvements.
+sidebar_position: 4
+---
+
+# Sprint Retrospectives & Continuous Improvement
+
+:::tip
+
+**Operational Purpose:** Lead reflective team sessions at the end of an iteration to evaluate team dynamics, engineering workflows, and delivery bottlenecks—converting raw feedback into actionable, owner-assigned improvement items.
+
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** At the end of each sprint cycle, following a major feature release, or after a prolonged incident recovery period.
+* **Inputs needed:** Completed sprint metrics (velocity, roll-over work, bug counts), team feedback entries (What went well, What didn't, Action items), and previous retro action items.
+* **Expected Output:** A completed Retrospective board/document, celebrated achievements, and 1–3 high-priority, owner-assigned action items logged in the backlog for the next sprint.
+
+---
+
+## 2. Standard Operating Procedure
+
+1. **Phase 1: Session Preparation & Data Gathering (Pre-Retro)**
+   * Set up an async retro board (e.g., Miro, EasyRetro, or Jira Retro) 24–48 hours before the meeting.
+   * Pull sprint delivery data (e.g., completed story points, unplanned scope additions, PR review turnaround times).
+   * Review the status of action items committed during the *previous* retrospective.
+
+2. **Phase 2: Setting the Stage & Psychological Safety**
+   * Reiterate Norm Kerth's Prime Directive: *"Regardless of what we discover, we understand and truly believe that everyone did the best job they could..."*
+   * Review previous action items: Celebrate completed items and acknowledge uncompleted ones without finger-pointing.
+
+3. **Phase 3: Silent Brainstorming & Grouping**
+   * Give the team 5–7 minutes of silent writing time to populate cards under three primary pillars:
+     * **What Went Well:** Successes, smooth deployments, great collaboration.
+     * **What Needs Improvement:** Bottlenecks, unclear specs, environment downtime, process friction.
+     * **Ideas & Questions:** Proposed experiments, questions about new tooling or workflows.
+   * Group duplicate or closely related cards into unified themes.
+
+4. **Phase 4: Voting, Discussion & Action Item Generation**
+   * Allow team members 3–5 votes to prioritize the themes that matter most.
+   * Discuss top-voted topics starting from the highest vote count. Focus discussions on **actionable solutions** rather than venting.
+   * Convert key insights into explicit, measurable **Action Items** with dedicated owners and target delivery dates.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Retrospective Board & Action Item Template
+
+```text
+# Sprint [X] Retrospective
+
+**Date:** YYYY-MM-DD  
+**Facilitator:** Technical Analyst  
+**Participants:** Engineering Team, QA, Product Owner  
+
+---
+
+## 1. Review of Previous Action Items
+- [x] **[COMPLETED]** Add automated linter check to PR pipeline (Owner: Alex)
+- [ ] **[IN PROGRESS]** Update staging database seed script (Owner: Sam)
+
+---
+
+## 2. Feedback Summary
+
+### 🟢 What Went Well
+- Quick turnaround on PR code reviews this sprint.
+- The new Technical Requirement Document format made API integration much clearer.
+
+### 🔴 What Needs Improvement
+- Staging environment was down for 2 days due to broken migrations.
+- Several tickets entered the sprint without explicit acceptance criteria.
+
+### 💡 Ideas & Experiments
+- Try adding a automated smoke-test check before merging to staging.
+- Implement a 15-minute daily "blocker clearance" drop-in call.
+
+---
+
+## 3. Actionable Commitments for Next Sprint
+
+| Action Item | Type | Owner | Target Ticket / Sprint |
+| :--- | :--- | :--- | :--- |
+| Add DoR checklist enforcement before pulling tickets into sprint | Process | Technical Analyst | Sprint [X+1] |
+| Set up alert notifications for staging environment build failures | Tooling | DevOps / Sam | Jira: PLAT-402 |
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Every action item has a single explicit owner (no "unowned" or group-owned tasks)
+* [ ] Total action items are capped at 1–3 items per sprint to avoid overwhelming the team
+* [ ] Action items are logged as actual Jira/backlog tasks rather than buried in meeting notes
+* [ ] Retro feedback focuses on processes and workflows rather than personal critiques
+
+---
+
+:::warning
+
+## Pitfalls & Edge Cases
+
+* **Common Mistake:** Creating a huge list of 10+ action items that nobody completes, leading to "retro fatigue" where the team feels nothing changes.
+* **Pro Tip:** Keep action items tightly focused. It is far better to execute **one** impactful process change every sprint than to record ten suggestions that get ignored.
+
+:::
+
+---
+
+## Related Playbook References
+
+* **Skills:** Engineering Refinement | Technical Requirements
+* **Theory:** Agile Metrics & Team Dynamics
+* **Practice:** Jira & Confluence Tooling Workbench

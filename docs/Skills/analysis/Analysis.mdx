@@ -1,0 +1,84 @@
+---
+title: "Analytical Thinking & Problem Framing"
+sidebar_position: 4
+sidebar_label: 🧪 Analysis
+slug: /skills/analysis
+---
+
+:::tip
+
+**Core Philosophy:** True analytical rigor begins before solutioning. It starts by taking raw operational friction or business needs, stripping away assumptions, and formulating a sharp, unambiguous **Problem Statement**.
+
+:::
+
+---
+
+## 1. What It Means to Be Analytical
+
+Being analytical is not just about reading logs or querying data - it is a structured mindset focused on **problem framing, scope isolation, and evidence-based reasoning**.
+
+### The Analytical Loop
+1. **Detect Friction:** Spotting anomalies, user bottlenecks, system failures, or process breakdowns.
+2. **Define the Problem:** Formulating an objective Problem Statement without prescribing an early solution.
+3. **Deconstruct & Scope:** Breaking the framed problem into testable hypotheses and clear boundaries.
+4. **Apply Analytical Skills:** Deploying targeted techniques (RCA, Requirements, Refinement) to resolve the underlying issue.
+
+---
+
+## 2. The Foundation: Formulating a Problem Statement
+
+Every analytical workflow in this section starts here. If a problem is poorly defined, every downstream specification, ticket, or fix will misfire.
+
+### The Problem Statement Framework
+
+```text
+[ Impacted Entity / Context ] is experiencing [ Specific Friction / Defect ],
+resulting in [ Quantifiable Impact ].
+This occurs under [ Specific Trigger / Conditions ].
+
+```
+
+#### Example Breakdown
+
+* ❌ **Poorly Framed:** *"The search API is slow and broken."* (Vague, emotional, no quantifiable bounds)
+* ❌ **Premature Solutioning:** *"We need to add Redis caching to the search endpoint."* (Assumes the solution before isolating the cause)
+* ✅ **Analytical Problem Statement:** *"Checkout users are experiencing $P_95
+$ response latencies above $3.5\texts$ during query execution, leading to an $8\%$ drop in conversion during peak traffic hours ($12\textpm–2\textpm$)."*
+
+---
+
+## 3. Applying the Analytical Skills Suite
+
+Once a Problem Statement is established, apply the specialized skill modules below to investigate, document, and resolve it:
+
+:::info Skill Execution Directory
+
+### 🔍 Root Cause Analysis (RCA)
+
+**When applied:** When the problem statement involves a system outage, defect, or unexpected behavior. Traces the issue past surface symptoms down to structural root causes.
+
+### 📋 Technical Requirements & Functional Specs
+
+**When applied:** When the problem statement stems from a missing capability or system gap. Defines the exact functional criteria and system contracts required to resolve the issue.
+
+### ⚙️ Engineering Refinement & Backlog Grooming
+
+**When applied:** When converting the proposed solution into actionable engineering scope. Ensures tickets meet the Definition of Ready (DoR) and team consensus.
+
+### 🔄 Sprint Retrospectives & Continuous Improvement
+
+**When applied:** When the problem statement highlights process bottlenecks or team delivery friction. Evaluates operational dynamics to prevent recurrence.
+
+:::
+
+---
+
+## 4. Problem framing Checklist
+
+Before passing a problem down the execution pipeline, verify:
+
+* [ ] Does the statement describe **what is happening** rather than prescribing **how to fix it**?
+* [ ] Is the business or technical impact quantified with data/metrics?
+* [ ] Are the boundary conditions (who, when, where) explicitly stated?
+* [ ] Do key technical and business stakeholders agree on this definition of the problem?
+
