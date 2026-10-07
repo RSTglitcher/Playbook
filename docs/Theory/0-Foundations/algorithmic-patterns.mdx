@@ -1,0 +1,153 @@
+---
+title: Algorithmic & Problem-Solving Patterns
+sidebar_position: 5
+description: Rapid recall cheat sheet for Pointer/Window Patterns, Tree & Graph Traversals, and Dynamic Programming/Greedy Strategies.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Algorithmic & Problem-Solving Patterns
+
+:::tip Persona Lens: Workshop & Interview Mode
+* **Quick Pitch:** 1-sentence off-the-cuff definition for interviews.
+* **Core Primitives:** Structured breakdowns of array manipulation, graph search, and state-space optimization patterns.
+* **BAU & Operational Realities:** Telemetry indicators, failure modes, and production diagnostics.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Array & Sequence Traversal:** Focus on **Pointer Mechanics (Two Pointers / Fast & Slow)** and **Sliding Window Bounds** to optimize sequence searching from $O(n^2)$ down to $O(n)$ time complexity.
+* **Hierarchical & Graph Search:** Focus on **Level-Order (BFS) vs Depth-First (DFS)** and **State Backtracking** to navigate decision trees, shortest paths, and topological dependencies.
+* **Optimal Substructure & Memoization:** Focus on **Top-Down Memoization vs Bottom-Up Tabulation (Dynamic Programming)** to eliminate redundant recursive computation branches.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Algorithmic Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Array & Window Patterns** | In-place array mutations minimizing garbage collection memory allocation. | Memory-efficient streaming window calculations over real-time log queues. |
+| **Graph & Tree Search** | Recursion stack frame allocation vs. iterative Queue/Stack heap allocations. | Parallel graph partition traversal and distributed BFS across worker nodes. |
+| **Dynamic Programming** | High memory allocation churn when building large multidimensional DP matrices. | Centralized memoization cache (Redis) lock contention during shared evaluation. |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Complexity Bounds">
+
+| Algorithmic Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Array & Window Patterns** | $O(1)$ auxiliary space allocations preserving CPU cache locality ($L1/L2$). | Low payload serialization overhead when processing ordered data blocks. |
+| **Graph & Tree Search** | Deep recursion triggering stack overflow crashes (`StackOverflowError`) on un-balanced trees. | Graph traversal memory expansion ($O(V + E)$) during large network graph queries. |
+| **Dynamic Programming** | Space complexity optimization ($O(n^2) \rightarrow O(n)$) reducing local heap pressure. | Sub-optimal recursive execution times ($O(2^n)$) causing upstream gateway timeouts. |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="pointers-windows" label="1. Pointers, Windows & Binary Search" default>
+
+### 🔀 Array & Sequence Optimization Patterns
+
+:::tip Definition
+Algorithmic structures that leverage index bounds, sorted properties, or dual references to iterate through contiguous memory without redundant nested loops.
+:::
+
+> **Interview Pitch:** *"Pointer and window patterns convert brute-force $O(n^2)$ nested iterations into single-pass $O(n)$ linear scans by tracking range invariants."*
+
+#### 🧠 Decision Drivers
+* **Choose Two Pointers:** Sorted arrays/strings, searching for pairs/triplets, reversing sequences in-place, partitioning arrays.
+* **Choose Fast & Slow Pointers (Floyd's Cycle):** Linked lists, cyclic sequence detection, finding middle elements.
+* **Choose Sliding Window:** Contiguous sub-arrays/sub-strings matching specific criteria (e.g., max sum, shortest window containing target characters).
+* **Choose Binary Search:** Sorted sequences, monotonic search spaces (e.g., finding optimal threshold values in range $[1, N]$).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Pattern / Primitive | Off-the-Cuff Explanation | Time / Space Complexity | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Two Pointers** | Converging (start/end) or parallel pointers traversing an ordered array toward a solution. | Time: $O(n)$ <br/>Space: $O(1)$ | Two-Sum Variants, In-Place Partitioning |
+| **Sliding Window** | Expanding/shrinking start and end pointers to track a dynamic contiguous range. | Time: $O(n)$ <br/>Space: $O(1)$ | Dynamic Window, Monotonic Queue |
+| **Fast & Slow Pointers** | Two pointers moving at different speeds ($1\times$ and $2\times$) to detect cycles or midpoints. | Time: $O(n)$ <br/>Space: $O(1)$ | Floyd’s Tortoise and Hare Algorithm |
+| **Binary Search** | Repeatedly halving a sorted search space based on monotonic condition evaluation. | Time: $O(\log n)$ <br/>Space: $O(1)$ | Monotonic Functions, Boundary Search |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Nested Array Scans** | Using nested loops (`Array.includes` inside `for` loop) for substring/pair searching ($O(n^2)$). | CPU utilization spikes to 100%; request latency scales exponentially with input size growth. | Convert to a **Sliding Window** or **Hash Set** lookup to enforce $O(n)$ execution time. |
+| **Unchecked Off-By-One** | Incorrect boundary evaluation (`<=` vs `<`) in binary search or sliding window loops. | Infinite loops hanging application threads, index out-of-bounds exceptions, or missing edge elements. | Strictly define and enforce boundary invariants (e.g., closed interval `[left, right]`). |
+
+  </TabItem>
+
+  <TabItem value="trees-graphs" label="2. Trees, Graphs & Backtracking">
+
+### 🌲 Trees, Graphs & Backtracking
+
+:::tip Definition
+Traversal strategies designed to navigate hierarchical tree nodes, interconnected graph relationships, and combinatorial decision state-spaces.
+:::
+
+> **Interview Pitch:** *"Breadth-First Search (BFS) explores level-by-level to guarantee shortest paths, while Depth-First Search (DFS) explores branch-by-branch for deep structural validation and backtracking."*
+
+#### 🧠 Decision Drivers
+* **Choose BFS (Breadth-First Search):** Shortest path in unweighted graphs, level-order tree processing, nearest-neighbor searches.
+* **Choose DFS (Depth-First Search):** Path finding, topological sorting, connected component discovery, subtree evaluations.
+* **Choose Backtracking:** Generating permutations, combinations, solving constraint satisfaction problems (e.g., Sudoku, N-Queens).
+* **Choose Topological Sort:** Task dependency ordering, build pipelines, package manager resolution (DAGs).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Pattern / Primitive | Off-the-Cuff Explanation | Time / Space Complexity | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Breadth-First Search (BFS)** | Level-by-level traversal using a Queue ($FIFO$) to explore neighbors in expanding ripples. | Time: $O(V + E)$ <br/>Space: $O(V)$ | Queue-based Traversal, Shortest Path |
+| **Depth-First Search (DFS)** | Deep branch exploration using a Stack ($LIFO$) or recursion to reach leaf nodes first. | Time: $O(V + E)$ <br/>Space: $O(H)$ | Recursion Stack, Branch Exploration |
+| **Backtracking** | Incremental construction of candidate states, reverting (backtracking) as soon as constraints fail. | Time: $O(K^N)$ <br/>Space: $O(N)$ | Pruning, State Space Tree |
+| **Topological Sort** | Linear ordering of vertices in a Directed Acyclic Graph (DAG) respecting direction dependencies. | Time: $O(V + E)$ <br/>Space: $O(V)$ | Kahn’s Algorithm, In-Degree Array |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Missing Visited Set** | Traversal of cyclic graphs without tracking previously visited nodes. | StackOverflowError or Infinite loop execution causing thread starvation and memory exhaustion. | Maintain a **`Visited` Hash Set** to track and skip already-processed nodes. |
+| **DFS for Shortest Path** | Using DFS to find the shortest path in an unweighted graph. | Sub-optimal long execution paths explored first, high memory consumption, and slow execution time. | Switch to **BFS (Queue-based)** to ensure the shortest path is found at the first target hit. |
+
+  </TabItem>
+
+  <TabItem value="dp-greedy" label="3. Dynamic Programming & Greedy">
+
+### 💡 Dynamic Programming & Greedy Strategies
+
+:::tip Definition
+Optimization paradigms that break complex problems into overlapping subproblems—storing subproblem solutions (DP) or making locally optimal choices at each step (Greedy).
+:::
+
+> **Interview Pitch:** *"Dynamic Programming eliminates exponential redundant calculations by caching overlapping subproblem answers, whereas Greedy algorithms commit to the local optimum at each step without looking back."*
+
+#### 🧠 Decision Drivers
+* **Choose Dynamic Programming:** Problems displaying **Overlapping Subproblems** and **Optimal Substructure** (e.g., shortest path with constraints, edit distance, knapsack variants).
+* **Choose Greedy Algorithms:** Problems where local optimal choices globally optimize the goal without requiring rollbacks (e.g., interval scheduling, Huffman coding).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Pattern / Strategy | Off-the-Cuff Explanation | Time / Space Complexity | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Top-Down DP (Memoization)** | Recursive exploration using a hash map or array lookup to cache computed subproblem results. | Time: $O(N)$ <br/>Space: $O(N)$ | Subproblem Cache, Recursion Tree |
+| **Bottom-Up DP (Tabulation)** | Iterative state-building starting from base cases and filling an array/matrix sequentially. | Time: $O(N)$ <br/>Space: $O(N) \rightarrow O(1)$ | State Transition Table, Space Reduction |
+| **Greedy Choice Property** | Choosing the best immediate option at each step guarantees a global optimum without back-tracking. | Time: $O(n \log n)$ <br/>Space: $O(1)$ | Local vs Global Optimum |
+| **Monotonic Stack / Heap** | Maintaining a strictly increasing/decreasing stack or priority queue to evaluate relative ranges. | Time: $O(n)$ <br/>Space: $O(n)$ | Min/Max Heap, Next Greater Element |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Naive Recursion** | Implementing recursive Fibonacci/tree algorithms without memoization on overlapping subproblems. | Exponential time complexity ($O(2^n)$); CPU throttling and thread timeout crashes on $N > 40$. | Apply **Memoization (Top-Down)** or convert to **Tabulation (Bottom-Up)**. |
+| **False Greedy Assumption** | Applying a greedy strategy to a problem that requires evaluating all subproblems (e.g., Coin Change with arbitrary denominations). | Inaccurate/incorrect calculation outputs produced silently in production edge cases. | Verify if the problem satisfies the **Greedy Choice Property**; if not, use **Dynamic Programming**. |
+
+  </TabItem>
+</Tabs>
