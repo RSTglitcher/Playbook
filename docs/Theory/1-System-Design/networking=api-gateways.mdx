@@ -1,0 +1,166 @@
+---
+title: Networking, API Gateways & Edge Routing
+sidebar_position: 3
+description: Rapid recall cheat sheet for OSI Layer Transport, Load Balancing, Reverse Proxies, API Gateways, and Traffic Guardrails.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Networking, API Gateways & Edge Routing
+
+
+:::tip 
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** 1-sentence off-the-cuff definition for interviews.
+* **Core Primitives:** Structured breakdowns of OSI transport layers, routing topologies, and edge protection patterns.
+* **BAU & Operational Realities:** Telemetry indicators, failure modes, and production diagnostics.
+
+:::
+
+## 🔍 Theory Focus Point
+
+* **Transport & Routing Boundaries (L4 vs L7):** Focus on **Packet-Level Routing (L4 TCP/UDP)** vs. **Application Awareness (L7 HTTP/gRPC)** to balance low-latency throughput against smart content-based routing.
+* **Ingress & Edge Architecture (Gateways vs Service Mesh):** Focus on **North-South Edge Traffic (API Gateways)** vs. **East-West Internal Communication (Service Mesh)** to manage security, routing, and cross-cutting concerns safely.
+* **Traffic Control & Resiliency:** Focus on **Rate Limiting, Throttling & Circuit Breakers** to prevent downstream service exhaustion and cascading system failures under traffic spikes.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Connection Limits" default>
+
+| Networking Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Transport & Load Balancing** | Thread contention on local TCP socket buffers under heavy connection pooling. | Load balancer connection limits, ephemeral port exhaustion, and NAT gateway bottlenecks. |
+| **API Gateways** | Non-blocking I/O event-loop saturation (e.g., Netty/Envoy) during SSL termination. | Centralized gateway thread pool starvation during downstream latency degradation. |
+| **Resiliency Guardrails** | Local bucket lock contention during high-frequency rate-limiter evaluation. | Distributed Redis lock/memory saturation when enforcing global rate limits across nodes. |
+
+  </TabItem>
+  <TabItem value="data" label="2. Traffic Spikes & Network Latency">
+
+| Networking Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Transport & Load Balancing** | CPU overhead driven by continuous TLS handshake decryption on worker threads. | Cross-availability-zone (AZ) network transfer costs and latency penalties on routing. |
+| **API Gateways** | Heap allocation churn from uncompressing and inspecting large request/response payloads. | Gateway timeouts, client connection drops, and queue buildup during downstream traffic surges. |
+| **Resiliency Guardrails** | CPU spikes driven by heavy regex execution in path-based routing rules. | Circuit breaker trips causing sudden 503 error spikes across distributed client applications. |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="load-balancing" label="1. Transport & Load Balancing" default>
+
+### 🌐 OSI Layers, Load Balancing & Reverse Proxies
+
+
+:::tip 
+
+**Definition**
+Mechanisms that distribute incoming network traffic across backend compute instances, operating at different levels of abstraction (L4 Transport vs. L7 Application).
+
+:::
+
+> **Interview Pitch:** *"Layer 4 load balancing routes raw TCP packets for maximum throughput, while Layer 7 inspects HTTP/gRPC headers to perform smart, content-based routing at the expense of higher CPU overhead."*
+
+#### 🧠 Decision Drivers
+* **Choose Layer 4 (Network/TCP):** High-throughput data streams, non-HTTP protocols, ultra-low latency requirements (e.g., AWS NLB, IP Hash).
+* **Choose Layer 7 (Application/HTTP):** Microservice routing based on URL paths/headers, TLS termination, cookie sticky sessions (e.g., NGINX, AWS ALB).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Strategy | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Layer 4 vs Layer 7** | L4 routes by IP address + TCP port; L7 inspects full HTTP URL paths, headers, and cookies. | L4 offers ultra-low CPU latency; L7 enables complex routing rules and header manipulation. | OSI Model, Packet Inspection |
+| **Reverse Proxy** | An intermediate server sitting in front of backend nodes to manage SSL, caching, and routing. | Shields internal topology from public exposure; acts as a single point of entry. | TLS Termination, Forward vs Reverse Proxy |
+| **Consistent Hashing** | A routing algorithm ensuring requests map to the same backend node even as nodes scale. | Minimizes cache invalidation and state redistribution during node auto-scaling. | Virtual Nodes, Hash Ring |
+| **DNS Load Balancing** | Resolving a domain name to multiple IP addresses sequentially via Round-Robin DNS. | Distributed load globally before hitting infrastructure; slow to update due to client TTL caching. | Anycast DNS, GeoDNS Routing |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **L7 Overhead on Hot Paths** | Forcing high-frequency binary database or streaming traffic through heavy L7 application proxies. | Proxy CPU saturation at 100%, high network latency jitter, and packet drop spikes. | Switch performance-critical data pipelines to **Layer 4 (TCP/UDP)** load balancers. |
+| **Ephemeral Port Exhaustion** | Opening new TCP connections to backend services for every HTTP request without connection reuse. | Sudden batch API failures with `Cannot assign requested address` or `Connection Reset` errors. | Enable **HTTP Keep-Alive** and tune TCP connection pool sizes on load balancers and clients. |
+
+  </TabItem>
+
+  <TabItem value="gateways" label="2. API Gateways & Edge Routing">
+
+### 🚪 API Gateways & Ingress Architecture
+
+
+:::tip 
+
+**Definition**
+A specialized reverse proxy managing external client access (North-South traffic) by centralizing authentication, routing, rate limiting, and protocol translation.
+
+:::
+
+> **Interview Pitch:** *"An API Gateway acts as the single point of entry for external traffic—abstracting microservice complexity while enforcing edge security, routing, and rate limiting."*
+
+#### 🧠 Decision Drivers
+* **Choose API Gateway:** Public-facing microservices requiring unified auth (JWT/OAuth), rate-limiting, edge CORS, and API key management.
+* **Choose Backend-For-Frontend (BFF):** Heterogenous client types (Mobile vs. Web vs. IoT) requiring custom response aggregation and payload tailoring.
+* **Choose Service Mesh (Envoy/Istio):** Complex internal East-West microservice-to-microservice security (mTLS), observability, and traffic splitting.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Architecture / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **North-South Traffic** | Traffic entering or leaving the data center boundary (Client $\rightarrow$ API Gateway). | Focused on public security, authentication, rate limiting, and edge caching. | Edge Router, Ingress Controller |
+| **East-West Traffic** | Traffic moving internally between microservices within the same cluster (Service A $\rightarrow$ Service B). | Focused on service discovery, mTLS encryption, retry policies, and distributed tracing. | Service Mesh, Sidecar Proxy |
+| **BFF Pattern** | Separate gateway layers customized specifically for different frontend clients (Web vs Mobile). | Prevents over-fetching on mobile networks while giving web clients rich aggregated payloads. | Backend-For-Frontend, Aggregation Layer |
+| **TLS Termination** | Decrypting incoming HTTPS traffic at the gateway layer before routing plain HTTP internally. | Reduces CPU overhead on internal microservices; requires secure isolated internal network VPCs. | SSL Offloading, mTLS |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Monolithic Gateway Logic** | Embedding complex business logic or database queries directly inside API Gateway scripts/plugins. | Gateway deployment bottlenecks, high latency across *all* routes, and severe blast radius during bugs. | Keep the gateway strictly focused on **routing and cross-cutting concerns**; push business logic down to services. |
+| **Double Encryption Overhead** | Performing TLS termination at the edge load balancer, re-encrypting for the API gateway, and re-encrypting again for services unnecessarily. | High latency, excessive CPU consumption on intermediate proxy nodes, and throughput drop. | Terminate TLS at the edge gateway and use lightweight internal **mTLS (via Service Mesh)** for East-West security. |
+
+  </TabItem>
+
+  <TabItem value="resiliency" label="3. Rate Limiting & Circuit Breakers">
+
+### 🛡️ Resiliency, Rate Limiting & Circuit Breakers
+
+
+:::tip 
+
+**Definition**
+Traffic control patterns designed to protect backend services from load shedding, cascading failures, and resource exhaustion under unpredictable traffic spikes.
+
+:::
+
+> **Interview Pitch:** *"Resiliency patterns protect system availability—using Rate Limiting to reject excess requests at the edge and Circuit Breakers to isolate failing downstream dependencies."*
+
+#### 🧠 Decision Drivers
+* **Enforce Rate Limiting:** Protecting public APIs from DDoS attacks, enforcing tier-based API billing quotas, shielding databases from traffic surges.
+* **Enforce Circuit Breakers:** Calling third-party APIs or external microservices susceptible to transient network latency or outages.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism / Algorithm | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Token Bucket Algorithm** | Tokens added to a bucket at a fixed rate; requests consume tokens; empty bucket drops requests. | Allows short bursts of traffic while enforcing a smooth long-term average request rate. | Leaky Bucket vs Token Bucket |
+| **Sliding Window Counter** | Tracks request counts over smooth overlapping time windows to eliminate burst boundary spikes. | Highly accurate rate limiting without edge-of-window traffic doubling vulnerabilities. | Distributed Rate Limiting, Redis Sliding Window |
+| **Circuit Breaker** | Automatically trips open when downstream error rates exceed thresholds, failing fast without calling the dependency. | Prevents thread pool starvation and cascading failures across microservices during outages. | Closed, Open, Half-Open States |
+| **Bulkheading** | Isolating thread pools or connection pools per service dependency. | Ensures a failure in one slow downstream service cannot consume all system resources and bring down unrelated endpoints. | Thread Pool Isolation, Fault Domain |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Cascading Thread Exhaustion** | Calling a slow downstream service repeatedly without timeouts or circuit breakers. | Incoming request threads pile up waiting for responses, starving the entire application thread pool (`504 Gateway Timeout`). | Implement strict **Request Timeouts**, **Circuit Breakers**, and **Bulkhead Isolation**. |
+| **Thundering Herd Recovery** | A tripped circuit breaker closes immediately for all queued traffic once the downstream dependency recovers slightly. | Downstream service is instantly overwhelmed and crashes again, causing a continuous open-close retry loop. | Use a **Half-Open state** with exponential backoff, jitter, and gradual traffic ramping during recovery. |
+
+  </TabItem>
+</Tabs>

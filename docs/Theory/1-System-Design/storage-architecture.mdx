@@ -1,0 +1,167 @@
+---
+title: Storage Architecture & Databases
+sidebar_position: 1
+description: Rapid recall cheat sheet for Relational vs. NoSQL Datastores, Caching Strategies, and Analytical/Search Storage Engine Mechanics.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Storage Architecture & Databases
+
+
+:::tip 
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** 1-sentence off-the-cuff definition for interviews.
+* **Core Primitives:** Structured breakdowns of storage engines, access patterns, and indexing structures.
+* **BAU & Operational Realities:** Telemetry indicators, failure modes, and production diagnostics.
+
+:::
+
+## 🔍 Theory Focus Point
+
+* **Transactional Datastores (RDBMS vs NoSQL):** Focus on **ACID vs BASE Guarantees** and **Access Patterns (Key-Value vs Document vs Graph)** to select datastores that match domain consistency and data relationship needs.
+* **In-Memory & Caching Layers:** Focus on **Caching Topology (In-Memory vs Distributed)** and **Eviction/Invalidation Strategies** to offload database CPU and prevent cache stampedes under high load.
+* **Search & Analytical Engines:** Focus on **Row-Oriented (OLTP) vs Column-Oriented/Inverted (OLAP/Search)** to optimize I/O paths for multi-field aggregations and full-text querying.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Storage Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Relational (RDBMS)** | Row and table lock contention under heavy concurrent writes (`SELECT FOR UPDATE`). | Connection pool exhaustion, deadlocks, and replication lag to read-replicas. |
+| **NoSQL (Document/KV)** | In-memory atomic mutations (e.g., Redis single-threaded event loop). | Partition/shard key hot-spotting on high-traffic nodes. |
+| **Caching Layers** | Local heap memory thrashing during concurrent cache invalidation events. | Distributed cache cluster lock contention and cache stampede on miss events. |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Storage Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Relational (RDBMS)** | Buffer pool churn and disk swap operations when indexes exceed available RAM. | Non-linear query latency degradation ($O(n)$) from unindexed joins across large tables. |
+| **NoSQL & Analytics** | LSM-tree compaction I/O spikes during sustained background data ingestion. | Network bandwidth saturation during large cross-node distributed aggregation scans. |
+| **Search Engines** | Java heap allocation churn during heavy inverted index updates and garbage collection. | Shard rebalancing overhead and distributed query fan-out latency across cluster nodes. |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="nosql" label="1. Relational vs NoSQL Datastores" default>
+
+### 🗄️ Transactional Datastores (RDBMS vs NoSQL)
+
+
+:::tip 
+
+**Definition**
+Storage models optimized for operational online transaction processing (OLTP), balancing strict ACID transactional guarantees against horizontal write scalability.
+
+:::
+
+> **Interview Pitch:** *"Choose relational databases when schema enforcement and strict ACID transactions across entities are mandatory; choose NoSQL when horizontal write scale, flexible schemas, or specialized access paths (Key-Value, Document, Graph) dictate performance."*
+
+#### 🧠 Decision Drivers
+* **Choose Relational (PostgreSQL, MySQL):** Financial ledgers, complex multi-entity domain models, strict relational integrity, unpredictable query patterns.
+* **Choose Document (MongoDB):** Unstructured/semi-structured domain models, rapidly evolving product catalogs, hierarchical payloads.
+* **Choose Key-Value (DynamoDB, Redis):** High-throughput low-latency lookups by primary key, user sessions, shopping carts.
+* **Choose Graph (Neo4j):** Interconnected relationship networks, social graphs, fraud detection patterns.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Engine | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **B-Tree Indexing** | Balanced tree structures optimized for read-heavy transactional lookups and range queries. | Enables $O(\log n)$ random read operations; imposes write penalty to update tree structure. | B-Tree / B+Tree, Write Amplification |
+| **LSM-Trees** | Write-optimized storage engine buffering writes in memory (MemTable) before flushing to disk. | Enables sub-millisecond write ingestion; introduces background compaction CPU/IO spikes. | Log-Structured Merge-tree, SSTables |
+| **ACID vs BASE** | ACID enforces strict consistency; BASE prioritizes availability and eventual consistency. | ACID requires distributed locking or consensus; BASE scales writes horizontally across nodes. | Isolation Levels (Read Committed, Serializable) |
+| **Sharding & Partitioning** | Distributing rows or documents across multiple physical database instances via a shard key. | Eliminates single-node storage limits; cross-shard queries become extremely slow ($O(N)$ fan-out). | Consistent Hashing, Shard Keys |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Monolithic Schemas** | Defaulting to RDBMS joins for massive unstructured event tracking logs. | Database CPU saturation at 100%, IOPS throttling, and connection pool starvation. | Offload high-volume event logging to **NoSQL Document/Append-Only** datastores. |
+| **Bad Shard Key** | Choosing a low-cardinality shard key (e.g., `Status` or `Country`) in a distributed NoSQL DB. | Hot-partition node failure; 90% of traffic routes to a single overwhelmed database node. | Select high-cardinality shard keys with uniform distribution (e.g., `Composite ID` or `TenantID + Hash`). |
+
+  </TabItem>
+
+  <TabItem value="caching" label="2. Caching Layers & Invalidation">
+
+### ⚡ In-Memory Storage & Caching Strategies
+
+
+:::tip 
+
+**Definition**
+High-speed data retrieval layers storing hot operational data in memory (RAM) to minimize disk I/O and offload primary database compute.
+
+:::
+
+> **Interview Pitch:** *"Caching trades memory overhead for sub-millisecond response times—requiring explicit write patterns and invalidation strategies to prevent stale data and database stampedes."*
+
+#### 🧠 Decision Drivers
+* **Choose Cache-Aside:** Standard read-heavy web applications where application logic manages fallback to DB on cache misses.
+* **Choose Write-Through / Write-Behind:** Write-intensive applications requiring synchronized cache/DB states or async write batching.
+* **Choose Local In-Memory Caching:** Single-instance microservices or static immutable lookup tables (zero network hop latency).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Strategy / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Cache-Aside (Lazy Loading)** | Application checks cache; if miss, fetches from DB and populates cache. | Resilient to cache node failures; first request suffers cache-miss latency tax. | Read-Through, Cache Miss Tax |
+| **Write-Through / Write-Behind** | Writes update cache directly; cache updates DB synchronously (Through) or asynchronously (Behind). | Write-Behind provides ultra-low write latency; risks data loss if cache node crashes before DB sync. | Write Buffer, Async Persistence |
+| **Eviction Policies** | Algorithms determining which keys to remove when cache memory limits are reached. | Dictates cache hit ratio efficiency under memory pressure. | LRU (Least Recently Used), LFU, TTL Bounds |
+| **Cache Stampede (Thundering Herd)** | Multiple concurrent requests simultaneously hitting DB on a key expiry event. | Instant DB CPU/Connection pool crash following cache key expiration. | Probabilistic Early Expiration, Mutex Locks |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Cache Keys** | Caching dynamic queries with unlimited parameters without setting key TTL bounds. | Redis/Memcached Out-Of-Memory (OOM) evictions, dropping hot keys and degrading hit ratios. | Enforce strict TTLs, memory limits, and LRU eviction policies on all cached entries. |
+| **Cache Invalidation Flaws** | Mutating DB records without clearing corresponding cache keys. | Users seeing stale data (e.g., updated prices or old authorization roles) across service requests. | Implement event-driven cache invalidation hooks or CDC (Change Data Capture) streams. |
+
+  </TabItem>
+
+  <TabItem value="analytics" label="3. Analytics & Search Engines">
+
+### 🔎 Analytical Storage (OLAP) & Search Engines
+
+
+:::tip 
+
+**Definition**
+Specialized storage architectures optimized for multi-dimensional analytical aggregations (OLAP) and full-text vector/keyword search queries.
+
+:::
+
+> **Interview Pitch:** *"Analytical storage structures data by columns (Parquet/ClickHouse) to speed up aggregations, while Search Engines invert text into term lookups (Elasticsearch) for instant full-text filtering."*
+
+#### 🧠 Decision Drivers
+* **Choose Columnar OLAP (ClickHouse, Snowflake):** Aggregating billions of rows over specific fields (e.g., calculating $p99$ metrics, financial reports, clickstream analytics).
+* **Choose Inverted Search Engines (Elasticsearch, OpenSearch):** Full-text search across unstructured text documents, log analysis (ELK stack), multi-faceted filtering.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Engine / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Row vs Column Storage** | Row storage places full records together; Column storage groups identical attributes sequentially on disk. | Columnar storage minimizes disk I/O by reading *only* queried columns; highly compressable. | Columnar Projection, Compression Ratio |
+| **Inverted Index** | A dictionary mapping terms/words directly to the document IDs in which they appear. | Transforms $O(n)$ full-text document scans into $O(1)$ term key lookups. | Lucene, Term Frequency-Inverse Document Frequency |
+| **Vector Indexing** | Storing dense embeddings to find semantic similarity rather than exact keyword matches. | Enables semantic search; requires heavy GPU/RAM indexing computation. | Hierarchical Navigable Small World (HNSW) |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **OLTP for Analytics** | Running `COUNT(*)`, `SUM()`, or heavy GROUP BY queries directly on operational MySQL/Postgres DBs. | Table locks, high disk read I/O, and query timeouts impacting real-time user transactions. | Replicate transactional data to an **OLAP Columnar Engine (ClickHouse)** via CDC. |
+| **Elasticsearch as Primary DB** | Using Elasticsearch as the single source of truth for transactional application state. | Silent data loss during cluster split-brain scenarios or index corruptions; non-ACID write race conditions. | Keep primary state in an ACID datastore; stream data asynchronously to Elasticsearch for search. |
+
+  </TabItem>
+</Tabs>
