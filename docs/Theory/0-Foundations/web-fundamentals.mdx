@@ -1,271 +1,179 @@
 ---
-title: "Web"
-sidebar_position: 6
+title: Web Fundamentals
+sidebar_position: 3
+description: Rapid recall cheat sheet for HTTP Protocol, State & Session Models, Rendering Strategies, and Web Security Boundaries.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## 🧠 Theory
-This **Theory** page explains the foundational concepts that underpin all web systems: **HTTP**, **state**, **sessions**, and the **request lifecycle**.
-These ideas shape how authentication works, how applications scale, how failures occur, and how users experience your system.
+# Web Fundamentals
 
-Understanding these fundamentals gives you the mental models to:
-
-- reason about distributed behaviour
-- anticipate bottlenecks and failure modes
-- evaluate architectural decisions
-- communicate clearly with engineers
-- diagnose issues in real systems
-
----
-
-:::tip
-### Definition
-**Web Fundamentals** describe how web applications communicate, maintain state, and structure their behaviour across stateless HTTP interactions.
+:::tip Persona Lens: Workshop & Interview Mode
+* **Quick Pitch:** 1-sentence off-the-cuff definition for interviews.
+* **Core Primitives:** Structured breakdowns of web protocols, state mechanisms, and rendering models.
+* **BAU & Operational Realities:** Telemetry indicators, failure modes, and production diagnostics.
 :::
 
-**When to Use**
+## 🔍 Theory Focus Point
 
-- Understanding how browsers, servers, and APIs interact
-- Analysing authentication, session management, or routing
-- Evaluating front‑end vs back‑end responsibilities
-
-**When Not to Use**
-
-- Tool‑specific server configuration
-- Framework‑specific behaviour (Spring, Django, React)
-- Low‑level networking (TCP, sockets, DNS)
+* **HTTP & Transport:** Focus on **Stateless Protocol Mechanics** and **Multiplexing (HTTP/1.1 vs HTTP/2/3)** to evaluate connection overhead, latency bottlenecks, and network head-of-line blocking.
+* **State & Authentication:** Focus on **Stateful Sessions vs. Stateless Tokens (JWT)** to evaluate horizontal auto-scaling, sticky session coupling, and token revocation risks.
+* **Browser Security & Boundaries:** Focus on **Same-Origin Policy (SOP), CORS, and Cookie Isolation** to prevent cross-site security leaks and API cross-domain blocking.
 
 ---
 
-## 🎯 What Problem Does This Solve?
-
-Web systems must operate over **HTTP**, a stateless protocol that forgets everything between requests.
-To build real applications — logins, dashboards, shopping carts, multi‑step flows — we need mechanisms for:
-
-- maintaining identity
-- persisting state
-- structuring application logic
-- rendering UI
-- scaling across multiple servers
-
-Web Fundamentals explain **how** these problems are solved and **why** these solutions behave the way they do.
-
----
-
-## 🧠 Conceptual Model
-
-### Core Components
-
-- **HTTP** — the transport protocol for all web communication
-- **Request/Response Cycle** — the atomic unit of interaction
-- **State** — information that must persist across requests
-- **Sessions** — server‑side memory linked to a user
-- **Cookies** — client‑side storage used to maintain continuity
-- **Web Servers** — software that receives requests and returns responses
-- **Rendering Models** — server‑side vs client‑side
-- **Architectural Patterns** — MVC and related variants
-
-### Axes of Variation
-
-- Stateless ↔ Stateful
-- Server‑side rendering ↔ Client‑side rendering
-- Single server ↔ Distributed cluster
-- Cookie‑based sessions ↔ Token‑based identity
-- Monolithic architecture ↔ Layered or MVC
-
----
-
-### Typical Lifecycle or Flow
-
-**Diagram(s):**
-
-```mermaid
-sequenceDiagram
-    participant Browser
-    participant Server
-    participant App
-    participant DB
-
-    Browser->>Server: HTTP Request
-    Server->>App: Route to handler
-    App->>DB: Query / Update
-    DB-->>App: Data
-    App-->>Server: Rendered output / JSON
-    Server-->>Browser: HTTP Response
-```
-
----
-
-## 🔍 TA Lens
-
-:::info How a TA Evaluates This Concept
-- What changes, what stays constant, what becomes a bottleneck
-- How state is stored, retrieved, and invalidated
-- How the system behaves under load or across multiple servers
-- How authentication and sessions interact with scaling
-- Where failures occur in the request lifecycle
-:::
-
-**What happens when:**
-
-- **Data grows** → session stores, caches, and DB queries become bottlenecks
-- **Traffic increases** → routing, load balancers, and server concurrency limits matter
-- **Concurrency rises** → session locking, race conditions, and stale state appear
-- **Resources become constrained** → timeouts, dropped connections, and partial renders occur
-
----
-
-## 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **HTTP** | Stateless protocol used for all web communication. |
-| **Request Scope** | Data that exists only for a single request/response cycle. |
-| **Session Scope** | Server‑side memory that persists across multiple requests. |
-| **Cookies** | Small client‑side storage used to maintain continuity. |
-| **Session ID** | Unique identifier linking a user to a server‑side session. |
-| **GET** | Retrieves data; parameters appear in the URL. |
-| **POST** | Sends data in the request body; used for state‑changing operations. |
-| **Web Server** | Software that receives HTTP requests and returns responses. |
-| **SSR** | Server‑side rendering: server generates HTML. |
-| **CSR** | Client‑side rendering: browser renders UI via JavaScript. |
-| **MVC** | Architectural pattern separating Model, View, and Controller. |
-
----
-
-## 🧬 Variants / Types
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="http" label="HTTP & State">
+| Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **HTTP & Transport** | Browser connection limits per domain (max 6 parallel connections on HTTP/1.1). | Load balancer TCP termination and thread pool exhaustion on API gateways. |
+| **State & Sessions** | In-memory session thread-locking during concurrent multi-tab requests. | Centralized distributed cache (Redis) lock contention and connection pool limits. |
+| **Rendering Models** | Main-thread CPU blocking during heavy client-side JavaScript execution (CSR). | Edge-rendered SSR stream hydration pressure under concurrent user load. |
 
-### HTTP & State
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Traffic Spikes">
 
-**Purpose**
-Explain how stateless communication supports stateful applications.
+| Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **HTTP & Transport** | Large HTTP header payloads inflating local network socket buffers. | Bandwidth saturation caused by uncompressed JSON responses or large JWT tokens. |
+| **State & Sessions** | Heap memory inflation from storing large user context objects in memory. | Distributed session store memory exhaustion and cache eviction thrashing under user growth. |
+| **Rendering Models** | Large JS bundle size downloading and parsing delays on mobile runtimes. | CDN edge cache hit ratios degrading during frequent dynamic content invalidation. |
 
-**Key Characteristics**
-- Stateless protocol
-- Requires external state management
-- Uses cookies, tokens, or sessions
-
-**Behaviour**
-Each request is independent; continuity must be explicitly maintained.
-
-**Trade-offs**
-- ✔ Scales horizontally
-- ✔ Simple, predictable protocol
-- ✘ Requires explicit state management
-- ✘ Can introduce security risks if mismanaged
-
-</TabItem>
-
-<TabItem value="rendering" label="Rendering Models">
-
-### Rendering Models
-
-**Purpose**
-Describe how UI is generated and delivered.
-
-**Key Characteristics**
-- SSR: server generates HTML
-- CSR: browser renders UI
-- Hybrid: mix of both
-
-**Behaviour**
-Rendering location affects performance, SEO, and user experience.
-
-**Trade-offs**
-- SSR: ✔ fast first load, ✘ more server load
-- CSR: ✔ rich interactivity, ✘ slower initial load
-- Hybrid: ✔ best of both, ✘ more complexity
-
-</TabItem>
-
-<TabItem value="architecture" label="Architecture">
-
-### Architecture Patterns
-
-**Purpose**
-Explain how web applications structure logic.
-
-**Key Characteristics**
-- MVC: Model, View, Controller
-- Layered: presentation, business, data
-- MVVM: view-model abstraction
-
-**Behaviour**
-Patterns define how data flows and how responsibilities are separated.
-
-**Trade-offs**
-- ✔ Clear separation of concerns
-- ✔ Easier testing
-- ✘ Can become rigid or over‑engineered
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🧩 System Interactions
+## Domain Deep-Dives
 
-:::info How a TA Understands the System
-- How HTTP interacts with servers, caches, and databases
-- How state is stored, retrieved, and invalidated
-- How rendering models affect performance and load
-- How architectural patterns shape request flow
+<Tabs>
+  <TabItem value="http" label="1. HTTP Protocols & APIs" default>
+
+### 🌐 HTTP Protocols & Communication Styles
+
+:::tip Definition
+The foundation of data exchange on the web, bridging client requests to server resources across stateless transport channels.
 :::
 
-### Local Systems
+> **Interview Pitch:** *"HTTP is a stateless protocol where state is maintained at the application layer, trading connection overhead across protocol generations (HTTP/1.1 to HTTP/3) to optimize transport latency."*
 
-- OS
-- Runtime (JVM, Node.js, Python)
-- Network stack
-- Storage (session stores, caches, DBs)
-- Concurrency model
-- Scaling mechanisms
+#### 🧠 Decision Drivers
+* **Choose REST (HTTP/JSON):** Standard CRUD APIs, external public integrations, resource-oriented modeling.
+* **Choose GraphQL:** Complex graph relationships, mobile clients requiring precise field filtering (preventing over-fetching).
+* **Choose WebSockets:** Low-latency bi-directional streaming (chat apps, live financial dashboards, collaborative tools).
 
-### Remote Systems
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-- Load balancers
-- API gateways
-- Distributed caches
-- Data centres / regions
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **HTTP/1.1 vs HTTP/2** | HTTP/1.1 uses text sequential requests; HTTP/2 multiplexes binary streams over a single TCP connection. | HTTP/2 eliminates browser connection limits and head-of-line blocking at the application layer. | Multiplexing, Binary Framing, HPACK |
+| **Idempotency** | Safe operations (GET, PUT, DELETE) produce the same result regardless of execution count; unsafe (POST) mutates repeatedly. | Enables safe retry logic in distributed API gateways without accidental duplicate records. | HTTP Methods, Retry Safety |
+| **Content Negotiation** | Headers (`Accept`, `Content-Type`) negotiating format and encoding between client and server. | Controls payload formatting (JSON vs. Protobuf) and compression streams (`gzip`, `br`). | REST Media Types, Accept Headers |
 
-### Questions to ask during reviews or incidents
+#### 🚨 Misapplication Diagnostics in Production
 
-- Where is state stored?
-- How is the session maintained?
-- What happens if a server restarts?
-- Is the system using sticky sessions?
-- How does rendering affect latency?
-- What happens under high concurrency?
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Non-Idempotent Retries** | Retrying failed HTTP `POST` requests automatically at the gateway level during network drops. | Duplicate database record creation (e.g., charging a credit card twice). | Implement **Idempotency Keys** (`X-Idempotency-Key`) in API request headers. |
+| **Chatty APIs** | Forcing mobile apps to make 20+ sequential HTTP/1.1 GET requests to construct a single screen. | Severe network latency spikes, mobile battery drain, and request queuing delays. | Use GraphQL or aggregate BFF (Backend-For-Frontend) endpoints to batch data. |
 
----
+  </TabItem>
 
-## 💥 Outputs / Results
+  <TabItem value="state" label="2. State & Session Models">
 
-:::note Special Considerations
-State management, session handling, and rendering models directly affect security, performance, and user experience.
+### 🔑 State Management, Sessions & Auth
+
+:::tip Definition
+Techniques for maintaining continuity, identity, and user context across stateless HTTP request cycles.
 :::
 
-### Success Modes
+> **Interview Pitch:** *"State management balances server-side session memory against stateless JWT self-containment—trading instant session revocation for effortless horizontal scaling."*
 
-| Result Type | Description |
-|-------------|-------------|
-| Consistent identity | User remains authenticated across requests. |
-| Predictable routing | Requests reach the correct handlers. |
-| Stable rendering | UI loads reliably across devices. |
+#### 🧠 Decision Drivers
+* **Choose Server-Side Sessions (Redis):** High security requirements, immediate session revocation needs (e.g., banking apps, admin portals).
+* **Choose Stateless JWT Tokens:** High-scale microservices, cross-domain SSO, edge-authenticated APIs.
 
-### Failure Modes
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| Failure Type | Description |
-|-------------|-------------|
-| Session loss | Users unexpectedly log out or lose progress. |
-| Routing errors | 404/500 responses due to misrouted requests. |
-| Rendering failures | Blank screens, partial loads, or JS errors. |
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Server-Side Session** | Client stores a `Session ID` cookie; server looks up state in centralized memory store (Redis). | Secure and easy to revoke instantly; requires distributed cache lookups on every request. | Session Hydration, Sticky Sessions |
+| **JWT (Stateless Token)** | Self-contained, digitally signed JSON payload sent in authorization headers. | Zero database lookups to verify identity; impossible to revoke before expiration without a blacklist. | Cryptographic Signatures, Claims |
+| **HTTP Cookies** | Key-value client storage automatically attached to outgoing HTTP requests by the browser. | Subject to CSRF attacks unless strictly guarded with browser isolation flags. | `HttpOnly`, `SameSite`, `Secure` |
 
----
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Bloated JWTs** | Storing large user permission lists and context objects directly inside the JWT payload. | Unnecessary network bandwidth consumption on every request; header size limit errors (413/431). | Keep JWT payloads minimal (User ID + Roles); fetch granular permissions from cache. |
+| **Local In-Memory Sessions** | Storing session state directly in single application server node memory without Redis. | Users constantly logged out whenever traffic routes to a different server instance (unless using sticky sessions). | Move session state to an external shared cache (Redis) or switch to JWT tokens. |
+
+  </TabItem>
+
+  <TabItem value="rendering" label="3. Rendering Models (SSR vs CSR)">
+
+### 🖥️ Rendering Models & Architecture
+
+:::tip Definition
+Strategies determining where UI template parsing, data fetching, and HTML rendering take place along the client-to-server path.
+:::
+
+> **Interview Pitch:** *"Rendering models trade server compute for client performance—balancing fast initial page loads and SEO (SSR) against rich interactive user experiences (CSR)."*
+
+#### 🧠 Decision Drivers
+* **Choose SSR (Server-Side Rendering):** SEO-driven sites, dynamic landing pages, content portals, fast initial load priorities.
+* **Choose CSR (Client-Side Rendering):** Gated dashboards, highly interactive SaaS applications, offline-first PWAs.
+* **Choose Static (SSG / ISR):** Documentation sites, blogs, stable e-commerce catalog pages.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Model | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **SSR** | Server executes template logic and returns fully rendered HTML to the browser. | Fast Time-To-First-Byte (TTFB) and SEO; increases server CPU load under high traffic. | Server Hydration, Edge Rendering |
+| **CSR** | Server returns empty HTML shell + JS bundle; browser executes JS to render UI. | Rich client interactivity; slower initial load speed and SEO rendering challenges. | Virtual DOM, Client Hydration |
+| **MVC Architecture** | Separates application data (Model), UI (View), and routing/logic (Controller). | Clean separation of concerns; prevents business logic from polluting rendering templates. | Separation of Concerns |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Pure CSR for SEO** | Building public marketing or e-commerce catalog sites as single-page CSR React apps without SSR. | Poor search engine indexing, low search rankings, and blank-screen delays on slow mobile networks. | Adopt SSR or Static Site Generation (SSG) with frameworks like Next.js or Astro. |
+| **SSR Server Bottlenecks** | Executing un-cached heavy database queries during SSR HTML generation on every request. | High server CPU load, degraded TTFB latency, and server crashes during traffic spikes. | Cache database queries at the edge or implement Incremental Static Regeneration (ISR). |
+
+  </TabItem>
+
+  <TabItem value="security" label="4. Browser Isolation & Security">
+
+### 🔒 Security & Browser Isolation Boundaries
+
+:::tip Definition
+Browser-enforced policies and HTTP headers designed to sandbox client web applications and protect resources from unauthorized cross-domain access.
+:::
+
+> **Interview Pitch:** *"Browser security enforces origin isolation—using SOP and CORS to prevent rogue domains from making unauthorized requests or reading cross-origin data."*
+
+#### 🧠 Decision Drivers
+* **Enforce CORS:** When exposing public or multi-domain APIs to third-party frontends.
+* **Enforce Strict Cookies:** When storing authentication tokens in browsers to prevent XSS and CSRF token theft.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Same-Origin Policy (SOP)** | Core browser security rule preventing scripts on domain A from reading data on domain B. | Protects user session privacy across different domains by default. | Origin (Scheme + Host + Port) |
+| **CORS** | Server-driven mechanism relaxing SOP to allow specific cross-origin domains. | Prevents browser clients from blocking legitimate API calls across microservice domains. | Preflight (`OPTIONS`), Access-Control Headers |
+| **Cookie Isolation Flags** | Security directives (`HttpOnly`, `SameSite=Strict`, `Secure`) attached to cookies. | `HttpOnly` blocks JS access (prevents XSS theft); `SameSite` blocks cross-domain attachment (prevents CSRF). | XSS, CSRF Mitigation |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Wildcard CORS (`*`)** | Setting `Access-Control-Allow-Origin: *` while enabling `Access-Control-Allow-Credentials: true`. | Severe security vulnerability; malicious websites can read authenticated user data. | Specify explicit allowed origins dynamically based on whitelist configurations. |
+| **Storing Tokens in LocalStorage** | Saving JWT auth tokens in browser `localStorage` or un-flagged cookies. | Complete account takeover via XSS attacks (malicious injected JS script reads token). | Store tokens in **`HttpOnly` + `SameSite=Strict` + `Secure` cookies**. |
+
+  </TabItem>
+</Tabs>
