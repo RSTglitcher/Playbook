@@ -1,0 +1,107 @@
+---
+id: tickets
+title: Ticket Specifications & Feature Stories
+sidebar_label: Ticket Specifications
+description: Framework for drafting precise feature user stories, technical capabilities, and actionable acceptance criteria with Definition of Ready.
+---
+
+:::tip
+
+**Operational Purpose:** Convert business requirements and architectural specs into structured, unambiguous feature tickets and user stories that engineering squads can estimate and execute without friction.
+
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** During feature scoping, sprint refinement, epic breakdown, or when translating a Technical Requirements Document (TRD) into actionable engineering stories.
+* **Inputs needed:** Business goals, functional/non-functional requirements, API payload contracts, UI/UX designs, and technical dependencies.
+* **Expected Output:** Fully specified backlog tickets (User Stories or Feature Capabilities) meeting the **Definition of Ready (DoR)** with explicit acceptance criteria.
+
+---
+
+## 2. Standard Operating Procedure (Step-by-Step)
+
+1. **Phase 1: Feature Scoping & Title Naming**
+   * Classify the ticket type: **User Story** (end-user value) or **Feature / System Capability** (enabling infrastructure/API).
+   * Apply consistent title syntax for quick scanning:
+     * `[Component/Service] Feature: Short description of capability` (e.g., `[Checkout-API] Feature: Support Apple Pay payment method`).
+
+2. **Phase 2: Narrative & Value Proposition**
+   * Write the core user story narrative (*"As a [user type], I want [capability] so that [business value]"*).
+   * Include a brief **Background & Problem Statement** explaining the operational friction or user pain point this feature resolves.
+
+3. **Phase 3: Acceptance Criteria & Functional Scenarios**
+   * Define explicit, testable **Acceptance Criteria (AC)** using `Given / When / Then` BDD scenarios or clear requirement checklists.
+   * Document non-functional expectations (performance bounds, security checks, audit logging).
+
+4. **Phase 4: Technical Context & Dependencies**
+   * Attach technical guidance identified during discovery: target endpoints, payload schemas, feature flags, or edge cases.
+   * Link upstream dependencies (parent Epic, TRD, design mocks, cross-team API contracts) and verify against the **Definition of Ready (DoR)**.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Standard Feature & User Story Template
+
+```text
+## Context & Value Proposition
+**As a** [user / system role]  
+**I want to** [action / new capability]  
+**So that** [business benefit / outcome]  
+
+---
+
+## Background & Business Context
+[Provide 1-2 sentences on why this feature is being introduced and the business metric or experience it improves.]
+
+---
+
+## Functional Acceptance Criteria
+- [ ] **AC1 (Happy Path):** Given [valid user input/state], when [user performs action], then [system produces expected result].
+- [ ] **AC2 (Validation & Errors):** Given [invalid input/state], when [action is triggered], then [system returns HTTP 400 with explicit error message].
+- [ ] **AC3 (Telemetry & Events):** Given [action succeeds], then [analytics event `feature_executed` is published to message broker].
+
+---
+
+## Non-Functional & Operational Requirements
+- **Performance:** Response time must remain $P_{95} < 250\text{ms}$ under peak load.
+- **Security:** Requires valid OAuth 2.0 bearer token with `checkout:write` scope.
+
+---
+
+## Technical Notes & Implementation Guidance
+- **Impacted Repos / Services:** `service-checkout-api`, `service-payment-gateway`
+- **API Contracts / Endpoints:** `POST /v2/checkout/payments`
+- **Feature Flag Key:** `enable-apple-pay-checkout`
+- **Edge Cases:** Gracefully handle user cancellation mid-handshake without persisting abandoned transactions.
+
+---
+
+## Dependencies & Design Assets
+- **Parent Epic:** [EPIC-101]
+- **Technical Specs:** [TRD Link]
+- **Figma Designs:** [Design Link]
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Title clearly identifies target component and feature scope (`[Component] Feature: Action`)
+* [ ] Acceptance criteria are testable by QA/engineers without subjective interpretation
+* [ ] Non-functional requirements (SLAs, telemetry, security) are explicitly stated
+* [ ] Feature flags, API endpoints, and dependent services are documented
+* [ ] Ticket satisfies team **Definition of Ready (DoR)** prior to sprint planning
+
+---
+
+:::warning Pitfalls & Edge Cases
+
+* **Common Mistake:** Writing monolithic feature tickets that span multiple sprints. If a feature contains more than 3–5 acceptance criteria, split it into vertical slices (e.g., API enablement ticket $\rightarrow$ UI integration ticket).
+* **Pro Tip:** Focus ticket documentation on **Behavior and Boundaries** rather than dictating exact code implementation. Let engineers decide *how* to implement while you define *what* success looks like.
+
+:::

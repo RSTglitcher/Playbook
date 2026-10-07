@@ -1,0 +1,88 @@
+---
+id: squad-delivery
+title: Squad Delivery & Technical Analyst Role
+sidebar_label: Squad Delivery
+description: Operational guide for how a Technical Analyst drives sprint execution, manages feature flow, and embedded squad delivery.
+---
+
+:::tip
+
+**Operational Purpose:** Drive agile execution within cross-functional engineering squads by refining requirements, managing work-in-progress (WIP), clearing technical blockers, and maintaining delivery momentum from sprint planning through deployment.
+
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** Ongoing daily execution within an embedded product engineering squad, sprint planning cycles, daily standups, and feature rollouts.
+* **Inputs needed:** Product backlog items, refined user stories, sprint goals, capacity models, and delivery telemetry (burndown/velocity).
+* **Expected Output:** Predictable sprint delivery, zero unhandled technical blockers, up-to-date board status, and verified feature releases.
+
+---
+
+## 2. Standard Operating Procedure
+
+1. **Phase 1: Sprint Planning & Goal Alignment**
+   * Partner with the Product Owner (PO) and Engineering Lead to define realistic sprint goals based on team velocity and capacity.
+   * Ensure candidate tickets meet the **Definition of Ready (DoR)** prior to pulling them into the active sprint.
+   * Confirm dependencies across other squads or platform teams are identified and scheduled.
+
+2. **Phase 2: Daily Execution & Blocker Clearance**
+   * Facilitate or participate in daily standups focusing on flow: *What is blocked? What is close to finishing? Are we on track for the sprint goal?*
+   * Actively clear non-engineering friction (e.g., missing API contracts, pending design assets, third-party credentials).
+   * Monitor Work-In-Progress (WIP) limits to prevent context switching and bottlenecks in code review or QA.
+
+3. **Phase 3: Mid-Sprint Tracking & Scope Management**
+   * Track sprint burndown and scope changes. If unplanned high-priority work enters the sprint, negotiate trade-offs to drop equivalent story points.
+   * Ensure pull requests (PRs) are progressing through review and staging environments without getting stuck.
+
+4. **Phase 4: Release Verification & Definition of Done (DoD)**
+   * Verify that completed work satisfies acceptance criteria and meets the **Definition of Done (DoD)**.
+   * Coordinate release notes, staging sign-offs, and feature flag toggles with DevOps/Product.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Squad Delivery Checklist & Metrics
+
+```text
+# Sprint Delivery Checklist
+
+## Pre-Sprint / Planning
+- [ ] Sprint goals clearly articulated and linked to top backlog epics
+- [ ] All sprint tickets estimated and meet Definition of Ready (DoR)
+- [ ] Team capacity accounts for planned PTO, on-call duties, and support work
+
+## In-Sprint Execution
+- [ ] Daily standup focused on unblocking WIP rather than status reporting
+- [ ] PR turnaround times monitored (<24h target)
+- [ ] Mid-sprint scope changes explicitly negotiated and logged
+
+## Release & Post-Sprint
+- [ ] Acceptance criteria validated in staging environment
+- [ ] Release notes published to stakeholder channels
+- [ ] Sprint retro items logged for continuous improvement
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Sprint commitments are based on historical velocity rather than aspirational targets
+* [ ] WIP limits are respected to maximize ticket throughput
+* [ ] External dependencies are identified and tracked before work begins
+* [ ] Stakeholders have visibility into delivery progress via updated boards and dashboards
+
+---
+
+:::warning
+
+## Pitfalls & Edge Cases
+
+* **Common Mistake:** Allowing scope creep mid-sprint without dropping lower-priority items, leading to missed sprint goals and team burnout.
+* **Pro Tip:** Focus on completing tickets sequentially rather than starting multiple items simultaneously. Pushing a single ticket to "Done" provides more value than five tickets sitting at 80% complete.
+
+:::

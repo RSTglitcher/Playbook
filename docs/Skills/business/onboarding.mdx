@@ -1,0 +1,105 @@
+---
+id: onboarding
+title: Team Onboarding & Technical Enablement
+sidebar_label: Team Onboarding
+description: Framework for onboarding team members, setting up developer workbenches, data pipelines, and operational delivery workflows.
+---
+
+:::tip
+
+**Operational Purpose:** Rapidly transition new engineers, analysts, and cross-functional stakeholders to full productivity by standardizing environment setups, domain orientation, data pipelines, delivery SLAs, and progressive task ownership.
+
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** When a new team member joins, when contractors or cross-functional partners embed into the project, or when setting up a new developer workbench.
+* **Inputs needed:** Organization permissions, repository access, architecture maps, database credentials, data dictionaries, tool credentials, and a 30-60-90 day enablement roadmap.
+* **Expected Output:** Fully configured local development environment, validated data pipeline connectivity, completed first staging/production commit within Week 1, and an audited onboarding checklist.
+
+---
+
+## 2. Standard Operating Procedure (Step-by-Step)
+
+1. **Phase 1: Pre-Arrival & Access Provisioning (Day 0–1)**
+   * Provision identity access management (IAM), identity provider (IdP) accounts, and single sign-on (SSO).
+   * Grant least-privilege permissions across critical tools: Git org, Jira/Linear, cloud console, telemetry suites, and communication channels.
+   * Assign a dedicated buddy/mentor for daily check-ins, pair programming, and unblocking.
+
+2. **Phase 2: Local Workbench & Environment Parity (Days 1–2)**
+   * Clone core repositories and configure local environment variables (`.env`).
+   * Install standard CLI tools, runtime versions (e.g., via `nvm`, `pyenv`), and IDE extensions.
+   * Execute local build scripts, seed database instances, and run unit/integration test suites to verify system sanity.
+
+3. **Phase 3: Data Onboarding & Lineage Orientation (Days 2–3)**
+   * Identify key upstream data sources (APIs, third-party feeds, transactional databases, event streams).
+   * Review data transformation pipelines (ETL/ELT jobs, dbt models, streaming transformations) and destination data warehouses or marts.
+   * Verify read access to staging/dev data sources and test database seed scripts.
+
+4. **Phase 4: Delivery, Operations & SLA Orientation (Days 3–4)**
+   * Review operational SLAs, system availability targets ($P_{95}$/$P_{99}$ latency thresholds), and error budget policies.
+   * Audit central operational dashboards (Datadog, Grafana, Looker/Tableau) and logging channels.
+   * Walk through delivery processes: Git branching models, Definition of Ready (DoR), Definition of Done (DoD), and incident escalation paths.
+
+5. **Phase 5: First Milestone Delivery & Feedback Loop (Days 4–10)**
+   * Assign a well-bounded initial task (e.g., bug fix, pipeline test case, or documentation gap).
+   * Walk through the automated CI/CD pipeline, code review expectations, and staging deployment verification.
+   * Have the new team member audit and update the onboarding documentation based on their setup experience.
+
+---
+
+## 3. Comprehensive Onboarding Checklist
+
+### 1. Identity, Access & Communications
+- [ ] Identity Provider / SSO account activated
+- [ ] Code Repository Org invite accepted (GitHub/GitLab)
+- [ ] Project management workspace access verified (Jira/Linear)
+- [ ] Knowledge base access granted (Docusaurus/Confluence)
+- [ ] Team messaging channels joined (Slack/Teams)
+- [ ] Read-only cloud infrastructure access (AWS/GCP/Azure)
+- [ ] Telemetry & logging access granted (Datadog/Grafana)
+
+### 2. Local Workbench & Tooling Configuration
+- [ ] SSH keys generated and attached to Git provider
+- [ ] Repository cloned locally (`git clone ...`)
+- [ ] Runtime versions matched using version managers (`.nvmrc` / `.python-version`)
+- [ ] Environment variables configured securely (`.env.example` -> `.env`)
+- [ ] Package dependencies installed (`npm install` / `pip install`)
+- [ ] Local dev server running without errors (`npm run start`)
+- [ ] Full local test suite passing (`npm test` / `pytest`)
+
+### 3. Data Onboarding & Architecture
+- [ ] **Data Sources Identified:** Core databases, third-party APIs, and message queues cataloged
+- [ ] **Data Dictionary & Schema Access:** Access verified for staging data warehouses/marts
+- [ ] **Transformations & Lineage:** ETL/ELT pipeline jobs and data models (e.g., dbt) mapped
+- [ ] **Data Security & Privacy:** PII masking rules, governance policies, and compliance standards reviewed
+- [ ] **Local Data Seeds:** Staging/dev database seed scripts executed successfully
+
+### 4. Delivery, Operations & SLAs
+- [ ] **Service Level Agreements (SLAs):** Latency, uptime, and data freshness SLAs understood
+- [ ] **Monitoring Dashboards:** Access verified for Datadog/Grafana service health and telemetry boards
+- [ ] **Delivery Workflow:** Definition of Ready (DoR) and Definition of Done (DoD) reviewed
+- [ ] **Branching Strategy:** Git workflow understood (`main` vs `feature/*` vs `bugfix/*`)
+- [ ] **Incident Response:** Escalation matrix, on-call schedules, and severity definitions (P1–P4) reviewed
+- [ ] **First Delivery Milestone:** First "Good First Issue" or doc ticket assigned and in progress
+
+---
+
+## 4. Quality Checklist & Verification
+
+- [ ] New joiner can build, test, and query local data models without unscripted workarounds
+- [ ] Access permissions follow the Principle of Least Privilege (POLP)
+- [ ] First pull request (PR) merged and verified on staging within the first 5 working days
+- [ ] Onboarding friction points captured and incorporated back into this runbook
+
+---
+
+:::warning Pitfalls & Edge Cases
+
+* **Common Mistake:** Omitting data lineage and operational SLAs during onboarding, forcing new hires to blindly modify pipelines without understanding downstream impacts or performance constraints.
+* **Pro Tip:** Make updating this onboarding guide the final required task for every new joiner. It guarantees that environment setup drift, stale data connections, and tool changes are continuously corrected.
+
+:::
+

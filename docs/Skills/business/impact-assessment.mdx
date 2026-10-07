@@ -1,0 +1,98 @@
+---
+id: impact-assessment
+title: Impact Assessment & Financial Alignment
+sidebar_label: Impact Assessment
+description: Framework for evaluating business impact, commercial ROI, OpEx vs CapEx expenditure classification, and total cost of ownership (TCO).
+---
+
+# Impact Assessment & Financial Alignment
+
+> **Operational Purpose:** Evaluate the economic, operational, and strategic consequences of proposed technical initiatives—quantifying financial return, classifying expenditure (OpEx vs CapEx), and measuring total cost of ownership (TCO) to justify engineering investment.
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** Prior to committing engineering capacity to new epics, when evaluating major architectural refactors, when selecting third-party SaaS/vendors, or during quarterly planning and resource allocation.
+* **Inputs needed:** Proposed technical scope, estimated engineering effort (story points/sprints), cloud infrastructure estimates, vendor licensing models, and business success metrics.
+* **Expected Output:** A completed Business Impact Assessment (BIA) document, financial classification (OpEx/CapEx), estimated ROI/payback period, and risk/cost-of-inaction analysis.
+
+---
+
+## 2. Standard Operating Procedure (Step-by-Step)
+
+1. **Phase 1: Financial Classification & Budget Alignment**
+   * Classify the initiative's capital and operational profile:
+     * **CapEx (Capital Expenditure):** Creation of new software assets, long-term platform capabilities, or major architecture additions (capitalized and depreciated over time).
+     * **OpEx (Operational Expenditure):** Recurring cloud run costs (AWS/GCP), SaaS licenses, routine maintenance, and ongoing operational support.
+   * Calculate Total Cost of Ownership (TCO) across a 12–36 month horizon: $\textTCO = \textBuild Cost (CapEx) + \textRecurring Run Costs (OpEx)$.
+
+2. **Phase 2: Direct & Indirect Impact Quantification**
+   * Estimate **Direct Financial Return:** Cost reductions (e.g., reducing database compute or third-party API calls) or direct revenue enablement.
+   * Estimate **Operational & Velocity Impact:** Time saved per sprint, reduction in manual toil (FTE hours), or improved developer throughput.
+   * Quantify **Risk & Compliance Exposure:** Financial cost of potential SLA breach penalties, security compliance failures, or system downtime.
+
+3. **Phase 3: Cost-of-Inaction & Opportunity Cost Analysis**
+   * Evaluate the **Cost of Inaction (COI):** *What happens to system performance, operational spend, or market positioning if we do nothing for 6–12 months?*
+   * Compare opportunity costs against competing engineering priorities to ensure maximum business return per engineering unit.
+
+4. **Phase 4: Synthesis & Executive Decision Brief**
+   * Draft a concise 1-page Impact Assessment brief summarizing effort vs financial/operational return.
+   * Present options (e.g., *Option A: Full Build, Option B: Minimal Viable Patch, Option C: Do Nothing*) with explicit trade-offs.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Business Impact Assessment (BIA) Template
+
+```text
+# Impact Assessment: [Initiative Name]
+
+**Owner:** Technical Analyst / Lead  
+**Target Window:** [Quarter / Fiscal Year]  
+**Financial Classification:** [CapEx / OpEx / Hybrid]  
+
+---
+
+## 1. Executive Summary & Value Proposition
+[Brief summary of the proposed change and its primary commercial or operational payback]
+
+## 2. Financial Breakdown & TCO
+
+| Category | Cost Item | Expense Type | Estimated Value |
+| :--- | :--- | :--- | :--- |
+| **Build Effort** | 3 Sprints (4 Engineers) | CapEx | $XX,XXX |
+| **Infrastructure** | AWS Aurora Auto-scaling | OpEx (Annual) | $X,XXX/yr |
+| **Third-Party** | Vendor API Subscription | OpEx (Annual) | $X,XXX/yr |
+| **Total (Year 1 TCO)** | | | **$XX,XXX** |
+
+## 3. Value & Impact Drivers
+- 💰 **Cost Savings:** Reduces monthly cloud infrastructure spend by $X,XXX ($XX,XXX annually).
+- ⚡ **Operational Velocity:** Automates manual data transformation, saving ~15 FTE hours/sprint.
+- 🛡️ **Risk Mitigation:** Eliminates single point of failure in payment pipeline, protecting ~$XXX,XXX in daily transactional throughput.
+
+## 4. Cost of Inaction (COI) & Trade-offs
+- **If Delayed 6 Months:** Storage costs will scale non-linearly by +35%; risk of exceeding $P_{99}$ latency SLAs during peak sales events.
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Technical expenditure is correctly classified into **CapEx** (asset creation) or **OpEx** (ongoing run cost)
+* [ ] Financial calculations account for both initial build cost and long-term operating costs (TCO)
+* [ ] Non-financial benefits (velocity, risk reduction) are quantified with concrete metrics
+* [ ] The Cost of Inaction (COI) is explicitly defined alongside the proposed solution
+
+---
+
+:::warning
+
+## Pitfalls & Edge Cases
+
+* **Common Mistake:** Focus solely on initial engineering build costs while ignoring recurring cloud or licensing OpEx, resulting in unexpected budget overruns down the line.
+* **Pro Tip:** Frame technical debt or architectural improvements in terms of **Risk & Cost of Inaction**. Executives respond far better to "Ignoring this will increase cloud spend by 25% and breach SLAs" than "The code is messy."
+
+:::

@@ -1,0 +1,96 @@
+---
+id: documentation-standards
+title: Documentation Standards & Knowledge Management
+sidebar_label: Documentation Standards
+description: Guidelines and framework for writing maintainable technical documentation, SOPs, and knowledge base articles.
+---
+
+# Documentation Standards & Knowledge Management
+
+:::tip
+
+**Operational Purpose:** Establish consistent structures, markdown conventions, and maintenance cycles for technical documentation, ensuring knowledge bases stay clear, discoverable, and actionable across engineering and business teams.
+
+:::
+
+---
+
+## 1. Context & Application Trigger
+
+* **When to perform:** When onboarding new tools/systems, defining internal SOPs, documenting complex architectural workflows, or auditing outdated team knowledge bases.
+* **Inputs needed:** System architecture diagrams, workflow details, developer/user pain points, existing raw notes, and codebase structures.
+* **Expected Output:** Standardized, peer-reviewed MDX/Markdown documentation published to the central knowledge repository (e.g., Docusaurus, Confluence).
+
+---
+
+## 2. Standard Operating Procedure
+
+1. **Phase 1: Target Audience & Intent Identification**
+   * Determine who will consume the document (e.g., developers needing API contracts vs non-technical stakeholders looking for workflow overviews).
+   * Define the document type: **Guide/Tutorial** (learning-focused), **How-To/SOP** (task-focused), **Reference** (information-focused), or **Explanation/Theory** (understanding-focused).
+
+2. **Phase 2: Drafting & Structural Alignment**
+   * Apply standard frontmatter metadata (`id`, `title`, `sidebar_label`, `description`).
+   * Open with a 1–2 sentence operational purpose or executive summary.
+   * Format content using progressive headers (`#`, `##`, `###`), active bullet points, and explicit code blocks with syntax highlighting.
+   * Use Mermaid.js diagrams for process flows rather than static images.
+
+3. **Phase 3: Docusaurus Admonition & Callout Formatting**
+   * Structure critical callouts using Docusaurus admonitions (`:::tip`, `:::info`, `:::warning`).
+   * Ensure blank lines exist before and after admonition blocks to guarantee MDX parsing.
+
+4. **Phase 4: Review, Cross-Linking & Maintenance**
+   * Insert relative links to related **Theory** or **Practice** modules to build a connected knowledge graph.
+   * Conduct peer review with domain owners to verify accuracy and code snippet validity.
+
+---
+
+## 3. Key Artifacts & Templates
+
+### Standard Knowledge Base Document Template
+
+```text
+# Document Title
+
+## TLDR / Executive Summary
+**Executive Summary:** High-level summary of the domain or process documented here.
+
+
+## 1. Core Principles / Overview
+- **Key Takeaway 1:** Description of principle.
+- **Key Takeaway 2:** Description of principle.
+
+---
+
+## 2. Step-by-Step Instructions
+
+1. **Step 1 Name:** Detailed action step.
+2. **Step 2 Name:** Detailed action step.
+
+---
+
+## 3. Conclusion
+
+
+```
+
+---
+
+## 4. Quality Checklist & Verification
+
+* [ ] Frontmatter contains all required fields (`id`, `title`, `description`)
+* [ ] Document opens directly with an executive summary / operational purpose statement
+* [ ] Code snippets specify appropriate language syntax tags (e.g., ````text`, ````javascript`)
+* [ ] Admonitions (`:::`) are surrounded by blank lines and render correctly in MDX
+* [ ] All internal cross-links use valid relative paths without broken links
+
+---
+
+:::warning
+
+## Pitfalls & Edge Cases
+
+* **Common Mistake:** Treating documentation as a one-time task. Without clear ownership and review cycles, docs become stale and misleading.
+* **Pro Tip:** Keep documentation close to code or in version-controlled repositories (like Docusaurus) so changes can be reviewed via standard Pull Requests.
+
+:::
