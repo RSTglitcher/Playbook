@@ -13,8 +13,6 @@ This document brings together the foundational principles that govern how softwa
 
 The concepts are ordered from lower-level computational mechanics up to high-level application abstractions:
 
----
-
 ## ⚡ Executive Paradigm Matrix
 
 | Paradigm / Domain | Primary Unit of Abstraction | State Handling | Primary Strengths | Architectural Risk / Anti-Pattern |
@@ -25,192 +23,71 @@ The concepts are ordered from lower-level computational mechanics up to high-lev
 | **Data Structures & Logic** | Collections, Trees & Graphs | In-Memory Access Patterns | Optimal time/space lookup efficiency ($O(1)$) | Repeated linear scans ($O(n)$), runaway recursion |
 | **Frameworks & Libraries** | Inversion of Control (IoC) | Managed Lifecycle | Fast development, enforced architecture | Framework lock-in, leaky abstractions |
 
----
 ## 🔍 Theory Focus Point
 
-:::info How to Leverage This Concept
-- What changes, what stays constant, what becomes a bottleneck
-- How the language behaves under load
-- How the runtime manages memory and concurrency
-- What guarantees the type system provides
-- What risks arise from the execution model
-- Does the transformation pipeline remain predictable?
-- Are side effects isolated and controlled?
-- Is immutability helping or hindering performance?
-- Are functions small, composable, and testable?
-- What happens when concurrency increases?
-- Does the abstraction reduce or increase complexity?
-- Are responsibilities clearly separated?
-- Is inheritance being used safely, or should composition replace it?
-- Are interfaces stable and well‑defined?
-- What happens when the system grows or changes?
-- What the framework controls vs what the team controls
-- Whether the framework’s constraints help or hinder
-- How libraries interact with the framework lifecycle
-- How dependency injection affects testability
-- Whether the abstraction leaks under load
+:::info
+
+### How to Leverage This Concept
+* **Language Theory:** Focus on **memory models (stack vs. heap/GC)** and **type safety guarantees** to understand latency spikes and runtime failures under load.
+* **Functional Programming (FP):** Focus on **immutability** and **pure functions** to evaluate thread safety, parallel data pipelines, and side-effect isolation.
+* **Object-Oriented Programming (OOP):** Focus on **encapsulation** and **composition over inheritance** to evaluate domain boundaries, mutable state risks, and maintainability.
+* **Data Structures & Logic:** Focus on **time/space complexity ($O(n)$ shapes)** to eliminate repeated linear scan bottlenecks in hot paths.
+* **Frameworks & Libraries:** Focus on **Inversion of Control (IoC)** and lifecycle boundaries to prevent leaky abstractions and framework lock-in.
 :::
 
 
+## 🧩 System Interactions & Scaling Realities
+
+Understanding how execution paradigms behave under real-world system pressure—both locally (single node) and remotely (distributed across nodes)—is critical for evaluating architectural stability.
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Parallelism" default>
+
+| Paradigm / Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Language Theory** | Thread scheduling, OS context switching, and memory visibility locks. | Multi-node thread pools and non-blocking I/O event loops. |
+| **Functional (FP)** | **Thread-safe by default:** Immutable data eliminates shared-state race conditions. | Pure functions scale horizontally across nodes without lock coordination. |
+| **Object-Oriented (OOP)** | **Lock contention risk:** Shared mutable state requires mutexes/locks. | State synchronization across instances requires distributed locks or sagas. |
+| **Data Structures** | Concurrent maps and lock-free atomic queues prevent thread blocking. | Partitioned keyspaces across distributed memory grids (e.g., Redis). |
+| **Frameworks** | Managed thread pools, coroutines/actors, and async middleware. | Event-driven consumers, reactive streaming, and distributed tracing. |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Memory">
+
+| Paradigm / Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Language Theory** | Stack overflow from deep call stacks; heap allocations trigger GC pauses. | Serialized wire formats (Protobuf/Avro) impact network payload size. |
+| **Functional (FP)** | Memory pressure and allocation churn from copying large immutable structures. | Stream processing transformations (Kafka/Flink) over batch chunks. |
+| **Object-Oriented (OOP)** | Deep object graphs increase memory footprints and slow down GC scanning. | ORM N+1 query problems and object-relational mapping latency overhead. |
+| **Data Structures** | $O(n)$ linear scans inside nested loops become CPU bottlenecks under scale. | Distributed indexes, bloom filters, and sharded lookup maps. |
+| **Frameworks** | In-memory caching layers and object lifecycle pooling. | Database connection pool exhaustion and query pagination limits. |
+
+  </TabItem>
+  <TabItem value="traffic" label="3. Traffic Spikes & Load">
+
+| Paradigm / Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Language Theory** | JIT compilation warm-up delays cause initial tail-latency ($p99$) spikes. | Load balancer routing to cold container instances (cold-start latency). |
+| **Functional (FP)** | Deterministic pipeline execution keeps latency predictable. | Stateless worker scaling behind auto-scaling API gateways. |
+| **Object-Oriented (OOP)** | Dynamic polymorphic dispatch ($v$-tables) adds minor CPU instruction overhead. | Stateful session stickiness requirements limit load balancer elasticity. |
+| **Data Structures** | Hash map collision degradation changes $O(1)$ lookups into $O(n)$ linked lists. | Caching layer misses cascading down to primary databases. |
+| **Frameworks** | Inversion of Control (IoC) request routing and filter chains. | Circuit breakers, backpressure handling, and rate-limiting middleware. |
+
+  </TabItem>
+</Tabs>
 
 
 ## 🧠 Theory
-
-
-## 🧩 System Interactions
-
-:::info How a TA Understands the System
-- How data structures interact with memory, CPU, and storage
-- How branching logic interacts with runtime and concurrency
-- What becomes a bottleneck as data or traffic grows
-- Frameworks define the application lifecycle
-- Libraries plug into that lifecycle
-- Code must respect framework conventions
-- How language theory shapes runtime behaviour
-- How type systems influence API design
-- How memory models affect performance under load
-- How execution models determine scaling characteristics
-- How pure functions scale horizontally
-- How immutability affects memory and performance
-- How effect systems model real‑world interactions
-- How FP simplifies concurrency
-- How objects live in memory
-- How dispatch works (dynamic vs static)
-- How abstractions affect performance
-- How inheritance chains impact maintainability
-:::
-
-### Local Systems
-
-- Memory layout
-- CPU cache behaviour
-- Runtime data access
-- Concurrency and locking
-- Sorting and traversal
-- **Runtime** — DI containers, event loops, thread pools
-- **Storage** — ORMs, JDBC, repositories
-- **Network** — routing, middleware, filters
-- **Concurrency** — async frameworks, actors, coroutines
-- OS scheduling
-- CPU architecture
-- Memory allocation
-- Threading model
-- File I/O
-- Event loops
-- **Runtime** — recursion, stack usage, lazy evaluation
-- **Memory** — persistent data structures, copying
-- **Concurrency** — no shared state → fewer race conditions
-- **Scaling** — pure functions parallelise naturally
-- **Runtime** — method dispatch, vtables, dynamic binding
-- **Memory** — heap allocation, object graphs
-- **Concurrency** — shared state, locking
-- **Scaling** — deep hierarchies slow evolution
-
-
-### Remote Systems
-
-- Distributed graphs
-- Query engines
-- Caches and indexes
-- Message queues
-- API gateways
-- Microservices
-- Databases
-- Message brokers
-- Distributed runtimes
-- Containers
-- Serverless platforms
-- Multi‑node concurrency
-Not directly applicable — FP constructs are conceptual, not distributed.
-Not typically applicable — OOP constructs are local to the runtime.
-
-
---
-
-**What happens when:**
-
-- **Data grows**
-    → memory pressure, GC churn, type coercion issues
-    → object graphs deepen; memory pressure increases
-    → recursion depth, memory pressure
-    → ORM frameworks may become limiting
-- **Traffic increases**
-    → runtime scheduling, event loops, thread pools
-    → pure functions scale horizontally
-    → polymorphic dispatch cost becomes visible
-    → framework routing & middleware become bottlenecks
-- **Concurrency rises**
-    → race conditions, locks, visibility issues
-    → immutability prevents race conditions
-    → shared mutable state becomes a bottleneck
-    → DI containers, thread pools, event loops matter
-- **Resources become constrained**
-    → GC pauses, stack overflows, OOM errors
-    → copying immutable data becomes expensive
-    → object lifecycle management matters
-    → framework conventions either help or constraints
-
-
 ---
 
-## 📘 Key Terminology
-
-| **Term** | **Definition** | **Languages** |
-| --- | --- | --- |
-| **Class** | Blueprint defining structure + behaviour for objects. | Java, Scala, Kotlin, C#, Python, Ruby, Swift |
-| **Instance** | A concrete object created from a class. | All OOP languages |
-| **Interface** | Contract defining behaviour without implementation. | Java, C#, TypeScript, Go, Swift (protocols), Rust (traits) |
-| **Abstract Class** | Partially implemented class used for shared behaviour. | Java, Scala, Kotlin, C#, PHP |
-| (()Trait / Mixin** | Reusable behaviour unit; interface + optional implementation. | Scala (traits), Rust (traits), PHP (traits), Python (mixins), Ruby (modules), Swift (protocol extensions) |
-| **Enum** | Finite set of named values representing a closed type. | Java, Scala, Rust, Swift, C#, TypeScript |
-| **Encapsulation)** | Hiding internal state and exposing controlled operations. | All OOP languages |
-| **Inheritance** | Reusing and extending behaviour via parent–child relationships. | Java, Scala, C#, Kotlin, Python, Ruby |
-| **Composition** | Building behaviour by combining objects rather than inheriting. | All OOP languages |
-| **Polymorphism** | Treating different types through a shared interface. | All OOP languages |
-| **Abstraction** | Exposing only essential behaviour; hiding implementation details. | All OOP languages |
-| **Object Lifecycle** | Creation → usage → mutation → destruction/GC. | All languages with objects |
-| **SOLID Principles** | Design guidelines for maintainable OOP systems. | Language‑agnostic (applies across OOP ecosystems) |
-| **Instantiation** | The act of creating a new object from a class. | All OOP languages |
-| **Initialization**  | Setting up an object’s initial state after creation. | All OOP languages |
-| **Pure Function** | A function with no side effects; same input → same output. | Haskell, Scala, F#, Elm, OCaml, JavaScript (FP style), Python (FP style) |
-| **Immutability** | Data cannot be changed after creation; new values are produced instead. | Haskell, Scala, Clojure, Elm, F#, Rust (by default), Java/Kotlin (optional) |
-| **Higher‑Order Function** | A function that takes other functions as arguments or returns them. | All FP languages; also JavaScript, Python, Java (lambdas), C# |
-| **Function Composition** | Combining functions so the output of one becomes the input of another. | Haskell, Scala, F#, Elm, JavaScript (FP style), Python (FP style) |
-| **Referential Transparency** | An expression can be replaced with its value without changing program behaviour. | Haskell, Elm, FP‑first Scala, F# |
-| **Side Effect** | Any interaction with the outside world (I/O, mutation, logging) that breaks purity. | All languages (conceptual) |
-| **Monad** | A structure for sequencing computations with controlled effects. | Haskell, Scala (Cats/ZIO), F#, Elm |
-| **Functor**  | A structure that can be mapped over (supports ``map``). | Haskell, Scala, F#, Elm |
-| **Applicative** | A structure that applies wrapped functions to wrapped values. | Haskell, Scala (Cats/ZIO), F# |
-| **Algebraic Data Type (ADT)** | A type formed by combining other types (sum + product types). | Haskell, Scala, Rust, Elm, F# |
-| **Pattern Matching** | A mechanism for destructuring and branching on ADTs. | Scala, Haskell, Rust, F#, OCaml, Elm |
-| **Recursion** | A function that calls itself to process data. | All FP languages; also Python, JS, Java |
-| **Lazy Evaluation** | Expressions are evaluated only when needed. | Haskell (default), Scala (optional), Clojure (optional) |
-| **Currying** | Transforming a function of multiple arguments into a chain of single‑argument functions. | Haskell, Scala, F#, Elm, JavaScript (FP style) |
-| **Syntax** | The grammar and structure of a language. ||
-| **Semantics** | The meaning of syntactic constructs. ||
-| **Paradigm**  | A style of programming (functional, OO, imperative). ||
-| **Type System** | Rules for classifying and validating values. ||
-| **Runtime** | The environment executing the program. ||
-| **Memory Model** | Rules for allocation, access, and concurrency. ||
-| **Garbage Collection** | Automatic memory reclamation. ||
-| **Turing Completeness** | Ability to express any computation a Turing machine can perform. ||
-| **Framework** | A structured environment that controls application flow. ||
-| **Library** | A reusable set of functions you call directly. ||
-| **Code** | Your domain logic; the part you own. ||
-| **Inversion of Control** | The framework calls your code, not the other way around. ||
-| **Dependency Injection** | Externalising object creation to improve modularity and testability. ||
-| **Convention over Configuration** | Sensible defaults reduce boilerplate. ||
-| **Middleware** | Components that intercept and process requests. ||
-| Collection | A group of values (list, set, map) ||
-| Graph | Nodes connected by edges representing relationships ||
-| Tree | Hierarchical structure with parent/child relationships ||
-| Big‑O | Approximation of algorithmic scaling behaviour ||
-| Branch | A conditional path the system may take ||
-| Predicate | A condition that evaluates to true/false  | |
 
 ---
 ### "Functional Programming"
 ---
+
+
+<Tabs>
+<TabItem value="overview" label="Overview">
 
 :::tip Definition
 A set of conceptual building blocks for modelling software using **pure functions**, **immutable data**, and **predictable transformations**.
@@ -250,11 +127,19 @@ They help Technical Analysts reason about **data flow**, **state transitions**, 
 - Recursion vs iteration
 - Expression‑oriented vs statement‑oriented
 
-
+</TabItem>
+<TabItem value="variants" label="Types">
 ## 🧬 Variants / Types
 
-<Tabs>
+|Variants|Purpose|Key Characteristics|Behaviour|Trade-Offs|
+|---------|-------|------|-----|------|
 
+</TabItem>
+<TabItem value="problems" label="Problems">
+
+🚨 Misapplication & BAU Symptoms
+
+</TabItem>
 <TabItem value="pure" label="Pure Functions">
 
 ### Pure Functions
@@ -313,6 +198,7 @@ Can become abstract or hard to debug.
 </TabItem>
 
 </Tabs>
+
 
 ---
 ### "Object-Oriented Programming"
@@ -1098,3 +984,59 @@ DEFINE function:
 </Tabs>
 
 
+---
+
+## 📘 Key Terminology
+
+| **Term** | **Definition** | **Languages** |
+| --- | --- | --- |
+| **Class** | Blueprint defining structure + behaviour for objects. | Java, Scala, Kotlin, C#, Python, Ruby, Swift |
+| **Instance** | A concrete object created from a class. | All OOP languages |
+| **Interface** | Contract defining behaviour without implementation. | Java, C#, TypeScript, Go, Swift (protocols), Rust (traits) |
+| **Abstract Class** | Partially implemented class used for shared behaviour. | Java, Scala, Kotlin, C#, PHP |
+| (()Trait / Mixin** | Reusable behaviour unit; interface + optional implementation. | Scala (traits), Rust (traits), PHP (traits), Python (mixins), Ruby (modules), Swift (protocol extensions) |
+| **Enum** | Finite set of named values representing a closed type. | Java, Scala, Rust, Swift, C#, TypeScript |
+| **Encapsulation)** | Hiding internal state and exposing controlled operations. | All OOP languages |
+| **Inheritance** | Reusing and extending behaviour via parent–child relationships. | Java, Scala, C#, Kotlin, Python, Ruby |
+| **Composition** | Building behaviour by combining objects rather than inheriting. | All OOP languages |
+| **Polymorphism** | Treating different types through a shared interface. | All OOP languages |
+| **Abstraction** | Exposing only essential behaviour; hiding implementation details. | All OOP languages |
+| **Object Lifecycle** | Creation → usage → mutation → destruction/GC. | All languages with objects |
+| **SOLID Principles** | Design guidelines for maintainable OOP systems. | Language‑agnostic (applies across OOP ecosystems) |
+| **Instantiation** | The act of creating a new object from a class. | All OOP languages |
+| **Initialization**  | Setting up an object’s initial state after creation. | All OOP languages |
+| **Pure Function** | A function with no side effects; same input → same output. | Haskell, Scala, F#, Elm, OCaml, JavaScript (FP style), Python (FP style) |
+| **Immutability** | Data cannot be changed after creation; new values are produced instead. | Haskell, Scala, Clojure, Elm, F#, Rust (by default), Java/Kotlin (optional) |
+| **Higher‑Order Function** | A function that takes other functions as arguments or returns them. | All FP languages; also JavaScript, Python, Java (lambdas), C# |
+| **Function Composition** | Combining functions so the output of one becomes the input of another. | Haskell, Scala, F#, Elm, JavaScript (FP style), Python (FP style) |
+| **Referential Transparency** | An expression can be replaced with its value without changing program behaviour. | Haskell, Elm, FP‑first Scala, F# |
+| **Side Effect** | Any interaction with the outside world (I/O, mutation, logging) that breaks purity. | All languages (conceptual) |
+| **Monad** | A structure for sequencing computations with controlled effects. | Haskell, Scala (Cats/ZIO), F#, Elm |
+| **Functor**  | A structure that can be mapped over (supports ``map``). | Haskell, Scala, F#, Elm |
+| **Applicative** | A structure that applies wrapped functions to wrapped values. | Haskell, Scala (Cats/ZIO), F# |
+| **Algebraic Data Type (ADT)** | A type formed by combining other types (sum + product types). | Haskell, Scala, Rust, Elm, F# |
+| **Pattern Matching** | A mechanism for destructuring and branching on ADTs. | Scala, Haskell, Rust, F#, OCaml, Elm |
+| **Recursion** | A function that calls itself to process data. | All FP languages; also Python, JS, Java |
+| **Lazy Evaluation** | Expressions are evaluated only when needed. | Haskell (default), Scala (optional), Clojure (optional) |
+| **Currying** | Transforming a function of multiple arguments into a chain of single‑argument functions. | Haskell, Scala, F#, Elm, JavaScript (FP style) |
+| **Syntax** | The grammar and structure of a language. ||
+| **Semantics** | The meaning of syntactic constructs. ||
+| **Paradigm**  | A style of programming (functional, OO, imperative). ||
+| **Type System** | Rules for classifying and validating values. ||
+| **Runtime** | The environment executing the program. ||
+| **Memory Model** | Rules for allocation, access, and concurrency. ||
+| **Garbage Collection** | Automatic memory reclamation. ||
+| **Turing Completeness** | Ability to express any computation a Turing machine can perform. ||
+| **Framework** | A structured environment that controls application flow. ||
+| **Library** | A reusable set of functions you call directly. ||
+| **Code** | Your domain logic; the part you own. ||
+| **Inversion of Control** | The framework calls your code, not the other way around. ||
+| **Dependency Injection** | Externalising object creation to improve modularity and testability. ||
+| **Convention over Configuration** | Sensible defaults reduce boilerplate. ||
+| **Middleware** | Components that intercept and process requests. ||
+| Collection | A group of values (list, set, map) ||
+| Graph | Nodes connected by edges representing relationships ||
+| Tree | Hierarchical structure with parent/child relationships ||
+| Big‑O | Approximation of algorithmic scaling behaviour ||
+| Branch | A conditional path the system may take ||
+| Predicate | A condition that evaluates to true/false  | |
