@@ -1,0 +1,181 @@
+---
+title: AI & Machine Learning Foundations
+sidebar_position: 4
+description: Rapid recall cheat sheet for ML Paradigms, Transformer Architectures, LLM Inference, RAG Patterns, and Operational AI Guardrails.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# AI & Machine Learning Foundations
+
+:::tip Persona Lens: Workshop & Interview Mode
+* **Quick Pitch:** 1-sentence off-the-cuff definition for interviews.
+* **Core Primitives:** Structured breakdowns of model families, inference mechanics, and RAG architectures.
+* **BAU & Operational Realities:** Telemetry indicators, failure modes, and production diagnostics.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Model Architectures:** Focus on **Deterministic Rules vs. Probabilistic Predictions** and **Self-Attention Mechanics** to evaluate compute requirements, explainability, and context handling.
+* **LLM Inference & Latency:** Focus on **Time-To-First-Token (TTFB) vs. Generation Throughput** and **Memory-Bound KV Caching** to diagnose GPU bottlenecking and cost scaling under load.
+* **Enterprise Integration:** Focus on **Parametric Knowledge (Weights) vs. Non-Parametric Context (RAG)** to choose between fine-tuning and retrieval pipelines for dynamic business data.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Compute" default>
+
+| Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Classical ML** | High CPU multithreading during batch feature matrix transformations. | Distributed model inference pools behind API microservices. |
+| **LLM Inference** | High GPU VRAM allocation for KV Caching during long context generations. | GPU cluster saturation, request queuing, and dynamic batching overhead. |
+| **RAG Pipelines** | Local embedding generation thread contention on vector transformations. | Vector database index lock contention (e.g., HNSW graph updates) during real-time ingest. |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Classical ML** | Memory thrashing when loading oversized training matrices into local RAM. | Training pipeline dataset ETL bottlenecks and feature store synchronization lag. |
+| **LLM Inference** | $O(N^2)$ quadratic context window growth increasing memory consumption per token. | Network bandwidth bottlenecks when streaming large token responses to mobile clients. |
+| **RAG Pipelines** | High local memory footprint when loading dense vector embeddings into memory. | Sub-optimal similarity search recall and vector DB index rebuild latency as data scales. |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="paradigms" label="1. Model Paradigms & Transformers" default>
+
+### 🧠 ML Paradigms & Transformer Architectures
+
+:::tip Definition
+A spectrum of algorithms ranging from statistical pattern recognition (Classical ML) to deep neural networks and self-attention transformers capable of understanding complex sequence dependencies.
+:::
+
+> **Interview Pitch:** *"Machine learning shifts software development from explicit rule-based code to probabilistic models trained on patterns—culminating in Transformers that use self-attention to process unstructured context in parallel."*
+
+#### 🧠 Decision Drivers
+* **Choose Classical ML (XGBoost/Random Forest):** Structured tabular data, predictable fraud detection, strict auditability/explainability requirements.
+* **Choose Deep Learning (CNN/RNN):** Computer vision, speech processing, specialized signal classification.
+* **Choose Generative AI / Transformers (LLMs):** Natural language understanding, code generation, unstructured text synthesis, multi-modal reasoning.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Classical vs Deep ML** | Classical maps features to targets via explicit math formulas; Deep Learning discovers features autonomously via stacked neural layers. | Classical models execute fast on CPU; Deep Learning requires specialized hardware (GPUs/TPUs). | Gradient Boosting, Neural Backpropagation |
+| **Self-Attention** | A mechanism allowing a neural network to weight the relevance of every word in a sequence against every other word. | Eliminates sequential processing bottlenecks (RNNs), enabling parallel training over massive text corpora. | Transformer Query-Key-Value ($Q, K, V$) |
+| **Embeddings & Latent Space** | Converting unstructured data (text, image, audio) into dense numeric vectors representing semantic meaning. | Enables mathematical similarity calculations ($O(1)$ cosine distance) between related concepts. | Vector Spaces, Cosine Distance |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **LLM Overkill** | Using a massive 70B parameter LLM for simple tabular classification or deterministic parsing tasks. | Unnecessary cost inflation, $p99$ latency spikes (>2s responses), and unpredictable output formatting. | Downscale to **Classical ML (XGBoost)** or fine-tuned micro-models (BERT/SLMs). |
+| **Unbounded Inputs** | Passing massive, raw unstructured documents into a transformer without truncation or chunking. | $O(N^2)$ GPU memory exhaustion leading to `Out Of Memory (OOM)` inference crashes. | Implement smart text chunking and enforce hard context window caps. |
+
+  </TabItem>
+
+  <TabItem value="inference" label="2. LLM Execution & Inference">
+
+### ⚡ LLM Execution, Tokens & Inference Mechanics
+
+:::tip Definition
+The runtime mechanics of executing trained large language models, balancing token-by-token generation latency against memory and compute constraints.
+:::
+
+> **Interview Pitch:** *"LLM inference is memory-bandwidth bound—generating output token-by-token using KV caching to avoid recalculating past context attention at the expense of high VRAM consumption."*
+
+#### 🧠 Decision Drivers
+* **Prioritize Low Latency (TTFB):** Interactive chat applications, real-time copilots, voice agents (require streaming + small models).
+* **Prioritize Batch Throughput:** Offline summarization, background dataset processing, document extraction (use high-batch inference servers).
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Tokens & Tokenization** | The atomic chunks of characters (sub-words) that LLMs process instead of raw strings. | Dictates context limit capacity and API cost models (pricing is per 1M tokens). | Byte-Pair Encoding (BPE), Token Ratios |
+| **KV Caching** | Storing previously calculated Key-Value attention tensors in GPU memory to speed up output token generation. | Dramatically improves generation speed per token, but heavily inflates GPU VRAM footprint. | Attention Key-Value Cache, PagedAttention |
+| **Quantization** | Reducing model weight precision (e.g., from FP16 down to INT8 or INT4). | Reduces VRAM requirements by 50–75% with minimal accuracy degradation, enabling cheaper hardware execution. | FP16 vs INT8/INT4, AWQ, GGUF |
+| **Streaming (SSE)** | Returning generated tokens incrementally to the client via Server-Sent Events as they are calculated. | Perceptually eliminates latency by lowering Time-To-First-Token (TTFB) for users. | Server-Sent Events (SSE), Chunked Response |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **No Streaming** | Waiting for the LLM to complete generating a 500-token response before sending the HTTP payload back. | User faces a 5-to-10 second blank screen loading state, causing high client bounce rates and gateway timeouts. | Implement **Server-Sent Events (SSE)** for real-time token streaming. |
+| **VRAM OOM under Load** | High concurrent user load exhausting GPU memory due to massive KV cache expansion per request. | Inference server crashes, dropped connections, and escalating request queue times. | Enable **PagedAttention** (vLLM) and apply model quantization (INT8/INT4). |
+
+  </TabItem>
+
+  <TabItem value="rag" label="3. Enterprise AI: RAG vs Fine-Tuning">
+
+### 🔍 RAG, Search & Enterprise Integration
+
+:::tip Definition
+Patterns for augmenting generative models with private enterprise data, domain-specific behavior, or multi-step tool execution pipelines.
+:::
+
+> **Interview Pitch:** *"RAG injects dynamic enterprise truth into an LLM's context window at runtime, whereas fine-tuning alters static model behavior and formatting."*
+
+#### 🧠 Decision Drivers
+* **Choose RAG (Retrieval-Augmented Generation):** Dynamic enterprise data, frequently updated knowledge bases, strict source citation needs, zero training budget.
+* **Choose Fine-Tuning:** Enforcing niche output formatting, specialized domain jargon (medical/legal), or reducing prompt instruction size.
+* **Choose Autonomous Agents:** Multi-step reasoning tasks requiring external API calls, SQL querying, or iterative tool execution.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **RAG Pipeline** | Retrieving relevant enterprise text chunks via vector search and inserting them into the prompt context before inference. | Grounds LLM responses in real-time truth, dramatically reducing hallucinations without retraining. | Vector Search, Hybrid Retrieval (BM25 + Vector) |
+| **Vector Databases** | Specialized databases designed to store and index high-dimensional numeric embeddings for fast similarity lookups. | Enables sub-second semantic retrieval across millions of enterprise documents. | HNSW Indexing, Approximate Nearest Neighbors |
+| **Fine-Tuning (LoRA)** | Adjusting a pre-trained model's internal parameter weights on specialized training dataset pairs. | Teaches tone, domain formatting, or specialized syntax; does NOT serve as an ideal long-term knowledge store. | Parameter-Efficient Fine-Tuning (PEFT/LoRA) |
+| **Agentic Workflows** | Giving LLMs access to tools (APIs, web search, databases) and letting them iteratively decide execution loops. | Solves complex workflows autonomously, but increases latency, cost, and non-deterministic loop risks. | ReAct Framework, Tool Use, Function Calling |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Fine-Tuning for Knowledge** | Fine-tuning an LLM to "memorize" fast-changing company policy documentation. | High retraining costs, outdated answers when policies change, and high risk of persistent hallucinations. | Use **RAG** for dynamic enterprise knowledge retrieval instead of fine-tuning. |
+| **Vector-Only Search** | Relying solely on vector embeddings for queries involving exact keywords, product IDs, or serial numbers. | Poor search relevance results (vector search struggles with exact alphanumeric match lookup). | Implement **Hybrid Search** combining Keyword Search (BM25) with Dense Vector Search. |
+
+  </TabItem>
+
+  <TabItem value="governance" label="4. AI Reliability & Governance">
+
+### 🛡️ Reliability, Hallucinations & AI Governance
+
+:::tip Definition
+Guardrails, evaluation metrics, and monitoring frameworks designed to manage non-deterministic AI risk, security vulnerabilities, and quality degradation.
+:::
+
+> **Interview Pitch:** *"AI governance enforces reliability over non-deterministic outputs—using input/output guardrails, evaluation benchmarks, and observability to catch hallucinations, prompt injections, and data leaks."*
+
+#### 🧠 Decision Drivers
+* **Enforce Deterministic Guardrails:** Production user-facing AI applications requiring strict schema adherence, safety filtering, and compliance logging.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Hallucination** | Plausible-sounding but factually incorrect or fabricated outputs generated by a probabilistic model. | Mitigated via RAG context grounding, low temperature settings, and output verification. | Groundedness, Faithfulness Metrics |
+| **Prompt Injection** | Malicious inputs designed to override system instructions and bypass safety rules (similar to SQL Injection). | Can leak system prompts, bypass authorization checks, or trigger unauthorized tool calls. | Indirect Prompt Injection, Jailbreaking |
+| **LLM Guardrails** | Interceptor layers that validate and sanitize incoming user prompts and outgoing generated responses. | Prevents PII leakage, block toxic outputs, and forces structured output compliance (JSON). | Input/Output Sanitization, Guardrails.ai |
+| **LLM-as-a-Judge** | Using an advanced LLM (e.g., GPT-4) to grade the quality and accuracy of smaller production model outputs. | Enables automated, continuous evaluation of RAG responses at scale. | Ragas Framework, Continuous Evaluation |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Prompt Injection Exposure** | Concatenating untrusted user input directly into LLM prompts without boundary isolation or validation. | Security breaches, system prompt leaks, and unauthorized execution of downstream backend tools. | Use separate developer system roles, isolate user data in prompt templates, and apply input guardrails. |
+| **Non-Deterministic JSON Parsing** | Asking an LLM for raw JSON in free text without constrained schema enforcement. | Production API crashes (`JSONDecodeError`) when the LLM wraps response code blocks in markdown or omits brackets. | Enforce native **Structured Outputs / JSON Mode** at the model API layer. |
+
+  </TabItem>
+</Tabs>
