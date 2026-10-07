@@ -1,112 +1,75 @@
 ---
-title: "📦 Development"
-sidebar_position: 4
+id: development-overview
+title: Engineering Quality & Code Standards
+sidebar_label: ⚗️ Development
+slug: /skills/development
+sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+:::tip
 
-:::tip Concept Overview
-**Data Products** are structured, consumable outputs derived from data that provide measurable value to the business.
-For Technical Analysts and Data Leaders, understanding how to manage, centralise, and operationalise data products is critical for enabling analytics, AI/ML, and decision-making at scale.
+**Domain Philosophy:** Writing code—whether in SQL, Python, Java, or LLM Prompts—is not just about getting a script to run. True development capability is about **engineering quality**: writing maintainable, well-tested, self-documenting code that operates safely in production environments.
+
 :::
 
 ---
 
-## Why Data Products Matter
+## 1. What It Means to Focus on Engineering Quality
 
-- Transform raw data into **actionable insights**
-- Ensure **data quality, consistency, and accessibility**
-- Support **analytics, AI/ML, and operational decision-making**
-- Reduce technical debt through **structured governance and processes**
+While **Analysis** frames the problem, **Business** evaluates impact, and **Delivery** ensures predictable flow, **Development** is about technical craftsmanship and execution standards.
 
-A TA’s role is to **steer, influence, and validate** data product strategy, not just build pipelines.
+Regardless of the stack or language, high-quality engineering follows five universal principles:
+
+1. **Readability & Intent:** Code is read far more often than it is written. Variable names, schemas, and prompts must be explicit and self-documenting.
+2. **Defensive Design & Error Handling:** Anticipating bad inputs, missing parameters, system timeouts, and edge cases gracefully.
+3. **Testability & Determinism:** Writing modular code, pure functions, and structured SQL/prompts that produce predictable, reproducible outcomes.
+4. **Maintainability & DRY (Don't Repeat Yourself):** Abstracting common logic into reusable modules, libraries, or SQL models (e.g., dbt macros).
+5. **Operational Safety:** Ensuring secrets are decoupled, database migrations are non-breaking, and code passes automated CI/CD quality gates.
 
 ---
 
-<Tabs>
-<TabItem value="principles" label="Principles of Data Product Management">
+## 2. Quality Standards Across Language Stacks
 
-### Core Principles
+| Language / Domain | Focus Area | Quality Standard |
+| :--- | :--- | :--- |
+| **SQL & Data Transformations** | Schema Modeling & Logic | Deterministic joins, explicit CTEs over nested subqueries, idempotency, and automated dbt tests. |
+| **Python** | Scripting, APIs & Data Pipelines | Type hinting (`mypy`), strict PEP 8 formatting (`ruff`/`black`), explicit exception handling, and unit test coverage (`pytest`). |
+| **Java** | Object-Oriented & Microservices | Clean architecture, strict OOP encapsulation, immutable state models, and comprehensive JUnit/integration testing. |
+| **Prompt Engineering** | LLM System Prompts | Zero-shot/few-shot framing, structured output schemas (JSON/Pydantic), deterministic guardrails, and context bounds. |
 
-1. **Data as a Product** – Treat datasets like software products: discoverable, reliable, documented, versioned.
-2. **Centralisation vs Access** – Balance between consolidating data and providing self-service access.
-3. **Quality & Governance** – Establish policies for security, validation, and compliance.
-4. **Sustainability** – Plan for evolving systems, scaling, and long-term maintenance.
-5. **Pragmatism over Novelty** – Focus on clear business impact, not always the latest tech.
-6. **Evergreening** – Continuously refresh data, documentation, and processes.
+---
 
-**TA signal:**
-A well-managed data product reduces friction for engineers and enables faster, reliable business insights.
+## 3. Applying the Development Skills Suite
 
-</TabItem>
+Apply the specialized sub-modules below to master language-specific quality standards and technical patterns:
 
-<TabItem value="challenges" label="Challenges & Observations">
+:::info
 
-### Key Challenges
+## Skill Execution Directory
 
-- Data growth outpaces quality and governance
-- Siloed datasets block analytics and AI projects
-- Legacy systems introduce hidden complexity
-- Resource allocation often prioritises building pipelines over analysis
-- Multi-year projects risk irrelevance without iterative value delivery
+### 🐍 [Python Standards & Clean Code](./python-standards)
+Guidelines for type hints, modular package structures, async execution, error handling, and test-driven development (`pytest`).
 
-**TA insight:**
-Focus on **visibility and communication** to identify friction points and emergent problems early.
+### 🗄️ [SQL & Transformation Standards](./sql-standards)
+SOP for clean query structuring, CTE patterns, dbt model organization, index optimization, and data testing protocols.
 
-</TabItem>
+### ☕ [Java & Object-Oriented Patterns](./java-standards)
+Design patterns, microservice interaction standards, dependency injection, and enterprise service architecture.
 
-<TabItem value="strategies" label="Key Strategies">
+### 🤖 [Prompt Engineering & AI Systems](./prompt-engineering)
+Structured prompt design, system role framing, guardrail enforcement, and deterministic JSON/LLM output validation.
 
-### Strategies for Successful Data Products
+:::
 
-- **Centralise Data** – Establish a single source of truth across all systems (on-prem, SaaS, ERP)
-- **Automate Integration** – Use tools (Fivetran, DBT) to reduce manual ETL work
-- **Enable Self-Service Analytics** – Provide accessible datasets for analysts and engineers
-- **Governance & Security** – Apply access controls and cataloging at platform level
-- **Iterative Delivery** – Focus on delivering usable data quickly; refine continuously
-- **Scenario Planning** – Model usage patterns, edge cases, and operational constraints
+---
 
-**TA signal:**
-These strategies allow TAs to focus on **analysis and insight generation** rather than infrastructure plumbing.
+## 4. Engineering Quality Checklist
 
-</TabItem>
+Before submitting a Pull Request or pushing code to staging, verify:
 
-<TabItem value="operations" label="Operational Considerations">
-
-### Data Product Lifecycle
-
-1. **Source Identification** – Understand where data originates and the business context
-2. **Integration & Transformation** – Automate ingestion and standardise formats
-3. **Storage & Centralisation** – Consolidate into scalable platforms (BigQuery, Snowflake, SAP)
-4. **Accessibility** – Catalog and expose datasets with discoverability and proper permissions
-5. **Consumption & Feedback** – Ensure analysts, engineers, and stakeholders can leverage the data
-6. **Maintenance & Refresh** – Keep schemas, quality checks, and documentation evergreen
-
-### Tools & Examples
-
-- **Integration:** Fivetran, custom ETL pipelines
-- **Transformation:** DBT, SQL-based models
-- **Storage:** Data warehouses, lakehouses
-- **Catalog & Governance:** Data catalogs, access control platforms
-
-**TA insight:**
-TAs evaluate **effectiveness, efficiency, and business impact** at each stage of the data product lifecycle.
-
-</TabItem>
-
-<TabItem value="communication" label="TA Focus & Communication">
-
-- Articulate **data value and limitations** to stakeholders
-- Highlight **technical debt risks** and remediation strategies
-- Translate **business requirements into actionable data workflows**
-- Ensure **trust, transparency, and relevance** in multi-year projects
-- Make the invisible visible: clarify processes, flows, and dependencies
-
-**TA tip:**
-Communication is as important as technical correctness — a TA bridges business intent and engineering execution.
-
-</TabItem>
-</Tabs>
-
+- [ ] Does the code pass automated linting and formatting checks?
+- [ ] Are functions/methods typed and bounded with explicit inputs and return types?
+- [ ] Is exception handling specific (avoiding bare `except:` or generic `catch (Exception e)`)?
+- [ ] Are unit tests written to cover both happy paths and boundary/failure cases?
+- [ ] Are credentials, API keys, and environment-specific configs completely decoupled from source control?
 

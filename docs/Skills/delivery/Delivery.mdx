@@ -1,156 +1,95 @@
 ---
-title: "🔄 Delivery"
-sidebar_position: 3
+id: delivery-overview
+title: Delivery, Predictability & Confidence
+sidebar_label: 🚥 Delivery
+slug: /skills/delivery
+sidebar_position: 4
 ---
 
-:::tip Concept Overview
-This page describes how a Technical Analyst operates across the full delivery lifecycle.
-Each Kanban stage is presented as a structured table showing how a TA thinks, behaves, collaborates, and contributes to delivery.
+
+:::tip
+
+**Domain Philosophy:** True delivery excellence is measured not by how fast you move, but by how **consistently and confidently** you land commitments. Predictability builds trust with stakeholders; quality gates ensure every release can be deployed without anxiety.
+
 :::
 
 ---
 
-<details>
-<summary>🛎️ Ceremonies</summary>
+## 1. What It Means to Focus on Predictability & Confidence
 
-| **Category** | **Purpose** |
-|--------------|-------------|
-| **TO** | Create shared understanding across engineering and stakeholders; provide structured opportunities for technical alignment; reduce ambiguity through evidence and constraints; surface risks early; support predictable delivery through clear decision‑making moments; strengthen communication loops across product, engineering, and operations |
-| **DO** | Define the purpose; prepare inputs; facilitate neutrally; surface risks early; document outcomes |
-| **BE** | Consistent; clear; neutral; accountable; focussed |
+While **Analysis** defines the problem, **Business** evaluates its impact, and **Development** writes the code, **Delivery** ensures that work lands in production on time, with high fidelity, and without last-minute operational surprises.
 
-</details>
+### Predictability over Speed, Confidence over Output
 
-<details>
-<summary>📐 Principles</summary>
-
-| **What You Observe** | **What It Reveals About Principles** | **TA Interpretation / What It Means** |
-| --- | --- | --- |
-| **How decisions are made** | What arguments win, what concerns block progress, what trade‑offs are acceptable | Reveals decision‑making principles: risk tolerance, bias toward speed vs safety, preference for simplicity vs flexibility |
-| **How work flows** | Whether the team uses Kanban, Scrum, big‑batch releases, high/low WIP | Reveals delivery principles: flow efficiency, iteration, predictability, throughput, batching |
-| **What engineers push back on** | Ambiguity, complexity, coupling, lack of observability | Reveals engineering principles: simplicity, separation of concerns, resilience, clarity |
-| **What gets escalated** | Performance issues, data quality, operational risk, predictability | Reveals organisational priorities: reliability, correctness, governance, delivery commitments |
-| **What gets praised** | Simplicity, speed, robustness, autonomy | Reveals cultural principles: craftsmanship, velocity, ownership, quality mindset |
-
-</details>
+* ❌ **The Output Illusion:** Maximizing story point velocity often leads to erratic release dates, bloated work-in-progress (WIP), and high anxiety during production deployments.
+* ✅ **Predictability & Confidence Mindset:** Right-sizing scope, managing queue bottlenecks, establishing clear quality criteria (**DoR** and **DoD**), and maintaining a release pipeline so reliable that deployments become non-events.
 
 ---
 
-## 🔎 Discovery
+## 2. The Pillars of Confident Delivery
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Vague request, symptom, observation, stakeholder concern |
-| **Ceremonies** | Informal discovery chats; early triage discussions; **Technical Discovery Sessions** |
-| **Principles in Play** | Evidence‑first, Simplicity, Systems awareness |
-| **TA Role** | **Leading** — TA drives clarity and determines whether work should progress |
-| **TA Thoughts** | Curious, neutral, validating whether a real problem exists; pattern‑spotting |
-| **TA Behaviour** | Gathers context, identifies stakeholders, confirms reproducibility, captures signals |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Discovery notes; initial problem framing; discovery summary |
+To achieve sustainable delivery confidence, focus on four core operational pillars:
 
+```text
+┌─────────────────────────┐      ┌─────────────────────────┐
+│  Definition of Ready    │ ───► │   WIP Constraint &      │
+│  Unambiguous DoR gates  │      │   Flow Management       │
+└─────────────────────────┘      └─────────────────────────┘
+             │                                │
+             ▼                                ▼
+┌─────────────────────────┐      ┌─────────────────────────┐
+│  Definition of Done     │ ◄─── │  Predictable Cadence &  │
+│  Automated QA & DoD     │      │  Scope Management       │
+└─────────────────────────┘      └─────────────────────────┘
 
+```
 
-## 🧠 Analysis
+1. **Upfront Clarity (DoR):** Eliminating ambiguity before work enters a sprint so engineers don't hit preventable mid-sprint blockers.
+2. **Controlled Work-In-Progress (WIP):** Limiting open tickets to prevent context-switching and accelerate time-to-completion.
+3. **Built-In Quality (DoD):** Enforcing strict Definition of Done criteria (automated tests, staging sign-offs, telemetry) to deploy with zero hesitation.
+4. **Transparent Risk Management:** Surface delivery risks and cross-team dependencies early while trade-offs can still be made predictably.
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Discovery signals, logs, metrics, stakeholder context |
-| **Ceremonies** | Deep‑dives with engineers; stakeholder clarification sessions |
-| **Principles in Play** | KISS, Separation of Concerns, Flow efficiency |
-| **TA Role** | **Leading** — TA owns investigation and shapes the problem |
-| **TA Thoughts** | Separates symptoms from expected behaviour; validates assumptions; maps dependencies |
-| **TA Behaviour** | Investigates deeply, clarifies assumptions, identifies edge cases |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Clear **Problem Statement**; draft **Requirements**; identified **Parameters**; clarified assumptions |
+---
 
+## 3. Delivery Confidence Indicators
 
+Track these stability indicators to measure team health and delivery reliability:
 
-## 📥 Backlog
+| Metric | Delivery Purpose | Operational Target |
+| --- | --- | --- |
+| **Commitment Ratio** | Measures sprint predictability (Delivered Points vs Committed Points). | Target: $85\%–95\%$ consistency across consecutive sprints. |
+| **Cycle Time Variance** | Measures how reliably ticket duration can be estimated. | Low variance indicates stable, well-bounded work items. |
+| **Change Failure Rate (CFR)** | Measures production confidence and test coverage effectiveness. | Target: $< 5\%$ of deployments require patch/rollback. |
+| **Blocker Age** | Tracks how rapidly flow bottlenecks are resolved. | Unblock critical WIP in $< 24hours$. |
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Shaped analysis, draft ticket components |
-| **Ceremonies** | Backlog refinement; prioritisation discussions; **Requirements Workshops** |
-| **Principles in Play** | Iterative delivery, Testability, Alignment |
-| **TA Role** | **Leading → Supporting** — leads refinement, supports prioritisation |
-| **TA Thoughts** | Ensures work is valuable, feasible, testable |
-| **TA Behaviour** | Refines requirements, validates with PM/engineering, clarifies dependencies |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Fully formed **Ticket**; refined requirements; prioritisation notes; workshop outputs |
+---
 
+## 4. Applying the Delivery Skills Suite
 
+Apply the specialized skill modules below to establish repeatable, confident delivery practices:
 
-## 📝 To Do
+:::info
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Ready ticket, aligned requirements |
-| **Ceremonies** | **Sprint Planning** — clarify requirements, highlight risks, ensure feasibility |
-| **Principles in Play** | Predictability, Clarity, Outcome orientation |
-| **TA Role** | **Supporting** — ensures readiness and clarity |
-| **TA Thoughts** | Ensures no ambiguity remains before work begins |
-| **TA Behaviour** | Provides clarification, prepares supporting documentation |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Confirmed scope; sprint‑ready ticket; planning notes |
+## Skill Execution Directory
 
+### 📑 Ticket Specifications & Feature Stories
 
+**When applied:** To draft precise, unambiguous feature user stories and capabilities with explicit acceptance criteria and Definition of Ready (DoR).
 
-## 🔧 In Progress
+### ⚡ Squad Delivery & Execution
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Active development work, engineering questions |
-| **Ceremonies** | Daily stand‑up; ad‑hoc technical discussions; **Design Clarification Sessions**; **Design Reviews** |
-| **Principles in Play** | Resilience, Boundaries, Traceability |
-| **TA Role** | **Supporting** — engineering leads; TA unblocks and clarifies |
-| **TA Thoughts** | Focuses on unblocking, ensuring alignment with requirements |
-| **TA Behaviour** | Answers questions quickly, clarifies edge cases, updates parameters |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Clarifications; updated ticket details; design review notes; decision documentation |
+**When applied:** To manage day-to-day sprint execution, unblock engineering Work-In-Progress (WIP), facilitate flow, and ensure reliable release sign-offs.
 
+:::
 
+---
 
-## 🔍 In Review
+## 5. Delivery Readiness Checklist
 
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Completed development, logs, metrics |
-| **Ceremonies** | Code review discussions; QA handover; **Technical Decision Reviews** |
-| **Principles in Play** | Contracts, Correctness, Testability |
-| **TA Role** | **Leading** — validates behaviour against requirements |
-| **TA Thoughts** | Validates behaviour, not implementation; checks against checklist |
-| **TA Behaviour** | Reviews logs/metrics, confirms acceptance criteria, flags gaps |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Verified behaviour; updated checklist; decision review outputs |
+Before committing to a release cycle or milestone, verify:
 
-
-
-## 🧪 In UAT
-
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | UAT results, stakeholder feedback |
-| **Ceremonies** | UAT review sessions; stakeholder demos |
-| **Principles in Play** | Outcome orientation, Real‑world validation |
-| **TA Role** | **Supporting → Leading** — supports PM/QA, then leads validation |
-| **TA Thoughts** | Focuses on user/business value; confirms the problem is resolved |
-| **TA Behaviour** | Validates real‑world scenarios, checks regressions |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Confirmed success criteria; UAT notes; sign‑off recommendations |
-
-
-
-## ✅ Done
-
-| **Dimension** | **Description** |
-|--------------|-----------------|
-| **Inputs** | Completed work, monitoring data, incident signals |
-| **Ceremonies** | Sprint retrospective; post‑implementation review; **Incident Analysis / Post‑Incident Reviews** |
-| **Principles in Play** | Continuous improvement, Reliability, Governance |
-| **TA Role** | **Leading** — ensures closure, documentation, and learning |
-| **TA Thoughts** | Reflects on learnings; identifies patterns for improvement |
-| **TA Behaviour** | Updates documentation, ensures monitoring/alerts, contributes to retros |
-| **TA Skills** | Identify / flag gaps, clarify expectations, define current behaviour |
-| **Outputs** | Updated documentation; monitoring updates; retrospective insights; incident reports |
+* [ ] Are all candidate items vetted against the **Definition of Ready (DoR)**?
+* [ ] Is team capacity modeled on historical completion trends rather than ideal scenarios?
+* [ ] Are cross-squad or third-party dependencies identified and scheduled in advance?
+* [ ] Does every ticket have explicit, testable criteria satisfying the **Definition of Done (DoD)**?
 
