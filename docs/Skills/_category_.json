@@ -1,4 +1,6 @@
 {
-  "label": "\uD83D\uDD2C Skills",
-  "position": 2
+  "label": "🔬 Skills",
+  "position": 2,
+  "collapsible": false,
+  "collapsed": false
 }

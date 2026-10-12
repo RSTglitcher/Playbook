@@ -1,4 +1,6 @@
 {
   "label": "\uD83D\uDCDA Theory",
-  "position": 3
+  "position": 3,
+  "collapsible": false,
+  "collapsed": false
 }

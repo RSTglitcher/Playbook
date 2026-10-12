@@ -1,0 +1,102 @@
+Here is a proposed page for **HTTP & cURL Network Requests (`HTTP.mdx`)**, fully structured to match your master Skills template and following the exact format of the other technical delivery files:
+
+```mdx
+---
+title: HTTP & cURL Network Requests
+sidebar_label: HTTP & cURL
+description: Operational framework for inspecting network payloads, testing REST APIs, and executing HTTP requests using cURL command-line utilities.
+sidebar_position: 3
+---
+
+# 📘 HTTP & cURL Network Requests
+
+:::tip
+
+## HTTP & cURL Network Requests
+
+**What is it?**
+A structured technical skill focused on understanding HTTP protocol semantics, headers, status codes, and executing network requests using the `cURL` command-line utility to test, debug, and interact with REST APIs.
+
+### 📚 Related Theory & Practice References
+* Theory — REST architectural constraints, HTTP status code specifications, and request/response lifecycles.
+* Practice — API endpoint testing, webhook debugging, and command-line network diagnostics.
+:::
+
+## 🧭 What is the Skill & When is it Used?
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Testing, debugging, and verifying backend REST APIs or webhook integrations from the terminal.<br>• Inspecting HTTP headers, authentication tokens, and payload structures during development.<br>• Automating health checks, file downloads, or smoke tests in shell scripts and CI pipelines. | • Building complex graphical HTTP clients with visual UI dashboards (where Postman or Insomnia are preferred).<br>• Writing low-level TCP socket listeners or custom network transport layers. |
+
+---
+
+## 💡 What Value Does It Bring? (Problem Solved)
+
+* **Accelerates API Debugging:** Allows developers to inspect exact request/response lifecycles without opening heavy GUI tools.
+* **Universal Availability:** Provides an instantly available standard tool (`curl`) across almost every operating system and container environment.
+* **Enables Automation:** Easily embeds into shell scripts and deployment pipelines to verify service uptime and endpoint contracts.
+
+---
+
+## 🧠 Core Concepts
+
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **HTTP Methods & Semantics** | Action verbs (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`) that dictate the intent of a network request. | Enforces standardized CRUD operations and resource handling across API boundaries. |
+| **Headers & Authorization** | Metadata sent alongside requests/responses (e.g., `Content-Type`, `Authorization: Bearer <token>`). | Secures communication channels and dictates how payloads should be serialized and parsed. |
+| **Status Codes & Ranges** | Three-digit codes categorizing responses into successes (`2xx`), client errors (`4xx`), or server errors (`5xx`). | Immediately signals execution outcome for automated scripts and debugging sessions. |
+
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Endpoint Scoping & Header Definition** — Determine required HTTP method, construct target URL, and assemble necessary headers or auth tokens.
+2. **Phase 2: Request Execution via cURL** — Formulate the `cURL` command incorporating flags for data payloads (`-d`), request methods (`-X`), and header inclusions (`-i`).
+3. **Phase 3: Response Inspection & Validation** — Verify returned status codes and examine response bodies to confirm expected payload structure.
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** HTTP Methods and cURL Command Execution Patterns.
+
+```bash
+# 1. Basic GET Request (Fetch data)
+curl -X GET "[https://api.example.com/v1/health](https://api.example.com/v1/health)" \
+  -H "Accept: application/json"
+
+# 2. Verbose GET Request (Inspect request/response headers)
+curl -iv "[https://api.example.com/v1/status](https://api.example.com/v1/status)"
+
+# 3. POST Request with JSON Payload and Authorization
+curl -X POST "[https://api.example.com/v1/users](https://api.example.com/v1/users)" \
+  -H "Authorization: Bearer secret_token_123" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice", "role": "admin"}'
+
+# 4. PUT Request (Resource Update)
+curl -X PUT "[https://api.example.com/v1/users/42](https://api.example.com/v1/users/42)" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "active"}'
+
+# 5. DELETE Request (Remove Resource)
+curl -X DELETE "[https://api.example.com/v1/users/42](https://api.example.com/v1/users/42)" \
+  -H "Authorization: Bearer secret_token_123"
+
+# 6. LIST  all connectors on this port
+curl -X GET kfk-conn-svc:8083/connectors
+
+# 7. CHECK the status of a specific connector
+curl -X GET kfk-conn-svc:8083/connectors/jdbc-name-of-connector1/status
+curl -X GET kfk-conn-svc:8083/connectors/jdbc-name-of-connector2/status
+
+
+```
+
+:::warning
+
+### Pitfalls & Edge Cases
+
+* **Common Mistake:** Forgetting to specify `-H "Content-Type: application/json"` when sending a JSON body with `-d`, causing the server to reject or misinterpret the raw payload.
+* **Pro Tip:** Always wrap your URLs in double quotes inside terminal commands to prevent special characters (like `&` or `?`) from breaking or backgrounding your shell session.
+:::

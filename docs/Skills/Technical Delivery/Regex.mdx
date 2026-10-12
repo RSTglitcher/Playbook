@@ -1,145 +1,92 @@
 ---
-title: "Regex"
+title: Regular Expressions & Pattern Matching
+sidebar_label: Regex
+description: Operational framework for defining patterns to search, match, extract, validate, and transform text strings across codebases and log pipelines.
 sidebar_position: 2
 ---
 
-:::tip
-Regular Expressions (Regex) define **patterns** used to search, match, extract, validate, and transform text.
+# 📘 Regular Expressions & Pattern Matching
 
-They are used across **CLI tools, programming languages, configuration files, and observability pipelines**.
+:::tip
+
+## Regular Expressions & Pattern Matching
+
+**What is it?**
+A structured technical skill used to define precise pattern syntax to search, match, extract, validate, and manipulate text strings across command-line tools, programming languages, and data observability pipelines.
+
+#### 📚 Related Theory & Practice References
+* Theory — Formal language theory, finite automata, and string parsing principles.
+* Practice — CLI grep operations, log parsing queries, and code refactoring search patterns.
 :::
 
-Regular Expressions define patterns to search, match, and manipulate text strings.
+## 🧭 When is it Used?
 
-Use Cases:
-- Text search & filtering
-- Data validation
-- Data extraction
-- Text replacement & formatting
-- Log analysis
-- URL routing & rewriting
-- Parsing
-- Refactoring
-- Security
-- Automated text filtering
-- Cleaning
-- Data masking
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Validating structured string inputs (e.g., email addresses, postal codes, IP addresses) in applications. • Extracting logs, identifying error codes, or filtering unstructured telemetry streams. • Performing complex find-and-replace transformations during code refactoring or data cleanup. | • Parsing fully nested or context-free languages like arbitrary HTML or XML trees (where dedicated parsers should be used instead). • Simple exact-string searches where standard string inclusion methods (`indexOf`, `contains`) suffice. |
 
 ---
 
-### Examples
+## 💡 What Value Does It Bring?
 
-```shell
-Social Security Number:
-^\d{3}-\d{2}-\d{4}$
+* **Accelerates Text Processing:** Replaces complex, multi-line conditional string loops with concise, declarative pattern expressions.
+* **Enforces Strict Validation:** Guarantees that user inputs and system payloads conform to exact structural contracts before processing.
+* **Simplifies Log Analysis:** Unlocks powerful filtering and extraction capabilities across massive observability and monitoring datasets.
 
-Email (simple):
-\b\w+@\w+\.\w+\b
+---
 
-Email (strict):
-^[a-zA-Z0-9._]*[a-zA-Z0-9]+[._]*@[a-zA-Z0-9._]*[a-zA-Z0-9]+[._]*\.[a-zA-Z]+
+## 🧠 Core Concepts
 
-Colours:
-(red|blue|green)
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **Anchors & Boundaries** | Special markers (`^`, `$`, `\b`) that specify the exact start, end, or word boundary of a target string match. | Prevents partial or unintended substring matches by locking pattern evaluation to specific boundaries. |
+| **Character Classes & Shorthands** | Condensed groupings (`\d` for digits, `\w` for word characters, `[a-z]` for ranges) representing sets of acceptable characters. | Keeps regex patterns compact, readable, and adaptable to varied character sets. |
+| **Quantifiers & Greediness** | Modifiers (`*`, `+`, `{n,m}`) that dictate how many times a preceding character or group must repeat. | Controls whether pattern matching consumes as much text as possible (greedy) or stops early (lazy). |
 
-IPv4 Address:
-\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Pattern Objective & Boundary Definition** — Establish whether the pattern is used for validation, search filtering, or extraction, and set strict start/end anchors.
+2. **Phase 2: Core Pattern Assembly** — Combine character classes, quantifiers, and capturing groups to isolate the target string format.
+3. **Phase 3: Testing & Execution** — Evaluate the regex against positive and negative test strings using runtime functions or CLI tools (`grep`, `sed`).
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Regex Fundamentals and Pattern Matching Patterns.
+
+```regex
+# 1. Basic Character Fundamentals & Anchors
+^               -> Start of line anchor
+$               -> End of line anchor
+\d              -> Any single digit (0-9)
+\w              -> Any word character (a-z, A-Z, 0-9, _)
+\s              -> Any whitespace character
+
+# 2. Quantifiers & Repetition
+{3}             -> Exactly 3 occurrences
++               -> One or more occurrences
+*               -> Zero or more occurrences
+?               -> Zero or one occurrence
+
+# 3. Basic String Matching (Hello World / Email validation)
+^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$
+
+# 4. Common Application Functions (JavaScript Example)
+const regex = /^\d{3}-\d{2}-\d{4}$/;
+const isValidSSN = regex.test("123-45-6789");
+
+const text = "Contact support@example.com for help.";
+const emailMatch = text.match(/\b[\w.-]+@[\w.-]+\.\w+\b/);
+
 ```
 
-### Common Regex Functions
+:::warning
 
-```shell
-.match     -> Match
-.search    -> Search
-.replace   -> Replace
-```
+### Pitfalls & Edge Cases
 
-### Characters
-
-```shell
-.    -> Any single character except newline
-\d   -> Digit (0-9)
-\w   -> Word character (a-z, A-Z, 0-9, _)
-\s   -> Whitespace
-\S   -> Non-whitespace
-\    -> Escape special character
-```
-
-### Quantifiers
-
-```shell
-{n}     -> Exactly n occurrences
-{n,}    -> At least n occurrences
-{n,m}   -> Between n and m occurrences
-+       -> One or more
-++      -> One or more (greedy)
-+?      -> One or more (lazy)
-*       -> Zero or more
-**      -> Zero or more (greedy)
-*?      -> Zero or more (lazy)
-?       -> Zero or one
-^       -> Start of line
-$       -> End of line
-.*      -> Any number of characters
-[^]     -> Any character NOT in range
-```
-
-### Specific Patterns
-
-```shell
-(abc)        -> Exact sequence
-(a|b)        -> a OR b
-[^abc]       -> Not a, b, or c
-[a-z]        -> Lowercase letters
-[A-Z]        -> Uppercase letters
-(?i)         -> Case-insensitive mode
-(?s)         -> Single-line mode
-(?m)         -> Multi-line mode
-(?x)         -> Free-spacing / comment mode
-[aeiou]      -> Any vowel
-[^XYZ]       -> Any character except X, Y, Z
-[a-z0-9]     -> Character range
-()           -> Capturing group
-[]           -> Character class
-[^]          -> Negated character class
-```
-
-### Modifiers
-
-```shell
-i   -> Case insensitive
-g   -> Global matching
-m   -> Multi-line matching
--w  -> Match whole word
--v  -> Invert match
--n  -> Line number
--c  -> Count matches
--B  -> Before context
--A  -> After context
--C  -> Context (before + after)
-```
-
-### Extended Regex
-
-```shell
-#EGREP
-!         -> NOT
-||        -> OR
--o        -> Shell OR
-&&        -> AND
--a        -> Shell AND
-*         -> Match 0 or more
-?         -> Match 1 character
-[]        -> Range
-{}        -> Lists / counts
-[a-e]     -> Match a through e
-[!0-9]    -> Anything except digits
-^         -> Start of line
-$         -> End of line
-.         -> Single character
-[^]       -> Any character not in range
-.*        -> Any number of characters
-\         -> Escape meta character
-+         -> One or more occurrences
-(a|b)     -> Match a or b
-```
+* **Common Mistake:** Writing overly complex, unreadable "write-only" regex strings that lack comments or breakdown, making maintenance nearly impossible.
+* **Pro Tip:** When matching complex strings like HTML or deeply nested data, prefer dedicated parsers over regex to avoid brittle failure modes on edge-case inputs.
+:::

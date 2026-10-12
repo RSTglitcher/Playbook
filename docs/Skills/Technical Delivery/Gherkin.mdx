@@ -1,205 +1,94 @@
 ---
-title: "Gherkin"
+title: Gherkin & Behavior-Driven Development
+sidebar_label: Gherkin
+description: Operational framework for defining user behaviors, acceptance criteria, and system specifications using human-readable Gherkin syntax.
+sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 Gherkin & Behavior-Driven Development
 
 :::tip
-A structured, human‑readable language for describing system behaviour using examples.
 
-- **Year developed:** 2008
-- **Primary purpose:** Define behaviour in a shared language
-- **Target problem:** Remove ambiguity between analysts, developers, QA, and stakeholders
+## Gherkin & Behavior-Driven Development
+
+**What is it?** 
+A structured technical writing and testing skill focused on describing system behavior using human-readable examples and structured syntax (`Given`/`When`/`Then`), bridging the gap between business stakeholders, developers, and QA.
+
+#### 📚 Related Theory & Practice References
+* Theory — Behavior-Driven Development (BDD), domain-driven design, and acceptance test-driven development (ATDD).
+* Practice — Cucumber test runners, automated acceptance testing, and Jira feature backlog grooming.
 :::
 
----
+## 🧭 When is it Used?
 
-## 🗺️ Context
-
-### History
-- Created as part of the Cucumber project (Aslak Hellesøy)
-- Designed to bridge business and technical language
-- Adopted widely in BDD practices
-- Now used across product, QA, engineering, and analysis teams
-
-### Strengths & Limitations
-
-**Strengths**
-- Shared language across roles
-- Clear, example‑driven behaviour
-- Easy to read and reason about
-- Encourages testability and modularity
-
-**Limitations**
-- Can become verbose if misused
-- Can drift into UI‑level detail
-- Requires discipline to keep scenarios atomic
-- Not inherently tied to automation
-
-### TA‑Relevant Insights
-Gherkin is one of the most powerful mediums for a TA because it:
-
-- forces clarity
-- exposes ambiguity
-- reveals missing edge cases
-- aligns teams on behaviour
-- creates testable requirements
-- supports both manual and automated testing
-
-It is a **thinking tool**, not a testing tool.
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Translating vague business requirements into clear, testable feature behaviors during sprint refinement or ticket writing. • Authoring acceptance test specifications for BDD automation frameworks (e.g., Cucumber, Behave). • Surfacing hidden edge cases and aligning cross-functional teams on expected system behavior. | • Writing low-level technical unit tests or API integration tests without business stakeholder context. • Documenting complex database schema designs or internal software architecture diagrams. |
 
 ---
 
-## 🧠 Mental Model
+## 💡 What Value Does It Bring?
 
-### How to think in this environment
-Gherkin expresses **behaviour**, not implementation.
-
-- “What should happen?”
-- “What should never happen?”
-- “What does success look like?”
-- “What does failure look like?”
-
-It is declarative, not procedural.
-
-### Ecosystem
-Gherkin is often paired with:
-
-- **Cucumber** (automation runner)
-- **SpecFlow** (.NET)
-- **Behave** (Python)
-- **Jest + Cucumber** (JavaScript)
-- **Selenium / Playwright** (UI automation)
-
-But it can also be used **without automation** as a requirements tool.
+* **Removes Ambiguity:** Replaces open-ended requirements with precise, example-driven specifications that everyone understands.
+* **Creates Executable Specifications:** Directly links human-readable behavior documentation to automated test runners, reducing test maintenance overhead.
+* **Exposes Edge Cases Early:** Forces product, engineering, and QA teams to think through alternative flows and boundary conditions before code is written.
 
 ---
 
-## 📚 Core Concepts
+## 🧠 Core Concepts
 
-<Tabs>
-
-<TabItem value="engineering" label="Engineering">
-
-```shell
---------------
-Common Gherkin Structures
---------------
-Feature: High-level capability
-Scenario: Single behaviour
-Given: Initial context
-When: Action or event
-Then: Expected outcome
-And/But: Additional steps
-```
-
-```shell
---------------
-Automation Mapping (Cucumber)
---------------
-# Step definitions map Gherkin to code
-Given("a user exists", () -> { ... });
-When("they log in", () -> { ... });
-Then("they see the dashboard", () -> { ... });
-```
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-# Pattern 1: Behaviour, not UI
-Avoid "click button X"
-Prefer "the user submits valid credentials"
-
-# Pattern 2: One behaviour per scenario
-If you need "if/else", split into multiple scenarios.
-
-# Pattern 3: Edge-case surfacing
-Use scenarios to expose missing rules:
-- invalid inputs
-- boundary conditions
-- alternative flows
-```
-
-</TabItem>
-
-</Tabs>
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **Declarative Behavior Syntax** | Focusing scenarios on *what* the system should do from a user's perspective rather than *how* the UI implements it. | Keeps feature specifications clean, resilient to UI redesigns, and readable for non-technical stakeholders. |
+| **Preconditions & Actions (`Given`/`When`/`Then`)** | Setting initial state (`Given`), triggering an event (`When`), and verifying the final observable result (`Then`). | Establishes a rigorous, uniform structure for every testable requirement across the codebase. |
+| **Data-Driven Scenario Outlines** | Using templates and example tables to test multiple input combinations against a single behavioral rule. | Prevents repetitive scenario duplication when validating complex validation boundaries or multi-state forms. |
 
 ---
 
-## 🔁 Common Patterns
+## 📋 Common Patterns
 
-### Idioms and Typical Approaches
-- Keep scenarios short
-- Use business language
-- Avoid implementation details
-- Use examples to clarify rules
-- Separate “happy path” and “edge cases”
-- Use Scenario Outlines for data-driven behaviour
-
-### Pitfalls
-- Over‑specifying UI interactions
-- Mixing multiple behaviours in one scenario
-- Using Gherkin as documentation instead of behaviour
-- Writing scenarios too large to automate
-- Using conditional logic inside scenarios
+1. **Phase 1: Feature & Behavior Scoping** — Identify the core capability, define the user persona, and isolate individual business rules.
+2. **Phase 2: Scenario Drafting (Given/When/Then)** — Write clear, atomic scenarios covering the happy path and primary edge cases using business terminology.
+3. **Phase 3: Automation Mapping** — Connect the Gherkin step definitions to underlying automation test harnesses (e.g., Jest, Cucumber, Playwright).
 
 ---
 
-## 🧪 Examples
+## 🛠️ Practical Tips & Templates
 
-### Good (Behaviour‑Focused)
+> **Template / Artifact Example:** Gherkin Feature Specification and Automation Mapping.
+
+```gherkin
+# 1. Feature Definition & Background Context
+Feature: User Authentication
+  As a registered member
+  I want to log into my account securely
+  So that I can access my dashboard
+
+  Background:
+    Given a registered user exists with email "user@example.com"
+
+  # 2. Basic Happy Path Scenario
+  Scenario: Successful login with valid credentials
+    When they enter valid credentials "user@example.com" and "password123"
+    Then they are successfully logged in
+    And they see their personalized dashboard
+
+  # 3. Data-Driven Scenario Outline
+  Scenario Outline: Invalid login attempts
+    When they enter <email> and <password>
+    Then they see an error message for failed authentication
+
+    Examples:
+      | email             | password   |
+      | user@example.com  | wrongpass  |
+      | wrong@example.com | password12 |
 
 ```
-Scenario: Successful login
-  Given a registered user exists
-  When they enter valid credentials
-  Then they are logged in
-  And they see their dashboard
-```
 
-### Bad (UI‑Focused)
+:::warning
 
-```
-Scenario: Login
-  Given the user clicks the username field
-  And types "user@example.com"
-  And clicks the password field
-  And types "password123"
-  And clicks the blue login button
-  Then the system logs them in
-```
+### Pitfalls & Edge Cases
 
-### Scenario Outline (Data‑Driven)
-
-```
-Scenario Outline: Invalid login attempts
-  Given a registered user exists
-  When they enter <email> and <password>
-  Then they see an error message
-
-  Examples:
-    | email              | password   |
-    | user@example.com   | wrongpass  |
-    | wrong@example.com  | password1  |
-```
-
----
-
-## 📝 Glossary
-
-| Term | Definition |
-|------|------------|
-| **Feature** | A high‑level capability or requirement. |
-| **Scenario** | A single behaviour expressed as an example. |
-| **Given** | The initial context or precondition. |
-| **When** | The action or event. |
-| **Then** | The expected outcome. |
-| **Step Definition** | Code that maps Gherkin to automation. |
-| **Scenario Outline** | Template for data‑driven scenarios. |
-| **Background** | Shared setup for all scenarios in a feature. |
+* **Common Mistake:** Over-specifying UI mechanics in Gherkin files (e.g., *“Given the user clicks the blue login button”*), which causes tests to break whenever frontend styling changes.
+* **Pro Tip:** Keep Gherkin scenarios strictly focused on business outcomes and system states. Let your automation step definitions handle the underlying UI selectors or API requests.
+:::

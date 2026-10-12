@@ -1,4 +1,6 @@
 {
   "label": "⚗\uFE0F Practice",
-  "position": 5
+  "position": 5,
+  "collapsible": false,
+  "collapsed": false
 }
