@@ -1,0 +1,118 @@
+---
+title: OS Architecture
+sidebar_label: OS Architecture
+description: Foundational concepts covering Language Theory, Functional & Object-Oriented paradigms, Data Structures, and Frameworks.
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# OS Architecture
+
+:::tip
+*Persona Lens: Workshop & Interview Mode*
+- *Quick Pitch:* Operating System Architecture defines how hardware, kernel functions, and user‑space processes are organized to provide safe, efficient, and portable execution abstractions.
+- *Core Primitives:* Monolithic vs. Microkernel, syscall boundaries, process/thread scheduling, namespaces, and cgroups.
+- *BAU & Operational Realities:* OOM kills, high I/O wait, CPU throttling, and socket exhaustion under load.
+:::
+
+## 🔍 Theory Focus Point
+
+- *Kernel Boundaries & Isolation:* Focus on *syscall overhead* and *user/kernel mode switching* to evaluate [execution latency and security boundaries].
+- *Resource Management:* Focus on *cgroups allocation* and *namespace isolation* to evaluate [multi-tenancy safety and resource contention].
+- *Execution Abstractions:* Focus on *process vs. thread scheduling* and *context switching costs* to evaluate [concurrency efficiency and CPU saturation].
+
+## 🧩 System Interactions & Scaling Realities
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| --- | --- | --- |
+| *Process & Thread Scheduling* | Local CPU core context switching, scheduler runqueues, lock contention | Distributed workload balancing across nodes, container orchestrator pod placement |
+| *Memory Management* | Page faults, heap allocation, paging, swapping, OOM killer triggers | Distributed memory pressure, node-level memory limits, cluster resource exhaustion |
+| *I/O & Networking* | System calls, file descriptor limits, socket buffers, disk wait states | Network stack congestion, distributed storage latency, packet loss, remote service timeouts |
+
+## Domain Deep-Dives
+
+### 🧠 Kernel Design & Core Abstractions
+
+:::tip
+*Definition* The foundational layer managing hardware access, hardware abstraction, and execution safety boundaries.
+:::
+
+*Interview Pitch:* *"The OS kernel acts as the trusted broker between untrusted user-space applications and underlying hardware resources, enforcing security and resource fairness via hardware rings and system calls."*
+
+#### 🧠 Decision Drivers
+
+- *Choose / Prioritize Monolithic Kernels:* High throughput, tight integration of drivers and filesystems, lower system call overhead, general-purpose computing.
+- *Choose / Prioritize Microkernels:* Maximum modularity, strict fault isolation (services in user-space), smaller security attack surface, high reliability requirements.
+- *Choose / Prioritize Hybrid Kernels:* Balancing monolithic performance with modular driver isolation for mainstream operating systems.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| --- | --- | --- | --- |
+| *System Call (Syscall)* | The secure doorway for an app to ask the kernel to do hardware operations. | Triggers a CPU privilege transition from user mode to kernel mode. | `syscall` / trap instruction |
+| *Namespace* | Linux feature that gives a process its own isolated view of system resources (network, PIDs). | Provides container-level isolation on top of a shared kernel. | Linux namespaces |
+| *cgroup (Control Group)* | A resource limiter that caps how much CPU, memory, or I/O a process group can consume. | Prevents runaway workloads from starving other processes; core container mechanism. | `cgroups` v2 |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| --- | --- | --- | --- |
+| *Container Isolation* | Treating containers as fully secure hardware virtual machines. | Kernel-level vulnerabilities or shared kernel panics impacting multi-tenant workloads. | Use microVMs (e.g., Firecracker) or dedicated hosts when strict hardware isolation is required. |
+| *Resource Capping* | Setting unlimited or unmonitored cgroup limits in production. | Sudden OOM kills (`Exit Code 137`) or CPU throttling spikes during traffic surges. | Configure explicit memory requests/limits and set up telemetry alerts for throttling. |
+
+### 🧩 Execution Models: Processes, Threads, and Coroutines
+
+:::tip
+*Definition* The models used to schedule and execute concurrent tasks across CPU cores.
+:::
+
+*Interview Pitch:* *"Concurrency models dictate how application logic maps to physical CPU cores, balancing context-switching overhead against parallel execution capacity."*
+
+#### 🧠 Decision Drivers
+
+- *Choose / Prioritize Processes:* Maximum isolation, independent memory spaces, fault tolerance at the cost of high memory overhead and expensive context switches.
+- *Choose / Prioritize Threads:* Shared memory space within a process, efficient data sharing, moderate context switch cost, vulnerable to race conditions.
+- *Choose / Prioritize Coroutines / User-Space Threads:* Massive concurrency for I/O-bound workloads, lightweight scheduling, avoiding kernel context switch overhead.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| --- | --- | --- | --- |
+| *Context Switch* | The CPU saving state of task A and loading task B. | Incurs CPU cycles and flushes CPU caches if switching between processes. | Context switching overhead |
+| *Scheduler Runqueue* | The queue of runnable threads waiting for CPU time slices. | High runqueue latency indicates CPU saturation and scheduling delays. | CFS (Completely Fair Scheduler) |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| --- | --- | --- | --- |
+| *Thread Pools* | Spawning unbounded OS threads for high-volume network requests. | High memory consumption per thread, excessive context switching, CPU saturation. | Migrate to event-driven loops, asynchronous runtimes, or bounded thread pools. |
+
+### ⚡ Infrastructure Abstractions: Bare Metal vs. VMs vs. Containers
+
+:::tip
+*Definition* The spectrum of virtualization layers running workloads from raw hardware up to containerized environments.
+:::
+
+*Interview Pitch:* *"Virtualization tradeoffs trade resource overhead for isolation density: bare metal offers maximum speed, VMs offer complete hardware isolation, and containers offer lightweight process isolation on a shared kernel."*
+
+#### 🧠 Decision Drivers
+
+- *Choose / Prioritize Bare Metal:* Maximum raw performance, zero virtualization overhead, direct hardware tuning access.
+- *Choose / Prioritize Virtual Machines (VMs):* Strong multi-tenancy, custom kernel support, complete tenant isolation via hypervisors.
+- *Choose / Prioritize Containers:* Fast startup times, high density, lightweight packaging sharing the host kernel.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| --- | --- | --- | --- |
+| *Hypervisor (Type 1/2)* | The manager layer that virtualizes hardware to run multiple guest OS instances. | Introduces minor CPU/memory virtualization overhead per VM. | Hardware Virtualization (VT-x/AMD-V) |
+| *Container Runtime* | Software that sets up namespaces, cgroups, and rootfs to run container images. | Shares host kernel while enforcing strict boundaries. | containerd / runc |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| --- | --- | --- | --- |
+| *Shared Kernel Scaling* | Running kernel-dependent kernel modules or custom sysctl tweaks in standard containers. | Permission denied errors, inability to modify network settings, cluster-wide instability. | Use privileged containers strictly when necessary or isolate to dedicated VMs. |
+
