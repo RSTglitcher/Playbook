@@ -5,11 +5,14 @@ description: Day-to-day operational runbooks, interaction guides, and quick-refe
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## Template
 
-# Tool Name
+:::tip
 
-:::tip Tool Name
+## Tool Name
 
 **Quick Definition:**
 Short, professional definition of what this tool is, its primary purpose, and the kind of problems it solves.
@@ -27,6 +30,24 @@ Short, professional definition of what this tool is, its primary purpose, and th
 
 ## 🚀 Getting Started & Day-to-Day Access
 
+*What is needed to start using this tool?*
+
+1. **Scope & Environment:** Confirm whether actions target Staging, UAT, or Production.
+2. **Access Permissions:** Verify that your role has the necessary RBAC/IAM permissions to execute mutations.
+3. **Payload / Query Limits:** Review pagination limits, rate limits, and expected query complexity.
+
+
+### Portal Navigation
+
+* **Access URL:** `https://tool.internal.enterprise.com`
+* **Authentication:** Single Sign-On (SSO) via corporate identity provider (Okta/Azure AD).
+* **Primary Views:** Check the main dashboard overview for cluster/system health status before executing mutations.
+
+---
+
+## 📋 Analyst & Engineer Workflows
+
+
 <Tabs>
   <TabItem value="terminal" label="1. Terminal & CLI" default>
 
@@ -40,25 +61,10 @@ tool-cli status --verbose
 
 ```
 
-### Portal Navigation
+  </TabItem>
 
-* **Access URL:** `https://tool.internal.enterprise.com`
-* **Authentication:** Single Sign-On (SSO) via corporate identity provider (Okta/Azure AD).
-* **Primary Views:** Check the main dashboard overview for cluster/system health status before executing mutations.
+  <TabItem value="common" label="Common Workflows & Commands">
 
----
-
-## 📋 Analyst & Engineer Workflows
-
-### Intake & Requirements Gathering
-
-*What does a Technical Analyst need to gather or consider before using this tool?*
-
-1. **Scope & Environment:** Confirm whether actions target Staging, UAT, or Production.
-2. **Access Permissions:** Verify that your role has the necessary RBAC/IAM permissions to execute mutations.
-3. **Payload / Query Limits:** Review pagination limits, rate limits, and expected query complexity.
-
-### Common Workflows & Commands
 
 ```bash
 # Example Workflow 1: Execute a standard query or request
@@ -68,6 +74,9 @@ tool-cli query --config ./request-payload.json --output table
 tool-cli validate --file ./config-manifest.yaml
 
 ```
+  </TabItem>
+</Tabs>
+
 
 ---
 

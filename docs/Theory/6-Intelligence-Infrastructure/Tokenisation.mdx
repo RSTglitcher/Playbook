@@ -76,7 +76,7 @@ The algorithmic process of splitting text into subword units using frequency sta
 | :--- | :--- | :--- | :--- |
 | **Byte-Pair Encoding (BPE)** | Iteratively merging the most frequent pairs of bytes or characters in a corpus. | Compresses vocabulary size while enabling the construction of unseen words from subword pieces. | Subword Vocabulary Compression |
 | **Vocabulary Size** | The total fixed dictionary of tokens recognized by the model's tokenizer. | Larger vocabularies improve compression efficiency but increase embedding matrix memory footprints. | Tokenizer Vocabulary Matrix |
-| **Special Tokens** | Designated tokens (e.g., `<|endoftext|>`, `<pad>`) marking structural boundaries. | Instructs the model on sequence starts, ends, and padding mechanics during generation. | Control Token Delimiters |
+| **Special Tokens** | Designated tokens marking structural boundaries. | Instructs the model on sequence starts, ends, and padding mechanics during generation. | Control Token Delimiters |
 
 #### 🚨 Misapplication Diagnostics in Production
 
