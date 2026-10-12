@@ -8,96 +8,89 @@ sidebar_position: 1
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Template
+# 📘 Practice Runbook
 
-:::tip
+:::tip Tool Name
 
-## Tool Name
+**What is it?** 
+Short, clear definition of the tool, its core function, and the specific problem space it addresses.
 
-**Quick Definition:**
-Short, professional definition of what this tool is, its primary purpose, and the kind of problems it solves.
+### 📚 Related Theory References
+* [[Theory] ../Theory/Theory.mdx] — Link to the corresponding Theor page
 
-* **Related Theory Pages:** Link to relevant foundational theory (e.g., [[Data Engineering](../Theory/3-Data-Engineering/data-strategy-mesh.mdx)] or [[Distributed Systems](../Theory/1-Distributed-Systems/consensus-protocols.mdx)]).
 :::
 
-## 🧭 Knowing When to Use Tool Name
+## 🧭 When to Use It
 
 | When to Use | When Not to Use |
 | :--- | :--- |
-| • High-frequency operational interactions requiring standard tooling. • Querying, mutating, or deploying through official supported interfaces. | • As an unmanaged workaround or shadow IT bypass. • For workloads exceeding the system's intended architectural scale. |
+| • Standard operational interactions matching the tool's intended design. • Official querying, mutating, or deployment workflows. | • As an unmanaged workaround or shadow IT bypass. • For workloads exceeding architectural scaling limits. |
 
 ---
 
-## 🚀 Getting Started & Day-to-Day Access
+## 🚀 Getting Started & Prerequisites
 
-*What is needed to start using this tool?*
-
-1. **Scope & Environment:** Confirm whether actions target Staging, UAT, or Production.
-2. **Access Permissions:** Verify that your role has the necessary RBAC/IAM permissions to execute mutations.
-3. **Payload / Query Limits:** Review pagination limits, rate limits, and expected query complexity.
-
-
-### Portal Navigation
-
-* **Access URL:** `https://tool.internal.enterprise.com`
-* **Authentication:** Single Sign-On (SSO) via corporate identity provider (Okta/Azure AD).
-* **Primary Views:** Check the main dashboard overview for cluster/system health status before executing mutations.
+What prerequisites, dependencies, or initial configurations are required before interacting with this tool?
+1. **Local Environment:** Required packages, runtimes, or client CLI installations.
+2. **Configuration Setup:** Environment variables, profile files, or configuration manifests needed locally.
 
 ---
 
-## 📋 Analyst & Engineer Workflows
-
+## 🔑 Access & Authentication
 
 <Tabs>
   <TabItem value="terminal" label="1. Terminal & CLI" default>
 
-### Terminal Access & Authentication
+### CLI Authentication
 ```bash
-# 1. Authenticate with the tool/platform
+# 1. Authenticate / establish active session
 tool-cli login --profile enterprise-prod
 
-# 2. Verify current session health and active context
+# 2. Verify active context and session health
 tool-cli status --verbose
 
 ```
 
-  </TabItem>
+### Portal Access
 
-  <TabItem value="common" label="Common Workflows & Commands">
-
-
-```bash
-# Example Workflow 1: Execute a standard query or request
-tool-cli query --config ./request-payload.json --output table
-
-# Example Workflow 2: Validate a schema or configuration syntax before deploying
-tool-cli validate --file ./config-manifest.yaml
-
-```
-  </TabItem>
-</Tabs>
-
+* **Access URL:** `https://tool.internal.enterprise.com`
+* **Authentication Method:** Single Sign-On (SSO) via corporate identity provider.
+* **Initial Check:** Verify cluster/system health indicators on the landing dashboard before proceeding.
 
 ---
 
-## 🚨 Operational Triage & Diagnostics
+## 📋 Common & Useful Workflows
+
+```bash
+# Workflow 1: Execute standard interaction, query, or deployment
+tool-cli execute --config ./manifest.yaml --output table
+
+# Workflow 2: Validate syntax or test connection payload
+tool-cli validate --target endpoint --dry-run
+
+```
+
+---
+
+## 🚨 Operational Triage Snapshots
 
 :::danger
-Common symptoms, root causes, and immediate triage steps for this platform:
+Quick-reference diagnostics for common platform failures:
 :::
 
-| Symptom / Telemetry | TLDR Root Cause | What to Check | Action to Propose |
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
 | --- | --- | --- | --- |
-| **Connection Timeout / 504 Gateway Error** | Network congestion, firewall blocking, or target service down. | • Check DNS resolution 
+| **Connection Timeout / 504** | Network congestion or target service down. | • DNS resolution 
 
- • Verify VPN / VPC peering status | • Test connection via curl 
+ • VPN / VPC status | • Test connection via curl 
 
- • Escalate to platform infra team if upstream is down. |
-| **Authentication Expired / 401 Unauthorized** | Token TTL expired or missing credentials profile. | • Check local credential store 
+ • Escalate if upstream is unreachable. |
+| **Authentication Expired / 401** | Token TTL expired or missing credential profile. | • Local credential store 
 
- • Review token expiration timestamp | • Re-authenticate via CLI login command. 
+ • Token timestamp | • Re-authenticate via CLI login. 
 
- • Refresh API tokens. |
-| **Rate Limit Exceeded / 429 Too Many Requests** | Query concurrency too high or missing request pagination. | • Review client request frequency 
+ • Refresh auth tokens. |
+| **Rate Limit Exceeded / 429** | High query concurrency or missing pagination. | • Request frequency 
 
- • Check query cost / complexity score | • Implement request batching or exponential backoff retry logic. |
+ • Query complexity score | • Implement request batching or exponential backoff. |
+
