@@ -1,0 +1,152 @@
+---
+title: Cloud Delivery Models (IaaS, PaaS, SaaS)
+sidebar_label: Cloud Delivery Models
+description: Architectural patterns and shared responsibility models governing Infrastructure, Platform, and Software-as-a-Service boundaries.
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Cloud Delivery Models (IaaS, PaaS, SaaS)
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Cloud delivery models define the boundary of shared responsibility between cloud providers and engineering teams—trading infrastructural control for operational velocity.
+* **Core Primitives:** Infrastructure-as-a-Service (IaaS), Platform-as-a-Service (PaaS), Software-as-a-Service (SaaS), and the Shared Responsibility Matrix.
+* **BAU & Operational Realities:** Misconfigured cloud permissions, platform vendor lock-in, unmanaged OS security patching, and unexpected data egress costs under scale.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Control vs. Velocity:** Focus on **infrastructure management overhead** versus **developer enablement speed** to evaluate delivery efficiency and engineering cost.
+* **Shared Responsibility:** Focus on **cloud provider security boundaries** versus **tenant configuration responsibilities** to evaluate compliance and blast radius.
+* **Vendor Integration:** Focus on **portable containerized runtimes** versus **proprietary managed service APIs** to evaluate architectural coupling and lock-in risk.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **IaaS (Infrastructure)** | Hypervisor resource sharing, local OS thread scheduling | Cloud control-plane API rate limits, virtual network interface card (ENI) contention |
+| **PaaS (Platform)** | Managed runtime thread pools, database connection pooling | Platform broker queue saturation, managed middleware multi-tenant resource throttling |
+| **SaaS (Software)** | Local browser DOM rendering, client-side script execution | Third-party API gateway rate limits, multi-tenant cloud service queuing delays |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **IaaS (Infrastructure)** | Local disk block storage caching, ephemeral volume limits | Wide-area network storage replication latency, cross-zone block storage I/O limits |
+| **PaaS (Platform)** | Local managed cache eviction, in-memory state scaling | Automated database storage scaling lag, remote distributed state synchronization overhead |
+| **SaaS (Software)** | Client local storage (IndexedDB/LocalStorage) footprints | Wide-area network payload transfer to third-party endpoints, synchronization lag |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Infrastructure-as-a-Service">
+
+### 💻 Infrastructure-as-a-Service (IaaS)
+
+:::tip
+
+**Definition**
+A cloud computing model that provides raw, virtualized computing resources (virtual machines, block storage, and virtual networks) over the internet.
+:::
+
+> **Interview Pitch:** *"IaaS gives you maximum architectural control—letting you configure kernels, networks, and storage exactly like bare metal—while placing full responsibility for OS patching and security maintenance on your team."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize IaaS:** Legacy applications requiring specific OS-level configurations, custom hypervisors, or absolute control over networking and storage topologies.
+* **Choose / Prioritize PaaS/Serverless:** Modern cloud-native applications where managing virtual machines, OS patches, and firewalls creates unnecessary operational drag.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Virtual Machine (VM)** | A software emulation of a physical computer running its own guest operating system. | Provides complete environment isolation at the cost of slow boot times and heavy resource overhead. | Hypervisor Virtualization |
+| **Virtual Private Cloud (VPC)** | An isolated, private network environment provisioned within a public cloud provider. | Enforces strict network traffic isolation, subnets, and routing table boundaries. | Software-Defined Networking |
+| **Ephemeral Block Storage** | High-performance raw disk volumes attached dynamically to virtual machines. | Decouples storage persistence from ephemeral compute instances. | Network-Attached Block Storage |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Pet VM Management** | Manually SSHing into individual virtual machines to patch packages and update configurations. | Configuration drift across nodes, untracked security vulnerabilities, and recovery failure during node loss. | Transition to immutable infrastructure patterns where VMs are built and replaced automatically via images. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Platform-as-a-Service">
+
+### ⚙️ Platform-as-a-Service (PaaS)
+
+:::tip
+
+**Definition**
+A cloud computing model that supplies an on-demand managed platform (runtimes, databases, and middleware) so developers can build and deploy apps without managing infrastructure.
+:::
+
+> **Interview Pitch:** *"PaaS abstracts away servers, operating systems, and networking, letting developers focus 100% of their energy on writing application code and business logic."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize PaaS:** Standard web applications, microservices, and databases where rapid developer velocity and zero infrastructure maintenance are paramount.
+* **Choose / Prioritize IaaS:** Applications requiring custom OS modifications, non-standard runtime dependencies, or specialized low-level kernel tuning.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Managed Runtime** | A pre-configured application execution environment (e.g., Heroku, App Engine, Cloud Run). | Eliminates server provisioning overhead; automatically handles underlying OS security updates. | Serverless Container Runtimes |
+| **Managed Database** | A relational or NoSQL database service where backups, replication, and scaling are automated. | Removes database administration burdens while introducing minor cloud-provider API constraints. | Database-as-a-Service (DBaaS) |
+| **Automated Buildpacks** | Tooling that automatically transforms source code into secure, runnable container images. | Streamlines CI/CD delivery pipelines by standardizing build artifacts. | Cloud Native Buildpacks |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Vendor Lock-In Trap** | Relying heavily on proprietary PaaS platform features and closed database extensions. | High cost of migration away from the provider and architectural inflexibility under pricing changes. | Abstract persistence layers behind standard drivers and design services around portable OCI containers. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Software-as-a-Service">
+
+### ☁️ Software-as-a-Service (SaaS)
+
+:::tip
+
+**Definition**
+A software delivery model where fully functional turnkey applications are hosted centrally by a vendor and accessed by users over the internet via a web browser.
+:::
+
+> **Interview Pitch:** *"SaaS shifts operational responsibility entirely to third-party vendors—you consume complete business capabilities (like Auth0, Datadog, or Salesforce) via APIs and dashboards without writing or managing the underlying software."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize SaaS:** Non-core business capabilities (authentication, logging, CRM, billing) where building custom software provides zero competitive advantage.
+* **Choose / Prioritize In-House Solutions:** Proprietary intellectual property, core product functionality, or strict regulatory requirements prohibiting third-party data storage.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Multi-Tenant Architecture** | A software model where a single instance of the application serves multiple distinct customer organizations. | Maximizes provider resource efficiency and reduces cost; requires rigorous logical tenant isolation. | Tenant Data Isolation |
+| **API Integration Webhook** | An HTTP callback mechanism allowing SaaS platforms to notify your system of asynchronous events. | Enables real-time integration across disparate third-party services without continuous polling. | Event-Driven SaaS Webhooks |
+| **Shared Responsibility Model** | The formal delineation where the vendor secures the software, while you secure user access and data. | Clarifies security boundaries and audit obligations during compliance assessments. | Cloud Responsibility Matrix |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **SaaS Dependency Blindness** | Treating external SaaS APIs as 100% reliable local function calls without handling outages. | Cascading application failures when a third-party SaaS provider experiences downtime or latency spikes. | Implement robust circuit breakers, fallback responses, and aggressive timeouts for all third-party SaaS calls. |
+
+  </TabItem>
+</Tabs>

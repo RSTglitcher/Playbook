@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 **Persona Lens: Workshop & Interview Mode**
 * **Quick Pitch:** Testing and quality engineering provide the automated safety nets and verification loops that ensure code correctness, prevent regressions, and maintain deployment confidence at scale.
-* **Core Primitives:** Unit isolation, integration boundaries, UI automation locators, and test-driven development cycles.
+* **Core Primitives:** Unit isolation, integration boundaries, UI automation locators, and specification-driven development cycles.
 * **BAU & Operational Realities:** Flaky test suites, brittle UI locators, slow feedback loops, and resource contention in CI pipelines under load.
 :::
 
@@ -22,7 +22,7 @@ import TabItem from '@theme/TabItem';
 
 * **Unit & Logic Isolation:** Focus on **mocking boundaries** and **deterministic execution** to evaluate code correctness and testing speed.
 * **Integration & Service Verification:** Focus on **database fixture management** and **API contract stability** to evaluate multi-component reliability.
-* **UI Automation & Reliability:** Focus on **locator resilience** and **async wait synchronization** to evaluate test flakiness and maintenance overhead.
+* **Specification & Methodology:** Focus on **contract-first specifications (SDD)** and **behavioral alignment (BDD/TDD)** to evaluate design rigor and reduction of downstream rework.
 
 ---
 
@@ -33,7 +33,7 @@ import TabItem from '@theme/TabItem';
 
 | Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
 | :--- | :--- | :--- |
-| **Unit Testing** | Local JVM/Node thread pool execution, isolated mock state | Minimal external contention (fully isolated local execution) |
+| **Unit Testing & TDD** | Local JVM/Node thread pool execution, isolated mock state | Minimal external contention (fully isolated local execution) |
 | **Integration Testing** | Local database container locks, test runner thread contention | External API rate limiting, concurrent test runs hammering shared test databases |
 | **UI Automation** | Browser viewport allocation, driver thread contention | Remote Selenium/Playwright grid congestion, cloud testing infrastructure queue limits |
 
@@ -42,7 +42,7 @@ import TabItem from '@theme/TabItem';
 
 | Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
 | :--- | :--- | :--- |
-| **Unit Testing** | In-memory object allocation, test fixture memory footprints | Minimal remote data dependency |
+| **Unit Testing & TDD** | In-memory object allocation, test fixture memory footprints | Minimal remote data dependency |
 | **Integration Testing** | Database migration overhead, test seed data setup latency | Wide-area network latency to remote staging databases, fixture synchronization costs |
 | **UI Automation** | DOM tree traversal memory overhead, screenshot artifact storage growth | Cross-browser network serialization latency, remote driver execution delays |
 
@@ -56,12 +56,12 @@ import TabItem from '@theme/TabItem';
 <Tabs>
   <TabItem value="subtopic1" label="Unit Testing & TDD">
 
-### 🧪 Unit Testing & Test-Driven Development
+### 🧪 Unit Testing & Test-Driven Development (TDD)
 
 :::tip
 
 **Definition**
-The practice of verifying small, isolated units of application logic independently, often driven iteratively through Test-Driven Development (Red-Green-Refactor).
+The practice of verifying small, isolated units of application logic independently, driven iteratively through Test-Driven Development (Red-Green-Refactor).
 :::
 
 > **Interview Pitch:** *"Unit tests provide fast, deterministic feedback on core business logic, while TDD shapes cleaner, more decoupled architectures by forcing you to design for testability first."*
@@ -147,6 +147,38 @@ Automated verification of complete user journeys by simulating real user interac
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
 | :--- | :--- | :--- | :--- |
 | **Brittle XPath Locators** | Relying on deep, auto-generated DOM tree paths (e.g., `div > div > button:nth-child(2)`). | Test suites breaking constantly on minor layout updates, leading engineers to ignore test failures. | Refactor tests to use explicit semantic test attributes (`data-testid`) assigned to key elements. |
+
+  </TabItem>
+
+  <TabItem value="subtopic4" label="SDD, BDD & Methodologies">
+
+### 📋 Spec-Driven Development (SDD) & BDD
+
+:::tip
+
+**Definition**
+Engineering methodologies (like Spec-Driven Development and Behavior-Driven Development) where machine-readable contracts or human-readable features drive architecture before code is written.
+:::
+
+> **Interview Pitch:** *"SDD and BDD shift verification left, using machine specs (OpenAPI/Protobuf) or human features (Gherkin syntax) as the single source of truth to automatically generate tests, stubs, and alignment before implementation."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize SDD/BDD:** Cross-functional environments with separate frontend/backend teams, public APIs, or strict business-to-code traceability requirements.
+* **Choose / Prioritize Code-First Prototyping:** Exploratory coding or isolated rapid experiments where formal specification overhead slows down velocity.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Contract-First Specification** | Writing API schemas (YAML/Protobuf) before server code. | Eliminates interface ambiguity and decouples frontend development from backend implementation. | API-First Design Contracts |
+| **Behavioral Gherkin Feature** | Writing requirements in plain-language `Given / When / Then` syntax executed by test runners. | Bridges the communication gap between business analysts, QA, and engineers. | BDD Feature Specifications |
+| **Specification-Based Mocking** | Spinning up live mock servers automatically from an API spec file. | Enables frontend teams to build and test UIs against realistic endpoints before backend code exists. | Dynamic Contract Mocking |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Spec Drift** | Updating production endpoint code directly without updating the underlying OpenAPI specification file. | Client SDKs failing, documentation out of sync, and automated contract tests generating false positives. | Enforce CI/CD pipeline checks that fail builds if code implementation diverges from the spec file. |
 
   </TabItem>
 </Tabs>
