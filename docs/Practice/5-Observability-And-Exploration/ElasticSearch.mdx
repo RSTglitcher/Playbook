@@ -1,289 +1,89 @@
 ---
-title: "Elasticsearch"
+title: Elasticsearch Distributed Search Engine
+sidebar_label: Elasticsearch
+description: Operational runbook and troubleshooting guide for Elasticsearch, cluster management, document indexing, Query DSL, and node diagnostics.
+sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 Elasticsearch Distributed Search Engine
 
 :::tip
-Elasticsearch is a **distributed search and analytics engine** built on top of Apache Lucene.  
-It enables **full‑text search**, **log analytics**, **time‑series analysis**, and **real‑time querying** across large datasets.  
-It solves problems related to **search relevance, indexing, distributed querying, and horizontal scaling**.  
+
+## Elasticsearch Distributed Search Engine
+
+**What is it?** 
+Elasticsearch is a distributed, RESTful search and analytics engine built on Apache Lucene. It enables full-text search, structured log analytics, time-series analysis, and real-time querying across massive distributed datasets.
+
+### 📚 Related Theory References
+* Observability & Exploration — Architecture of inverted indices, distributed sharding, and real-time text analysis.
 :::
 
-### Key Terms
+## 🧭 When to Use It
 
-- **Index:** Logical namespace for documents (similar to a database table)  
-- **Document:** JSON object stored and indexed  
-- **Shard:** A partition of an index (primary or replica)  
-- **Cluster:** A group of Elasticsearch nodes  
-- **Node:** A single Elasticsearch server  
-- **Mapping:** Schema definition for fields  
-- **Analyzer:** Text processing pipeline (tokenization, stemming, etc.)  
-- **Query DSL:** JSON-based query language for Elasticsearch  
-
-### Knowing when to use **Elasticsearch**
-
-| When to use | When not to use |
-|-------------|-----------------|
-| Full‑text search, fuzzy matching, relevance scoring | Strict relational consistency (use SQL DB) |
-| Log analytics, observability, time‑series search | Heavy OLTP workloads |
-| Real‑time search across large datasets | Long‑term cold storage (use S3/ADLS) |
-| Autocomplete, suggestions, ranking | Complex joins or transactions |
-| Distributed, scalable search workloads | Small datasets where simple DB queries suffice |
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Full-text search, fuzzy matching, and real-time relevance scoring across large corpuses.<br>• Centralized log analytics, observability search, and time-series aggregations.<br>• Distributed search workloads requiring horizontal scaling and fault tolerance. | • Strict relational transaction (OLTP) workloads requiring ACID compliance.<br>• Simple small datasets where standard relational database queries suffice.<br>• Long-term cold storage archiving where high-performance indexing is unnecessary. |
 
 ---
 
-## 📘 About / Foundations  
-_Conceptual grounding for how the tool works._
+## 🚀 Getting Started & Prerequisites
 
-### How It Works (Conceptual Model)
-
-- Data is stored as **JSON documents** inside **indices**  
-- Indices are split into **shards**, distributed across nodes  
-- Elasticsearch uses **inverted indices** for fast text search  
-- Queries are executed using the **Query DSL**  
-- Clusters automatically rebalance shards and replicas  
-- **Mappings** define field types and indexing behaviour  
-- **Analyzers** process text into searchable tokens  
-
-### System Contract
-
-Elasticsearch enforces contracts through:
-
-- **Index mappings** (field types, analyzers, keyword vs text fields)  
-- **Cluster topology** (number of nodes, shard allocation)  
-- **Replication strategy** (primary + replica shards)  
-- **Query DSL** (structured search queries)  
-- **Index lifecycle policies** (rollover, retention, deletion)  
-
-### Key Strategies
-
-<Tabs>
-<TabItem value="indexing" label="Indexing Strategy">
-
-- Define mappings explicitly (avoid dynamic mapping in production)  
-- Use `keyword` for exact matches, `text` for full‑text search  
-- Use appropriate analyzers for language‑specific search  
-- Responsibility: SWE + TA validation  
-- Goal: predictable search behaviour and performance  
-
-</TabItem>
-
-<TabItem value="sharding" label="Sharding Strategy">
-
-- Choose shard count based on data size and query patterns  
-- Avoid oversharding (too many small shards)  
-- Use replicas for high availability  
-- Responsibility: Platform + SWE  
-- Goal: balanced cluster, predictable performance  
-
-</TabItem>
-
-<TabItem value="lifecycle" label="Data Lifecycle Strategy">
-
-- Use ILM (Index Lifecycle Management) for rollover and retention  
-- Move old data to warm/cold tiers  
-- Delete expired indices automatically  
-- Responsibility: SWE + TA  
-- Goal: cost‑efficient storage and stable cluster health  
-
-</TabItem>
-</Tabs>
-
-### What Results Normally Look Like
-
-- Search results with relevance scores  
-- Aggregations (histograms, terms, metrics)  
-- Cluster health (`green`, `yellow`, `red`)  
-- Shard allocation and node distribution  
-- Index statistics (docs count, size, refresh rate)  
-- Slow query logs  
+What prerequisites, dependencies, or initial configurations are required before interacting with Elasticsearch?
+1. **Local Environment:** Client utilities installed locally (`curl`, `jq`, or Kibana console access).
+2. **Configuration Setup:** Cluster transport endpoints, API keys or Basic Authentication credentials, and explicit index mapping templates.
 
 ---
 
-## 🧩 Technical Skills
+## 🔑 Tool Requirements
 
-<details>
-<summary>Pre‑Requisites</summary>
+* **Access URL / Portal:** Elasticsearch cluster endpoint URL (e.g., `https://es-cluster.internal.enterprise.com:9200`) or Kibana UI portal.
+* **Authentication Method:** API Keys (`Authorization: ApiKey <key>`) or Basic Authentication credentials (`user:password`).
+* **Initial Setup Check:** Verify cluster health and node availability using command-line probes (`/_cluster/health`) before writing or querying indices.
 
-#### Security
-- Elasticsearch credentials (basic auth, API keys)  
-- TLS/SSL configuration  
-- Role‑based access control (RBAC)  
-- Kibana access (if applicable)
+---
 
-#### Networking
-- Node IPs and cluster endpoints  
-- VPC/subnet configuration  
-- Firewall rules for ports (9200/9300)  
-- Load balancer or coordinator nodes  
+## 📋 Common & Useful Workflows
 
-#### Architecture
-- Cluster size and node roles (master, data, ingest, coordinating)  
-- Shard and replica configuration  
-- Index lifecycle policies  
-- Snapshot/restore configuration  
+```bash
+# 1. Check cluster health and node status
+curl -u user:password [https://es-cluster.internal.enterprise.com:9200/_cluster/health?pretty](https://es-cluster.internal.enterprise.com:9200/_cluster/health?pretty)
 
-#### Data
-- Mappings and field types  
-- Analyzer configuration  
-- Expected query patterns  
-- Data ingestion pipelines (Logstash, Beats, custom apps)
-
-#### Operational Guarantees
-- Replication factor  
-- Refresh interval  
-- Query latency expectations  
-- Cluster failover behaviour  
-
-#### Observability Metrics
-- Cluster health  
-- Shard allocation  
-- Node CPU/memory/disk  
-- Query latency  
-- Indexing throughput  
-- JVM heap usage  
-
-</details>
-
-:::info  
-How to interact with this tool day‑to‑day:  
-- Terminal (cURL, Elasticsearch API)  
-- UI (Kibana)  
-:::
-
-<Tabs>
-
-<TabItem value="access" label="Access">
-
-```shell
---------------
-How to set up credentials
---------------
-
-# Using API key
-curl -H "Authorization: ApiKey <key>" https://<host>:9200
-
-# Using basic auth
-curl -u user:password https://<host>:9200
-
---------------
-How to log-in via the terminal
---------------
-
-# Check cluster health
-curl -u user:password https://<host>:9200/_cluster/health
-
-# List indices
-curl -u user:password https://<host>:9200/_cat/indices?v
-```
-
-</TabItem>
-
-<TabItem value="requirements" label="Requirements">
-
-**How to formulate requirements when working with this platform**
-
-- Identify indices, mappings, and shard configuration  
-- Confirm cluster topology and node roles  
-- Validate access credentials and Kibana permissions  
-- Determine ingestion pipelines and data sources  
-- Confirm retention and ILM policies  
-- Identify query patterns and performance expectations  
-- Establish TA expectations for monitoring and triage  
-
-</TabItem>
-
-<TabItem value="engineering" label="Engineering">
-
-Common workflows and commands used by engineers when operating this tool
-
-```shell
---------------
-Key Terminal Commands
---------------
-
-# Create an index with mapping
-curl -X PUT https://<host>:9200/my_index -H 'Content-Type: application/json' -d '{
-  "mappings": {
-    "properties": {
-      "message": { "type": "text" },
-      "timestamp": { "type": "date" }
+# 2. Create an index with explicit field mappings and token analyzers
+curl -X PUT [https://es-cluster.internal.enterprise.com:9200/my_index](https://es-cluster.internal.enterprise.com:9200/my_index) \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "mappings": {
+      "properties": {
+        "message": { "type": "text" },
+        "timestamp": { "type": "date" }
+      }
     }
-  }
-}'
+  }'
 
-# Index a document
-curl -X POST https://<host>:9200/my_index/_doc -H 'Content-Type: application/json' -d '{
-  "message": "hello world",
-  "timestamp": "2024-01-01T00:00:00Z"
-}'
+# 3. Index a structured JSON document
+curl -X POST [https://es-cluster.internal.enterprise.com:9200/my_index/_doc](https://es-cluster.internal.enterprise.com:9200/my_index/_doc) \
+  -H 'Content-Type: application/json' \
+  -d '{"message": "system error encountered", "timestamp": "2026-06-06T00:00:00Z"}'
 
-# Search documents
-curl -X GET https://<host>:9200/my_index/_search -H 'Content-Type: application/json' -d '{
-  "query": { "match": { "message": "hello" } }
-}'
+# 4. Search documents using Query DSL
+curl -X GET [https://es-cluster.internal.enterprise.com:9200/my_index/_search](https://es-cluster.internal.enterprise.com:9200/my_index/_search) \
+  -H 'Content-Type: application/json' \
+  -d '{"query": {"match": {"message": "error"}}}'
 
-# Run an aggregation
-curl -X GET https://<host>:9200/my_index/_search -H 'Content-Type: application/json' -d '{
-  "size": 0,
-  "aggs": { "messages": { "terms": { "field": "message.keyword" } } }
-}'
 ```
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-Common workflows and queries used by analysts when interpreting data from this tool.
-
-```shell
---------------
-Key Terminal Commands (mapped to analyst skills)
---------------
-
-# Inspect index mappings
-curl https://<host>:9200/my_index/_mapping
-
-# Check cluster health
-curl https://<host>:9200/_cluster/health?pretty
-
-# View shard allocation
-curl https://<host>:9200/_cat/shards?v
-
-# Profile a slow query
-curl -X GET https://<host>:9200/my_index/_search?pretty -d '{
-  "profile": true,
-  "query": { "match": { "message": "error" } }
-}'
-
-# Check index statistics
-curl https://<host>:9200/my_index/_stats
-
-# Validate ILM policy
-curl https://<host>:9200/_ilm/policy/my_policy
-```
-
-</TabItem>
-
-</Tabs>
 
 ---
 
-## 🚨 Triage
+## 🚨 Operational Triage Snapshots
 
-:::danger  
-Symptoms and issues with this platform and how to triage this:  
+:::danger
+Quick-reference diagnostics for common Elasticsearch platform failures:
 :::
 
-| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
-|--------|---------------------|---------------|-------------------|
-| Cluster red | Missing primary shards | `_cluster/health`, `_cat/shards` | Restore shards, fix node failures |
-| Cluster yellow | Missing replica shards | Replica count, node availability | Add nodes, fix allocation rules |
-| Slow queries | Poor mappings, large shards, heavy aggregations | Query profile, shard size | Add filters, adjust mappings, reduce shard size |
-| High heap usage | JVM pressure, large fields, heavy aggregations | Node stats, GC logs | Increase heap, optimize queries, reindex |
-| Shard imbalance | Uneven distribution | `_cat/shards` | Trigger shard rebalance |
-| Indexing failures | Mapping conflicts, full disk | `_cat/indices`, logs | Fix mappings, free disk, reindex |
-| ILM stuck | Policy misconfig or rollover failure | `_ilm/explain` | Fix policy, force rollover |
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Cluster Red Status** | Missing primary shards resulting from node crashes or split-brain isolation. | `/_cluster/health`, `/_cat/shards`, and node system logs. | Restore missing primary shards, fix node network partitions, or restart failed nodes. |
+| **Cluster Yellow Status** | Missing replica shards due to unassigned placement rules or cluster capacity. | Replica count settings, node availability, and disk watermark thresholds. | Add cluster nodes or adjust shard allocation rules to let replicas settle. |
+| **High JVM Heap Usage** | JVM memory pressure from large queries, heavy aggregations, or unbounded field mapping. | Node stats, Garbage Collection logs, and query complexity profiles. | Optimize resource-heavy queries, reindex bloated fields, or scale up heap limits. |
+| **Indexing Failures (429/503)** | Mapping type conflicts, unhandled schema changes, or full disk watermarks. | `/_cat/indices`, disk free space metrics, and server error logs. | Fix mapping violations, free storage space, or trigger disk watermark adjustments. |
 
