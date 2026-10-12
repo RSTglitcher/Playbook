@@ -1,275 +1,78 @@
 ---
-title: "Databricks"
+title: Databricks Unified Analytics Platform
+sidebar_label: Databricks
+description: Operational runbook and troubleshooting guide for Databricks, Delta Lake storage, cluster management, notebook execution, and data pipeline triage.
+sidebar_position: 3
 ---
 
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 Databricks Unified Analytics Platform
 
 :::tip
-Databricks is a **unified analytics and data engineering platform** built on top of Apache Spark.
-It provides collaborative notebooks, scalable compute clusters, Delta Lake storage, and orchestration for ETL, ML, and analytics workloads.
-It solves problems related to **large‑scale data processing, lakehouse architecture, streaming, and collaborative development**.
+
+## Databricks Unified Analytics Platform
+
+**What is it?** 
+Databricks is a unified analytics and data engineering platform built on top of Apache Spark. It provides collaborative notebooks, scalable compute clusters, Delta Lake storage, and orchestration for ETL, ML, and analytics workloads.
+
+### 📚 Related Theory References
+* Data Engineering & Storage — Architecture of distributed spark compute engines, Lakehouse storage patterns, and ACID delta tables.
 :::
 
-### Key Terms
+## 🧭 When to Use It
 
-- **Workspace:** The Databricks environment containing notebooks, repos, jobs, clusters
-- **Cluster:** Compute resources used to run notebooks, jobs, and queries
-- **DBFS:** Databricks File System (abstraction over cloud storage)
-- **Delta Lake:** ACID‑compliant storage layer for data lakes
-- **Job:** Scheduled or triggered workload (ETL, ML training, batch processing)
-- **Notebook:** Interactive development environment for SQL, Python, Scala, R
-- **Unity Catalog:** Centralised governance for data access and lineage
-
-### Knowing when to use **Databricks**
-
-| When to use | When not to use |
-|-------------|-----------------|
-| Large‑scale ETL/ELT workloads | Small datasets easily handled by a warehouse |
-| Collaborative notebooks for data science | Real‑time low‑latency APIs |
-| Lakehouse architecture (Delta Lake) | Traditional OLTP workloads |
-| ML training and feature engineering | Simple SQL transformations (use dbt) |
-| Streaming pipelines (Structured Streaming) | Systems requiring strict ACID transactions |
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Large-scale distributed ETL/ELT data processing pipelines.  • Collaborative data science notebooks and machine learning feature engineering.  • Delta Lake architecture requiring ACID guarantees on top of cloud object storage. | • Small datasets easily handled by a standard relational warehouse.  • Real-time low-latency microservice APIs.  • Simple SQL-only transformations (use dbt instead). |
 
 ---
 
-## 📘 About / Foundations
-_Conceptual grounding for how the tool works._
+## 🚀 Getting Started & Prerequisites
 
-### How It Works (Conceptual Model)
-
-- Databricks runs on top of **Apache Spark**, providing distributed compute
-- Data is stored in cloud object storage (S3/ADLS/GCS) with **Delta Lake** for ACID guarantees
-- Workloads run on **clusters** (interactive or job clusters)
-- **Unity Catalog** governs access, lineage, and metadata
-- **Jobs** orchestrate pipelines, notebooks, and workflows
-- **Repos** integrate Git for version control
-- **Notebooks** allow SQL, Python, Scala, and R in a single environment
-
-### System Contract
-
-Databricks enforces contracts through:
-
-- **Cluster configuration** (runtime version, autoscaling, node types)
-- **Delta Lake schema enforcement**
-- **Unity Catalog permissions**
-- **Job definitions** (tasks, dependencies, triggers)
-- **Workspace structure** (repos, notebooks, folders)
-
-### Key Strategies
-
-<Tabs>
-<TabItem value="storage" label="Storage Strategy">
-
-- Use **Delta Lake** for all production tables
-- Enable schema evolution only when necessary
-- Partition large datasets by natural keys (date, region, etc.)
-- Responsibility: SWE + TA validation
-- Goal: reliable, scalable, ACID‑compliant storage
-
-</TabItem>
-
-<TabItem value="compute" label="Compute Strategy">
-
-- Use **job clusters** for scheduled workloads
-- Use **autoscaling** to optimise cost
-- Choose appropriate node types for workload patterns
-- Responsibility: Platform + SWE
-- Goal: efficient, cost‑aware compute usage
-
-</TabItem>
-
-<TabItem value="orchestration" label="Orchestration Strategy">
-
-- Use Jobs for DAG‑based workflows
-- Use task dependencies for multi‑step pipelines
-- Integrate with CI/CD for deployment
-- Responsibility: SWE + TA
-- Goal: reliable, observable pipelines
-
-</TabItem>
-</Tabs>
-
-### What Results Normally Look Like
-
-- Notebook output (tables, charts, logs)
-- Job run logs and task graphs
-- Cluster metrics (CPU, memory, shuffle, autoscaling events)
-- Delta table metadata (`DESCRIBE DETAIL`, `DESCRIBE HISTORY`)
-- Workspace activity logs
-- Unity Catalog lineage graphs
+What prerequisites, dependencies, or initial configurations are required before interacting with Databricks?
+1. **Local Environment:** Databricks CLI installed locally (`pip install databricks-cli`).
+2. **Configuration Setup:** Databricks host URL, personal access token configured via `databricks configure --token`, and appropriate Unity Catalog scopes.
 
 ---
 
-## 🧩 Technical Skills
+## 🔑 Tool Requirements
 
-<details>
-<summary>Pre‑Requisites</summary>
+* **Access URL / Portal:** Databricks workspace tenant enterprise URL (e.g., `https://adb-xxxx.azuredatabricks.net` or AWS/GCP workspace equivalent).
+* **Authentication Method:** OAuth, Personal Access Tokens (PAT), or cloud IAM integration.
+* **Initial Setup Check:** Verify workspace reachability and active cluster availability using the Databricks CLI or web UI before submitting jobs.
 
-#### Security
-- Workspace access (SSO/SCIM)
-- Unity Catalog permissions
-- Cluster access policies
-- Secret scopes for credentials
+---
 
-#### Networking
-- VPC/subnet configuration
-- Secure cluster connectivity
-- Access to cloud storage (S3/ADLS/GCS)
-- Private endpoints (if required)
+## 📋 Common & Useful Workflows
 
-#### Architecture
-- Workspace structure (repos, notebooks, jobs)
-- Cluster types (all‑purpose vs job clusters)
-- Delta Lake storage layout
-- Streaming vs batch workloads
-
-#### Data
-- Table schemas and Delta metadata
-- Partitioning strategy
-- Data quality expectations
-- Storage locations and mount points
-
-#### Operational Guarantees
-- Job retry policies
-- Cluster autoscaling behaviour
-- Delta Lake ACID guarantees
-- Streaming checkpointing and recovery
-
-#### Observability Metrics
-- Job run durations
-- Cluster CPU/memory/shuffle metrics
-- Delta table history and vacuum logs
-- Streaming progress metrics
-
-</details>
-
-:::info
-How to interact with this tool day‑to‑day:
-- Terminal (Databricks CLI, Spark SQL)
-- UI (Workspace, Jobs, Clusters, Data Explorer)
-:::
-
-<Tabs>
-
-<TabItem value="access" label="Access">
-
-```shell
---------------
-How to set up credentials
---------------
-
-# Configure Databricks CLI
+```bash
+# 1. Configure Databricks CLI credentials and validate authentication
 databricks configure --token
-
-# Validate authentication
 databricks workspace ls
 
---------------
-How to log-in via the terminal
---------------
-
-# List clusters
+# 2. List active compute clusters and jobs
 databricks clusters list
-
-# List jobs
 databricks jobs list
+
+# 3. Submit a job or run a notebook programmatically
+databricks jobs run-now --job-id <job_id>
+
+# 4. Inspect Delta table metadata and transaction history via Spark SQL
+spark.sql("DESCRIBE DETAIL my_delta_table").show()
+spark.sql("DESCRIBE HISTORY my_delta_table").show()
+
 ```
-
-</TabItem>
-
-<TabItem value="requirements" label="Requirements">
-
-**How to formulate requirements when working with this platform**
-
-- Identify which notebooks, jobs, or pipelines are in scope
-- Confirm cluster requirements (runtime, node type, autoscaling)
-- Validate storage locations and Delta table schemas
-- Confirm Unity Catalog permissions
-- Determine CI/CD integration requirements
-- Establish TA expectations for monitoring and troubleshooting
-
-</TabItem>
-
-<TabItem value="engineering" label="Engineering">
-
-Common workflows and commands used by engineers when operating this tool
-
-```shell
---------------
-Key Terminal Commands
---------------
-
-# Run a job
-databricks jobs run-now --job-id <id>
-
-# Submit a Spark job
-databricks jobs submit --json-file job.json
-
-# Inspect Delta table metadata
-spark.sql("DESCRIBE DETAIL my_table").show()
-
-# View Delta table history
-spark.sql("DESCRIBE HISTORY my_table").show()
-
-# Read and write Delta tables
-df = spark.read.format("delta").load("/mnt/data/table")
-df.write.format("delta").mode("append").save("/mnt/data/table")
-
-# Run a notebook programmatically
-databricks runs submit --json-file run_notebook.json
-```
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-Common workflows and queries used by analysts when interpreting data from this tool.
-
-```shell
---------------
-Key Terminal Commands (mapped to analyst skills)
---------------
-
-# Inspect table schema
-spark.sql("DESCRIBE TABLE my_table").show()
-
-# View Delta table history
-spark.sql("DESCRIBE HISTORY my_table").show()
-
-# Profile data
-spark.sql("SELECT COUNT(*), COUNT(DISTINCT id) FROM my_table").show()
-
-# Check job run status
-databricks runs get --run-id <id>
-
-# Explore lineage (Unity Catalog)
-# (UI-based, but CLI example)
-databricks unity-catalog tables list --catalog <catalog>
-
-# Validate data quality
-spark.sql("SELECT * FROM my_table WHERE important_field IS NULL").show()
-```
-
-</TabItem>
-
-</Tabs>
 
 ---
 
-## 🚨 Triage
+## 🚨 Operational Triage Snapshots
 
 :::danger
-Symptoms and issues with this platform and how to triage this:
+Quick-reference diagnostics for common Databricks platform failures:
 :::
 
-| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
-|--------|---------------------|---------------|-------------------|
-| Job failing | Notebook error, cluster misconfig, missing dependency | Job logs, cluster config | Fix code, adjust cluster, reinstall libs |
-| Slow job performance | Underpowered cluster, skew, shuffle issues | Cluster metrics, Spark UI | Increase cluster size, repartition data |
-| Delta table corruption | Interrupted writes, schema mismatch | `DESCRIBE HISTORY`, checkpoint logs | Restore version, fix schema, reprocess |
-| Cluster not starting | Node type unavailable, network issue | Cluster events, VPC config | Change node type, fix networking |
-| Streaming job stuck | Checkpoint corruption, late data | Streaming progress logs | Reset checkpoint, fix source data |
-| Permission denied | Unity Catalog or workspace ACL issue | Permissions in UC | Update grants, fix workspace ACLs |
-
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Job Failing** | Notebook code exception, cluster misconfiguration, or missing library dependency. | Job run logs, cluster configuration settings, and exception stack traces. | Fix code bugs, adjust cluster node/runtime definitions, or install required cluster libraries. |
+| **Slow Job Performance** | Underpowered cluster, data skew, or inefficient shuffle partitions. | Cluster CPU/memory metrics and Spark UI execution stages. | Scale up cluster node sizes, repartition data keys, or tune Spark configuration properties. |
+| **Delta Table Corruption** | Interrupted concurrent writes or schema mismatch conflicts. | Delta history logs (`DESCRIBE HISTORY`) and checkpoint metadata. | Roll back to a previous valid version using time-travel or fix schema definitions and reprocess. |
+| **Cluster Not Starting** | Cloud provider instance type unavailability, network limit, or VPC subnet exhaustion. | Cluster event logs and cloud provider infrastructure capacity limits. | Switch to an alternate node type family or fix VPC subnet configurations. |

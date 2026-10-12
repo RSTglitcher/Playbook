@@ -1,265 +1,76 @@
 ---
-title: "dbt"
+title: dbt Data Transformation Framework
+sidebar_label: dbt
+description: Operational runbook and troubleshooting guide for dbt (data build tool), modular SQL models, testing, lineage graph execution, and CI/CD data pipelines.
+sidebar_position: 4
 ---
 
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 dbt Data Transformation Framework
 
 :::tip
-dbt (data build tool) is a **data transformation framework** that enables analysts and engineers to build modular SQL models, enforce data quality tests, manage dependencies, and generate documentation — all version‑controlled and reproducible.  
-It solves problems related to **transformations, testing, lineage, CI/CD, and analytics engineering workflows**.  
+
+## dbt Data Transformation Framework
+
+**What is it?** 
+dbt (data build tool) is a data transformation framework that enables data analysts and analytics engineers to transform data in their warehouses more effectively by writing modular SQL models, enforcing automated data quality tests, managing dependencies, and generating documentation.
+
+### 📚 Related Theory References
+* Data Engineering & Storage — Architecture of analytical data models, DAG dependency scheduling, and modular transformation layers.
 :::
 
-### Key Terms
+## 🧭 When to Use It
 
-- **Model:** A SQL transformation compiled and run by dbt  
-- **Source:** External raw data referenced by dbt  
-- **Seed:** CSV file managed and loaded by dbt  
-- **Macro:** Reusable Jinja logic for SQL generation  
-- **DAG:** Directed Acyclic Graph representing model dependencies  
-- **Tests:** Assertions on data quality (unique, not null, accepted values)  
-- **Profiles.yml:** Connection configuration for environments  
-
-### Knowing when to use **dbt**
-
-| When to use | When not to use |
-|-------------|-----------------|
-| SQL‑based transformations in a warehouse | Heavy ETL/ELT requiring Python or Spark |
-| You need lineage, testing, and modular SQL | Real‑time streaming transformations |
-| You want version‑controlled analytics code | Operational pipelines requiring orchestration |
-| You need CI/CD for data models | Complex ML pipelines or non‑SQL workloads |
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • SQL-based transformations inside cloud data warehouses (Snowflake, BigQuery, Databricks). • Enforcing data quality testing, lineage tracking, and version-controlled analytics code. • Managing structured multi-layer data models (staging, intermediate, marts). | • Heavy ETL/ELT pipelines requiring raw Python or Spark code execution. • Real-time low-latency streaming data transformations. • Non-SQL workloads or operational transactional database updates. |
 
 ---
 
-## 📘 About / Foundations  
-_Conceptual grounding for how the tool works._
+## 🚀 Getting Started & Prerequisites
 
-### How It Works (Conceptual Model)
-
-- dbt compiles **modular SQL files** into executable SQL for the warehouse  
-- Models form a **DAG**, ensuring correct execution order  
-- Tests validate data quality at model or column level  
-- Documentation is auto‑generated from model metadata  
-- Environments (dev/stage/prod) are configured via `profiles.yml`  
-- dbt Cloud or CI pipelines automate runs and testing  
-
-### System Contract
-
-dbt enforces contracts through:
-
-- **Model definitions** (`.sql` files)  
-- **Schema.yml files** defining tests, descriptions, and metadata  
-- **Source freshness** checks  
-- **Tags** and **selectors** controlling execution scope  
-- **Profiles.yml** defining warehouse credentials and environment behaviour  
-
-### Key Strategies
-
-<Tabs>
-<TabItem value="modelling" label="Modelling Strategy">
-
-- Use **staging → intermediate → mart** layers  
-- Keep models modular and composable  
-- Use CTEs sparingly; prefer model references (`ref()`)  
-- Responsibility: SWE + TA validation  
-- Goal: maintainable, testable, lineage‑driven SQL  
-
-</TabItem>
-
-<TabItem value="testing" label="Testing Strategy">
-
-- Apply **unique**, **not null**, and **accepted values** tests  
-- Add custom tests for business logic  
-- Monitor test failures in CI  
-- Responsibility: Analysts + TAs  
-- Goal: reliable, trustworthy data models  
-
-</TabItem>
-
-<TabItem value="performance" label="Performance Strategy">
-
-- Use incremental models for large tables  
-- Partition and cluster warehouse tables where possible  
-- Monitor warehouse cost and query performance  
-- Responsibility: SWE + TA collaboration  
-- Goal: efficient, scalable transformations  
-
-</TabItem>
-</Tabs>
-
-### What Results Normally Look Like
-
-- `dbt run` → executed models with pass/fail status  
-- `dbt test` → test results with failures highlighted  
-- `dbt docs generate` → documentation site with lineage graph  
-- CI logs showing model execution order and failures  
-- Source freshness reports  
+What prerequisites, dependencies, or initial configurations are required before interacting with dbt?
+1. **Local Environment:** dbt core or CLI installed locally (`pip install dbt-core dbt-snowflake` or relevant adapter).
+2. **Configuration Setup:** Project configuration in `dbt_project.yml` and local connection profiles defined in `~/.dbt/profiles.yml`.
 
 ---
 
-## 🧩 Technical Skills
+## 🔑 Tool Requirements
 
-<details>
-<summary>Pre‑Requisites</summary>
+* **Access URL / Portal:** Cloud data warehouse dashboard endpoint or dbt Cloud web portal.
+* **Authentication Method:** Warehouse credentials, OAuth tokens, or SSH/key-pair integrations via `profiles.yml`.
+* **Initial Setup Check:** Verify connection health and profile configurations using diagnostic commands (`dbt debug`) before executing models.
 
-#### Security
-- Warehouse credentials (Snowflake, BigQuery, Redshift, Databricks)  
-- dbt Cloud account (if applicable)  
-- Git repository access  
+---
 
-#### Networking
-- Warehouse connectivity (VPC, private endpoints if required)  
-- CI/CD runner access to warehouse  
+## 📋 Common & Useful Workflows
 
-#### Architecture
-- Project structure (models, seeds, sources, macros)  
-- Environment setup (dev/stage/prod)  
-- Incremental model strategy  
-- DAG dependencies  
-
-#### Data
-- Source schemas and freshness expectations  
-- Model inputs/outputs  
-- Test coverage requirements  
-- Tags and selectors  
-
-#### Operational Guarantees
-- CI/CD pipeline behaviour  
-- Test enforcement (blocking vs non‑blocking)  
-- Documentation generation requirements  
-- Deployment cadence  
-
-#### Observability Metrics
-- Model run times  
-- Test failure rates  
-- Source freshness  
-- Warehouse cost/performance metrics  
-
-</details>
-
-:::info  
-How to interact with this tool day‑to‑day:  
-- Terminal (`dbt run`, `dbt test`, `dbt docs`)  
-- UI (dbt Cloud, warehouse dashboards, CI logs)  
-:::
-
-<Tabs>
-
-<TabItem value="access" label="Access">
-
-```shell
---------------
-How to set up credentials
---------------
-
-# Configure profiles.yml
-~/.dbt/profiles.yml
-
-# Validate connection
+```bash
+# 1. Verify local profile connectivity and project configuration
 dbt debug
 
---------------
-How to log-in via the terminal
---------------
-
-# Check project structure
-dbt ls
-
-# Generate documentation
-dbt docs generate
-```
-
-</TabItem>
-
-<TabItem value="requirements" label="Requirements">
-
-**How to formulate requirements when working with this platform**
-
-- Identify which models, sources, and tests are in scope  
-- Confirm warehouse credentials and environment variables  
-- Validate DAG dependencies and downstream impact  
-- Confirm access control for dev/stage/prod  
-- Determine CI/CD integration requirements  
-- Establish TA expectations for troubleshooting and release verification  
-
-</TabItem>
-
-<TabItem value="engineering" label="Engineering">
-
-Common workflows and commands used by engineers when operating this tool
-
-```shell
---------------
-Key Terminal Commands
---------------
-
-# Run dbt models
-dbt run
-
-# Test dbt models
-dbt test
-
-# Compile SQL without executing
+# 2. Compile SQL models without executing them against the warehouse
 dbt compile
 
-# Generate and serve documentation
-dbt docs generate
-dbt docs serve
+# 3. Execute all transformation models in the project DAG
+dbt run
 
-# Run models incrementally
-dbt run --models +model_name
-
-# Run only selected models
-dbt run --models tag:finance
-```
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-Common workflows and queries used by analysts when interpreting data from this tool.
-
-```shell
---------------
-Key Terminal Commands (mapped to analyst skills)
---------------
-
-# Inspect DAG and dependencies
-dbt ls --resource-type model --output json | jq '.[] | .depends_on.nodes'
-
-# Validate tests and data quality
+# 4. Run automated data quality tests across models
 dbt test
 
-# Check source freshness
-dbt source freshness
-
-# Review documentation and lineage
-dbt docs generate
-dbt docs serve
-
-# Assess impact of changes (model selectors)
-dbt ls --models <model_name>+
 ```
-
-</TabItem>
-
-</Tabs>
 
 ---
 
-## 🚨 Triage
+## 🚨 Operational Triage Snapshots
 
-:::danger  
-Symptoms and issues with this platform and how to triage this:  
+:::danger
+Quick-reference diagnostics for common dbt platform and execution failures:
 :::
 
-| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
-|--------|---------------------|---------------|-------------------|
-| Models failing | SQL errors, missing tables, broken references | `dbt run` logs, warehouse schema | Fix SQL, update references, rerun |
-| Tests failing | Data quality or constraints violated | `dbt test` output, model source data | Correct data or model logic, rerun tests |
-| DAG dependency broken | Model dependency misconfigured or deleted | DAG graph, `dbt ls` | Update dependencies, verify DAG, rerun |
-| Documentation not updating | Docs not generated or build failed | `dbt docs` logs, artifacts | Regenerate docs and serve |
-| CI/CD pipeline failing | Git issues, environment misconfig | CI logs, profiles.yml | Fix CI config, validate environment |
-| Slow runs / warehouse overload | Large incremental loads, high cardinality | dbt run timing, warehouse metrics | Optimize queries, shard incremental runs, adjust warehouse size |
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Model Compilation / Execution Failure** | Syntax error in SQL, missing table reference, or invalid `ref()` macro call. | `dbt run` terminal logs, warehouse error output, and target schema state. | Fix SQL syntax errors, update broken model references, and re-run transformation. |
+| **Data Quality Test Failure** | Unmet constraints (`unique`, `not null`) or upstream source data corruption. | `dbt test` failure output and corresponding model source tables. | Correct source data anomalies or fix transformation logic, then re-run tests. |
+| **Broken DAG Dependencies** | Misconfigured model parent/child references or deleted base nodes. | `dbt ls` graph output and project model folder structures. | Update node dependency mapping, verify schema files, and re-compile project. |
+| **Slow Run Performance** | Large table scans without incremental strategies or unoptimized joins. | Warehouse query history and execution timing metrics per model. | Convert large models to incremental strategies, add partitioning, or optimize SQL code. |
 
