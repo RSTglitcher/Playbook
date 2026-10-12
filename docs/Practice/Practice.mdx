@@ -1,160 +1,94 @@
 ---
-title: "Practice"
+title: Practice Runbooks
+sidebar_label: Practice Runbooks
+description: Day-to-day operational runbooks, interaction guides, and quick-reference triage patterns for enterprise tools and platforms.
+sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+## Template
 
-## **📘 Runbook**
-This **Runbook** space captures the operational behaviour of the tools, platforms, and systems you interact with day‑to‑day.
-Where **Theory** explains how systems work and **Workbench** explains how you think, **Runbook explains how tools behave in the real world — and how to work with them safely, effectively, and diagnostically.**
+# Tool Name
 
-Runbook pages answer questions like:
-
-- *What does this tool do and how does it work?*
-- *How do I access it, configure it, or authenticate with it?*
-- *What does “normal” look like? What does “broken” look like?*
-- *How do I triage issues quickly and propose the right actions?*
-- *What does a Technical Analyst need to know before using this tool?*
-
-This section is your **operational muscle memory** — the practical knowledge that lets you move confidently across platforms, environments, and systems.
-It helps you:
-
-- understand how tools behave under normal and abnormal conditions
-- navigate credentials, permissions, and access patterns
-- interpret logs, metrics, and system outputs
-- diagnose issues and propose credible next steps
-- collaborate effectively with engineers, SREs, and platform teams
-
-If Theory is *why systems behave the way they do*, and Workbench is *how you think*,
-**Runbook is how you *operate* — the lived, practical interface between you and the technical world.**
-
----
 :::tip Tool Name
-Short, professional definition of **what this tool is**, its primary purpose, and the kind of problems it solves.
+
+**Quick Definition:**
+Short, professional definition of what this tool is, its primary purpose, and the kind of problems it solves.
+
+* **Related Theory Pages:** Link to relevant foundational theory (e.g., [[Data Engineering](../Theory/3-Data-Engineering/data-strategy-mesh.mdx)] or [[Distributed Systems](../Theory/1-Distributed-Systems/consensus-protocols.mdx)]).
 :::
 
-### Key Terms
+## 🧭 Knowing When to Use Tool Name
 
-- **Term:** Definition
-- **Term:** Definition
-
-### Knowing when to use **Tool Name**
-
-|When to use|When not to use|
-|-----------|----------------|
-|||
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • High-frequency operational interactions requiring standard tooling.<br>• Querying, mutating, or deploying through official supported interfaces. | • As an unmanaged workaround or shadow IT bypass.<br>• For workloads exceeding the system's intended architectural scale. |
 
 ---
 
-## 📘 About / Foundations
-_Conceptual grounding for how the tool works._
-
-### How It Works (Conceptual Model)
-
-### System Contract
-
-### Key Strategies
-
-### What Results Normally Look Like
-
----
-
-## 🧩 Technical Skills
-
-<details>
-
-<summary>Pre-Requisites</summary>
-
-#### Security
-
-#### Networking
-
-#### Architecture
-
-#### Data
-
-#### Operational Guarantees
-
-#### Observability Metrics
-
-</details>
-
-
-:::info
-How to interact with this tool day‑to‑day:
-- Terminal
-- UI
-:::
+## 🚀 Getting Started & Day-to-Day Access
 
 <Tabs>
-<TabItem value="access" label="Access">
+  <TabItem value="terminal" label="1. Terminal & CLI" default>
 
-```shell
---------------
-How to set up credentials
---------------
+### Terminal Access & Authentication
+```bash
+# 1. Authenticate with the tool/platform
+tool-cli login --profile enterprise-prod
 
---------------
-How to log-in via the terminal
---------------
-
-```
-
-</TabItem>
-<TabItem value="requirements" label="Requirements">
-
-**How to formulate requirements when working with this platform**
-
-- Examples of use cases
-- What does a TA need to gather/consider as part of intake for analysis
-
-</TabItem>
-<TabItem value="engineering" label="Engineering">
-
-Common workflows and commands used by engineers when operating this tool
-
-```shell
---------------
-Key Terminal Commands
---------------
-# Skill 1
-Command
-
-# Skill 2
-Command
-
+# 2. Verify current session health and active context
+tool-cli status --verbose
 
 ```
 
-</TabItem>
-<TabItem value="analyst" label="Analyst">
+### Portal Navigation
 
-Common workflows and queries used by analysts when interpreting data from this tool.
-
-```shell
---------------
-Key Terminal Commands
---------------
-# Each analyst skill should have a corresponding example command
-Command
-
-# Skill 2
-Command
-
-
-```
-
-</TabItem>
-</Tabs>
+* **Access URL:** `https://tool.internal.enterprise.com`
+* **Authentication:** Single Sign-On (SSO) via corporate identity provider (Okta/Azure AD).
+* **Primary Views:** Check the main dashboard overview for cluster/system health status before executing mutations.
 
 ---
 
-## 🚨 Triage
+## 📋 Analyst & Engineer Workflows
+
+### Intake & Requirements Gathering
+
+*What does a Technical Analyst need to gather or consider before using this tool?*
+
+1. **Scope & Environment:** Confirm whether actions target Staging, UAT, or Production.
+2. **Access Permissions:** Verify that your role has the necessary RBAC/IAM permissions to execute mutations.
+3. **Payload / Query Limits:** Review pagination limits, rate limits, and expected query complexity.
+
+### Common Workflows & Commands
+
+```bash
+# Example Workflow 1: Execute a standard query or request
+tool-cli query --config ./request-payload.json --output table
+
+# Example Workflow 2: Validate a schema or configuration syntax before deploying
+tool-cli validate --file ./config-manifest.yaml
+
+```
+
+---
+
+## 🚨 Operational Triage & Diagnostics
 
 :::danger
-Symptoms and issues with this platform and how to triage this:
+Common symptoms, root causes, and immediate triage steps for this platform:
 :::
 
-| Symptom | TLDR of Root Cause | What to Check | Action to Propose |
-|--------|---------------------|---------------|-------------------|
+| Symptom / Telemetry | TLDR Root Cause | What to Check | Action to Propose |
+| --- | --- | --- | --- |
+| **Connection Timeout / 504 Gateway Error** | Network congestion, firewall blocking, or target service down. | • Check DNS resolution<br>
+
+<br>• Verify VPN / VPC peering status | • Test connection via curl<br>
+
+<br>• Escalate to platform infra team if upstream is down. |
+| **Authentication Expired / 401 Unauthorized** | Token TTL expired or missing credentials profile. | • Check local credential store<br>
+
+<br>• Review token expiration timestamp | • Re-authenticate via CLI login command.<br>
+
+<br>• Refresh API tokens. |
+| **Rate Limit Exceeded / 429 Too Many Requests** | Query concurrency too high or missing request pagination. | • Review client request frequency<br>
+
+<br>• Check query cost / complexity score | • Implement request batching or exponential backoff retry logic. |
