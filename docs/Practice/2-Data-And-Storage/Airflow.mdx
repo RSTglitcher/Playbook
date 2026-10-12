@@ -22,7 +22,7 @@ Apache Airflow is an open-source workflow orchestration platform used to program
 
 | When to Use | When Not to Use |
 | :--- | :--- |
-| • Complex multi-step data pipelines with intricate upstream/downstream task dependencies.<br>• Scheduled batch ETL/ELT workflows coordinating multiple systems and data stores.<br>• Python-based workflow logic requiring robust retry policies, SLAs, and monitoring. | • Real-time low-latency streaming transformations (use Kafka or Spark Streaming instead).<br>• Simple ad-hoc SQL model transformations (use dbt directly).<br>• Large-scale distributed machine learning training loops (use Databricks or MLflow). |
+| • Complex multi-step data pipelines with intricate upstream/downstream task dependencies. • Scheduled batch ETL/ELT workflows coordinating multiple systems and data stores. • Python-based workflow logic requiring robust retry policies, SLAs, and monitoring. | • Real-time low-latency streaming transformations (use Kafka or Spark Streaming instead). • Simple ad-hoc SQL model transformations (use dbt directly). • Large-scale distributed machine learning training loops (use Databricks or MLflow). |
 
 ---
 
