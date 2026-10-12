@@ -1,52 +1,65 @@
 ---
-id: tickets
 title: Ticket Specifications & Feature Stories
-sidebar_label: Ticket Specifications
-description: Framework for drafting precise feature user stories, technical capabilities, and actionable acceptance criteria with Definition of Ready.
+sidebar_label: Ticket Writing
+description: Operational framework for drafting precise feature user stories, technical capabilities, and actionable acceptance criteria with Definition of Ready.
+sidebar_position: 2
 ---
+
+# 📘 Ticket Specifications & Feature Stories
 
 :::tip
 
-**Operational Purpose:** Convert business requirements and architectural specs into structured, unambiguous feature tickets and user stories that engineering squads can estimate and execute without friction.
+## Ticket Specifications & Feature Stories
 
+**What is it?** 
+A structured technical writing and backlog management skill focused on translating business requirements, epics, and technical specifications into precise, unambiguous feature tickets and user stories that engineering squads can estimate and execute without friction.
+
+#### 📚 Related Theory & Practice References
+* Theory — Agile delivery governance, user story mapping, and feature breakdown principles.
+* Practice — Jira backlog management, technical refinement workflows, and squad delivery tracking.
 :::
 
----
+## 🧭 What is the Skill & When is it Used?
 
-## 1. Context & Application Trigger
-
-* **When to perform:** During feature scoping, sprint refinement, epic breakdown, or when translating a Technical Requirements Document (TRD) into actionable engineering stories.
-* **Inputs needed:** Business goals, functional/non-functional requirements, API payload contracts, UI/UX designs, and technical dependencies.
-* **Expected Output:** Fully specified backlog tickets (User Stories or Feature Capabilities) meeting the **Definition of Ready (DoR)** with explicit acceptance criteria.
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • During feature scoping, epic breakdown, sprint refinement, or when translating a Technical Requirements Document (TRD) into actionable engineering stories. • When defining acceptance criteria and technical scope prior to sprint ingestion. • When establishing a clear Definition of Ready (DoR) baseline across engineering squads. | • Writing informal team chat updates or posting quick ad-hoc bug reports in Slack channels. • Authoring low-level source code implementations or running unit tests. |
 
 ---
 
-## 2. Standard Operating Procedure (Step-by-Step)
+## 💡 What Value Does It Bring? (Problem Solved)
 
-1. **Phase 1: Feature Scoping & Title Naming**
-   * Classify the ticket type: **User Story** (end-user value) or **Feature / System Capability** (enabling infrastructure/API).
-   * Apply consistent title syntax for quick scanning:
-     * `[Component/Service] Feature: Short description of capability` (e.g., `[Checkout-API] Feature: Support Apple Pay payment method`).
-
-2. **Phase 2: Narrative & Value Proposition**
-   * Write the core user story narrative (*"As a [user type], I want [capability] so that [business value]"*).
-   * Include a brief **Background & Problem Statement** explaining the operational friction or user pain point this feature resolves.
-
-3. **Phase 3: Acceptance Criteria & Functional Scenarios**
-   * Define explicit, testable **Acceptance Criteria (AC)** using `Given / When / Then` BDD scenarios or clear requirement checklists.
-   * Document non-functional expectations (performance bounds, security checks, audit logging).
-
-4. **Phase 4: Technical Context & Dependencies**
-   * Attach technical guidance identified during discovery: target endpoints, payload schemas, feature flags, or edge cases.
-   * Link upstream dependencies (parent Epic, TRD, design mocks, cross-team API contracts) and verify against the **Definition of Ready (DoR)**.
+* **Eliminates Ambiguity:** Replaces vague requirements with structured, testable acceptance criteria so developers and QA share a single source of truth.
+* **Accelerates Sprint Velocity:** Prevents mid-sprint blockers and rework by ensuring tickets are fully scoped and technically vetted before development starts.
+* **Improves Handoff Quality:** Bridges the gap between product requirements and engineering execution through clean Markdown templates and standardized naming conventions.
 
 ---
 
-## 3. Key Artifacts & Templates
+## 🧠 Core Concepts
 
-### Standard Feature & User Story Template
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **User Story Narrative** | Structuring requirements around user value using standard syntax ("As a... I want to... So that..."). | Keeps the engineering focus aligned with user outcomes rather than raw technical mechanics. |
+| **Testable Acceptance Criteria** | Defining precise, binary conditions (using Given/When/Then formats) that prove a feature works correctly. | Eliminates subjective interpretations of "done" and allows QA to automate test cases directly from the ticket. |
+| **Definition of Ready (DoR) Gate** | The checklist of criteria a ticket must meet before it can be pulled into an active sprint. | Prevents half-baked or underspecified tickets from causing friction and delays during development. |
 
-```text
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Feature Scoping & Title Naming** — Classify ticket type (User Story vs Feature Capability) and apply consistent component naming conventions for quick scanning.
+2. **Phase 2: Narrative & Value Proposition Drafting** — Author the core user narrative and provide context on why the feature is being introduced and what operational friction it resolves.
+3. **Phase 3: Acceptance Criteria & Technical Notes Integration** — Define explicit Given/When/Then test scenarios, attach API contracts or database schema changes, and verify against the Definition of Ready (DoR).
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Standard Feature & User Story Ticket Template.
+
+```markdown
+# [Component/Service] Feature: Short description of capability
+
 ## Context & Value Proposition
 **As a** [user / system role]  
 **I want to** [action / new capability]  
@@ -54,54 +67,25 @@ description: Framework for drafting precise feature user stories, technical capa
 
 ---
 
-## Background & Business Context
-[Provide 1-2 sentences on why this feature is being introduced and the business metric or experience it improves.]
-
----
-
 ## Functional Acceptance Criteria
 - [ ] **AC1 (Happy Path):** Given [valid user input/state], when [user performs action], then [system produces expected result].
 - [ ] **AC2 (Validation & Errors):** Given [invalid input/state], when [action is triggered], then [system returns HTTP 400 with explicit error message].
-- [ ] **AC3 (Telemetry & Events):** Given [action succeeds], then [analytics event `feature_executed` is published to message broker].
-
----
-
-## Non-Functional & Operational Requirements
-- **Performance:** Response time must remain $P_{95} < 250\text{ms}$ under peak load.
-- **Security:** Requires valid OAuth 2.0 bearer token with `checkout:write` scope.
+- [ ] **AC3 (Telemetry & Events):** Given [action succeeds], then [analytics event is published to message broker].
 
 ---
 
 ## Technical Notes & Implementation Guidance
-- **Impacted Repos / Services:** `service-checkout-api`, `service-payment-gateway`
-- **API Contracts / Endpoints:** `POST /v2/checkout/payments`
-- **Feature Flag Key:** `enable-apple-pay-checkout`
-- **Edge Cases:** Gracefully handle user cancellation mid-handshake without persisting abandoned transactions.
-
----
-
-## Dependencies & Design Assets
-- **Parent Epic:** [EPIC-101]
-- **Technical Specs:** [TRD Link]
-- **Figma Designs:** [Design Link]
+- **Impacted Services:** `service-api`, `service-db`
+- **API Contracts / Endpoints:** `POST /v2/resource`
+- **Feature Flag Key:** `enable-new-feature`
+- **Edge Cases:** Handle connection timeouts gracefully without persisting corrupted states.
 
 ```
 
----
+:::warning
 
-## 4. Quality Checklist & Verification
+### Pitfalls & Edge Cases
 
-* [ ] Title clearly identifies target component and feature scope (`[Component] Feature: Action`)
-* [ ] Acceptance criteria are testable by QA/engineers without subjective interpretation
-* [ ] Non-functional requirements (SLAs, telemetry, security) are explicitly stated
-* [ ] Feature flags, API endpoints, and dependent services are documented
-* [ ] Ticket satisfies team **Definition of Ready (DoR)** prior to sprint planning
-
----
-
-:::warning Pitfalls & Edge Cases
-
-* **Common Mistake:** Writing monolithic feature tickets that span multiple sprints. If a feature contains more than 3–5 acceptance criteria, split it into vertical slices (e.g., API enablement ticket $\rightarrow$ UI integration ticket).
-* **Pro Tip:** Focus ticket documentation on **Behavior and Boundaries** rather than dictating exact code implementation. Let engineers decide *how* to implement while you define *what* success looks like.
-
+* **Common Mistake:** Writing monolithic feature tickets that span multiple sprints. If a feature contains more than 3 to 5 acceptance criteria, split it into vertical slices.
+* **Pro Tip:** Focus ticket documentation on *Behavior and Boundaries* rather than dictating exact code implementation. Let engineers decide *how* to build while you define *what* success looks like.
 :::

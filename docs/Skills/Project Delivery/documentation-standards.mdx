@@ -1,60 +1,75 @@
 ---
-id: documentation-standards
 title: Documentation Standards & Knowledge Management
 sidebar_label: Documentation Standards
-description: Guidelines and framework for writing maintainable technical documentation, SOPs, and knowledge base articles.
+description: Operational framework for writing maintainable technical documentation, SOPs, and knowledge base articles.
+sidebar_position: 1
 ---
 
-# Documentation Standards & Knowledge Management
+# 📘 Documentation Standards & Knowledge Management
 
 :::tip
 
-**Operational Purpose:** Establish consistent structures, markdown conventions, and maintenance cycles for technical documentation, ensuring knowledge bases stay clear, discoverable, and actionable across engineering and business teams.
+## Documentation Standards & Knowledge Management
 
+**What is it?** 
+A structured technical writing and knowledge management skill focused on establishing clear structures, markdown conventions, and maintenance cycles for technical documentation, ensuring knowledge bases stay clear, discoverable, and actionable across engineering and business teams.
+
+#### 📚 Related Theory & Practice References
+* Theory — Knowledge management governance, technical communication architecture, and documentation debt mitigation.
+* Practice — Confluence documentation layouts, Markdown syntax standards, and Docusaurus publishing workflows.
 :::
 
----
+## 🧭 What is the Skill & When is it Used?
 
-## 1. Context & Application Trigger
-
-* **When to perform:** When onboarding new tools/systems, defining internal SOPs, documenting complex architectural workflows, or auditing outdated team knowledge bases.
-* **Inputs needed:** System architecture diagrams, workflow details, developer/user pain points, existing raw notes, and codebase structures.
-* **Expected Output:** Standardized, peer-reviewed MDX/Markdown documentation published to the central knowledge repository (e.g., Docusaurus, Confluence).
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • When onboarding new tools, defining internal SOPs, or documenting complex architectural workflows. • When auditing and restructuring outdated team knowledge bases or runbooks. • Publishing version-controlled technical specs and operational runbooks to Docusaurus or Confluence. | • Writing informal transient chat messages or quick Slack updates for immediate team coordination. • Authoring code comments or inline docstrings within source code files. |
 
 ---
 
-## 2. Standard Operating Procedure
+## 💡 What Value Does It Bring? (Problem Solved)
 
-1. **Phase 1: Target Audience & Intent Identification**
-   * Determine who will consume the document (e.g., developers needing API contracts vs non-technical stakeholders looking for workflow overviews).
-   * Define the document type: **Guide/Tutorial** (learning-focused), **How-To/SOP** (task-focused), **Reference** (information-focused), or **Explanation/Theory** (understanding-focused).
-
-2. **Phase 2: Drafting & Structural Alignment**
-   * Apply standard frontmatter metadata (`id`, `title`, `sidebar_label`, `description`).
-   * Open with a 1–2 sentence operational purpose or executive summary.
-   * Format content using progressive headers (`#`, `##`, `###`), active bullet points, and explicit code blocks with syntax highlighting.
-   * Use Mermaid.js diagrams for process flows rather than static images.
-
-3. **Phase 3: Docusaurus Admonition & Callout Formatting**
-   * Structure critical callouts using Docusaurus admonitions (`:::tip`, `:::info`, `:::warning`).
-   * Ensure blank lines exist before and after admonition blocks to guarantee MDX parsing.
-
-4. **Phase 4: Review, Cross-Linking & Maintenance**
-   * Insert relative links to related **Theory** or **Practice** modules to build a connected knowledge graph.
-   * Conduct peer review with domain owners to verify accuracy and code snippet validity.
+* **Reduces Cognitive Overhead:** Provides a predictable layout so readers can locate required technical information instantly without parsing walls of text.
+* **Prevents Tribal Knowledge Bottlenecks:** Converts unwritten team practices into permanent, discoverable, and version-controlled assets.
+* **Minimizes Documentation Rot:** Implements clear structural templates and maintenance guidelines to keep technical docs accurate over time.
 
 ---
 
-## 3. Key Artifacts & Templates
+## 🧠 Core Concepts
 
-### Standard Knowledge Base Document Template
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **Audience Alignment** | Tailoring documentation depth and tone to the specific consumer (e.g., developers needing API contracts vs. non-technical stakeholders needing high-level workflows). | Prevents documentation from being too dense for beginners or too shallow for engineers. |
+| **Progressive Disclosure** | Structuring content from executive summaries down to granular technical steps using clear hierarchical headings. | Allows readers to scan for high-level context before diving into deep configuration details. |
+| **Living Documentation** | Treating documentation as code by storing Markdown/MDX files in version-controlled repositories alongside application code. | Ensures documentation updates are reviewed and merged via standard Pull Request workflows. |
 
-```text
-# Document Title
+---
 
-## TLDR / Executive Summary
-**Executive Summary:** High-level summary of the domain or process documented here.
+## 📋 Common Patterns
 
+1. **Phase 1: Target Audience & Intent Identification** — Determine document type (Guide, SOP, Reference, or Theory) and map reader requirements before drafting.
+2. **Phase 2: Drafting & Structural Alignment** — Apply frontmatter metadata, open with an operational purpose summary, and format content using progressive headings and explicit code blocks.
+3. **Phase 3: Review, Cross-Linking & Maintenance** — Insert relative cross-links to related Theory and Practice modules, and conduct peer reviews with domain owners.
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Standard Knowledge Base Document Template.
+
+```markdown
+---
+title: Document Title
+sidebar_label: Sidebar Label
+description: Short summary of document scope.
+sidebar_position: 1
+---
+
+# 📘 Document Title
+
+:::tip
+*Operational Purpose:* High-level summary of the domain, process, or tool documented here.
+:::
 
 ## 1. Core Principles / Overview
 - **Key Takeaway 1:** Description of principle.
@@ -64,33 +79,22 @@ description: Guidelines and framework for writing maintainable technical documen
 
 ## 2. Step-by-Step Instructions
 
-1. **Step 1 Name:** Detailed action step.
-2. **Step 2 Name:** Detailed action step.
+1. **Step 1 Name:** Detailed action step description.
+2. **Step 2 Name:** Detailed action step description.
 
 ---
 
-## 3. Conclusion
-
+## 3. Quality Verification
+- [ ] Frontmatter contains all required fields (`title`, `description`, `sidebar_label`).
+- [ ] Document opens directly with an executive summary or operational purpose statement.
+- [ ] Code snippets specify appropriate language syntax tags.
 
 ```
 
----
-
-## 4. Quality Checklist & Verification
-
-* [ ] Frontmatter contains all required fields (`id`, `title`, `description`)
-* [ ] Document opens directly with an executive summary / operational purpose statement
-* [ ] Code snippets specify appropriate language syntax tags (e.g., ````text`, ````javascript`)
-* [ ] Admonitions (`:::`) are surrounded by blank lines and render correctly in MDX
-* [ ] All internal cross-links use valid relative paths without broken links
-
----
-
 :::warning
 
-## Pitfalls & Edge Cases
+### Pitfalls & Edge Cases
 
 * **Common Mistake:** Treating documentation as a one-time task. Without clear ownership and review cycles, docs become stale and misleading.
-* **Pro Tip:** Keep documentation close to code or in version-controlled repositories (like Docusaurus) so changes can be reviewed via standard Pull Requests.
-
+* **Pro Tip:** Keep documentation close to code or in version-controlled repositories (like Docusaurus) so changes can be tracked and reviewed via standard Pull Requests.
 :::
