@@ -1,1 +1,75 @@
-Theory: SDD
+---
+title: OpenAPI Specification
+sidebar_label: OpenAPI
+description: Operational runbook and troubleshooting guide for OpenAPI specifications, API design contracts, validation tooling, and mock servers.
+sidebar_position: 4
+---
+
+# 📘 OpenAPI Specification
+
+:::tip
+
+## OpenAPI Specification
+
+**What is it?** 
+OpenAPI is an API description format for REST APIs, enabling developers to describe URL paths, request/response payloads, authentication methods, and parameters. It forms the backbone of Specification-Driven Development (SDD), powering documentation, code generation, and contract validation.
+
+### 📚 Related Theory References
+* Test Automation — Core philosophy of Specification-Driven Development (SDD), API governance, and contract testing.
+:::
+
+## 🧭 When to Use It
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Designing RESTful API contracts before writing implementation code. • Generating automated interactive API documentation (e.g., Swagger UI). • Generating client SDKs and server stubs automatically from specs. | • Asynchronous, event-driven streaming streams (use AsyncAPI or Kafka specs instead). • Rapid, throwaway internal-only microservice prototyping where specs lag code. • Complex GraphQL query schema definitions (use GraphQL SDL instead). |
+
+---
+
+## 🚀 Getting Started & Prerequisites
+
+What prerequisites, dependencies, or initial configurations are required before interacting with OpenAPI?
+1. **Local Environment:** CLI specification validator tools and code generators installed locally (e.g., `openapi-generator-cli`, `redocly`, or `swagger-cli`).
+2. **Configuration Setup:** Validated YAML or JSON specification files (`openapi.yaml`) conforming to OpenAPI Specification version 3.x.
+
+---
+
+## 🔑 Tool Requirements
+
+* **Access URL / Portal:** Internal developer portal or Swagger UI endpoint (e.g., `https://api.internal.enterprise.com/docs`).
+* **Authentication Method:** N/A for local CLI tooling; API management portal access requires corporate Single Sign-On (SSO).
+* **Initial Setup Check:** Verify spec syntax correctness locally using validation tools (`swagger-cli validate openapi.yaml`) before publishing changes.
+
+---
+
+## 📋 Common & Useful Workflows
+
+```bash
+# 1. Validate OpenAPI specification syntax and structure
+swagger-cli validate openapi.yaml
+
+# 2. Generate a client SDK or server stubs from an OpenAPI spec
+openapi-generator-cli generate -i openapi.yaml -g typescript-axios -o ./generated-client
+
+# 3. Bundle multi-file OpenAPI specs into a single monolithic document
+swagger-cli bundle openapi.yaml -o bundled-spec.yaml --type yaml
+
+# 4. Preview documentation locally via mock server or redocly
+npx @redocly/cli preview-docs openapi.yaml
+
+```
+
+---
+
+## 🚨 Operational Triage Snapshots
+
+:::danger
+Quick-reference diagnostics for common OpenAPI platform failures:
+:::
+
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Validation Syntax Error** | Malformed YAML indentation, missing required fields, or invalid OpenAPI 3.x schema. | CLI validation output logs and structural YAML spacing. | Fix schema errors and re-run validation checks. |
+| **Breaking API Changes Detected** | Field type changes, removed parameters, or missing required response blocks. | Git diff history on specification files and contract compatibility linters. | Revert breaking modifications or bump API major version numbers. |
+| **SDK Generation Failure** | Incompatible generator version or malformed data types in definitions. | Generator CLI version compatibility and schema reference ($ref) targets. | Update generator tooling or resolve broken relative file paths. |
+| **Documentation Rendering Drift** | Outdated spec file deployed to the API developer portal. | Portal build logs and source specification file tracking hash. | Force a re-build and redeployment of the API portal documentation. |

@@ -1,227 +1,75 @@
- ---
-title: "JUnit"
+---
+title: JUnit
+sidebar_label: JUnit
+description: Operational runbook and troubleshooting guide for JUnit, executing Java unit test suites, assertions, and TDD validation cycles.
+sidebar_position: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 JUnit
 
-::tip
-A Java unit testing framework used to express expected behaviour, validate logic, and drive design through tests.
+:::tip
 
-- **Year developed:** 1997
-- **Primary purpose:** Provide a structured environment for writing automated unit tests
-- **Target problem:** Validate small, isolated units of logic and support TDD workflows
+## JUnit
+
+**What is it?** 
+JUnit is a popular unit testing framework for the Java ecosystem that provides a structured environment for writing automated unit tests, validating component logic, and supporting Test-Driven Development (TDD) workflows.
+
+### 📚 Related Theory References
+* Test Automation — Core philosophy of TDD, unit test isolation, and behavior validation.
 :::
 
-Theory: TDD
+## 🧭 When to Use It
 
-## 🗺️ Context
-
-### History
-- Created by Kent Beck and Erich Gamma (founders of XP and the Gang of Four)
-- One of the original xUnit family frameworks
-- Became the de‑facto standard for Java testing
-- JUnit 5 introduced modular architecture, modern annotations, and extensibility
-- Used across enterprise Java, Spring, microservices, and backend systems
-
-### Strengths & Limitations
-
-**Strengths**
-- Fast, deterministic feedback
-- Encourages modular, testable design
-- Clear, expressive assertions
-- Integrates with Maven, Gradle, IDEs, CI/CD
-- Supports TDD (Red → Green → Refactor)
-
-**Limitations**
-- Only tests in‑process Java logic
-- Not suitable for UI, network, or distributed tests
-- Requires discipline to avoid brittle tests
-- Can be misused for integration tests
-
-### TA‑Relevant Insights
-JUnit helps analysts understand:
-
-- how developers express expected behaviour
-- how edge cases and invariants are captured
-- how regressions are prevented
-- how method contracts are shaped
-- how failures reveal system assumptions
-- how testability influences architecture
-
-JUnit is a **thinking environment**, not just a testing tool.
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Validating isolated Java methods, classes, and business logic. • Implementing TDD workflows (Red-Green-Refactor cycles). • Automating regression tests within Maven or Gradle build lifecycles. | • Testing complex UI frontends or browser workflows (use Cypress instead). • End-to-end distributed network environments across multiple live microservices. • Heavy load, performance, or stress benchmarking. |
 
 ---
 
-## 🧠 Mental Model
+## 🚀 Getting Started & Prerequisites
 
-### How to think in this environment
-JUnit expresses behaviour through a simple structure:
-
-- **Arrange** — set up the state
-- **Act** — execute the logic
-- **Assert** — verify the outcome
-
-In TDD, this becomes:
-
-1. Write a failing test (Red)
-2. Write minimal code to pass it (Green)
-3. Refactor safely (Refactor)
-
-JUnit is where developers:
-
-- define expected behaviour
-- shape method signatures
-- clarify edge cases
-- document intent
-- enforce correctness
-
-### Ecosystem
-JUnit interacts with:
-
-- **Mockito** (mocking dependencies)
-- **AssertJ / Hamcrest** (fluent assertions)
-- **Spring Test** (context testing)
-- **Maven / Gradle** (build + test lifecycle)
-- **JaCoCo** (coverage)
-- **CI/CD pipelines** (GitHub Actions, Jenkins, Azure DevOps)
+What prerequisites, dependencies, or initial configurations are required before interacting with JUnit?
+1. **Local Environment:** Java Development Kit (JDK) installed alongside a build automation tool (Maven or Gradle) with JUnit dependencies declared in configuration files (`pom.xml` or `build.gradle`).
+2. **Configuration Setup:** Test source directory structures (`src/test/java`) matching production package layouts.
 
 ---
 
-## 📚 Core Concepts
+## 🔑 Tool Requirements
 
-<Tabs>
+* **Access URL / Portal:** Local terminal command-line interface or CI/CD pipeline execution logs.
+* **Authentication Method:** N/A (Local or CI runner execution).
+* **Initial Setup Check:** Verify build system and test target availability (`mvn --version` or `gradle --version`).
 
-<TabItem value="engineering" label="Engineering">
+---
 
-Common workflows and commands used by engineers.
+## 📋 Common & Useful Workflows
 
-```shell
---------------
-Key Terminal Commands
---------------
-
-# Run all tests (Maven)
+```bash
+# 1. Execute all unit tests via Maven build lifecycle
 mvn test
 
-# Run a specific test class
+# 2. Run a specific test class using a filter parameter
 mvn -Dtest=CalculatorTest test
 
-# Run tests with detailed output
+# 3. Execute tests with detailed quiet or debug terminal output
 mvn -q test
-```
 
-```java
---------------
-Basic JUnit Structure
---------------
-@Test
-void addsNumbers() {
-    assertEquals(4, Calculator.add(2, 2));
-}
-```
+# 4. Run tests and generate code coverage reports (e.g., via JaCoCo plugin)
+mvn clean test jacoco:report
 
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-Useful interpretation patterns for analysts.
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Pattern 1: Expected vs Actual
-If a test fails:
-- Read the assertion message
-- Identify the behavioural mismatch
-- Infer the intended contract
-
-# Pattern 2: Edge Case Discovery
-Tests often reveal:
-- null handling
-- boundary conditions
-- invalid inputs
-- error paths
-
-# Pattern 3: Behaviour Drift
-If many tests break at once:
-- requirements changed
-- method contract changed
-- assumptions outdated
-```
-
-</TabItem>
-
-</Tabs>
-
----
-
-## 🔁 Common Patterns
-
-### Idioms and Typical Approaches
-- One behaviour per test
-- Descriptive test names (behaviour‑focused)
-- Use mocks to isolate dependencies
-- Parameterised tests for variants
-- Keep tests deterministic and fast
-- Use expressive assertions
-
-### Pitfalls
-- Over‑mocking (brittle tests)
-- Testing implementation instead of behaviour
-- Large test classes with mixed responsibilities
-- Slow tests due to unnecessary I/O
-- Missing edge‑case coverage
-
----
-
-## 🧪 Examples
-
-### Behaviour‑Focused Test
-
-```java
-@Test
-void returnsEmptyListWhenNoUsersFound() {
-    UserRepository repo = new InMemoryUserRepository();
-    assertTrue(repo.findAll().isEmpty());
-}
-```
-
-### Parameterised Test
-
-```java
-@ParameterizedTest
-@ValueSource(strings = {"", " ", "\n"})
-void rejectsBlankUsernames(String input) {
-    assertThrows(InvalidUsernameException.class, () -> User.create(input));
-}
-```
-
-### Using Mockito
-
-```java
-@Test
-void sendsEmailOnRegistration() {
-    EmailService email = mock(EmailService.class);
-    Registration reg = new Registration(email);
-
-    reg.register("rebecca@example.com");
-
-    verify(email).sendWelcome("rebecca@example.com");
-}
 ```
 
 ---
 
-## 📝 Glossary
+## 🚨 Operational Triage Snapshots
 
-| Term | Definition |
-|------|------------|
-| **Unit Test** | A test for a small, isolated piece of logic. |
-| **Assertion** | A statement that must be true for the test to pass. |
-| **Mock** | A fake dependency used to isolate behaviour. |
-| **Fixture** | Setup data or objects used in tests. |
-| **Red/Green/Refactor** | The TDD cycle. |
-| **Parameterized Test** | A test that runs with multiple inputs. |
+:::danger
+Quick-reference diagnostics for common JUnit execution failures:
+:::
+
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Assertion Failure (Expected vs Actual)** | Behavioral mismatch between code implementation and test expectation. | Assertion error message, input values, and intended method contract. | Inspect the code logic or update the test expectation if requirements shifted. |
+| **NullPointerException in Test** | Uninitialized dependencies or missing mock objects. | Object instantiation and setup methods (`@BeforeEach`). | Initialize required objects or set up proper mocking stubs. |
+| **Slow Test Execution Suite** | Unnecessary I/O operations, database queries, or thread sleeps. | Test annotations and presence of heavy external resource calls. | Isolate unit tests by mocking external systems to keep runtime sub-second. |
+| **Build Failure on CI Pipeline** | Environment-specific differences or flaky concurrent tests. | CI build logs, test ordering dependencies, and shared state mutations. | Ensure tests are entirely self-contained and order-independent. |

@@ -1,233 +1,75 @@
 ---
-title: "Cucumber"
+title: Cucumber BDD
+sidebar_label: Cucumber
+description: Operational runbook and troubleshooting guide for Cucumber, executing behavior-driven development (BDD) features and living specifications.
+sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
+# 📘 Cucumber BDD
 
 :::tip
-A test runner that executes **Gherkin scenarios** by mapping them to underlying automation code (UI, API, or service‑level tests).
-It ensures behaviour described in natural language is executed consistently and verifiably.
+
+## Cucumber BDD
+
+**What is it?** 
+Cucumber is a testing tool that supports Behavior-Driven Development (BDD) by running executable specifications written in plain language (Gherkin syntax: Given-When-Then). It bridges product requirements, QA, and automated test implementation.
+
+### 📚 Related Theory References
+* Test Automation — Core philosophy of BDD, living documentation, and Gherkin syntax design.
 :::
 
-Theory: BDD
+## 🧭 When to Use It
 
-### Key Terms
-
-- **Feature File:** A `.feature` file containing Gherkin scenarios.
-- **Step Definition:** Code that implements a Gherkin step.
-- **Glue Code:** The binding layer between Gherkin and automation.
-- **Hooks:** Before/After logic that runs around scenarios.
-- **Runner Class:** The entry point that triggers Cucumber execution.
-
-### Knowing when to use **Cucumber**
-
-|When to use|When not to use|
-|-----------|----------------|
-|When behaviour is best expressed in examples|When testing low‑level logic (unit tests)|
-|When multiple roles need shared understanding|When speed is critical (Cucumber is slower)|
-|When automating UI or API flows|When behaviour is too complex for natural language|
-|When acceptance criteria must be executable|When the team lacks discipline to maintain scenarios|
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Translating business acceptance criteria into automated test suites. • Maintaining living documentation that mirrors system features. • Verifying end-to-end integration and multi-component behavior. | • Low-level micro-unit testing or algorithmic function validation. • High-speed code refactoring loops where TDD is preferred. • Pure performance or stress testing benchmarks. |
 
 ---
 
-## 📘 About / Foundations
-_Conceptual grounding for how the tool works._
+## 🚀 Getting Started & Prerequisites
 
-### How It Works (Conceptual Model)
-
-Cucumber executes behaviour in three layers:
-
-1. **Gherkin** describes behaviour in natural language.
-2. **Step Definitions** map each step to code.
-3. **Automation Layer** performs the actual work (Selenium, API clients, mocks, DB calls).
-
-Flow:
-
-```
-Feature File → Step Definition → Automation Code → Result
-```
-
-### System Contract
-
-Cucumber guarantees:
-
-- Every Gherkin step must map to exactly one step definition.
-- Steps execute in order.
-- Failures stop the scenario unless configured otherwise.
-- Hooks run before/after scenarios for setup/teardown.
-- Reports are generated for each run.
-
-### Key Strategies
-
-- Keep scenarios atomic (one behaviour each).
-- Keep step definitions reusable and modular.
-- Avoid UI‑specific language in Gherkin.
-- Use hooks for environment setup, not steps.
-- Keep automation logic out of step definitions (call services/helpers instead).
-
-### What Results Normally Look Like
-
-A normal Cucumber run shows:
-
-- **Green** steps (passed)
-- **Yellow** steps (skipped)
-- **Red** steps (failed)
-- A summary of scenarios passed/failed
-- A stack trace for failures
-- Optional HTML/JSON reports
+What prerequisites, dependencies, or initial configurations are required before interacting with Cucumber?
+1. **Local Environment:** Runtime environment (JVM, Node.js/JavaScript, or Python) with Cucumber package dependencies installed (`cucumber`, `cucumber-js`, or `junit-cucumber`).
+2. **Configuration Setup:** Feature file directories (`.feature`), step definition implementations, and configuration profiles (e.g., `cucumber.json` or runner classes).
 
 ---
 
-## 🧩 Technical Skills
+## 🔑 Tool Requirements
 
-<details>
-<summary>Pre-Requisites</summary>
-
-#### Security
-No special credentials required unless tests hit secured APIs or environments.
-
-#### Networking
-Understanding of endpoints, environments, routing, and test URLs.
-
-#### Architecture
-Awareness of where automation code lives (UI layer, API layer, service layer).
-
-#### Data
-Knowledge of test data setup, fixtures, and environment state.
-
-#### Operational Guarantees
-Cucumber does not guarantee speed or stability — underlying automation determines reliability.
-
-#### Observability Metrics
-- Scenario pass/fail rate
-- Step execution time
-- Flakiness indicators
-- Error logs and stack traces
-
-</details>
+* **Access URL / Portal:** Local command-line interface or CI/CD test reports portal (e.g., Allure or Jenkins Test Reports).
+* **Authentication Method:** N/A (Local execution or CI/CD pipeline service account credentials).
+* **Initial Setup Check:** Verify runtime installation (`cucumber-js --version` or Maven/Gradle test plugin availability) and validate feature file syntax pathing.
 
 ---
 
-:::info
-How to interact with this tool day‑to‑day:
-- Terminal (Maven, npm, CLI runners)
-- IDE (IntelliJ, VSCode, Eclipse)
-:::
+## 📋 Common & Useful Workflows
 
-<Tabs>
+```bash
+# 1. Execute all feature test suites locally
+npx cucumber-js
 
-<TabItem value="access" label="Access">
+# 2. Run feature files matching a specific tag filter (e.g. smoke tests)
+npx cucumber-js --tags "@smoke"
 
-```shell
---------------
-Run Cucumber via Maven
---------------
-mvn test
+# 3. Generate an HTML test report output from test execution
+npx cucumber-js --format json:reports/cucumber_report.json --format html:reports/cucumber_report.html
 
---------------
-Run a specific feature file
---------------
-mvn test -Dcucumber.features=src/test/resources/features/login.feature
+# 4. Verify dry-run of step definitions without executing browser or network layers
+npx cucumber-js --dry-run
 
---------------
-Run with tags
---------------
-mvn test -Dcucumber.filter.tags="@smoke"
 ```
-
-</TabItem>
-
-<TabItem value="requirements" label="Requirements">
-
-**How to formulate requirements when working with Cucumber**
-
-- Define behaviour in Gherkin (Given/When/Then).
-- Keep scenarios small and atomic.
-- Avoid UI‑specific details unless UI is the behaviour.
-- Provide edge cases and alternative flows.
-- Ensure acceptance criteria are testable and deterministic.
-
-**What a TA needs to gather**
-
-- Preconditions (data, user state, environment)
-- Expected outcomes (success + failure)
-- Variants (different inputs, roles, permissions)
-- Dependencies (APIs, UI flows, services)
-
-</TabItem>
-
-<TabItem value="engineering" label="Engineering">
-
-```shell
---------------
-Common Cucumber Engineering Workflows
---------------
-
-# Create a step definition
-@Given("a registered user exists")
-public void userExists() { ... }
-
-# Create a runner class
-@RunWith(Cucumber.class)
-@CucumberOptions(features="src/test/resources/features")
-public class RunCucumberTest {}
-
-# Use hooks
-@Before
-public void setUp() { ... }
-
-@After
-public void tearDown() { ... }
-```
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Pattern 1: Step Not Found
-If Cucumber reports "Undefined Step":
-- The Gherkin changed
-- The step definition was deleted
-- The glue path is wrong
-
-# Pattern 2: Flaky Scenario
-If a scenario passes locally but fails in CI:
-- Check environment differences
-- Check timing issues (UI/API)
-- Check test data setup
-
-# Pattern 3: Behaviour Drift
-If scenarios no longer match reality:
-- Requirements changed
-- UI/API changed
-- Step definitions outdated
-```
-
-</TabItem>
-
-</Tabs>
 
 ---
 
-## 🚨 Triage
+## 🚨 Operational Triage Snapshots
 
 :::danger
-Symptoms and issues with this platform and how to triage them:
+Quick-reference diagnostics for common Cucumber execution failures:
 :::
 
-| Symptom | TLDR Root Cause | What to Check | Action to Propose |
-|--------|------------------|---------------|-------------------|
-| **Undefined Step** | No matching step definition | Step text, glue path | Add/match step definition |
-| **Flaky Scenario** | Timing, async UI, environment drift | Waits, network, CI logs | Add waits, stabilise environment |
-| **Scenario always failing** | Behaviour changed | Requirements, UI/API changes | Update Gherkin or automation |
-| **Hooks not running** | Misconfigured runner | Runner annotations | Fix `@CucumberOptions` |
-| **Slow execution** | Too many UI tests | Test pyramid imbalance | Shift tests left (API/unit) |
-| **Tag filters not working** | Incorrect tag syntax | Tag names, runner config | Fix tag expressions |
-
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Undefined Step Error** | Missing step definition mapping for a Gherkin sentence. | Step definition file paths and regex/expression matches. | Implement the missing step definition snippet in code. |
+| **Ambiguous Step Definition** | Multiple step definitions match a single Gherkin phrase. | Regular expression overlap across step files. | Refine step expressions to be uniquely distinct. |
+| **High Test Flakiness** | Network timing issues, asynchronous race conditions, or bad waits. | Explicit vs. implicit wait timeouts and mock states. | Introduce proper polling or robust synchronization hooks. |
+| **Slow Pipeline Execution** | Running heavy end-to-end scenarios sequentially. | Parallel execution settings and worker configuration. | Enable parallel test execution flags (e.g., `--parallel <threads>`). |

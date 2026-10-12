@@ -1,223 +1,75 @@
 ---
-title: "Cypress"
+title: Cypress E2E Testing
+sidebar_label: Cypress
+description: Operational runbook and troubleshooting guide for Cypress, executing modern browser-native end-to-end and component testing workflows.
+sidebar_position: 2
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# 📘 Cypress E2E Testing
 
-:::tip Cypress
-A modern JavaScript end‑to‑end testing framework that runs directly in the browser, enabling fast, reliable UI automation with real‑time feedback.
+:::tip
 
-- **Year developed:** 2014
-- **Primary purpose:** Test web applications end‑to‑end in a real browser
-- **Target problem:** Provide a stable, developer‑friendly alternative to Selenium for UI automation
+## Cypress E2E Testing
+
+**What is it?** 
+Cypress is a modern, browser-native end-to-end testing framework that runs directly in the browser runtime. It provides a deterministic execution model, automatic waiting, and time-travel debugging for web application UIs.
+
+### 📚 Related Theory References
+* Test Automation — Core philosophy of UI test automation, selector stability, and the testing pyramid.
 :::
 
-Theory: UI Testing
+## 🧭 When to Use It
 
-
-## 🗺️ Context
-
-### History
-- Created by Brian Mann to address Selenium’s flakiness and complexity
-- Built around a **browser‑native execution model**
-- Became widely adopted in React, Vue, Angular, and modern frontend ecosystems
-- Known for its interactive runner, time‑travel debugging, and deterministic execution
-
-### Strengths & Limitations
-
-**Strengths**
-- Runs *inside* the browser → consistent, deterministic behaviour
-- Automatic waiting (no sleeps or explicit waits)
-- Time‑travel debugging (snapshot every step)
-- Great for modern SPAs (React, Vue, Angular)
-- Easy to write, read, and reason about
-
-**Limitations**
-- Not suitable for multi‑tab or multi‑domain flows
-- Limited support for native browser dialogs
-- Not ideal for backend‑only testing
-- Can struggle with complex authentication flows
-- Requires JavaScript/TypeScript ecosystem knowledge
-
-### TA‑Relevant Insights
-Cypress helps analysts understand:
-
-- how UI state changes over time
-- how asynchronous rendering affects behaviour
-- how routing works in SPAs
-- how user flows break under timing or state issues
-- how to interpret UI failures with precise snapshots
-- how to reason about DOM stability and selectors
-
-Cypress is a **thinking environment for UI behaviour**, not just a test runner.
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Testing modern single-page applications (React, Vue, Angular). • Validating user journeys and end-to-end browser flows. • Intercepting network requests to test UI behavior under mock conditions. | • Multi-tab or multi-domain routing scenarios. • Heavy backend-only API testing or high-performance load testing. • Low-level micro-unit logic calculations. |
 
 ---
 
-## 🧠 Mental Model
+## 🚀 Getting Started & Prerequisites
 
-### How to think in this environment
-Cypress uses a **command queue** and **automatic waiting**:
-
-- Commands don’t run immediately
-- Cypress queues them
-- Cypress retries until the DOM is ready
-- Assertions wait for the expected state
-
-This means:
-
-- no sleeps
-- no explicit waits
-- tests read like user journeys
-- failures show exactly what the UI looked like
-
-Think of Cypress as:
-
-- a **browser co‑pilot**
-- a **state observer**
-- a **time‑travel debugger**
-- a **deterministic UI simulator**
-
-### Ecosystem
-Cypress interacts with:
-
-- **React / Vue / Angular**
-- **TypeScript**
-- **Mocking tools** (cy.intercept)
-- **CI/CD pipelines**
-- **Component testing mode**
-- **Cypress Dashboard** (optional)
-- **Ant Design / Material UI** (component libraries)
+What prerequisites, dependencies, or initial configurations are required before interacting with Cypress?
+1. **Local Environment:** Node.js runtime and Cypress package installed locally (`npm install cypress --save-dev`).
+2. **Configuration Setup:** Cypress configuration file (`cypress.config.js`) and test spec directory (`cypress/e2e/`).
 
 ---
 
-## 📚 Core Concepts
+## 🔑 Tool Requirements
 
-<Tabs>
+* **Access URL / Portal:** Local interactive test runner GUI (`npx cypress open`) or headless CI terminal output.
+* **Authentication Method:** Local environment variables or programmatic API login seeding before test specs execute.
+* **Initial Setup Check:** Verify Cypress package execution and check browser availability (`npx cypress verify`).
 
-<TabItem value="engineering" label="Engineering">
+---
 
-Common workflows and commands used by engineers.
+## 📋 Common & Useful Workflows
 
-```shell
---------------
-Key Terminal Commands
---------------
-
-# Open Cypress UI
+```bash
+# 1. Open the interactive Cypress Test Runner GUI
 npx cypress open
 
-# Run tests headlessly
+# 2. Run all E2E test specs headlessly in CI mode
 npx cypress run
 
-# Run a specific spec
+# 3. Run a specific test spec file
 npx cypress run --spec "cypress/e2e/login.cy.js"
-```
 
-```javascript
---------------
-Basic Cypress Test
---------------
-describe("Login", () => {
-  it("logs in successfully", () => {
-    cy.visit("/login");
-    cy.get("#email").type("user@example.com");
-    cy.get("#password").type("password123");
-    cy.contains("Sign In").click();
-    cy.url().should("include", "/dashboard");
-  });
-});
-```
+# 4. Run tests against a specific browser target (e.g. chrome, firefox)
+npx cypress run --browser chrome
 
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-Useful interpretation patterns for analysts.
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Pattern 1: Selector Stability
-If tests fail:
-- Check if selectors changed
-- Prefer data-testid attributes
-- Avoid brittle CSS selectors
-
-# Pattern 2: Timing & Rendering
-If UI loads slowly:
-- Cypress retries automatically
-- Failures indicate true UI instability
-
-# Pattern 3: State Drift
-If tests pass locally but fail in CI:
-- Check environment variables
-- Check API mocks vs real calls
-- Check authentication flows
-```
-
-</TabItem>
-
-</Tabs>
-
----
-
-## 🔁 Common Patterns
-
-### Idioms and Typical Approaches
-- Use **cy.get()** with stable selectors
-- Use **cy.intercept()** to mock network calls
-- Use **cy.contains()** for user‑visible text
-- Keep tests atomic and behaviour‑focused
-- Use fixtures for stable test data
-- Use custom commands for repeated flows
-
-### Pitfalls
-- Using brittle selectors (CSS classes, deep DOM paths)
-- Forgetting that Cypress commands are asynchronous
-- Over‑mocking (tests diverge from real behaviour)
-- Testing too much in one scenario
-- Confusing command queue behaviour with promises
-
----
-
-## 🧪 Examples
-
-### Example: Intercepting an API Call
-
-```javascript
-cy.intercept("GET", "/api/users", { fixture: "users.json" }).as("getUsers");
-cy.visit("/users");
-cy.wait("@getUsers");
-cy.contains("Rebecca").should("be.visible");
-```
-
-### Example: Component Test (React)
-
-```javascript
-mount(<Button label="Submit" />);
-cy.contains("Submit").click();
-```
-
-### Example: Form Validation
-
-```javascript
-cy.get("input[name=email]").type("invalid");
-cy.contains("Email is not valid").should("be.visible");
 ```
 
 ---
 
-## 📝 Glossary
+## 🚨 Operational Triage Snapshots
 
-| Term | Definition |
-|------|------------|
-| **Command Queue** | Cypress schedules commands instead of running them immediately. |
-| **Automatic Waiting** | Cypress retries until the DOM reaches the expected state. |
-| **Time‑Travel Debugging** | Snapshots of each step for visual debugging. |
-| **Intercept** | Mock or observe network calls. |
-| **Fixture** | Static test data used in tests. |
-| **Spec File** | A Cypress test file. |
+:::danger
+Quick-reference diagnostics for common Cypress execution failures:
+:::
 
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Element Not Found / Timeout** | Brittle selector or slow asynchronous DOM rendering. | Selector specificity, CSS path stability, and element visibility states. | Refactor to use dedicated data attributes (e.g., `data-testid`) instead of structural CSS classes. |
+| **Test Flakiness in CI** | Environment timing variance or un-intercepted network requests. | `cy.intercept` stubs and asynchronous API response timing. | Add explicit network waiting blocks (`cy.wait()`) or stable assertion retries. |
+| **Cross-Origin Policy Error** | Test navigates across multiple distinct superdomains. | Cypress domain configuration limits and navigation URLs. | Refactor test flow or use `cy.origin()` blocks for multi-domain jumps. |
+| **State Leak Between Tests** | Shared application state or dirty session cookies remaining. | Test hooks (`beforeEach` / `afterEach`) and database teardowns. | Ensure proper state resetting, cache clearing, or session cleanup per spec. |
