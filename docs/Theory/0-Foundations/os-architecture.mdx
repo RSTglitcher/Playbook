@@ -33,7 +33,7 @@ import TabItem from '@theme/TabItem';
 
 ## Domain Deep-Dives
 
-### 🧠 Kernel Design & Core Abstractions
+#### 🧠 Kernel Design & Core Abstractions
 
 :::tip
 *Definition* The foundational layer managing hardware access, hardware abstraction, and execution safety boundaries.
@@ -41,13 +41,13 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"The OS kernel acts as the trusted broker between untrusted user-space applications and underlying hardware resources, enforcing security and resource fairness via hardware rings and system calls."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Monolithic Kernels:* High throughput, tight integration of drivers and filesystems, lower system call overhead, general-purpose computing.
 - *Choose / Prioritize Microkernels:* Maximum modularity, strict fault isolation (services in user-space), smaller security attack surface, high reliability requirements.
 - *Choose / Prioritize Hybrid Kernels:* Balancing monolithic performance with modular driver isolation for mainstream operating systems.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -70,13 +70,13 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"Concurrency models dictate how application logic maps to physical CPU cores, balancing context-switching overhead against parallel execution capacity."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Processes:* Maximum isolation, independent memory spaces, fault tolerance at the cost of high memory overhead and expensive context switches.
 - *Choose / Prioritize Threads:* Shared memory space within a process, efficient data sharing, moderate context switch cost, vulnerable to race conditions.
 - *Choose / Prioritize Coroutines / User-Space Threads:* Massive concurrency for I/O-bound workloads, lightweight scheduling, avoiding kernel context switch overhead.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -97,13 +97,13 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"Virtualization tradeoffs trade resource overhead for isolation density: bare metal offers maximum speed, VMs offer complete hardware isolation, and containers offer lightweight process isolation on a shared kernel."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Bare Metal:* Maximum raw performance, zero virtualization overhead, direct hardware tuning access.
 - *Choose / Prioritize Virtual Machines (VMs):* Strong multi-tenancy, custom kernel support, complete tenant isolation via hypervisors.
 - *Choose / Prioritize Containers:* Fast startup times, high density, lightweight packaging sharing the host kernel.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |

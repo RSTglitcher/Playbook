@@ -69,13 +69,13 @@ Storage models optimized for operational online transaction processing (OLTP), b
 
 > **Interview Pitch:** *"Choose relational databases when schema enforcement and strict ACID transactions across entities are mandatory; choose NoSQL when horizontal write scale, flexible schemas, or specialized access paths (Key-Value, Document, Graph) dictate performance."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Relational (PostgreSQL, MySQL):** Financial ledgers, complex multi-entity domain models, strict relational integrity, unpredictable query patterns.
 * **Choose Document (MongoDB):** Unstructured/semi-structured domain models, rapidly evolving product catalogs, hierarchical payloads.
 * **Choose Key-Value (DynamoDB, Redis):** High-throughput low-latency lookups by primary key, user sessions, shopping carts.
 * **Choose Graph (Neo4j):** Interconnected relationship networks, social graphs, fraud detection patterns.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Engine | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -107,12 +107,12 @@ High-speed data retrieval layers storing hot operational data in memory (RAM) to
 
 > **Interview Pitch:** *"Caching trades memory overhead for sub-millisecond response times—requiring explicit write patterns and invalidation strategies to prevent stale data and database stampedes."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Cache-Aside:** Standard read-heavy web applications where application logic manages fallback to DB on cache misses.
 * **Choose Write-Through / Write-Behind:** Write-intensive applications requiring synchronized cache/DB states or async write batching.
 * **Choose Local In-Memory Caching:** Single-instance microservices or static immutable lookup tables (zero network hop latency).
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Strategy / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -144,11 +144,11 @@ Specialized storage architectures optimized for multi-dimensional analytical agg
 
 > **Interview Pitch:** *"Analytical storage structures data by columns (Parquet/ClickHouse) to speed up aggregations, while Search Engines invert text into term lookups (Elasticsearch) for instant full-text filtering."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Columnar OLAP (ClickHouse, Snowflake):** Aggregating billions of rows over specific fields (e.g., calculating $p99$ metrics, financial reports, clickstream analytics).
 * **Choose Inverted Search Engines (Elasticsearch, OpenSearch):** Full-text search across unstructured text documents, log analysis (ELK stack), multi-faceted filtering.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Engine / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

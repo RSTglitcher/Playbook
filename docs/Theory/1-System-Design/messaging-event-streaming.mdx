@@ -67,11 +67,11 @@ Asynchronous communication models that decouple message producers from consumers
 
 > **Interview Pitch:** *"Message queues distribute transient tasks to worker pools until acknowledged and deleted, whereas Event Streams append immutable events to a persistent log that multiple consumers can read and replay independently."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Message Queues (RabbitMQ, SQS):** Transient job distribution, complex routing patterns (pub/sub, topic matching), per-message acknowledgments, worker task queues.
 * **Choose Event Streams (Apache Kafka, AWS Kinesis):** High-throughput event sourcing, real-time stream processing, multi-consumer data pipelines, needing historical event replay.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Architecture | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -102,11 +102,11 @@ Contracts offered by messaging systems regarding message loss and duplication, r
 
 > **Interview Pitch:** *"Distributed networks make true Exactly-Once delivery impossible without performance-killing two-phase commits—making At-Least-Once delivery with idempotent consumer handling the standard production architecture."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Enforce At-Least-Once + Idempotency:** Virtually all production microservice architectures (guarantees no data loss while protecting against duplicate processing).
 * **Accept At-Most-Once:** Non-critical high-frequency telemetry/metrics streaming where occasional data loss is preferable to latency or duplication.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Guarantee / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -137,11 +137,11 @@ Mechanisms controlling message distribution, sequential execution guarantees, an
 
 > **Interview Pitch:** *"Message ordering is guaranteed only within a single partition—requiring deterministic partition key hashing while balancing consumer throughput against processing lag."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Enforce Strict Partition Keys:** Sequential entity workflows (e.g., processing order updates for `AccountID` or `OrderID` in chronological sequence).
 * **Implement Backpressure Controls:** High-throughput consumers susceptible to downstream database or memory saturation.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Concept | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

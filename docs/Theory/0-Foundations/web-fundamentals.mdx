@@ -65,12 +65,12 @@ The foundation of data exchange on the web, bridging client requests to server r
 
 > **Interview Pitch:** *"HTTP is a stateless protocol where state is maintained at the application layer, trading connection overhead across protocol generations (HTTP/1.1 to HTTP/3) to optimize transport latency."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose REST (HTTP/JSON):** Standard CRUD APIs, external public integrations, resource-oriented modeling.
 * **Choose GraphQL:** Complex graph relationships, mobile clients requiring precise field filtering (preventing over-fetching).
 * **Choose WebSockets:** Low-latency bi-directional streaming (chat apps, live financial dashboards, collaborative tools).
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -99,11 +99,11 @@ Techniques for maintaining continuity, identity, and user context across statele
 
 > **Interview Pitch:** *"State management balances server-side session memory against stateless JWT self-containment—trading instant session revocation for effortless horizontal scaling."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Server-Side Sessions (Redis):** High security requirements, immediate session revocation needs (e.g., banking apps, admin portals).
 * **Choose Stateless JWT Tokens:** High-scale microservices, cross-domain SSO, edge-authenticated APIs.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -132,12 +132,12 @@ Strategies determining where UI template parsing, data fetching, and HTML render
 
 > **Interview Pitch:** *"Rendering models trade server compute for client performance—balancing fast initial page loads and SEO (SSR) against rich interactive user experiences (CSR)."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose SSR (Server-Side Rendering):** SEO-driven sites, dynamic landing pages, content portals, fast initial load priorities.
 * **Choose CSR (Client-Side Rendering):** Gated dashboards, highly interactive SaaS applications, offline-first PWAs.
 * **Choose Static (SSG / ISR):** Documentation sites, blogs, stable e-commerce catalog pages.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Model | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -166,11 +166,11 @@ Browser-enforced policies and HTTP headers designed to sandbox client web applic
 
 > **Interview Pitch:** *"Browser security enforces origin isolation—using SOP and CORS to prevent rogue domains from making unauthorized requests or reading cross-origin data."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Enforce CORS:** When exposing public or multi-domain APIs to third-party frontends.
 * **Enforce Strict Cookies:** When storing authentication tokens in browsers to prevent XSS and CSRF token theft.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

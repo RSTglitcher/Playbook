@@ -69,12 +69,12 @@ The physical and virtual organization of RAM into thread-isolated call stacks, d
 
 > **Interview Pitch:** *"The Stack manages thread-local, short-lived function execution frames with zero GC overhead, while the Heap stores long-lived shared dynamic objects that require garbage collection tracking."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Prefer Stack Allocation:** Short-lived primitive variables, local loop computations, performance-critical hot paths.
 * **Prefer Heap Allocation:** Large collections, shared multi-threaded domain objects, variable-length runtime data.
 * **Prefer Off-Heap Memory:** Large network buffers (Netty/NIO), high-throughput caching (e.g., Redis/RocksDB), preventing GC pause times on multi-gigabyte stores.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Region | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -106,11 +106,11 @@ Automated runtime mechanisms that trace, mark, and reclaim heap memory occupied 
 
 > **Interview Pitch:** *"Garbage collection automates memory management by tracing object references—trading background CPU overhead and occasional pause times for memory safety and zero dangling pointers."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Generational GC (Young vs Old):** Most web workloads where 90%+ of objects die young (Eデン generation).
 * **Reference Counting (ARC):** Real-time systems or languages like Rust/Swift requiring deterministic destruction without STW pauses.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism / Algorithm | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -142,11 +142,11 @@ The operating system and container orchestration boundaries controlling how virt
 
 > **Interview Pitch:** *"Virtual memory provides isolated address spaces using paging, but exceeding physical RAM leads to disk swap thrashing or swift container termination by the Linux kernel OOM killer."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Disable Swap in Containers:** Kubernetes environments where predictable latency is mandatory and node paging introduces severe performance hits.
 * **Configure Cgroup Limits Carefully:** Microservice deployments requiring hard memory ceilings to protect shared worker nodes.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Concept | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

@@ -37,7 +37,7 @@ import TabItem from '@theme/TabItem';
 
 ## Domain Deep-Dives
 
-### 🧠 Functional Programming
+#### 🧠 Functional Programming
 
 :::tip
 *Definition* A paradigm for modeling software as deterministic transformations of immutable data pipelines through pure, side-effect-free functions.
@@ -45,12 +45,12 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"FP minimizes bugs by eliminating shared mutable state—treating computations as pure data transformations where the same input always produces the exact same output."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Functional Programming:* High concurrency/parallelism requirements, complex data ingestion/ETL pipelines, and systems requiring strict testability and side-effect auditing.
 - *Choose / Prioritize Imperative/Mutable Alternatives:* State-heavy hardware/UI control contexts or strict memory-constrained environments where copying immutable objects incurs prohibitive performance overhead.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ import TabItem from '@theme/TabItem';
 | *Pure Functions* | Mixing network/database I/O deep inside core mathematical or validation logic. | Unpredictable unit test failures, flaky integration tests, and difficult dependency mocking. | Isolate side-effects to system edges (adapters/ports); keep core domain purely functional. |
 | *Immutability* | Copying massive in-memory arrays or objects repeatedly in high-throughput hot paths. | High CPU utilization, memory thrashing, and $p_{99}$ tail-latency spikes from GC allocation churn. | Use persistent data structures with structural sharing or local private mutation loops. |
 
-### 🧠 Object-Oriented Programming
+#### 🧠 Object-Oriented Programming
 
 :::tip
 *Definition* A paradigm for modeling software as bounded entities (objects) that encapsulate mutable state and expose behavior behind polymorphic contracts.
@@ -73,12 +73,12 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"OOP manages domain complexity by bundling related data and behavior into encapsulated entities, exposing clear contracts while protecting internal invariants."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Object-Oriented Programming:* Complex business domains with evolving entities (e.g., e-commerce orders, banking ledgers), large teams requiring strict access control boundaries, and pluggable runtime behavior requirements.
 - *Choose / Prioritize Alternative Approaches:* Pure data-flow transformations, stateless streaming architectures, or highly concurrent shared-state systems requiring lock-free scaling.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ import TabItem from '@theme/TabItem';
 | *Encapsulation* | Anemic Domain Models exposing public getters and setters for all internal state fields. | Data corruption across service layers, scattered validation logic, and untraceable state bugs. | Enforce private state; expose business-driven mutation methods that explicitly validate invariants. |
 | *Inheritance* | Building deep class inheritance hierarchies (>3 levels) to share utility code. | High developer friction, brittle base class regressions, and tight component coupling. | Refactor to *Composition over Inheritance* via interface injection. |
 
-### 🧠 Language Theory & Execution Models
+#### 🧠 Language Theory & Execution Models
 
 :::tip
 *Definition* A formal system of syntax, semantics, type systems, and runtime execution models that translates human logic into executable machine instructions.
@@ -101,12 +101,12 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"Language theory defines the rules of the machine—how syntax and types constrain behavior, and how memory management and execution models determine runtime performance and reliability."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Static / AOT Languages:* Low-latency services, high-throughput systems where GC pauses are unacceptable, and large enterprise codebases requiring strict build-time safety guarantees.
 - *Choose / Prioritize Dynamic / Interpreted Languages:* Rapid prototyping environments, high developer iteration speed requirements, and dynamic scripting contexts.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -121,7 +121,7 @@ import TabItem from '@theme/TabItem';
 | *Memory Management* | Treating heap allocation as zero-cost in high-throughput hot paths. | High $p_{99}$ tail-latency spikes coinciding with GC Stop-The-World pauses and container OOM crashes. | Reuse objects via pools, reduce transient allocations, or leverage stack-allocated primitives. |
 | *Execution Runtimes* | Deploying cold JIT runtimes (e.g., JVM/V8) into ephemeral serverless functions. | Extreme cold-start latency spikes for end users during traffic auto-scaling surges. | Use AOT-compiled binaries (Go, Rust, GraalVM) for serverless environments. |
 
-### 🧠 Frameworks & Libraries
+#### 🧠 Frameworks & Libraries
 
 :::tip
 *Definition* Ecosystem abstractions that structure application architectures and manage execution lifecycles, balancing development velocity against operational control.
@@ -129,12 +129,12 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"Frameworks provide architectural structure and manage component lifecycles through Inversion of Control (IoC), while libraries are targeted utilities called directly to extend functionality without surrendering execution flow."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize Frameworks:* Standard domain web applications and microservices where conventions eliminate infrastructure boilerplate and standardize team patterns.
 - *Choose / Prioritize Libraries & Custom Glue:* High-performance custom engines, middleware utilities, or domains requiring absolute control over execution flow and zero framework lock-in.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |
@@ -149,7 +149,7 @@ import TabItem from '@theme/TabItem';
 | *Framework Coupling* | Annotating core domain entities with framework-specific annotations (e.g., ORM entities). | High developer friction during major framework upgrades; inability to test business rules in isolation. | Apply Clean/Hexagonal Architecture to keep core business logic isolated from framework types. |
 | *Middleware Chaining* | Piling heavy database or synchronous I/O operations inside request interceptors. | Latency degradation across *all* endpoints; thread pool starvation under moderate traffic spikes. | Offload async tasks to background workers; keep middleware lightweight and non-blocking. |
 
-### 🧠 Data Structures & Algorithmic Logic
+#### 🧠 Data Structures & Algorithmic Logic
 
 :::tip
 *Definition* In-memory structures and branching conditionals that dictate how software organizes information and executes decisions, defining time and space complexity ($O(n)$) under scale.
@@ -157,12 +157,12 @@ import TabItem from '@theme/TabItem';
 
 *Interview Pitch:* *"Data structures organize memory for efficient access, while logic paths direct execution; together, their efficiency determines how system performance scales under data growth and load."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 
 - *Choose / Prioritize High-Performance Structures:* Hot paths, high-throughput loops, and database queries where access time directly impacts service latency and scaling stability.
 - *Choose / Prioritize Simple Collections:* Low-throughput administrative tools or small datasets where algorithmic optimization yields negligible real-world gains.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | --- | --- | --- | --- |

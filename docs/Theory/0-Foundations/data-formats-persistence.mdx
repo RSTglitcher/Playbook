@@ -73,11 +73,11 @@ How structured data is encoded into text or binary representations for storage, 
 
 > **Interview Pitch:** *"Serialization balances human readability against machine efficiency—trading text flexibility (JSON) for binary compact payloads and compile-time schema safety (Protobuf/Avro)."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Text (JSON/XML):** Public APIs, debugging visibility, rapid iteration, heterogenous clients.
 * **Choose Binary (Protobuf/Avro):** Microservice-to-microservice (gRPC), high-throughput data streams, low-latency hot paths, strict schema evolution.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Format | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -107,11 +107,11 @@ Externalized parameters, environment variables, and declarative manifests that c
 
 > **Interview Pitch:** *"Configuration externalizes runtime behavior and desired state—decoupling code deployments from environment-specific controls and infrastructure reconciliation."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose ENV Variables:** Environment secrets, simple flags, containerized runtime parameters.
 * **Choose Declarative Manifests (YAML/TOML):** Complex application structures, Kubernetes manifests, Infrastructure as Code (Terraform).
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -140,11 +140,11 @@ Tabular and binary storage representations optimized for row-based transactional
 
 > **Interview Pitch:** *"Analytics formats optimize memory layouts—using columnar storage (Parquet) to minimize disk I/O during aggregations compared to row-based formats (CSV)."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose CSV:** Simple data imports/exports, human inspection, lightweight integrations.
 * **Choose Parquet:** Big Data analytics (Spark/BigQuery/Snowflake), data lake storage, columnar queries.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Format | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -171,12 +171,12 @@ Mechanisms by which applications store, retrieve, and cache state across applica
 
 > **Interview Pitch:** *"Persistence guarantees state durability—balancing direct low-level control (JDBC) against developer velocity (ORMs), supported by ephemeral caching layers to offload databases."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Direct SQL / JDBC:** High-throughput query optimization, complex analytics, batch mutations.
 * **Choose ORM:** Rapid CRUD development, domain model mapping, standard transactional applications.
 * **Choose Caching:** Read-heavy workloads, expensive computed data, database offloading.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

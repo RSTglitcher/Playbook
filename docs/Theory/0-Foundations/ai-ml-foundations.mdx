@@ -55,7 +55,7 @@ import TabItem from '@theme/TabItem';
 <Tabs>
   <TabItem value="paradigms" label="1. Model Paradigms & Transformers" default>
 
-### 🧠 ML Paradigms & Transformer Architectures
+#### 🧠 ML Paradigms & Transformer Architectures
 
 :::tip
 
@@ -65,12 +65,12 @@ A spectrum of algorithms ranging from statistical pattern recognition (Classical
 
 > **Interview Pitch:** *"Machine learning shifts software development from explicit rule-based code to probabilistic models trained on patterns—culminating in Transformers that use self-attention to process unstructured context in parallel."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Classical ML (XGBoost/Random Forest):** Structured tabular data, predictable fraud detection, strict auditability/explainability requirements.
 * **Choose Deep Learning (CNN/RNN):** Computer vision, speech processing, specialized signal classification.
 * **Choose Generative AI / Transformers (LLMs):** Natural language understanding, code generation, unstructured text synthesis, multi-modal reasoning.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -99,11 +99,11 @@ The runtime mechanics of executing trained large language models, balancing toke
 
 > **Interview Pitch:** *"LLM inference is memory-bandwidth bound—generating output token-by-token using KV caching to avoid recalculating past context attention at the expense of high VRAM consumption."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Prioritize Low Latency (TTFB):** Interactive chat applications, real-time copilots, voice agents (require streaming + small models).
 * **Prioritize Batch Throughput:** Offline summarization, background dataset processing, document extraction (use high-batch inference servers).
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -133,12 +133,12 @@ Patterns for augmenting generative models with private enterprise data, domain-s
 
 > **Interview Pitch:** *"RAG injects dynamic enterprise truth into an LLM's context window at runtime, whereas fine-tuning alters static model behavior and formatting."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose RAG (Retrieval-Augmented Generation):** Dynamic enterprise data, frequently updated knowledge bases, strict source citation needs, zero training budget.
 * **Choose Fine-Tuning:** Enforcing niche output formatting, specialized domain jargon (medical/legal), or reducing prompt instruction size.
 * **Choose Autonomous Agents:** Multi-step reasoning tasks requiring external API calls, SQL querying, or iterative tool execution.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -168,10 +168,10 @@ Guardrails, evaluation metrics, and monitoring frameworks designed to manage non
 
 > **Interview Pitch:** *"AI governance enforces reliability over non-deterministic outputs—using input/output guardrails, evaluation benchmarks, and observability to catch hallucinations, prompt injections, and data leaks."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Enforce Deterministic Guardrails:** Production user-facing AI applications requiring strict schema adherence, safety filtering, and compliance logging.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |

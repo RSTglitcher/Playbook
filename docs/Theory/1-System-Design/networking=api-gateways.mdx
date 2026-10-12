@@ -69,11 +69,11 @@ Mechanisms that distribute incoming network traffic across backend compute insta
 
 > **Interview Pitch:** *"Layer 4 load balancing routes raw TCP packets for maximum throughput, while Layer 7 inspects HTTP/gRPC headers to perform smart, content-based routing at the expense of higher CPU overhead."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose Layer 4 (Network/TCP):** High-throughput data streams, non-HTTP protocols, ultra-low latency requirements (e.g., AWS NLB, IP Hash).
 * **Choose Layer 7 (Application/HTTP):** Microservice routing based on URL paths/headers, TLS termination, cookie sticky sessions (e.g., NGINX, AWS ALB).
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Strategy | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -105,12 +105,12 @@ A specialized reverse proxy managing external client access (North-South traffic
 
 > **Interview Pitch:** *"An API Gateway acts as the single point of entry for external traffic—abstracting microservice complexity while enforcing edge security, routing, and rate limiting."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Choose API Gateway:** Public-facing microservices requiring unified auth (JWT/OAuth), rate-limiting, edge CORS, and API key management.
 * **Choose Backend-For-Frontend (BFF):** Heterogenous client types (Mobile vs. Web vs. IoT) requiring custom response aggregation and payload tailoring.
 * **Choose Service Mesh (Envoy/Istio):** Complex internal East-West microservice-to-microservice security (mTLS), observability, and traffic splitting.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Architecture / Pattern | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
@@ -142,11 +142,11 @@ Traffic control patterns designed to protect backend services from load shedding
 
 > **Interview Pitch:** *"Resiliency patterns protect system availability—using Rate Limiting to reject excess requests at the edge and Circuit Breakers to isolate failing downstream dependencies."*
 
-#### 🧠 Decision Drivers
+##### 🧠 Decision Drivers
 * **Enforce Rate Limiting:** Protecting public APIs from DDoS attacks, enforcing tier-based API billing quotas, shielding databases from traffic surges.
 * **Enforce Circuit Breakers:** Calling third-party APIs or external microservices susceptible to transient network latency or outages.
 
-#### 🧬 Core Primitives & Off-the-Cuff Explanations
+##### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Mechanism / Algorithm | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
 | :--- | :--- | :--- | :--- |
