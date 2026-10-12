@@ -1,0 +1,152 @@
+---
+title: Observability & Telemetry Pillars
+sidebar_label: Telemetry Pillars
+description: Architectural patterns and foundational telemetry mechanisms covering metrics, structured logs, and distributed tracing.
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Observability & Telemetry Pillars
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** The three pillars of observability—metrics, logs, and distributed traces—provide the raw telemetry required to diagnose unknown-unknown failures in complex distributed systems.
+* **Core Primitives:** Time-series metric aggregation, structured log context propagation, and distributed trace context injection.
+* **BAU & Operational Realities:** Cardinality explosions, log storage cost saturation, trace sampling blind spots, and metric sampling jitter under load.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Metrics & Aggregation:** Focus on **high-cardinality label explosion** and **downsampling intervals** to evaluate storage costs and query latency.
+* **Structured Logging:** Focus on **contextual log enrichment** and **log-level sampling thresholds** to evaluate debugging clarity and storage footprint.
+* **Distributed Tracing:** Focus on **W3C trace context propagation** and **head/tail-based sampling** to evaluate request visibility and data volume trade-offs.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Metrics & Aggregation** | Local thread-safe counter atomic updates, gauge memory caching | Scrape endpoint concurrency limits, central time-series database ingestion throttling |
+| **Structured Logging** | Synchronous I/O file block writes, logging framework thread locking | Central log aggregator network socket saturation, ingestion queue backpressure |
+| **Distributed Tracing** | In-memory span context allocation, thread-local storage tracking | Distributed collector ingestion bottlenecks, trace backend span indexing delays |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Metrics & Aggregation** | Time-series memory buffer allocation, compression block sizing | Network bandwidth consumption during scrapes, long-term storage index growth |
+| **Structured Logging** | JSON string serialization CPU overhead, local disk buffer retention | Wide-area network log transmission volume, cloud storage cost scaling |
+| **Distributed Tracing** | Span attribute memory footprint, trace buffer retention limits | High-volume span payload transmission over network collectors, storage compaction load |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Metrics & Time-Series">
+
+### 📈 Metrics & Time-Series Aggregation
+
+:::tip
+
+**Definition**
+Numerical measurements recorded over time that quantify system state, resource utilization, and throughput, optimized for fast aggregations and alerting.
+:::
+
+> **Interview Pitch:** *"Metrics give you the high-level pulse of your system; they tell you something is broken fast, but they don't explain why."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Metrics:** Monitoring systemic resource usage, CPU/memory saturation, error rates, and triggering fast PagerDuty alerts.
+* **Choose / Prioritize Detailed Logs/Traces:** Investigating complex root causes, specific error payloads, or individual user transaction flows.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Cardinality** | The uniqueness count of distinct label values in a metric series. | High cardinality explodes time-series database memory and indexing costs. | Dimensional Cardinality |
+| **Counter vs. Gauge** | Counters only go up (e.g., request totals); gauges go up and down (e.g., memory usage). | Dictates mathematical rate calculations and alert threshold design. | Metric Type Semantics |
+| **Histogram & Quantiles** | Bucketing numerical values to calculate latency distributions (e.g., P99). | Enables visibility into tail-end latency outliers hidden by mathematical averages. | Distribution Quantile Bucketing |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **High-Cardinality Labels** | Using unbounded values (like user_id or raw request URLs) as metric label keys. | Time-series database memory exhaustion, slow queries, and scraping timeouts. | Remove high-cardinality attributes from metrics; move user IDs and request paths into traces or logs. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Structured Logging">
+
+### 📝 Structured Logging & Context
+
+:::tip
+
+**Definition**
+The practice of emitting logs as structured payloads (e.g., JSON) enriched with contextual metadata rather than unstructured plaintext strings.
+:::
+
+> **Interview Pitch:** *"Structured logs turn walls of unparseable text into queryable JSON records, letting you instantly filter logs by tenant ID, trace ID, or error code."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Structured JSON Logs:** Modern microservices and distributed environments requiring fast log indexing and cross-system correlation.
+* **Choose / Prioritize Plaintext Logs:** Simple legacy scripts or local debugging environments where human readability supersedes programmatic searchability.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Context Propagation** | Injecting correlation IDs (like trace IDs) into every log statement within a request. | Connects disparate log lines across multiple microservices into a unified narrative. | Correlated Log Context |
+| **Log Level Filtering** | Dynamically adjusting log verbosity (DEBUG, INFO, ERROR) based on environment config. | Controls storage volume and prevents sensitive data leaks in production. | Severity-Based Log Filtering |
+| **Log Sampling** | Discarding a percentage of high-frequency repetitive logs (e.g., 200 OK access logs). | Saves massive storage and network egress costs without losing critical error visibility. | Probabilistic Log Sampling |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Log Volume** | Emitting verbose DEBUG logs containing entire payloads for every high-volume request. | Log storage cost explosions, slow aggregator indexing, and disk fill-ups on worker nodes. | Restrict production logs to INFO/ERROR levels and implement dynamic probabilistic sampling. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Distributed Tracing">
+
+### ⛓️ Distributed Tracing & Propagation
+
+:::tip
+
+**Definition**
+The end-to-end tracking of a request as it traverses multiple services, asynchronous queues, and databases in a distributed architecture.
+:::
+
+> **Interview Pitch:** *"Distributed tracing is the ultimate debugging superpower, mapping the exact causal path, timing, and bottlenecks of a request across dozens of microservices."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Distributed Tracing:** Complex microservice topologies, event-driven architectures, or systems where latency bottlenecks are opaque.
+* **Choose / Prioritize Simple Monolithic Logs:** Single-process monolithic applications where execution threads stay within one codebase.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **W3C Trace Context** | Standardized HTTP headers (`traceparent`) passing trace and span IDs across services. | Ensures seamless interoperability between different tracing vendors and languages. | Distributed Context Propagation |
+| **Span & Parent-Child Tree** | Representing individual units of work (spans) linked together in a hierarchical tree. | Pinpoints exactly which downstream service call caused a latency spike. | Hierarchical Span Graph |
+| **Tail-Based Sampling** | Analyzing an entire completed trace before deciding whether to keep or discard it. | Preserves rare error traces while safely dropping 99% of normal successful traffic. | Post-Execution Trace Sampling |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Broken Trace Context** | Failing to pass W3C trace headers across message queues or third-party HTTP clients. | Orphaned spans in tracing dashboards, broken service graphs, and incomplete transaction trees. | Implement automatic tracing instrumentation libraries on all HTTP clients, gRPC channels, and message brokers. |
+
+  </TabItem>
+</Tabs>
