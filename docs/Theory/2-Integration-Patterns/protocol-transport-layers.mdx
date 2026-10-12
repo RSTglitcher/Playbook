@@ -1,663 +1,152 @@
 ---
-title: "HTTP"
+title: Protocol & Transport Layers
+sidebar_label: Protocol & Transport Layers
+description: Architectural patterns and underlying transport mechanisms governing how data moves securely and reliably across networks.
+sidebar_position: 4
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip
-HTTP (HyperText Transfer Protocol) is the foundational communication protocol of the web.  
-It defines *how* clients and servers exchange requests and responses.
+# Protocol & Transport Layers
 
-- **Year developed:** 1991  
-- **Primary purpose:** Client–server communication  
-- **Target problem:** Standardising how resources are requested, transferred, and represented  
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Protocol and transport layers govern the underlying mechanics of network communication, dictating delivery reliability, connection lifecycles, and formatting semantics between distributed systems.
+* **Core Primitives:** TCP/UDP transport flows, HTTP request-response framing, connection multiplexing, and cryptographic transport security (TLS).
+* **BAU & Operational Realities:** Connection resets, packet loss amplification, head-of-line blocking, and socket descriptor exhaustion under load.
 :::
 
----
+## 🔍 Theory Focus Point
 
-## 🗺️ Context
-
-### History
-HTTP was created by **Tim Berners‑Lee** alongside HTML as part of the original web architecture.  
-It evolved through:
-
-- **HTTP/0.9** — simple GET requests  
-- **HTTP/1.1** — persistent connections, headers, caching  
-- **HTTP/2** — multiplexing, binary framing  
-- **HTTP/3** — QUIC transport, faster and more reliable  
-
-|Code   |Status Meaning |
-|------|-------------------------------------------------------------|
-| **1xx** | Informational — Continue / Switching Protocols / Processing  |
-| **2xx** | Success — OK / Created / Accepted / No Content / Multi‑Status / etc. |
-| **3xx** | Redirection — Multiple Choices / Moved Permanently / Found / See Other / etc. |
-| **4xx** | Client Error — Bad Request / Unauthorized / Forbidden / Not Found / etc. |
-| **5xx** | Server Error — Internal Server Error / Not Implemented / Bad Gateway / Service Unavailable / etc. |
-
-HTTP underpins:
-
-- Web browsers  
-- APIs  
-- Microservices  
-- Mobile apps  
-- IoT devices  
-- Cloud services  
-
-### Strengths & Limitations
-
-**Strengths**
-- Simple, universal, well‑understood  
-- Stateless (scales horizontally)  
-- Flexible payloads (JSON, HTML, binary)  
-- Extensible via headers  
-- Works across all platforms  
-
-**Limitations**
-- Statelessness requires additional mechanisms for sessions  
-- Latency can be high in HTTP/1.1  
-- Verb semantics are often misused  
-- Caching behaviour can be complex  
-
-### TA‑Relevant Insights
-- HTTP reveals **how systems communicate**  
-- Understanding HTTP helps you debug APIs, microservices, and integrations  
-- Many issues surface in headers, status codes, or payloads  
-- HTTP is the backbone of REST, GraphQL, and most modern service architectures  
+* **Transport Mechanics:** Focus on **connection-oriented streams (TCP)** versus **datagram communication (UDP)** to evaluate reliability overhead and latency trade-offs.
+* **Application Protocols:** Focus on **HTTP/1.1 vs HTTP/2/3 multiplexing** and **binary serialization (gRPC)** to evaluate wire efficiency and head-of-line blocking.
+* **Security & Encryption:** Focus on **TLS handshakes** and **certificate lifecycle management** to evaluate encryption overhead and secure session establishments.
 
 ---
 
-## 🧠 Mental Model
-
-### **How to think in this environment**
-- HTTP is **request → response**  
-- Clients initiate; servers respond  
-- Everything is a **resource**  
-- Methods express **intent** (GET, POST, PUT, DELETE)  
-- Headers carry **metadata**  
-- Status codes express **outcome**  
-- Bodies carry **data**  
-
-### Ecosystem
-- **Methods:** GET, POST, PUT, PATCH, DELETE  
-- **Status codes:** 2xx, 3xx, 4xx, 5xx  
-- **Headers:** Content‑Type, Authorization, Accept  
-- **Payloads:** JSON, XML, HTML, binary  
-- **Auth:** OAuth, JWT, API keys  
-- **Transport:** TCP (HTTP/1.1, HTTP/2), QUIC (HTTP/3)  
-
----
-
-## 📚 Core Concepts
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="engineering" label="Engineering">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Transport Mechanics** | OS socket buffer allocation, file descriptor limits (EMFILE), TCP handshake queues | Network congestion window scaling, packet loss retries across wide-area networks |
+| **Application Protocols** | Serialization/deserialization CPU overhead, request parsing memory buffers | API gateway load balancer proxying, connection pool sharing across microservices |
+| **Security & Encryption** | In-memory cryptographic cipher execution, private key signing CPU contention | TLS negotiation latency, distributed key management service (KMS) verification calls |
 
-```http
-GET /users/123 HTTP/1.1
-Host: api.example.com
-Accept: application/json
-Authorization: Bearer <token>
-```
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Transport Mechanics** | Frame buffer memory footprints, socket state memory retention | Network link bandwidth saturation, round-trip time (RTT) amplification |
+| **Application Protocols** | Header compression/decompression memory usage, payload parsing overhead | Payload size inflation, cross-datacenter transmission latency |
+| **Security & Encryption** | Session key cache memory footprint, certificate chain size overhead | TLS handshake round-trip delays, cipher suite negotiation overhead |
 
-{
-  "id": 123,
-  "name": "Rebecca"
-}
-```
-
-### **Common Methods**
-
-- **GET** — retrieve a resource
-- **POST** — create or trigger an action
-- **PUT** — replace a resource
-- **PATCH** — partially update
-- **DELETE** — remove a resource
-
-### **Common Headers**
-
-- `Content-Type` — format of the body
-- `Accept` — what formats the client wants
-- `Authorization` — credentials
-- `Cache-Control` — caching rules
-- `User-Agent` — client identity
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-```http
-# Identify the endpoint
-GET /orders?customerId=42
-
-# Understand the response
-HTTP/1.1 404 Not Found
-
-# Spot auth issues
-HTTP/1.1 401 Unauthorized
-
-# Recognise rate limits
-HTTP/1.1 429 Too Many Requests
-
-# Inspect payload structure
-{
-  "orderId": 987,
-  "status": "pending",
-  "items": [...]
-}
-```
-
-### **Analyst Patterns**
-
-- Query parameters reveal **filtering logic**
-- Status codes reveal **system behaviour**
-- Headers reveal **auth, caching, and content negotiation**
-- JSON structure reveals **domain modelling**
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🔁 Common Patterns
-
-### Idioms
-- RESTful resource naming
-- JSON as the default payload
-- Stateless interactions
-- Pagination via query params
-- Versioning via headers or URL
-- Caching with `ETag` and `Cache-Control`
-
-### **⚠️ Pitfalls**
-- Misusing POST for everything
-- Returning 200 OK for errors
-- Missing or incorrect `Content-Type`
-- Overloaded endpoints with unclear semantics
-- Leaking sensitive data in responses
-- Ignoring idempotency rules
-
----
-
-## 🧪 Examples
-
-### **RESTful Resource**
-
-```http
-GET /products/42
-```
-
-### **Create Resource**
-
-```http
-POST /products
-Content-Type: application/json
-
-{
-  "name": "Laptop",
-  "price": 1200
-}
-```
-
-### **Partial Update**
-
-```http
-PATCH /products/42
-Content-Type: application/json
-
-{
-  "price": 1100
-}
-```
-
-### **Error Response**
-
-```http
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
-
-{
-  "error": "Missing required field: name"
-}
-```
-
----
-
-## 📝 Glossary
-
-- **Request** — client → server message
-- **Response** — server → client message
-- **Header** — metadata for request/response
-- **Status Code** — numeric indicator of outcome
-- **Payload** — body of the message
-- **Idempotent** — same request → same result (GET, PUT, DELETE)
-- **Stateless** — server stores no client session
-
-
----
-##  "Networking"
-
-
-
-:::tip
-### Definition
-**Networking Concepts** describe the patterns, abstractions, and behaviours that allow systems to communicate reliably across machines, services, and environments.
-They explain *how data moves*, *how services find each other*, and *how failures manifest* in distributed systems.
-:::
-
-**When to Use**
-- Investigating API failures
-- Reviewing distributed system behaviour
-- Assessing latency or performance issues
-- Designing service‑to‑service communication
-- Evaluating security boundaries
-- Understanding container or cloud networking
-
-**When Not to Use**
-- When the issue is clearly application‑level
-- When the system is local and not distributed
-- When early design does not yet involve communication paths
-
-Networking concepts matter most when **systems talk to each other.
-
----
-
-## 🎯 What Problem Does This Solve?
-
-Networking concepts solve the problem of **reliable, predictable communication** between distributed systems.
-
-| Benefit | Why it matters |
-|--------|----------------|
-| **Reliable communication** | Services can talk to each other predictably |
-| **Service discovery** | Systems can find the right endpoints dynamically |
-| **Performance awareness** | Understand latency, throughput, and bottlenecks |
-| **Security boundaries** | Control who can talk to whom |
-| **Failure diagnosis** | Recognise network‑driven issues quickly |
-
-For a TA, networking concepts help you reason about **API behaviour**, **distributed systems**, **security**, and **observability**.
-
----
-
-## 🧠 Conceptual Model
-
-Networking can be understood through four fundamental abstractions:
-
-### Core Components
-- **Addressing** — how systems identify each other
-- **Routing** — how data finds its way across networks
-- **Transport** — how data is delivered reliably (or unreliably)
-- **Application Protocols** — how meaning is structured on top of transport
-
-### Axes of Variation
-- Static vs dynamic addressing
-- Direct vs multi‑hop routing
-- Reliable vs unreliable transport
-- Request/response vs streaming vs messaging
-- Stateful vs stateless connections
-
----
-
-### Typical Lifecycle or Flow
-
-**Diagram(s):**
-
-Client --> DNS --> Routing --> Transport --> Application Protocol --> Response
-
-Typical flow:
-1. Resolve an address
-2. Route traffic to the destination
-3. Establish transport semantics (TCP/UDP)
-4. Apply protocol rules (HTTP, gRPC, WebSockets)
-5. Handle responses, retries, and failures
-
----
-
-## 🔍 TA Lens
-
-:::info How a TA Evaluates This Concept
-- What changes, what stays constant, what becomes a bottleneck
-- How the network behaves under pressure
-- Questions to ask during reviews or incidents
-- Risks, constraints, or trade-offs to surface
-:::
-
-**What happens when:**
-- Latency increases → slow APIs, cascading timeouts
-- Throughput drops → backpressure, queue growth
-- DNS misbehaves → wrong endpoints, stale records
-- Routing changes → traffic shifts unexpectedly
-- Transport degrades → packet loss, retries, resets
-
----
-
-## 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| **IP Address** | Numerical identifier for a host |
-| **Port** | Logical endpoint for communication |
-| **DNS** | Maps names to addresses |
-| **Latency** | Time for data to travel |
-| **Throughput** | Amount of data transferred per second |
-| **Load Balancer** | Distributes traffic across services |
-| **Firewall** | Controls allowed traffic |
-| **TLS** | Encryption for data in transit |
-| **CDN** | Network of edge nodes that cache and deliver content |
-
----
-
-## 🧬 Variants / Types
+## Domain Deep-Dives
 
 <Tabs>
+  <TabItem value="subtopic1" label="Transport Protocols">
 
-<TabItem value="addressing" label="Addressing">
+### 🚚 Transport Protocols (TCP & UDP)
 
-### Addressing
+:::tip
 
-**Key Characteristics**
-- Identifies where a service or machine lives
-- Uses IPs, ports, hostnames, DNS
+**Definition**
+The foundational transport layer protocols that define how data packets are packaged, addressed, ordered, and delivered across networks.
+:::
 
-**Behaviour**
-Addressing determines *how* a service is located and *what* endpoint is used.
+> **Interview Pitch:** *"TCP guarantees ordered, reliable delivery at the cost of handshake overhead and head-of-line blocking, whereas UDP prioritizes raw speed and minimal latency over delivery guarantees."*
 
-**Trade-offs**
-- Static addressing is simple but inflexible
-- Dynamic addressing is flexible but requires discovery
+#### 🧠 Decision Drivers
+* **Choose / Prioritize TCP:** Data integrity is non-negotiable (e.g., database writes, file transfers, REST APIs) where dropped packets cause critical failures.
+* **Choose / Prioritize UDP / QUIC:** Real-time streaming, live voice/video calls, or high-frequency telemetry where low latency supersedes packet perfection.
 
-**Problem Shapes**
-- “Why can’t service A reach service B?”
-- “Why is DNS returning the wrong address?”
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-</TabItem>
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **TCP 3-Way Handshake** | Establishing a synchronized connection state before data transfer begins. | Adds initial latency overhead; guarantees both peers are ready to exchange streams. | Connection-Oriented Handshake |
+| **Congestion Control** | Dynamic window sizing that throttles sending rates based on network capacity. | Prevents network collapse and packet storms during high-load intervals. | TCP Congestion Window |
+| **QUIC Transport** | UDP-based transport layer protocol powering HTTP/3 with built-in encryption. | Eliminates head-of-line blocking across streams and accelerates connection recovery. | Multiplexed Datagram Transport |
 
-<TabItem value="routing" label="Routing">
+#### 🚨 Misapplication Diagnostics in Production
 
-### Routing
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Exhausting File Descriptors** | Opening and closing millions of short-lived TCP sockets without connection pooling. | `EMFILE: Too many open files` errors, application crashes, and failed health checks. | Implement HTTP connection reuse, connection pooling, or persistent keep-alive settings. |
 
-**Key Characteristics**
-- Moves data between networks or services
-- Uses routes, gateways, NAT, load balancers
+  </TabItem>
 
-**Behaviour**
-Routing determines the path traffic takes and how it adapts to topology.
+  <TabItem value="subtopic2" label="Application Protocols">
 
-**Trade-offs**
-- More routing layers increase resilience but add latency
-- NAT simplifies networks but obscures source identity
+### 🌐 Application Protocols (HTTP/gRPC)
 
-**Problem Shapes**
-- Traffic not leaving a subnet
-- Requests reaching the wrong service
-- Load balancing inconsistencies
+:::tip
 
-</TabItem>
+**Definition**
+Protocols that sit on top of transport layers to define structured semantics, formatting, and request-response patterns for service communication.
+:::
 
-<TabItem value="transport" label="Transport">
+> **Interview Pitch:** *"Application protocols bridge raw network bytes into meaningful domain contracts—from human-readable REST/JSON payloads to ultra-fast binary gRPC streams."*
 
-### Transport
+#### 🧠 Decision Drivers
+* **Choose / Prioritize HTTP/REST:** Public developer ecosystems, web browser compatibility, browser-to-server APIs, and human-debuggable endpoints.
+* **Choose / Prioritize gRPC:** High-throughput internal microservice communication, strict schema typing, and low-latency binary streaming.
 
-**Key Characteristics**
-- Defines how data is delivered
-- Connection‑oriented vs connectionless
-- Reliability vs speed
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-**Behaviour**
-Transport governs retries, ordering, congestion control, and connection lifecycle.
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **HTTP Multiplexing (HTTP/2)** | Sending multiple concurrent requests and responses over a single TCP connection. | Eliminates head-of-line blocking at the application level; reduces connection overhead. | Stream Multiplexing |
+| **Protocol Buffers (Protobuf)** | Compact binary serialization format used primarily by gRPC. | Dramatically reduces payload sizes and speeds up serialization CPU overhead. | Binary Schema Serialization |
+| **Content Negotiation** | Mechanism allowing clients and servers to agree on data formats via headers. | Enables flexible API versioning and multi-format payload delivery. | MIME Type Negotiation |
 
-**Trade-offs**
-- TCP is reliable but slower
-- UDP is fast but lossy
+#### 🚨 Misapplication Diagnostics in Production
 
-**Problem Shapes**
-- Slow APIs
-- Connection resets
-- Packet loss
-- Retry storms
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Misusing HTTP Semantics** | Using POST methods for idempotent cacheable queries or returning 200 OK for application errors. | Broken HTTP caching proxies, inaccurate monitoring metrics, and client error-handling failures. | Align API designs strictly with standard HTTP status codes and method idempotency rules. |
 
-</TabItem>
+  </TabItem>
 
-<TabItem value="application" label="Application Protocols">
+  <TabItem value="subtopic3" label="Security & Encryption">
 
-### Application Protocols
+### 🔐 Transport Security & Encryption (TLS)
 
-**Key Characteristics**
-- Defines meaning on top of transport
-- Request/response, streaming, messaging
+:::tip
 
-**Behaviour**
-Protocols shape how clients and servers communicate and interpret data.
+**Definition**
+A cryptographic security protocol that secures data in transit between clients and servers through encryption, authentication, and integrity checks.
+:::
 
-**Trade-offs**
-- Rich protocols add power but increase complexity
-- Simple protocols are predictable but limited
+> **Interview Pitch:** *"Transport Layer Security ensures that even if network traffic is intercepted across untrusted public networks, the payloads remain entirely unreadable ciphertext."*
 
-**Problem Shapes**
-- API timeouts
-- Misinterpreted payloads
-- Version mismatches
+#### 🧠 Decision Drivers
+* **Choose / Prioritize TLS / mTLS:** All production network traffic, cloud-native service meshes, and sensitive data transmissions crossing trust boundaries.
+* **Choose / Prioritize Plaintext:** Strictly isolated internal loopback interfaces or non-critical local debugging environments.
 
-</TabItem>
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-<TabItem value="cdn" label="Content Delivery (CDN)">
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **TLS Handshake** | Cryptographic negotiation establishing session keys and verifying server identity. | Adds initial connection latency; essential for establishing trust boundaries. | Cryptographic Key Exchange |
+| **Mutual TLS (mTLS)** | Requiring both client and server to authenticate each other via digital certificates. | Enforces strict zero-trust workload identity verification inside service meshes. | Bilateral Certificate Auth |
+| **Cipher Suite Selection** | The agreed-upon collection of algorithms used for encryption and hashing. | Determines security strength and cryptographic processing CPU overhead. | Cryptographic Cipher Negotiation |
 
-### Content Delivery Network
+#### 🚨 Misapplication Diagnostics in Production
 
-**Purpose**
-Reduce latency and improve performance by delivering content from locations geographically closer to users.
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Expired Certificates** | Failing to automate TLS certificate rotation before expiration dates. | Sudden production outages, browser security warnings, and failing service-to-service calls. | Implement automated certificate lifecycle management (e.g., Let's Encrypt, cert-manager). |
 
-**Key Characteristics**
-- **Edge caching**: storing frequently accessed content near users
-- **Anycast routing**: directing users to the nearest edge node
-- **Request collapsing**: preventing multiple identical upstream requests
-- **TTL & cache expiry**: controlling freshness
-- **Failover routing**: redirecting to alternative nodes when edges fail
-
-**Behaviour**
-CDNs bring content closer to users and absorb traffic spikes.
-
-**Trade-offs**
-- Faster delivery vs risk of stale content
-- Lower origin load vs cache invalidation complexity
-
-**Problem Shapes**
-- “Why is the site fast for some users but slow for others?”
-- “Why is stale content being served?”
-- “Why is the origin under heavy load despite caching?”
-
-</TabItem>
-
-<TabItem value="failures" label="Networking Failure Patterns">
-
-### Networking Failure Patterns
-
-**Key Characteristics**
-- Recurring shapes of network‑driven failures
-- Often subtle and intermittent
-
-**Behaviour**
-Failures manifest as latency, resets, misrouting, or degraded throughput.
-
-**Trade-offs**
-- More diagnostics increase visibility but add noise
-
-**Problem Shapes**
-- DNS resolution failures
-- Timeouts
-- Connection resets
-- Packet loss
-- Misrouting
-- Port conflicts
-
-</TabItem>
-
-<TabItem value="protection" label="Networking Protection Patterns">
-
-### Networking Protection Patterns
-
-**Key Characteristics**
-- Define boundaries and enforce safe communication
-- Protect data in transit and restrict access
-
-**Behaviour**
-Protection patterns shape who can talk to whom and under what guarantees.
-
-**Trade-offs**
-- Stronger boundaries reduce flexibility
-- Encryption adds overhead
-
-**Problem Shapes**
-- Network segmentation
-- Firewalls & security groups
-- TLS / encryption in transit
-- Zero Trust networking
-- Rate limiting
-- mTLS
-
-</TabItem>
-
-<TabItem value="latency" label="Latency">
-
-### Latency
-
-**Key Characteristics**
-- The time it takes for data to travel between two points
-- Influenced by physical distance, congestion, and processing overhead
-- Often the root cause of “slow” systems
-- Highly variable in distributed systems
-- Directly impacts user experience and API responsiveness
-
-**Behaviour**
-Latency accumulates across every hop in a request path — DNS lookup, routing, load balancers, service processing, and response return.
-
-**Trade-offs**
-- Lower latency improves responsiveness but may require caching, CDNs, or architectural changes
-- Reducing latency can increase infrastructure cost
-- Stateless designs reduce routing constraints but may require more computation
-- Stateful designs can optimise performance but require sticky routing and careful failover
-
-**Examples**
-- Throughput
-- Bandwidth
-- Connection Lifecycle
-  - Open
-  - Use
-  - Idle
-  - Close
-- Statefulness vs Statelessness
-- Service Discovery
-- Network Segmentation
-
-</TabItem>
-
-<TabItem value="failure" label="Failure Patterns">
-
-### Failure Patterns
-
-#### DNS Resolution Failures
-- Wrong hostname
-- Stale DNS cache
-- Misconfigured records
-
-#### Timeouts
-- Slow downstream services
-- Network congestion
-- Misconfigured retry logic
-
-#### Connection Resets
-- Load balancer timeouts
-- Idle connection drops
-- Firewall interference
-
-#### Packet Loss
-- Congestion
-- Faulty links
-- Overloaded nodes
-
-#### Misrouting
-- Incorrect routes
-- NAT issues
-- Wrong load balancer target
-
-#### Port Conflicts
-- Multiple services binding to the same port
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
-
-
----
-
-## 🧩 System Interactions
-
-:::info How a TA Understands the System
-- How networking interacts with architecture, data, or runtime
-- How the network behaves under pressure
-- What changes, what stays constant, what becomes a bottleneck
-:::
-
-### Local Systems
-- OS networking stack
-- Container networking
-- Local routing tables
-- Connection lifecycle
-
-### Remote Systems
-- Load balancers
-- Gateways
-- DNS resolvers
-- CDNs
-- Cloud networking layers
-
-### Questions to ask during reviews or incidents
-- Where is the request actually going?
-- What address is being resolved?
-- What path does traffic take?
-- What retries, timeouts, or backoff exist?
-- What happens when the network is slow or lossy?
-
----
-
-## 💥 Outputs / Results
-
-:::note Special Considerations
-Networking outputs often manifest as **latency**, **throughput**, **connection behaviour**, or **error patterns**.
-:::
-
-### Success Modes
-
-| Result Type | Description |
-|-------------|-------------|
-| **Low latency** | Requests travel quickly end‑to‑end |
-| **Stable throughput** | Data flows consistently |
-| **Correct routing** | Traffic reaches the intended service |
-| **Secure communication** | TLS/mTLS enforced |
-| **Resilient behaviour** | Retries, backoff, and failover work correctly |
-
-### Failure Modes
-
-| Failure Type | Description |
-|-------------|-------------|
-| **DNS failures** | Wrong or stale address resolution |
-| **Timeouts** | Slow downstream or congested network |
-| **Connection resets** | Load balancer or firewall interference |
-| **Packet loss** | Congestion or faulty links |
-| **Misrouting** | Incorrect routes or NAT issues |
-| **Port conflicts** | Multiple services binding to the same port |
-
----
-
-## 🔗 Related Runbook Concepts
-
-- Distributed Systems Concepts
-- Containerised Environments
-- API & Communication Patterns
-- Observability
-- Cyber Security Patterns

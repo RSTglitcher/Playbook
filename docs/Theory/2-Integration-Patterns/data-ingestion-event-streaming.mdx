@@ -1,0 +1,152 @@
+---
+title: Data Ingestion & Event Streaming
+sidebar_label: Data Ingestion & Event Streaming
+description: Architectural patterns and protocols designed for high-throughput, real-time data ingestion, stream processing, and event-driven pipeline ingestion.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Data Ingestion & Event Streaming
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Data ingestion and event streaming patterns govern how distributed architectures ingest, buffer, and stream massive volumes of real-time telemetry and transactional events reliably.
+* **Core Primitives:** Message brokers, real-time event logs, backpressure handling, and consumer partition management.
+* **BAU & Operational Realities:** Consumer lag spikes, partition hotspotting, broker disk saturation, and unmanaged payload deserialization bottlenecks.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Ingestion Buffering:** Focus on **buffer sizing** and **producer throttling** to evaluate traffic spike absorption and memory pressure.
+* **Stream Partitioning:** Focus on **partition key distribution** and **consumer group scaling** to evaluate horizontal scalability and ordering guarantees.
+* **Delivery Guarantees:** Focus on **at-least-once processing** versus **idempotent consumers** to evaluate data integrity and duplicate event handling.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Ingestion Buffering** | Local memory ring buffer contention, thread-pool serialization overhead | Network load balancer connection saturation, producer-to-broker socket congestion |
+| **Stream Partitioning** | Consumer thread polling loops, local state store RocksDB compaction locks | Broker partition leader rebalancing, distributed consumer group coordination lag |
+| **Delivery Guarantees** | Local offset checkpoint flushing, transactional state caching | Multi-node acknowledgment coordination, distributed transaction log replication |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Ingestion Buffering** | Heap memory footprint for incoming batches, garbage collection pressure | Network bandwidth utilization, payload compression CPU overhead |
+| **Stream Partitioning** | Segment file index caching in OS page cache, disk read/write throughput | Long-term log storage scaling, cross-broker partition replication bandwidth |
+| **Delivery Guarantees** | Local transaction state log growth, dead-letter storage allocation | Deduplication state store memory footprint across distributed clusters |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Ingestion Buffering">
+
+### 📥 Ingestion Buffering & Flow Control
+
+:::tip
+
+**Definition**
+An architectural pattern that places durable buffers or rate-limited queues between high-volume data producers and processing consumers to absorb load spikes safely.
+:::
+
+> **Interview Pitch:** *"Ingestion buffering acts as a shock absorber for data streams, decoupling bursty producer traffic from downstream processing capacity to prevent cascading system crashes."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Ingestion Buffering:** High-throughput telemetry pipelines, bursty web clickstreams, or decoupling edge IoT devices from core processing microservices.
+* **Choose / Prioritize Synchronous Direct Pipelines:** Low-volume deterministic data ingestion where buffering overhead introduces unnecessary latency.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Ring Buffer (Disruptor)** | A pre-allocated circular memory buffer that passes messages without locking. | Eliminates garbage collection pressure and lock contention in high-performance threads. | Lock-Free Ring Buffer |
+| **Backpressure Signaling** | A mechanism where consumers signal producers to slow down when overwhelmed. | Prevents memory exhaustion and out-of-memory crashes under traffic surges. | Reactive Streams Backpressure |
+| **Write-Ahead Buffer** | Persisting incoming payloads to disk sequentially before acknowledging receipt. | Guarantees zero data loss if nodes crash mid-ingestion. | Durable Disk Staging |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Queues** | Allocating limitless in-memory queues to absorb incoming traffic spikes. | Out-Of-Memory (OOM) crashes and silent data drops when memory boundaries are breached. | Implement strict bounded queue capacities with explicit drop or spill-to-disk policies. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Stream Partitioning">
+
+### ⚡ Stream Partitioning & Ordering
+
+:::tip
+
+**Definition**
+The practice of splitting event streams into logical, parallel shards (partitions) based on keys to scale consumption horizontally while preserving order within each shard.
+:::
+
+> **Interview Pitch:** *"Partitioning is the secret sauce of streaming scale—it lets you process millions of events in parallel across an army of consumers, as long as you maintain strict ordering per key."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Stream Partitioning:** Massive event streams requiring horizontal worker scaling, multi-tenant event separation, or ordered per-entity processing.
+* **Choose / Prioritize Unpartitioned Queues:** Low-volume, single-threaded processing pipelines where parallel partitioning adds unnecessary complexity.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Partition Key Hash** | Hashing a unique field (e.g., user_id) to map events to a specific stream partition. | Ensures all events for the same entity land in the exact same partition sequence. | Consistent Hash Routing |
+| **Consumer Group** | A collection of worker instances cooperating to consume records from a topic. | Automatically balances partition ownership and scales processing throughput. | Consumer Group Rebalancing |
+| **Offset Tracking** | Recording the precise read position of a consumer within a partition log. | Enables resumable stream processing and exact recovery after node restarts. | Log Offset Checkpointing |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Partition Hotspotting** | Selecting poor partition keys (e.g., static strings or high-skew IDs). | One partition handles 95% of cluster traffic, causing worker thread starvation and bottlenecks. | Redesign partition keys using high-cardinality attributes combined with uniform hash distribution. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Delivery Guarantees">
+
+### 🛡️ Delivery Guarantees & Idempotency
+
+:::tip
+
+**Definition**
+The semantic guarantees governing message processing behavior across network failures, ensuring data is processed reliably without unintended duplication.
+:::
+
+> **Interview Pitch:** *"Distributed networks drop packets and trigger retries; streaming architectures must explicitly handle at-least-once delivery by making all downstream consumers fully idempotent."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize At-Least-Once with Idempotency:** Production financial transactions, audit logs, and operational telemetry where dropped messages are unacceptable.
+* **Choose / Prioritize At-Most-Once:** Non-critical metrics or UI telemetry where occasional data loss is preferable to duplication overhead.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **At-Least-Once Delivery** | Retrying message delivery until an explicit acknowledgment is received. | Eliminates data loss; guarantees duplicate message arrivals during network retries. | Acknowledgement Retries |
+| **Idempotent Consumer** | Designing processing logic so repeating the same event produces identical state. | Neutralizes duplicate message deliveries safely without corrupting data stores. | Idempotency Key De-duplication |
+| **Transactional Outbox** | Storing outgoing events in a local database table within the same transaction. | Prevents dual-write split-brain issues between database states and message brokers. | Transactional Outbox Pattern |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Assuming Exactly-Once** | Treating broker retries as exactly-once without implementing duplicate checks. | Double-processing customer orders, inflated metrics counts, and corrupted database aggregations. | Implement explicit deduplication tables or check idempotency keys at the consumer storage layer. |
+
+  </TabItem>
+</Tabs>

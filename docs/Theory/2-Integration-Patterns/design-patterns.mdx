@@ -11,108 +11,145 @@ import TabItem from '@theme/TabItem';
 # Design Patterns
 
 :::tip
-*Persona Lens: Workshop & Interview Mode*
-- *Quick Pitch:* Design patterns provide a proven, shared vocabulary and reusable structural blueprints for solving recurring software design and integration challenges.
-- *Core Primitives:* Creational controls, structural integration boundaries, behavioral collaboration protocols, and architectural decomposition.
-- *BAU & Operational Realities:* Over-engineering anti-patterns, hidden complexity, tight coupling through misapplication, and maintenance friction.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Design patterns provide a proven, shared vocabulary and reusable structural blueprints for solving recurring software design and integration challenges.
+* **Core Primitives:** Creational controls, structural integration boundaries, Behavioural collaboration protocols, and architectural decomposition.
+* **BAU & Operational Realities:** Over-engineering anti-patterns, hidden complexity, tight coupling through misapplication, and maintenance friction.
 :::
 
 ## 🔍 Theory Focus Point
 
-- *Creational Patterns:* Focus on *instantiation boundaries* and *configuration ownership* to evaluate [resource initialization overhead and dependency flexibility].
-- *Structural Patterns:* Focus on *interface decoupling* and *adapter boundaries* to evaluate [system coupling risks and integration resilience].
-- *Behavioral Patterns:* Focus on *responsibility distribution* and *runtime execution flow* to evaluate [call-stack complexity and distributed tracing visibility].
+* **Creational Patterns:** Focus on **instantiation boundaries** and **configuration ownership** to evaluate resource initialization overhead and dependency flexibility.
+* **Structural Patterns:** Focus on **interface decoupling** and **adapter boundaries** to evaluate system coupling risks and integration resilience.
+* **Behavioural Patterns:** Focus on **responsibility distribution** and **runtime execution flow** to evaluate call-stack complexity and distributed tracing visibility.
+
+---
 
 ## 🧩 System Interactions & Scaling Realities
 
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
 | Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
-| --- | --- | --- |
-| *Creational Patterns* | Singletons locking shared memory, local heap allocation during object construction, dependency graph resolution overhead | Cluster-wide singleton lock contention, distributed configuration initialization bottlenecks |
-| *Structural Patterns* | Adapter indirection overhead, decorator call-stack depth, in-memory proxy delegation | API gateway facades, middleware interception chains, service mesh sidecar proxies |
-| *Behavioral Patterns* | Event listener run queue notifications, strategy pattern virtual dispatch overhead, command execution queues | Pub/sub broadcast loops, asynchronous command buses, distributed message routing queues |
+| :--- | :--- | :--- |
+| **Creational Patterns** | Singletons locking shared memory, local heap allocation during object construction, dependency graph resolution overhead | Cluster-wide singleton lock contention, distributed configuration initialization bottlenecks |
+| **Structural Patterns** | Adapter indirection overhead, decorator call-stack depth, in-memory proxy delegation | API gateway facades, middleware interception chains, service mesh sidecar proxies |
+| **Behavioural Patterns** | Event listener run queue notifications, strategy pattern virtual dispatch overhead, command execution queues | Pub/sub broadcast loops, asynchronous command buses, distributed message routing queues |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Creational Patterns** | Heap memory footprint for instantiated caches, object graph memory overhead | Configuration payload transmission size, distributed startup coordination delay |
+| **Structural Patterns** | Call stack growth across wrapper layers, decorator object instantiation overhead | Interception network latency, payload transformation overhead at gateway boundaries |
+| **Behavioural Patterns** | Queue depth memory consumption, listener registry map memory scaling | Message broker backpressure handling, asynchronous event log throughput limits |
+
+  </TabItem>
+</Tabs>
+
+---
 
 ## Domain Deep-Dives
 
-#### 🧠 Creational Patterns
+<Tabs>
+  <TabItem value="subtopic1" label="Creational Patterns">
+
+### 🏭 Creational Patterns
 
 :::tip
-*Definition* Reusable blueprints that manage object instantiation, decoupling creation logic from system consumption to control resource ownership and configuration.
+
+**Definition**
+Reusable blueprints that manage object instantiation, decoupling creation logic from system consumption to control resource ownership and configuration.
 :::
 
-*Interview Pitch:* *"Creational patterns govern how objects are instantiated, ensuring that systems can configure and spin up resources flexibly without scattering hardcoded initialization logic everywhere."*
+> **Interview Pitch:** *"Creational patterns govern how objects are instantiated, ensuring that systems can configure and spin up resources flexibly without scattering hardcoded initialization logic everywhere."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Singletons / Factories:** Centralizing scarce resource ownership (e.g., connection pools, configuration loaders) or abstracting complex conditional instantiation logic.
+* **Choose / Prioritize Direct Instantiation:** Simple, lightweight domain objects where configuration overhead and indirection provide zero architectural value.
 
-- *Choose / Prioritize Singletons / Factories:* Centralizing scarce resource ownership (e.g., connection pools, configuration loaders) or abstracting complex conditional instantiation logic.
-- *Choose / Prioritize Direct Instantiation:* Simple, lightweight domain objects where configuration overhead and indirection provide zero architectural value.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *Singleton* | Ensures only one instance exists and provides a global access point. | Controls shared state, but introduces hidden global dependencies and tight coupling. | Global State & Instance Control |
-| *Factory Method* | Delegates object creation to subclasses or creator functions. | Centralizes construction logic and supports extensibility without modifying client code. | Polymorphic Instantiation |
-| *Builder* | Constructs complex objects step-by-step using a fluent API. | Eliminates telescoping constructors and makes complex object configuration readable. | Fluent Construction Pattern |
+| :--- | :--- | :--- | :--- |
+| **Singleton** | Ensures only one instance exists and provides a global access point. | Controls shared state, but introduces hidden global dependencies and tight coupling. | Global State & Instance Control |
+| **Factory Method** | Delegates object creation to subclasses or creator functions. | Centralizes construction logic and supports extensibility without modifying client code. | Polymorphic Instantiation |
+| **Builder** | Constructs complex objects step-by-step using a fluent API. | Eliminates telescoping constructors and makes complex object configuration readable. | Fluent Construction Pattern |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Singleton* | Using Singletons as a shortcut for global state storage across concurrent threads. | Race conditions, difficult unit-test isolation, and thread contention bottlenecks. | Replace with Dependency Injection (DI) to pass scoped instances explicitly. |
-| *Builder* | Over-engineering simple data classes or DTOs with complex builder chains. | Unnecessary code verbosity, boilerplate inflation, and slower compilation/runtime inspection. | Use standard language constructors or records for simple data structures. |
+| :--- | :--- | :--- | :--- |
+| **Singleton** | Using Singletons as a shortcut for global state storage across concurrent threads. | Race conditions, difficult unit-test isolation, and thread contention bottlenecks. | Replace with Dependency Injection (DI) to pass scoped instances explicitly. |
+| **Builder** | Over-engineering simple data classes or DTOs with complex builder chains. | Unnecessary code verbosity, boilerplate inflation, and slower compilation/runtime inspection. | Use standard language constructors or records for simple data structures. |
 
-#### 🧠 Structural Patterns
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Structural Patterns">
+
+### 🔌 Structural Patterns
 
 :::tip
-*Definition* Design idioms that shape relationships and interfaces between classes and components, ensuring systems can integrate cleanly despite differing contracts.
+
+**Definition**
+Design idioms that shape relationships and interfaces between classes and components, ensuring systems can integrate cleanly despite differing contracts.
 :::
 
-*Interview Pitch:* *"Structural patterns handle how classes and components are composed together, building clean abstraction boundaries and adapters to bridge incompatible interfaces."*
+> **Interview Pitch:** *"Structural patterns handle how classes and components are composed together, building clean abstraction boundaries and adapters to bridge incompatible interfaces."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Structural Patterns:** Integrating legacy systems with modern codebases, wrapping complex third-party libraries, or dynamically adding cross-cutting behaviors.
+* **Choose / Prioritize Direct Integration:** Tightly coupled monolithic modules where interface translation layers add unnecessary latency and indirection.
 
-- *Choose / Prioritize Structural Patterns:* Integrating legacy systems with modern codebases, wrapping complex third-party libraries, or dynamically adding cross-cutting behaviors.
-- *Choose / Prioritize Direct Integration:* Tightly coupled monolithic modules where interface translation layers add unnecessary latency and indirection.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *Adapter* | Converts one interface into another expected by the client. | Enables systems with incompatible contracts to interoperate without rewriting core logic. | Wrapper / Interface Translation |
-| *Facade* | Provides a simplified, unified interface to a complex subsystem. | Hides internal component complexity behind a single clean entry point. | Subsystem Encapsulation |
-| *Decorator* | Dynamically attaches new behaviors to an object without altering its code. | Avoids deep inheritance subclass explosions through flexible runtime composition. | Runtime Behavior Wrapping |
+| :--- | :--- | :--- | :--- |
+| **Adapter** | Converts one interface into another expected by the client. | Enables systems with incompatible contracts to interoperate without rewriting core logic. | Wrapper / Interface Translation |
+| **Facade** | Provides a simplified, unified interface to a complex subsystem. | Hides internal component complexity behind a single clean entry point. | Subsystem Encapsulation |
+| **Decorator** | Dynamically attaches new behaviors to an object without altering its code. | Avoids deep inheritance subclass explosions through flexible runtime composition. | Runtime Behavior Wrapping |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Facade* | Allowing a Facade to absorb all business logic, turning it into a "God Object." | Monolithic maintenance bottlenecks, high internal coupling, and untestable components. | Decompose the Facade into domain-driven service boundaries. |
-| *Decorator* | Piling on excessive nested decorators in hot paths. | Deep call stacks, difficult stack trace debugging, and minor performance degradation. | Flatten wrapper chains or convert performance-critical paths to direct execution. |
+| :--- | :--- | :--- | :--- |
+| **Facade** | Allowing a Facade to absorb all business logic, turning it into a "God Object." | Monolithic maintenance bottlenecks, high internal coupling, and untestable components. | Decompose the Facade into domain-driven service boundaries. |
+| **Decorator** | Piling on excessive nested decorators in hot paths. | Deep call stacks, difficult stack trace debugging, and minor performance degradation. | Flatten wrapper chains or convert performance-critical paths to direct execution. |
 
-#### 🧠 Behavioral Patterns
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Behavioural Patterns">
+
+### ⚡ Behavioural Patterns
 
 :::tip
-*Definition* Patterns that govern communication, responsibility distribution, and algorithmic execution flow between objects and services.
+
+**Definition**
+Patterns that govern communication, responsibility distribution, and algorithmic execution flow between objects and services.
 :::
 
-*Interview Pitch:* *"Behavioral patterns focus on how objects communicate and distribute responsibility, ensuring runtime logic is flexible and decoupled from concrete implementations."*
+> **Interview Pitch:** *"Behavioural patterns focus on how objects communicate and distribute responsibility, ensuring runtime logic is flexible and decoupled from concrete implementations."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Behavioural Patterns:** Complex state machines, event-driven workflows, multi-listener communication, or algorithms that must swap dynamically based on runtime context.
+* **Choose / Prioritize Hardcoded Control Flow:** Simple, linear business logic where standard conditional branching (if/else or switch) is fully sufficient and easier to trace.
 
-- *Choose / Prioritize Behavioral Patterns:* Complex state machines, event-driven workflows, multi-listener communication, or algorithms that must swap dynamically based on runtime context.
-- *Choose / Prioritize Hardcoded Control Flow:* Simple, linear business logic where standard conditional branching (`if/else` or `switch`) is fully sufficient and easier to trace.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *Strategy* | Encapsulates interchangeable algorithms behind a common interface. | Eliminates massive conditional branches; allows swapping behavior at runtime. | Polymorphic Algorithm Dispatch |
-| *Observer* | Notifies multiple dependent listeners automatically when state changes. | Decouples event producers from consumers, enabling event-driven architectures. | Publish-Subscribe in-memory |
-| *Command* | Encapsulates a request as an independent object. | Enables operation queueing, logging, parameterization, and undo/redo capabilities. | Request Encapsulation |
+| :--- | :--- | :--- | :--- |
+| **Strategy** | Encapsulates interchangeable algorithms behind a common interface. | Eliminates massive conditional branches; allows swapping behavior at runtime. | Polymorphic Algorithm Dispatch |
+| **Observer** | Notifies multiple dependent listeners automatically when state changes. | Decouples event producers from consumers, enabling event-driven architectures. | Publish-Subscribe in-memory |
+| **Command** | Encapsulates a request as an independent object. | Enables operation queueing, logging, parameterization, and undo/redo capabilities. | Request Encapsulation |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Observer* | Emitting unconstrained events to hundreds of silent listeners without backpressure. | Cascading event loops, memory leaks from dangling listener references, and hard-to-trace bugs. | Track listener references explicitly, limit event fan-out, or use bounded reactive streams. |
-| *Strategy* | Creating hundreds of tiny strategy classes for minor configuration variations. | Directory bloat, high developer cognitive load, and over-engineered architecture. | Use simple configuration maps or inline lambda functions for lightweight variations. |
+| :--- | :--- | :--- | :--- |
+| **Observer** | Emitting unconstrained events to hundreds of silent listeners without backpressure. | Cascading event loops, memory leaks from dangling listener references, and hard-to-trace bugs. | Track listener references explicitly, limit event fan-out, or use bounded reactive streams. |
+| **Strategy** | Creating hundreds of tiny strategy classes for minor configuration variations. | Directory bloat, high developer cognitive load, and over-engineered architecture. | Use simple configuration maps or inline lambda functions for lightweight variations. |
+
+  </TabItem>
+</Tabs>

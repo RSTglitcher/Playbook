@@ -11,30 +11,40 @@ import TabItem from '@theme/TabItem';
 # Security Architecture
 
 :::tip
-*Persona Lens: Workshop & Interview Mode*
-- *Quick Pitch:* Security architecture safeguards systems by establishing strict trust boundaries, enforcing least privilege, and designing defense-in-depth mechanisms to ensure that localized breaches cannot cascade into total system compromise.
-- *Core Primitives:* Authentication and authorization gates, input validation channels, encryption boundaries, and least-privilege compartmentalization.
-- *BAU & Operational Realities:* Privilege escalation paths, silent data exfiltration, authorization bypasses, and unmonitored lateral movement under load.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Security architecture safeguards systems by establishing strict trust boundaries, enforcing least privilege, and designing defense-in-depth mechanisms to ensure that localized breaches cannot cascade into total system compromise.
+* **Core Primitives:** Authentication and authorization gates, input validation channels, encryption boundaries, and least-privilege compartmentalization.
+* **BAU & Operational Realities:** Privilege escalation paths, silent data exfiltration, authorization bypasses, and unmonitored lateral movement under load.
 :::
 
 ## 🔍 Theory Focus Point
 
-- *Identity & Trust:* Focus on *cryptographic session validation* and *fine-grained attribute-based access control* to evaluate perimeter defense and privilege enforcement.
-- *Data Protection:* Focus on *transit encryption (TLS)* and *envelope encryption at rest* to evaluate data confidentiality and secrets segregation.
-- *Resilience & Containment:* Focus on *network micro-segmentation* and *fail-closed exception handling* to evaluate blast radius limitation and threat isolation.
+* **Identity & Trust:** Focus on **cryptographic session validation** and **fine-grained attribute-based access control** to evaluate perimeter defense and privilege enforcement.
+* **Data Protection:** Focus on **transit encryption (TLS)** and **envelope encryption at rest** to evaluate data confidentiality and secrets segregation.
+* **Resilience & Containment:** Focus on **network micro-segmentation** and **fail-closed exception handling** to evaluate blast radius limitation and threat isolation.
 
 ---
 
 ## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
-  <TabItem value="security-interactions" label="1. Security Contention & Scale" default>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-| *Domain / Concept* | *Local Runtime Interaction* | *Remote & Distributed Interaction* |
-| ----- | ----- | ----- |
-| *Authentication & AuthZ* | Local token decryption, cache lookups, thread security context binding | Remote Identity Provider (IdP) public key fetches, distributed session state verification |
-| *Data Protection* | In-memory cryptographic cipher execution, local secret masking | Transport layer security handshakes, distributed key management service (KMS) calls |
-| *Input Validation* | CPU-intensive regex matching, schema parsing, sanitization buffers | Edge API gateway filtering, upstream payload payload inspection |
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Authentication & AuthZ** | Local token decryption, cache lookups, thread security context binding | Remote Identity Provider (IdP) public key fetches, distributed session state verification |
+| **Data Protection** | In-memory cryptographic cipher execution, local secret masking | Transport layer security handshakes, distributed key management service (KMS) calls |
+| **Input Validation** | CPU-intensive regex matching, schema parsing, sanitization buffers | Edge API gateway filtering, upstream payload inspection |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Authentication & AuthZ** | Session cache memory footprint, lookup map contention | Identity provider throughput capacity, token size impact on network bandwidth |
+| **Data Protection** | Cryptographic buffer allocations, CPU crypto-acceleration overhead | Key management service latency, ciphertext payload size overhead |
+| **Input Validation** | Heap memory allocation during string manipulation and regex evaluation | Payload size constraints at the API gateway, inspection pipeline latency |
 
   </TabItem>
 </Tabs>
@@ -44,95 +54,100 @@ import TabItem from '@theme/TabItem';
 ## Domain Deep-Dives
 
 <Tabs>
-  <TabItem value="subtopic1" label="1. Authentication & Authorization" default>
+  <TabItem value="subtopic1" label="Authentication & Authorization" default>
 
 ### 🛡️ Authentication & Authorization Controls
 
 :::tip
-*Definition* A comprehensive identity and access framework that verifies who an actor is (Authentication) and enforces what they are allowed to do (Authorization) across all system boundaries.
+
+**Definition**
+A comprehensive identity and access framework that verifies who an actor is (Authentication) and enforces what they are allowed to do (Authorization) across all system boundaries.
 :::
 
-> *Interview Pitch:* *"Authentication and authorization are the bouncers and locksmiths of your microservices ecosystem; authenticating proves you are who you say you are, while authorization ensures you only touch the resources you are explicitly cleared to access."*
+> **Interview Pitch:** *"Authentication and authorization are the bouncers and locksmiths of your microservices ecosystem; authenticating proves you are who you say you are, while authorization ensures you only touch the resources you are explicitly cleared to access."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Zero-Trust Frameworks:* Distributed cloud-native environments, multi-tenant architectures, or zero-perimeter networks where internal requests cannot be assumed safe.
-- *Choose / Prioritize Perimeter-Only Trust:* Highly isolated legacy corporate intranets or single-tenant internal tools with strict physical network boundaries.
+* **Choose / Prioritize Zero-Trust Frameworks:** Distributed cloud-native environments, multi-tenant architectures, or zero-perimeter networks where internal requests cannot be assumed safe.
+* **Choose / Prioritize Perimeter-Only Trust:** Highly isolated legacy corporate intranets or single-tenant internal tools with strict physical network boundaries.
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Stateless Tokens (JWT)* | Digitally signed data packets containing user claims and permissions. | Eliminates database session lookups on every call; requires robust public-key validation. | JSON Web Tokens |
-| *Role-Based Access (RBAC)* | Assigning permissions to static operational roles (e.g., Admin, Editor). | Simplifies permission management; can lead to privilege creep if roles become too broad. | Role-Based Access Control |
-| *Attribute-Based Access (ABAC)* | Dynamic access decisions based on user traits, resource type, and environmental context. | Highly granular security policy enforcement; introduces evaluation performance overhead. | Attribute-Based Access Control |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Stateless Tokens (JWT)** | Digitally signed data packets containing user claims and permissions. | Eliminates database session lookups on every call; requires robust public-key validation. | JSON Web Tokens |
+| **Role-Based Access (RBAC)** | Assigning permissions to static operational roles (e.g., Admin, Editor). | Simplifies permission management; can lead to privilege creep if roles become too broad. | Role-Based Access Control |
+| **Attribute-Based Access (ABAC)** | Dynamic access decisions based on user traits, resource type, and environmental context. | Highly granular security policy enforcement; introduces evaluation performance overhead. | Attribute-Based Access Control |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *Token Validation* | Trusting incoming JWT payloads without verifying signatures or expiration dates. | Unauthorized privilege escalation via forged or expired user tokens. | Always enforce cryptographic signature verification (RS256/Ed25519) and expiration checks. |
-| *Missing Object-Level Checks* | Relying solely on UI-level hiding or missing back-end ownership validation. | Insecure Direct Object Reference (IDOR) allowing users to query other users' data. | Enforce explicit server-side tenant and resource ownership checks on every database query. |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Token Validation** | Trusting incoming JWT payloads without verifying signatures or expiration dates. | Unauthorized privilege escalation via forged or expired user tokens. | Always enforce cryptographic signature verification (RS256/Ed25519) and expiration checks. |
+| **Missing Object-Level Checks** | Relying solely on UI-level hiding or missing back-end ownership validation. | Insecure Direct Object Reference (IDOR) allowing users to query other users' data. | Enforce explicit server-side tenant and resource ownership checks on every database query. |
 
   </TabItem>
-  <TabItem value="subtopic2" label="2. Input Validation & Injection Prevention">
+
+  <TabItem value="subtopic2" label="Input Validation & Injection Prevention">
 
 ### 🔍 Input Validation & Injection Prevention
 
 :::tip
-*Definition* A proactive defense pattern that validates, sanitizes, and escapes all untrusted external data before it reaches application business logic, storage layers, or interpreters.
+
+**Definition**
+A proactive defense pattern that validates, sanitizes, and escapes all untrusted external data before it reaches application business logic, storage layers, or interpreters.
 :::
 
-> *Interview Pitch:* *"Never trust user input—treat every inbound data stream as hostile until it has been strictly validated against an allowlist and safely parameterized before execution."*
+> **Interview Pitch:** *"Never trust user input—treat every inbound data stream as hostile until it has been strictly validated against an allowlist and safely parameterized before execution."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Strict Allowlisting:* Public-facing APIs, form submissions, query parsers, and command-line execution interfaces.
-- *Choose / Prioritize Permissive Denylists:* Highly internal trusted pipelines where schemas are strictly controlled (though allowlisting remains preferred).
+* **Choose / Prioritize Strict Allowlisting:** Public-facing APIs, form submissions, query parsers, and command-line execution interfaces.
+* **Choose / Prioritize Permissive Denylists:** Highly internal trusted pipelines where schemas are strictly controlled (though allowlisting remains preferred).
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Parameterized Queries* | Separating SQL code logic from data values using query variables. | Completely neutralizes SQL injection by ensuring input is never treated as code. | Query Parameterization |
-| *Type & Schema Validation* | Enforcing rigid structural schemas (e.g., JSON Schema) on incoming payloads. | Rejects malformed or unexpected payloads early at the edge gateway. | Structural Schema Enforcement |
-| *Output Context Encoding* | Escaping HTML, JavaScript, or shell special characters prior to rendering. | Prevents Cross-Site Scripting (XSS) and command injection vectors. | Context-Aware Output Encoding |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Parameterized Queries** | Separating SQL code logic from data values using query variables. | Completely neutralizes SQL injection by ensuring input is never treated as code. | Query Parameterization |
+| **Type & Schema Validation** | Enforcing rigid structural schemas (e.g., JSON Schema) on incoming payloads. | Rejects malformed or unexpected payloads early at the edge gateway. | Structural Schema Enforcement |
+| **Output Context Encoding** | Escaping HTML, JavaScript, or shell special characters prior to rendering. | Prevents Cross-Site Scripting (XSS) and command injection vectors. | Context-Aware Output Encoding |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *String Concatenation* | Constructing SQL statements or system commands via direct string interpolation. | High-risk database table extraction or remote code execution via injection payloads. | Refactor queries to use native database drivers with bound parameters. |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **String Concatenation** | Constructing SQL statements or system commands via direct string interpolation. | High-risk database table extraction or remote code execution via injection payloads. | Refactor queries to use native database drivers with bound parameters. |
 
   </TabItem>
-  <TabItem value="subtopic3" label="3. Data Protection & Cryptography">
+
+  <TabItem value="subtopic3" label="Data Protection & Cryptography">
 
 ### 🔐 Data Protection & Cryptography
 
 :::tip
-*Definition* A comprehensive security discipline that protects sensitive data at rest, in transit, and during processing through strong encryption algorithms, secure hashing, and strict key management.
+
+**Definition**
+A comprehensive security discipline that protects sensitive data at rest, in transit, and during processing through strong encryption algorithms, secure hashing, and strict key management.
 :::
 
-> *Interview Pitch:* *"Data protection ensures that even if an attacker breaches your perimeter and steals your database backups or intercepts network traffic, they find nothing more than unreadable ciphertext."*
+> **Interview Pitch:** *"Data protection ensures that even if an attacker breaches your perimeter and steals your database backups or intercepts network traffic, they find nothing more than unreadable ciphertext."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Envelope Encryption:* Storing sensitive PII, financial records, or secrets in multi-tenant cloud storage or databases.
-- *Choose / Prioritize Plaintext Storage:* Public, non-sensitive configuration parameters or non-critical telemetry data where encryption overhead outweighs risk.
+* **Choose / Prioritize Envelope Encryption:** Storing sensitive PII, financial records, or secrets in multi-tenant cloud storage or databases.
+* **Choose / Prioritize Plaintext Storage:** Public, non-sensitive configuration parameters or non-critical telemetry data where encryption overhead outweighs risk.
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Transport Layer Security (TLS)* | Encrypting all data in motion across network boundaries. | Prevents man-in-the-middle sniffing and data tampering; requires certificate lifecycle management. | Transport Layer Security |
-| *Envelope Encryption* | Encrypting data with a unique data key, which is then encrypted by a master key. | Optimizes performance for large files while securing cryptographic keys separately. | Envelope Encryption Hierarchy |
-| *Cryptographic Hashing (Argon2)* | One-way transformation of data into a fixed-length string, used for password storage. | Defends against rainbow table attacks during credential verification. | Adaptive Key Derivation Functions |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Transport Layer Security (TLS)** | Encrypting all data in motion across network boundaries. | Prevents man-in-the-middle sniffing and data tampering; requires certificate lifecycle management. | Transport Layer Security |
+| **Envelope Encryption** | Encrypting data with a unique data key, which is then encrypted by a master key. | Optimizes performance for large files while securing cryptographic keys separately. | Envelope Encryption Hierarchy |
+| **Cryptographic Hashing (Argon2)** | One-way transformation of data into a fixed-length string, used for password storage. | Defends against rainbow table attacks during credential verification. | Adaptive Key Derivation Functions |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *Hardcoded Secrets* | Embedding database connection strings or API keys directly into source code repositories. | Credential compromise via repository leakage or static analysis decompilation. | Externalize secrets into managed vault services (e.g., HashiCorp Vault, AWS Secrets Manager). |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Hardcoded Secrets** | Embedding database connection strings or API keys directly into source code repositories. | Credential compromise via repository leakage or static analysis decompilation. | Externalize secrets into managed vault services (e.g., HashiCorp Vault, AWS Secrets Manager). |
 
   </TabItem>
 </Tabs>

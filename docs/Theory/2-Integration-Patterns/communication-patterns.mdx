@@ -11,138 +11,181 @@ import TabItem from '@theme/TabItem';
 # Communication Patterns
 
 :::tip
-*Persona Lens: Workshop & Interview Mode*
-- *Quick Pitch:* Communication patterns define how independent services in a distributed system exchange information reliably, dictating sync/async boundaries, delivery guarantees, and failure behavior.
-- *Core Primitives:* Request-response cycles, message queues, publish-sub channels, event logs, and network transport protocols.
-- *BAU & Operational Realities:* Cascading latency, retry storms, consumer lag, schema drift, and backpressure collapse under load.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Communication patterns define how independent services in a distributed system exchange information reliably, dictating sync/async boundaries, delivery guarantees, and failure behavior.
+* **Core Primitives:** Request-response cycles, message queues, publish-sub channels, event logs, and network transport protocols.
+* **BAU & Operational Realities:** Cascading latency, retry storms, consumer lag, schema drift, and backpressure collapse under load.
 :::
 
 ## 🔍 Theory Focus Point
 
-- *Synchronous APIs:* Focus on *request-response coupling* and *blocking dependency chains* to evaluate [tail latency amplification and cascading failure risks].
-- *Asynchronous Messaging:* Focus on *durable queues* and *point-to-point worker scaling* to evaluate [load leveling and traffic spike absorption].
-- *Event Streams:* Focus on *append-only logs* and *partition ordering guarantees* to evaluate [replayability, stream processing joins, and consumer lag].
-- *Protocols & Transport:* Focus on *payload serialization* and *transport layer mechanics (HTTP/TCP/WebSockets)* to evaluate [network bandwidth, connection limits, and latency].
+* **Synchronous APIs:** Focus on **request-response coupling** and **blocking dependency chains** to evaluate tail latency amplification and cascading failure risks.
+* **Asynchronous Messaging:** Focus on **durable queues** and **point-to-point worker scaling** to evaluate load leveling and traffic spike absorption.
+* **Event Streams:** Focus on **append-only logs** and **partition ordering guarantees** to evaluate replayability, stream processing joins, and consumer lag.
+* **Protocols & Transport:** Focus on **payload serialization** and **transport layer mechanics (HTTP/TCP/WebSockets)** to evaluate network bandwidth, connection limits, and latency.
+
+---
 
 ## 🧩 System Interactions & Scaling Realities
 
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
 | Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
-| --- | --- | --- |
-| *Synchronous APIs* | Thread-pool exhaustion, thread blocking per request, local socket limits | Downstream service degradation, cascading timeouts, API gateway bottlenecking |
-| *Asynchronous Messaging* | Worker queue memory buffers, thread context switching, local file spillover | Broker partition contention, consumer group rebalancing, dead-letter queue growth |
-| *Event Streams* | Disk write-ahead log (WAL) flushing, OS page cache efficiency, sequential disk I/O | Multi-region replication lag, partition saturation, distributed consumer lag |
-| *Protocols & Transport* | Serialization/deserialization CPU overhead, memory allocation for frames | Network jitter, packet loss, TCP congestion window scaling, proxy sidecar overhead |
+| :--- | :--- | :--- |
+| **Synchronous APIs** | Thread-pool exhaustion, thread blocking per request, local socket limits | Downstream service degradation, cascading timeouts, API gateway bottlenecking |
+| **Asynchronous Messaging** | Worker queue memory buffers, thread context switching, local file spillover | Broker partition contention, consumer group rebalancing, dead-letter queue growth |
+| **Event Streams** | Disk write-ahead log (WAL) flushing, OS page cache efficiency, sequential disk I/O | Multi-region replication lag, partition saturation, distributed consumer lag |
+| **Protocols & Transport** | Serialization/deserialization CPU overhead, memory allocation for frames | Network jitter, packet loss, TCP congestion window scaling, proxy sidecar overhead |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Synchronous APIs** | Heap memory footprint per request connection, socket descriptor retention | Payload size overhead across network boundaries, upstream serialization latency |
+| **Asynchronous Messaging** | Queue buffer allocations, message serialization overhead | Broker disk space consumption, backpressure propagation delays |
+| **Event Streams** | Segment file index caching, high-frequency disk I/O write amplification | Long-term log retention storage scaling, cross-datacenter replication bandwidth |
+| **Protocols & Transport** | Frame buffer memory limits, connection table memory mapping | Network link saturation, TCP window scaling bottlenecks under high packet loss |
+
+  </TabItem>
+</Tabs>
+
+---
 
 ## Domain Deep-Dives
 
-#### 🧠 Synchronous APIs
+<Tabs>
+  <TabItem value="subtopic1" label="Synchronous APIs">
+
+### 🔄 Synchronous APIs
 
 :::tip
-*Definition* A tight coupling pattern where a client initiates a request and blocks execution until the server processes and returns an immediate response.
+
+**Definition**
+A tight coupling pattern where a client initiates a request and blocks execution until the server processes and returns an immediate response.
 :::
 
-*Interview Pitch:* *"Synchronous APIs provide immediate feedback and simple mental models, but couple service availability directly—if a dependency slows down, the caller stalls."*
+> **Interview Pitch:** *"Synchronous APIs provide immediate feedback and simple mental models, but couple service availability directly—if a dependency slows down, the caller stalls."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Synchronous APIs:** Immediate feedback required (e.g., user-facing web requests, real-time checkout validations) or transactional actions requiring atomic responses.
+* **Choose / Prioritize Asynchronous Alternatives:** Long-running operations, background processing, or decoupled multi-system workflows where blocking callers is unacceptable.
 
-- *Choose / Prioritize Synchronous APIs:* Immediate feedback required (e.g., user-facing web requests, real-time checkout validations) or transactional actions requiring atomic responses.
-- *Choose / Prioritize Asynchronous Alternatives:* Long-running operations, background processing, or decoupled multi-system workflows where blocking callers is unacceptable.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *REST / HTTP* | Resource-based stateless request/response over standard web protocol. | Ubiquitous support; high overhead per request; sensitive to network latency. | Stateless Request/Response |
-| *gRPC / RPC* | Function-like remote procedure calls using binary protocol buffers. | High performance and low latency; tight contract coupling between client and server. | Protobuf Binary Serialization |
-| *GraphQL* | Client-specified precise data queries over a single endpoint. | Eliminates over-fetching; complex query resolvers can cause dependency waterfalls. | Query Resolvers & Introspection |
+| :--- | :--- | :--- | :--- |
+| **REST / HTTP** | Resource-based stateless request/response over standard web protocol. | Ubiquitous support; high overhead per request; sensitive to network latency. | Stateless Request/Response |
+| **gRPC / RPC** | Function-like remote procedure calls using binary protocol buffers. | High performance and low latency; tight contract coupling between client and server. | Protobuf Binary Serialization |
+| **GraphQL** | Client-specified precise data queries over a single endpoint. | Eliminates over-fetching; complex query resolvers can cause dependency waterfalls. | Query Resolvers & Introspection |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *API Chaining* | Calling 5 downstream services synchronously in series for a single web page render. | Extreme tail-latency spikes, thread pool exhaustion, and cascading timeouts across services. | Implement API gateways, asynchronous parallel fetching, or switch to event streaming models. |
-| *Timeouts & Retries* | Configuring infinite or unjittered retries on failing synchronous APIs. | Retry storms causing 10x traffic amplification and total outage of downstream dependencies. | Use circuit breakers, exponential backoff, and strict request timeouts. |
+| :--- | :--- | :--- | :--- |
+| **API Chaining** | Calling 5 downstream services synchronously in series for a single web page render. | Extreme tail-latency spikes, thread pool exhaustion, and cascading timeouts across services. | Implement API gateways, asynchronous parallel fetching, or switch to event streaming models. |
+| **Timeouts & Retries** | Configuring infinite or unjittered retries on failing synchronous APIs. | Retry storms causing 10x traffic amplification and total outage of downstream dependencies. | Use circuit breakers, exponential backoff, and strict request timeouts. |
 
-#### 🧠 Asynchronous Messaging
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Asynchronous Messaging">
+
+### 📬 Asynchronous Messaging
 
 :::tip
-*Definition* A decoupled communication model where producers drop messages into durable queues or brokers to be processed asynchronously by independent workers.
+
+**Definition**
+A decoupled communication model where producers drop messages into durable queues or brokers to be processed asynchronously by independent workers.
 :::
 
-*Interview Pitch:* *"Asynchronous messaging decouples producers from consumers, absorbing traffic spikes and buffering work for reliable background processing."*
+> **Interview Pitch:** *"Asynchronous messaging decouples producers from consumers, absorbing traffic spikes and buffering work for reliable background processing."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Messaging:** High-volume background task distribution, load leveling during traffic spikes, and workflows requiring retries and durable storage.
+* **Choose / Prioritize Direct Sync Calls:** Instant feedback requirements or simple operations where queuing infrastructure adds unnecessary operational complexity.
 
-- *Choose / Prioritize Messaging:* High-volume background task distribution, load leveling during traffic spikes, and workflows requiring retries and durable storage.
-- *Choose / Prioritize Direct Sync Calls:* Instant feedback requirements or simple operations where queuing infrastructure adds unnecessary operational complexity.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *Message Queue* | Point-to-point work distribution where each message is consumed by one worker. | Smooths out spikes; provides work distribution across worker pools. | Competing Consumers Pattern |
-| *Pub/Sub* | Broadcast messaging where one event triggers many independent subscribers. | Enables decoupled event-driven systems; risks schema drift and subscriber overload. | Fan-out Messaging |
-| *Dead Letter Queue (DLQ)* | A holding bin for messages that repeatedly fail processing. | Prevents poison pills from blocking queues; enables offline debugging. | Error Quarantine & Retry Bounds |
+| :--- | :--- | :--- | :--- |
+| **Message Queue** | Point-to-point work distribution where each message is consumed by one worker. | Smooths out spikes; provides work distribution across worker pools. | Competing Consumers Pattern |
+| **Pub/Sub** | Broadcast messaging where one event triggers many independent subscribers. | Enables decoupled event-driven systems; risks schema drift and subscriber overload. | Fan-out Messaging |
+| **Dead Letter Queue (DLQ)** | A holding bin for messages that repeatedly fail processing. | Prevents poison pills from blocking queues; enables offline debugging. | Error Quarantine & Retry Bounds |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Consumer Scaling* | Failing to scale consumer workers when incoming message production rates spike. | Exponential queue depth growth, high consumer lag, and delayed processing SLAs. | Implement horizontal autoscaling based on queue depth metrics. |
-| *Idempotency* | Treating message delivery as exactly-once without making consumer logic idempotent. | Duplicate data processing, double-charging accounts, or inconsistent database state on retries. | Enforce idempotency keys and transactional deduplication at the consumer level. |
+| :--- | :--- | :--- | :--- |
+| **Consumer Scaling** | Failing to scale consumer workers when incoming message production rates spike. | Exponential queue depth growth, high consumer lag, and delayed processing SLAs. | Implement horizontal autoscaling based on queue depth metrics. |
+| **Idempotency** | Treating message delivery as exactly-once without making consumer logic idempotent. | Duplicate data processing, double-charging accounts, or inconsistent database state on retries. | Enforce idempotency keys and transactional deduplication at the consumer level. |
 
-#### 🧠 Event Streams
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Event Streams">
+
+### 📊 Event Streams
 
 :::tip
-*Definition* High-throughput, ordered, append-only logs where immutable events are recorded and read at consumer-defined paces.
+
+**Definition**
+High-throughput, ordered, append-only logs where immutable events are recorded and read at consumer-defined paces.
 :::
 
-*Interview Pitch:* *"Event streams maintain chronological ordering across immutable records, allowing multiple independent consumer groups to replay history and build real-time state."*
+> **Interview Pitch:** *"Event streams maintain chronological ordering across immutable records, allowing multiple independent consumer groups to replay history and build real-time state."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Event Streams:** Complex event sourcing, real-time log ingestion, CDC (Change Data Capture), and stateful stream-processing architectures.
+* **Choose / Prioritize Simple Queues:** Stateless background job execution where message ordering and historical event replay are completely unnecessary.
 
-- *Choose / Prioritize Event Streams:* Complex event sourcing, real-time log ingestion, CDC (Change Data Capture), and stateful stream-processing architectures.
-- *Choose / Prioritize Simple Queues:* Stateless background job execution where message ordering and historical event replay are completely unnecessary.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *Append-Only Log* | Immutable sequence of records stored in exact order of arrival. | Enables deterministic replay, fast sequential disk reads, and high write throughput. | Write-Ahead Log (WAL) |
-| *Partitioning* | Splitting a topic into segments to allow parallel consumer processing. | Scales throughput horizontally; maintains ordering *only* within the partition key. | Topic Partition Sharding |
-| *Stream Windowing* | Grouping stream events over bounded time periods for correlation. | Allows aggregations, joins of disparate event fragments, and time-based analytics. | Sliding & Tumbling Windows |
+| :--- | :--- | :--- | :--- |
+| **Append-Only Log** | Immutable sequence of records stored in exact order of arrival. | Enables deterministic replay, fast sequential disk reads, and high write throughput. | Write-Ahead Log (WAL) |
+| **Partitioning** | Splitting a topic into segments to allow parallel consumer processing. | Scales throughput horizontally; maintains ordering *only* within the partition key. | Topic Partition Sharding |
+| **Stream Windowing** | Grouping stream events over bounded time periods for correlation. | Allows aggregations, joins of disparate event fragments, and time-based analytics. | Sliding & Tumbling Windows |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Partition Keys* | Choosing high-cardinality or poorly distributed keys (e.g., random UUIDs). | Hotspotting where a single partition bears 90% of the cluster traffic while others sit idle. | Select balanced, business-domain partition keys (e.g., `tenant_id` or `user_id`). |
-| *Schema Evolution* | Introducing breaking field type changes to event payloads without version contracts. | Consumer deserialization crashes, poison pills filling up consumer logs, and cluster failures. | Enforce strict schema registry validation (Protobuf/Avro) for all event producers. |
+| :--- | :--- | :--- | :--- |
+| **Partition Keys** | Choosing high-cardinality or poorly distributed keys (e.g., random UUIDs). | Hotspotting where a single partition bears 90% of the cluster traffic while others sit idle. | Select balanced, business-domain partition keys (e.g., tenant_id or user_id). |
+| **Schema Evolution** | Introducing breaking field type changes to event payloads without version contracts. | Consumer deserialization crashes, poison pills filling up consumer logs, and cluster failures. | Enforce strict schema registry validation (Protobuf/Avro) for all event producers. |
 
-#### 🧠 Protocols & Transport Layers
+  </TabItem>
+
+  <TabItem value="subtopic4" label="Protocols & Transport">
+
+### 🌐 Protocols & Transport Layers
 
 :::tip
-*Definition* The underlying transport primitives and network rules (HTTP, TCP, WebSockets, MQTT) that govern how serialized data bytes move across networks.
+
+**Definition**
+The underlying transport primitives and network rules (HTTP, TCP, WebSockets, MQTT) that govern how serialized data bytes move across networks.
 :::
 
-*Interview Pitch:* *"Protocols dictate wire efficiency and connection behaviors—from stateless request-response headers down to persistent TCP and bidirectional WebSocket channels."*
+> **Interview Pitch:** *"Protocols dictate wire efficiency and connection behaviors—from stateless request-response headers down to persistent TCP and bidirectional WebSocket channels."*
 
-##### 🧠 Decision Drivers
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Standard HTTP/REST:** General web traffic, firewall-friendly webhooks, and public-facing APIs where tooling is universal.
+* **Choose / Prioritize Low-Level Protocols (TCP/UDP/WebSockets):** Real-time bidirectional streaming, high-frequency telemetry, or low-latency IoT device communication.
 
-- *Choose / Prioritize Standard HTTP/REST:* General web traffic, firewall-friendly webhooks, and public-facing APIs where tooling is universal.
-- *Choose / Prioritize Low-Level Protocols (TCP/UDP/WebSockets):* Real-time bidirectional streaming, high-frequency telemetry, or low-latency IoT device communication.
-
-##### 🧬 Core Primitives & Off-the-Cuff Explanations
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
 | Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
-| --- | --- | --- | --- |
-| *TCP* | Connection-oriented, ordered, reliable stream of packets. | Guarantees delivery; susceptible to head-of-line blocking under packet loss. | Transmission Control Protocol |
-| *WebSockets* | Persistent, full-duplex TCP connection established via HTTP upgrade. | Enables real-time server push; requires sticky sessions and connection state management. | Full-Duplex Socket Framing |
-| *MQTT / CoAP* | Lightweight protocols designed for constrained IoT hardware networks. | Minimal battery/bandwidth overhead; handles intermittent network connectivity gracefully. | Constrained Device Messaging |
+| :--- | :--- | :--- | :--- |
+| **TCP** | Connection-oriented, ordered, reliable stream of packets. | Guarantees delivery; susceptible to head-of-line blocking under packet loss. | Transmission Control Protocol |
+| **WebSockets** | Persistent, full-duplex TCP connection established via HTTP upgrade. | Enables real-time server push; requires sticky sessions and connection state management. | Full-Duplex Socket Framing |
+| **MQTT / CoAP** | Lightweight protocols designed for constrained IoT hardware networks. | Minimal battery/bandwidth overhead; handles intermittent network connectivity gracefully. | Constrained Device Messaging |
 
 #### 🚨 Misapplication Diagnostics in Production
 
 | Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
-| --- | --- | --- | --- |
-| *Persistent Connections* | Maintaining millions of idle WebSocket connections on a single monolithic node. | Memory exhaustion, file descriptor limit depletion (`EMFILE`), and node crashes. | Offload connections to API gateways/load balancers or scale WebSocket proxy pools. |
-| *UDP Usage* | Using raw UDP without application-level acknowledgements for critical data transfers. | Silent data loss, corrupted payloads, and missing audit telemetry records. | Implement custom sequence validation or switch to TCP/QUIC where reliability is mandatory. |
+| :--- | :--- | :--- | :--- |
+| **Persistent Connections** | Maintaining millions of idle WebSocket connections on a single monolithic node. | Memory exhaustion, file descriptor limit depletion (EMFILE), and node crashes. | Offload connections to API gateways/load balancers or scale WebSocket proxy pools. |
+| **UDP Usage** | Using raw UDP without application-level acknowledgements for critical data transfers. | Silent data loss, corrupted payloads, and missing audit telemetry records. | Implement custom sequence validation or switch to TCP/QUIC where reliability is mandatory. |
+
+  </TabItem>
+</Tabs>

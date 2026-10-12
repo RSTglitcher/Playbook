@@ -11,104 +11,141 @@ import TabItem from '@theme/TabItem';
 # Resilience Patterns
 
 :::tip
-*Persona Lens: Workshop & Interview Mode*
-- *Quick Pitch:* Resilience patterns safeguard distributed systems by isolating failures, handling transient faults gracefully, and preventing local degradation from turning into a total cluster outage.
-- *Core Primitives:* Circuit breakers, retries with backoff, bulkheads, rate limiting, and fallback strategies.
-- *BAU & Operational Realities:* Cascading timeout storms, thread pool starvation, retry amplification, and unhandled dependency degradation under load.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Resilience patterns safeguard distributed systems by isolating failures, handling transient faults gracefully, and preventing local degradation from turning into a total cluster outage.
+* **Core Primitives:** Circuit breakers, retries with backoff, bulkheads, rate limiting, and fallback strategies.
+* **BAU & Operational Realities:** Cascading timeout storms, thread pool starvation, retry amplification, and unhandled dependency degradation under load.
 :::
 
 ## 🔍 Theory Focus Point
 
-- *Fault Isolation:* Focus on *bulkhead thread separation* and *resource pooling* to evaluate failure containment and blast radius reduction.
-- *Flow Control & Protection:* Focus on *circuit breaker trip thresholds* and *rate limiting algorithms* to evaluate upstream defense and downstream overload prevention.
-- *Recovery Mechanics:* Focus on *jittered exponential backoff* and *dead-letter queuing* to evaluate thundering herd prevention and recovery velocity.
+* **Fault Isolation:** Focus on **bulkhead thread separation** and **resource pooling** to evaluate failure containment and blast radius reduction.
+* **Flow Control & Protection:** Focus on **circuit breaker trip thresholds** and **rate limiting algorithms** to evaluate upstream defense and downstream overload prevention.
+* **Recovery Mechanics:** Focus on **jittered exponential backoff** and **dead-letter queuing** to evaluate thundering herd prevention and recovery velocity.
+
+---
 
 ## 🧩 System Interactions & Scaling Realities
 
-| *Domain / Concept* | *Local Runtime Interaction* | *Remote & Distributed Interaction* |
-| ----- | ----- | ----- |
-| *Circuit Breakers* | State machine evaluation per client call, memory status tracking | Downstream outage detection, traffic shedding to protect failing remote nodes |
-| *Bulkheads* | Isolated thread pools, bounded concurrency semaphores | Resource partitioning across external service dependencies, preventing cross-tenant starvation |
-| *Retries & Backoff* | Sleep execution timers, local memory buffer retention for payloads | Network retry amplification, downstream connection saturation during recovery spikes |
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Circuit Breakers** | State machine evaluation per client call, memory status tracking | Downstream outage detection, traffic shedding to protect failing remote nodes |
+| **Bulkheads** | Isolated thread pools, bounded concurrency semaphores | Resource partitioning across external service dependencies, preventing cross-tenant starvation |
+| **Retries & Backoff** | Sleep execution timers, local memory buffer retention for payloads | Network retry amplification, downstream connection saturation during recovery spikes |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Circuit Breakers** | State registry memory overhead, sliding window metric buffers | Circuit state payload synchronization overhead across distributed clients |
+| **Bulkheads** | Worker pool memory allocations, queue buffer overhead | Resource contention metrics tracking, cross-tenant isolation enforcement delay |
+| **Retries & Backoff** | Sleep timer memory retention, payload buffer allocation per retry attempt | Network bandwidth saturation during traffic recovery spikes |
+
+  </TabItem>
+</Tabs>
+
+---
 
 ## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Circuit Breakers">
 
 ### ⚡ Circuit Breakers & State Isolation
 
 :::tip
-*Definition* A protective state-machine pattern that wraps remote calls, monitoring failure rates and tripping open to fail fast when a downstream dependency is unhealthy.
+
+**Definition**
+A protective state-machine pattern that wraps remote calls, monitoring failure rates and tripping open to fail fast when a downstream dependency is unhealthy.
 :::
 
-*Interview Pitch:* *"Circuit breakers act like electrical fuses for microservices—when failure rates spike, the breaker trips open to protect both the caller from blocking and the struggling downstream service from drowning in traffic."*
+> **Interview Pitch:** *"Circuit breakers act like electrical fuses for microservices—when failure rates spike, the breaker trips open to protect both the caller from blocking and the struggling downstream service from drowning in traffic."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Circuit Breakers:* Unreliable external HTTP/gRPC APIs, flaky network dependencies, or multi-service architectures where one failing component shouldn't bring down the whole app.
-- *Choose / Prioritize Direct Execution:* Highly reliable internal in-memory function calls or hard local dependencies where failure is impossible or strictly fatal.
+* **Choose / Prioritize Circuit Breakers:** Unreliable external HTTP/gRPC APIs, flaky network dependencies, or multi-service architectures where one failing component shouldn't bring down the whole app.
+* **Choose / Prioritize Direct Execution:** Highly reliable internal in-memory function calls or hard local dependencies where failure is impossible or strictly fatal.
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Closed State* | Normal operation; requests pass through while failures are monitored. | Baseline request handling with overhead telemetry checks. | Closed State Monitoring |
-| *Open State* | Tripped state; requests fail immediately without hitting the network. | Saves downstream resources and prevents caller thread exhaustion. | Fail-Fast Short-Circuiting |
-| *Half-Open State* | Trial state; allows a single canary request through to check if recovery occurred. | Automatically heals the circuit when the downstream service recovers. | Probe & Probe Recovery |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Closed State** | Normal operation; requests pass through while failures are monitored. | Baseline request handling with overhead telemetry checks. | Closed State Monitoring |
+| **Open State** | Tripped state; requests fail immediately without hitting the network. | Saves downstream resources and prevents caller thread exhaustion. | Fail-Fast Short-Circuiting |
+| **Half-Open State** | Trial state; allows a single canary request through to check if recovery occurred. | Automatically heals the circuit when the downstream service recovers. | Probe & Probe Recovery |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *Trip Thresholds* | Setting overly sensitive error rates (e.g., tripping on 2 network timeouts). | Circuit flapping open and closed constantly during minor network jitter. | Tune thresholds based on sliding time-windows and minimum sample volume. |
-| *Fallback Handling* | Returning empty or misleading mock data on circuit trip without logging. | Silent data omission or silent client-side failures that bypass observability alerts. | Ensure robust fallback telemetry logging and return explicit degraded-state indicators. |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Trip Thresholds** | Setting overly sensitive error rates (e.g., tripping on 2 network timeouts). | Circuit flapping open and closed constantly during minor network jitter. | Tune thresholds based on sliding time-windows and minimum sample volume. |
+| **Fallback Handling** | Returning empty or misleading mock data on circuit trip without logging. | Silent data omission or silent client-side failures that bypass observability alerts. | Ensure robust fallback telemetry logging and return explicit degraded-state indicators. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Bulkheads">
 
 ### 📦 Bulkheads & Resource Partitioning
 
 :::tip
-*Definition* An isolation pattern that partitions system resources (such as thread pools or memory) into independent pools so that a failure in one area cannot exhaust resources globally.
+
+**Definition**
+An isolation pattern that partitions system resources (such as thread pools or memory) into independent pools so that a failure in one area cannot exhaust resources globally.
 :::
 
-*Interview Pitch:* *"Bulkheads prevent total system collapse by compartmentalizing resources—if your payment service hangs, its dedicated thread pool fills up, leaving your user profile service completely untouched."*
+> **Interview Pitch:** *"Bulkheads prevent total system collapse by compartmentalizing resources—if your payment service hangs, its dedicated thread pool fills up, leaving your user profile service completely untouched."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Bulkheads:* Multi-tenant systems, critical services interacting with multiple external APIs, or high-throughput servers needing strict thread isolation.
-- *Choose / Prioritize Shared Resource Pools:* Homogeneous internal tasks where maximum resource utilization across a single unified pool outweighs isolation safety.
+* **Choose / Prioritize Bulkheads:** Multi-tenant systems, critical services interacting with multiple external APIs, or high-throughput servers needing strict thread isolation.
+* **Choose / Prioritize Shared Resource Pools:** Homogeneous internal tasks where maximum resource utilization across a single unified pool outweighs isolation safety.
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Thread Pool Isolation* | Assigning a dedicated, fixed-size thread pool to each downstream dependency. | Prevents slow service A from stealing worker threads from service B. | Bounded Worker Pools |
-| *Semaphore Concurrency Limiter* | Capping the maximum active concurrent calls to a resource using a counter. | Lightweight alternative to thread pools; drops excessive calls immediately. | Concurrency Semaphores |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Thread Pool Isolation** | Assigning a dedicated, fixed-size thread pool to each downstream dependency. | Prevents slow service A from stealing worker threads from service B. | Bounded Worker Pools |
+| **Semaphore Concurrency Limiter** | Capping the maximum active concurrent calls to a resource using a counter. | Lightweight alternative to thread pools; drops excessive calls immediately. | Concurrency Semaphores |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *Pool Sizing* | Allocating massive thread pool sizes to every single integration client. | Excessive context-switching overhead, high memory footprint, and CPU thrashing. | Size pools strictly based on downstream latency SLAs and available CPU cores. |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Pool Sizing** | Allocating massive thread pool sizes to every single integration client. | Excessive context-switching overhead, high memory footprint, and CPU thrashing. | Size pools strictly based on downstream latency SLAs and available CPU cores. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Retries & Backoff">
 
 ### 🔄 Retries, Backoff & Jitter
 
 :::tip
-*Definition* A recovery strategy that re-attempts failed operations after a delay, using exponential backoff and randomized jitter to prevent traffic stampedes.
+
+**Definition**
+A recovery strategy that re-attempts failed operations after a delay, using exponential backoff and randomized jitter to prevent traffic stampedes.
 :::
 
-*Interview Pitch:* *"Retries handle transient network hiccups, but without randomized jitter, they transform into coordinated denial-of-service attacks against recovering services when thousands of clients retry at the exact same second."*
+> **Interview Pitch:** *"Retries handle transient network hiccups, but without randomized jitter, they transform into coordinated denial-of-service attacks against recovering services when thousands of clients retry at the exact same second."*
 
 #### 🧠 Decision Drivers
-
-- *Choose / Prioritize Retries:* Idempotent read operations, transient network blips, or stateless cloud API calls.
-- *Choose / Prioritize Fail-Fast:* Non-idempotent write operations (e.g., payment charges) where blind retries risk duplicate transactions.
+* **Choose / Prioritize Retries:** Idempotent read operations, transient network blips, or stateless cloud API calls.
+* **Choose / Prioritize Fail-Fast:** Non-idempotent write operations (e.g., payment charges) where blind retries risk duplicate transactions.
 
 #### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| *Primitive / Mechanism* | *Off-the-Cuff Explanation* | *Architectural Impact / Mechanism* | *Deep-Dive Research Term* |
-| ----- | ----- | ----- | ----- |
-| *Exponential Backoff* | Increasing wait time exponentially between consecutive retry attempts. | Gives the downstream system time to breathe and recover between retries. | Backoff Multiplier Intervals |
-| *Full Jitter* | Adding a random number between 0 and the calculated backoff delay. | Breaks up synchronized client retry lockstep, smoothing out traffic waves. | Randomized Jitter Distribution |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Exponential Backoff** | Increasing wait time exponentially between consecutive retry attempts. | Gives the downstream system time to breathe and recover between retries. | Backoff Multiplier Intervals |
+| **Full Jitter** | Adding a random number between 0 and the calculated backoff delay. | Breaks up synchronized client retry lockstep, smoothing out traffic waves. | Randomized Jitter Distribution |
 
 #### 🚨 Misapplication Diagnostics in Production
 
-| *Concept* | *Misapplication Scenario* | *Production BAU Symptom / Telemetry* | *Remediation* |
-| ----- | ----- | ----- | ----- |
-| *Unbounded Retries* | Retrying failed requests infinitely with fixed short intervals. | Retry storms causing 100% CPU utilization and prolonged downstream outages. | Enforce a hard maximum retry limit (e.g., max 3 attempts) and mandatory backoff jitter. |
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Retries** | Retrying failed requests infinitely with fixed short intervals. | Retry storms causing 100% CPU utilization and prolonged downstream outages. | Enforce a hard maximum retry limit (e.g., max 3 attempts) and mandatory backoff jitter. |
+
+  </TabItem>
+</Tabs>

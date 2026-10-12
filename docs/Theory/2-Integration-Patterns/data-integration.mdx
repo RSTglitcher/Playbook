@@ -1,0 +1,152 @@
+---
+title: Data Integration
+sidebar_label: Data Integration
+description: Architectural patterns and synchronization strategies for moving, transforming, and synchronizing data across disparate distributed systems.
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Data Integration
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Data integration patterns govern how disparate systems share and synchronize state, balancing consistency guarantees, latency, and transactional boundaries across distributed boundaries.
+* **Core Primitives:** ETL/ELT pipelines, Change Data Capture (CDC), dual-writes, and eventual consistency sync models.
+* **BAU & Operational Realities:** Schema drift, split-brain race conditions, replication lag, and silent data corruption under load.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Batch & ETL:** Focus on **scheduled extraction windows** and **staging transformation buffers** to evaluate batch throughput and storage costs.
+* **Change Data Capture (CDC):** Focus on **write-ahead log tailing** and **low-latency streaming synchronization** to evaluate source-to-target replication lag.
+* **Distributed Consistency:** Focus on **distributed transactions (2PC)** versus **eventual consistency models** to evaluate write availability and partition tolerance.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Batch & ETL** | Memory limits during bulk extraction, disk I/O read amplification | Source database connection pool saturation, network pipe bandwidth contention |
+| **Change Data Capture** | WAL log reader buffering, sequential disk I/O tracking | Downstream streaming broker partition congestion, consumer group lag |
+| **Distributed Consistency** | Lock contention on local database rows during 2PC coordination | Cross-datacenter network latency, prolonged lock holds reducing system throughput |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Batch & ETL** | Temporary staging file storage growth, heap usage during parsing | Large batch payload transfers over wide-area networks, target store indexing load |
+| **Change Data Capture** | Transaction log storage sizing, memory retention for uncommitted txns | Long-term replication lag during high write-volume traffic spikes |
+| **Distributed Consistency** | Transaction log transaction overhead, rollback snapshot allocations | Network partition timeout cascades, distributed consensus round-trip delays |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Batch & ETL">
+
+### 🔄 Batch & Extract, Transform, Load (ETL)
+
+:::tip
+
+**Definition**
+A scheduled data integration pattern where large volumes of data are extracted from source systems, transformed in staging environments, and loaded into analytical data stores.
+:::
+
+> **Interview Pitch:** *"Batch ETL moves massive volumes of data efficiently during off-peak windows, but introduces inherent latency since insights are only as fresh as the last scheduled pipeline run."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Batch ETL:** Large-scale data warehousing, periodic reporting, historical data migration, and heavy compute transformations where real-time freshness is not required.
+* **Choose / Prioritize Real-Time Streaming:** Operational dashboards, fraud detection, or live user experiences requiring sub-second data propagation.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Full Table Load** | Extracting the entire source dataset on every execution run. | Simple to implement; highly inefficient for large tables, causing source database load. | Full Extraction Sync |
+| **Incremental Load** | Extracting only records modified or created since the last successful sync window. | Conserves bandwidth and compute resources; requires robust watermark tracking (e.g., timestamps). | Delta Watermarking |
+| **Staging Area** | A temporary intermediate storage zone where data is cleaned before loading. | Isolates transformation workloads from production databases. | Staging Data Warehouse Layer |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Scheduled Window Overlaps** | Running heavy batch extractions during peak online transactional traffic hours. | Source database CPU starvation, query timeouts, and degradation of user-facing web requests. | Reschedule heavy ETL jobs to off-peak maintenance windows or switch to incremental CDC. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Change Data Capture">
+
+### 📡 Change Data Capture (CDC)
+
+:::tip
+
+**Definition**
+A near-real-time integration pattern that tails database transaction logs (WAL) to capture row-level inserts, updates, and deletes, streaming them to downstream consumers.
+:::
+
+> **Interview Pitch:** *"CDC listens directly to the database's heartbeat by reading its transaction logs, capturing every data modification instantly without placing extra query load on the operational tables."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize CDC:** Microservice event-driven synchronization, cache invalidation, search index syncing, or real-time data replication with minimal source impact.
+* **Choose / Prioritize Polling Queries:** Legacy databases lacking transaction log access or simple low-frequency synchronization needs.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Write-Ahead Log (WAL)** | The database's internal append-only ledger recording all upcoming changes. | Provides an immutable source of truth for exact change ordering without table scanning. | Transaction Log Tailing |
+| **Debezium / Connectors** | Middleware workers that parse transaction logs and emit structured events. | Standardizes change streams into JSON/Avro formats for message brokers. | Log-Based CDC Connectors |
+| **Schema Registry** | A centralized repository managing schema versions for streamed records. | Prevents breaking data changes from corrupting downstream consumers. | Evolution Schema Validation |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Consumer Lag** | Downstream consumers processing CDC events slower than the database produces them. | Unbounded transaction log retention on the source database, risking disk space exhaustion. | Scale out consumer workers and monitor broker consumer lag metrics actively. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Distributed Consistency">
+
+### ⚖️ Distributed Consistency & Transactions
+
+:::tip
+
+**Definition**
+The architectural discipline of synchronizing state across multiple independent data stores while maintaining defined consistency guarantees (ACID vs. BASE).
+:::
+
+> **Interview Pitch:** *"Distributed consistency forces a hard architectural tradeoff: you can have immediate atomic consistency across systems, or high availability and partition tolerance, but distributed locking severely limits scale."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Eventual Consistency:** High-scale distributed microservices, multi-region architectures, and systems where high write availability outweighs immediate sync needs.
+* **Choose / Prioritize Distributed Transactions (2PC):** Strict financial ledgers, inventory reservation systems, or regulatory workflows where inconsistent states are strictly forbidden.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Two-Phase Commit (2PC)** | A locking protocol ensuring all databases commit or rollback a transaction together. | Guarantees strict atomicity; introduces severe latency and single-point-of-failure bottlenecks. | Distributed Atomic Commit |
+| **Saga Pattern** | A sequence of local transactions where each step updates data and publishes events to trigger the next step. | Maintains eventual consistency across services without holding global locks. | Compensating Transactions |
+| **Idempotent Upserts** | Designing write operations so that processing the same data multiple times yields identical results. | Prevents duplicate state corruption during network retries or message replays. | Idempotency Key Enforcement |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Dual-Writes** | Writing directly to a database and then publishing to a message broker in separate unmanaged steps. | Split-brain discrepancies where the database succeeds but the broker fails, leaving services out of sync. | Replace dual-writes with transactional outbox patterns or log-based CDC. |
+
+  </TabItem>
+</Tabs>
