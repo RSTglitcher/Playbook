@@ -5,9 +5,6 @@ description: Day-to-day operational runbooks, interaction guides, and quick-refe
 sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # 📘 Practice Runbook
 
 :::tip
@@ -18,8 +15,7 @@ import TabItem from '@theme/TabItem';
 Short, clear definition of the tool, its core function, and the specific problem space it addresses.
 
 ### 📚 Related Theory References
-* [[Theory] ../Theory/Theory.mdx] — Link to the corresponding Theor page
-
+* [[Theory] ../Theory/Theory.mdx] — Link to the corresponding Theory page
 :::
 
 ## 🧭 When to Use It
@@ -38,36 +34,27 @@ What prerequisites, dependencies, or initial configurations are required before 
 
 ---
 
-## 🔑 Access & Authentication
+## 🔑 Tool Requirements
 
-<Tabs>
-  <TabItem value="terminal" label="1. Terminal & CLI" default>
-
-### CLI Authentication
-```bash
-# 1. Authenticate / establish active session
-tool-cli login --profile enterprise-prod
-
-# 2. Verify active context and session health
-tool-cli status --verbose
-
-```
-
-### Portal Access
-
-* **Access URL:** `https://tool.internal.enterprise.com`
-* **Authentication Method:** Single Sign-On (SSO) via corporate identity provider.
-* **Initial Check:** Verify cluster/system health indicators on the landing dashboard before proceeding.
+* **Access URL / Portal:** `https://tool.internal.enterprise.com`
+* **Authentication Method:** Single Sign-On (SSO) via corporate identity provider or required IAM/RBAC permissions.
+* **Initial Setup Check:** Verify cluster/system health indicators on the dashboard or ensure your local credential profile is initialized before executing commands.
 
 ---
 
 ## 📋 Common & Useful Workflows
 
 ```bash
-# Workflow 1: Execute standard interaction, query, or deployment
+# 1. Authenticate / establish active CLI session
+tool-cli login --profile enterprise-prod
+
+# 2. Verify active context, session health, and system status
+tool-cli status --verbose
+
+# 3. Execute standard interaction, query, or deployment workflow
 tool-cli execute --config ./manifest.yaml --output table
 
-# Workflow 2: Validate syntax or test connection payload
+# 4. Validate syntax, configuration, or test connection payload
 tool-cli validate --target endpoint --dry-run
 
 ```
@@ -82,17 +69,7 @@ Quick-reference diagnostics for common platform failures:
 
 | Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
 | --- | --- | --- | --- |
-| **Connection Timeout / 504** | Network congestion or target service down. | • DNS resolution 
-
- • VPN / VPC status | • Test connection via curl 
-
- • Escalate if upstream is unreachable. |
-| **Authentication Expired / 401** | Token TTL expired or missing credential profile. | • Local credential store 
-
- • Token timestamp | • Re-authenticate via CLI login. 
-
- • Refresh auth tokens. |
-| **Rate Limit Exceeded / 429** | High query concurrency or missing pagination. | • Request frequency 
-
- • Query complexity score | • Implement request batching or exponential backoff. |
+| **Connection Timeout / 504** | Network congestion or target service down. | • DNS resolution • VPN / VPC status | • Test connection via curl • Escalate if upstream is unreachable. |
+| **Authentication Expired / 401** | Token TTL expired or missing credential profile. | • Local credential store • Token timestamp | • Re-authenticate via CLI login. • Refresh auth tokens. |
+| **Rate Limit Exceeded / 429** | High query concurrency or missing pagination. | • Request frequency • Query complexity score | • Implement request batching or exponential backoff. |
 
