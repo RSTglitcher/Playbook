@@ -1,0 +1,88 @@
+---
+title: Root Cause Analysis (RCA)
+sidebar_label: Root Cause Analysis
+description: Operational framework for diagnosing production incidents, isolating core failure modes, and establishing permanent remediation paths.
+sidebar_position: 1
+---
+
+# 📘 RCA
+
+:::tip
+
+## Root Cause Analysis
+
+**What is it?** 
+A structured diagnostic skill used to investigate production incidents, system failures, or anomalous behaviors by moving past surface-level symptoms to identify and remediate the underlying systemic failure points.
+
+### 📚 Related Theory & Practice References
+* Theory — System reliability principles, failure domain isolation, and fault tolerance architecture.
+* Practice — Triage snapshots, log aggregation queries, and node diagnostics across infrastructure components.
+:::
+
+## 🧭 When is it Used?
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Post-incident reviews following production outages, severe error spikes, or SLO breaches. • Chronic recurring platform bugs requiring deep systemic investigation. • Security incident post-mortems and infrastructure failure investigations. | • Routine exploratory code debugging or simple syntax error corrections during development. • Feature planning and architectural requirement gathering. |
+
+---
+
+## 💡 What Value Does It Bring? (Problem Solved)
+
+* **Eliminates Recurrence:** Stops teams from applying temporary patches to surface-level symptoms, ensuring permanent bug eradication.
+* **Reduces MTTR (Mean Time to Resolution):** Provides a repeatable, methodical checklist that prevents panic and flailing during high-pressure incidents.
+* **Drives Systemic Resilience:** Turns individual failures into architectural learnings by updating monitoring alerts, runbooks, and test coverage.
+
+---
+
+## 🧠 Core Concepts
+
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **The "5 Whys" Iteration** | Asking "why" successively to peel back layers of symptoms until the true procedural or architectural flaw is revealed. | Prevents engineers from stopping at superficial triggers (e.g., "the server crashed") and uncovers root causes (e.g., "memory leak due to unpooled DB connections"). |
+| **Timeline Reconstruction** | Chronological ordering of events from first alert trigger to full remediation. | Identifies exact friction points, detection latency, and response bottlenecks during the incident lifecycle. |
+| **Blast Radius Isolation** | Mapping the boundaries of impacted services, downstream dependencies, and user cohorts. | Determines the systemic impact scale and guides immediate mitigation actions. |
+
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Triage & Data Collection** — Capture telemetry, logs, metric spikes, error traces, and exact incident timestamps before state changes occur.
+2. **Phase 2: Chronology & Hypothesis Formulation** — Construct an incident timeline and form testable hypotheses regarding the root cause.
+3. **Phase 3: Deep-Dive Verification & Remediation** — Test hypotheses against logs/code, implement permanent fixes, and document learnings in a post-mortem.
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Standard Post-Mortem and Root Cause Analysis Confluence structure.
+
+```markdown
+# Incident Post-Mortem: [Incident Title]
+- **Date / Time:** YYYY-MM-DD HH:MM UTC
+- **Severity Level:** SEV-1 / SEV-2 / SEV-3
+- **Impact Duration:** [X hours Y minutes]
+- **Summary:** [1-2 sentence high-level overview of what happened and why]
+
+## Timeline (UTC)
+- **HH:MM** - Alert triggered by Prometheus CPU threshold.
+- **HH:MM** - On-call engineer acknowledged the page.
+- **HH:MM** - Service restarted, traffic normalized.
+
+## Root Cause Analysis
+- **Immediate Trigger:** [e.g., Connection pool exhaustion]
+- **Underlying Root Cause:** [e.g., Unbounded thread creation in microservice v2.1]
+
+## Action Items
+- [ ] [JIRA-1234] Add circuit breaker to downstream client call.
+- [ ] [JIRA-1235] Update Prometheus alert threshold for connection pools.
+
+```
+
+:::warning
+
+### Pitfalls & Edge Cases
+
+* **Common Mistake:** Blaming individuals ("human error") rather than examining systemic process or architectural vulnerabilities.
+* **Pro Tip:** Always capture perishable telemetry (ephemeral container logs, active connection tables) immediately when an incident stabilizes before auto-scaling or restarts wipe the state.
+:::

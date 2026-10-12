@@ -1,0 +1,89 @@
+---
+title: Technical Refinement & Grooming
+sidebar_label: Technical Refinement
+description: Operational framework for breaking down epics, estimating technical complexity, and refining engineering user stories prior to sprint ingestion.
+sidebar_position: 3
+---
+
+# 📘 Refinement
+
+:::tip
+
+## Technical Refinement & Grooming
+
+**What is it?** 
+A structured engineering skill focused on reviewing, breaking down, and estimating backlog items, epics, and user stories to ensure technical clarity, architectural alignment, and readiness for development teams.
+
+### 📚 Related Theory & Practice References
+* Theory — Agile delivery governance, system decomposition, and dependency management.
+* Practice — Ticket management, squad delivery workflows, and specification standards.
+:::
+
+## 🧭 When is it Used?
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Pre-sprint backlog grooming and story point estimation sessions with engineering squads. • Translating high-level product epics or ambiguous stakeholder requirements into actionable technical tasks. • Identifying architectural risks, third-party dependencies, and acceptance criteria prior to coding. | • Handling live production incidents or urgent hotfix triage requiring immediate mitigation. • Writing low-level unit implementation code or executing test suites. |
+
+---
+
+## 💡 What Value Does It Bring? (Problem Solved)
+
+* **Prevents Scope Creep:** Clarifies technical boundaries and acceptance criteria so developers know exactly when a task is finished.
+* **Reduces Development Blockers:** Exposes hidden data migrations, security reviews, or architectural dependencies before sprints kick off.
+* **Aligns Product & Engineering:** Bridges the gap between business objectives and technical implementation feasibility.
+
+---
+
+## 🧠 Core Concepts
+
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **INVEST Criteria** | Evaluating user stories to ensure they are Independent, Negotiable, Valuable, Estimable, Small, and Testable. | Prevents bloated or vague stories that stall squad velocity and confuse developers. |
+| **Spike Allocation** | Defining timed research tasks for unknown technical risks before committing to core implementation estimates. | Eliminates guesswork and prevents multi-week estimation errors on complex technical spikes. |
+| **Acceptance Criteria Definition** | Clear, binary, testable conditions that validate whether a feature behaves correctly. | Removes subjective judgment regarding completion and forms the basis for QA testing. |
+
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Epic Decomposition & Discovery** — Review the product requirement document (PRD) or epic brief, and break monolithic requirements down into smaller deployable user stories.
+2. **Phase 2: Technical Risk & Dependency Audit** — Evaluate database schema changes, API contract updates, security implications, and upstream/downstream service dependencies.
+3. **Phase 3: Acceptance Criteria & Point Estimation** — Collaborate with the engineering team to define clear BDD-style acceptance criteria and assign relative sizing/story points.
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Technical User Story Refinement Confluence or Jira Template.
+
+```markdown
+# User Story: [STORY-ID] - [Short Descriptive Title]
+
+## Description
+As a [user persona], I want [feature/capability] so that [business value/outcome].
+
+## Technical Scope & Architecture Notes
+- **Data Stores:** Requires a new migration adding an `index_status` column to the `orders` table.
+- **API Changes:** Expose new REST endpoint `/api/v1/orders/status` with JWT authentication.
+- **Dependencies:** Relies on upstream Kafka event stream updates from payment service.
+
+## Acceptance Criteria
+- [ ] Given a valid order ID, when the status endpoint is called, then it returns 200 OK with the current status JSON.
+- [ ] Given an invalid order ID, when the status endpoint is called, then it returns 404 Not Found.
+- [ ] Database query execution time must remain under 50ms at peak load.
+
+## Definition of Done
+- [ ] Code reviewed and approved by at least 1 peer engineer.
+- [ ] Automated integration tests written and passing in CI pipeline.
+- [ ] Documentation updated in system runbooks.
+
+```
+
+:::warning
+
+### Pitfalls & Edge Cases
+
+* **Common Mistake:** Refining stories in a silo without engineering input, leading to inaccurate point estimates and overlooked technical debt.
+* **Pro Tip:** Always establish a strict "Definition of Ready" (DoR) checklist—if a ticket lacks acceptance criteria or technical notes, refuse to pull it into the active sprint.
+:::

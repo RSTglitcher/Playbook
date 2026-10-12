@@ -1,0 +1,86 @@
+---
+title: Sprint Retrospectives & Continuous Improvement
+sidebar_label: Sprint Retrospectives
+description: Operational framework for facilitating sprint retrospectives, gathering team feedback, and driving actionable process improvements.
+sidebar_position: 4
+---
+
+# 📘 Retrospectives
+
+:::tip
+
+## Sprint Retrospectives & Continuous Improvement
+
+**What is it?** 
+A structured team facilitation skill used at the end of iteration cycles to evaluate team dynamics, engineering workflows, and delivery bottlenecks, converting raw qualitative feedback into concrete, owner-assigned improvement items.
+
+### 📚 Related Theory & Practice References
+* Theory — Agile delivery governance, agile metrics, and team dynamics.
+* Practice — Jira workspace tracking, confluence documentation, and squad delivery workflows.
+:::
+
+## 🧭 When is it Used?
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • At the end of every scheduled sprint or iteration cycle. • Following major milestone deliveries, product releases, or prolonged incident recovery periods. • When team velocity is dropping or friction around engineering workflows is increasing. | • Ad-hoc daily standups or tactical bug triage sessions. • Individual developer performance reviews or disciplinary evaluations. |
+
+---
+
+## 💡 What Value Does It Bring? (Problem Solved)
+
+* **Prevents Retro Fatigue:** Ensures meetings result in real, tracked action items rather than unstructured venting sessions that lead to no change.
+* **Drives Continuous Evolution:** systematically eliminates workflow bottlenecks, CI/CD friction, and communication gaps sprint by sprint.
+* **Fosters Psychological Safety:** Creates a blame-free environment focused on fixing systemic process failures rather than targeting individuals.
+
+---
+
+## 🧠 Core Concepts
+
+| Concept / Mechanism | Plain English Explanation | Execution Impact |
+| :--- | :--- | :--- |
+| **Prime Directive Alignment** | Establishing that everyone did the best job they could given what they knew at the time. | Eliminates defensiveness and opens the team to honest, constructive reflections. |
+| **Theme Grouping** | Clustering dozens of individual feedback cards into unified, manageable categories. | Focuses discussion on high-impact macro trends rather than getting lost in isolated complaints. |
+| **Actionable Accountability** | Assigning single owners and tracked Jira tasks to every single improvement item generated. | Guarantees that retro outcomes are executed rather than forgotten in static meeting notes. |
+
+---
+
+## 📋 Common Patterns
+
+1. **Phase 1: Preparation & Data Gathering** — Set up the retro board 24-48 hours prior, pull sprint delivery metrics, and review the status of previous action items.
+2. **Phase 2: Silent Brainstorming & Grouping** — Give the team silent time to log cards under "What Went Well", "What Needs Improvement", and "Ideas", then group related themes.
+3. **Phase 3: Voting & Action Item Commitment** — Vote on priority topics, discuss constructive solutions, and assign 1 to 3 tracked action items with clear owners.
+
+---
+
+## 🛠️ Practical Tips & Templates
+
+> **Template / Artifact Example:** Sprint Retrospective Confluence or Board Template.
+
+```markdown
+# Sprint [X] Retrospective Summary
+
+## 1. Review of Previous Action Items
+- [x] [COMPLETED] Add automated linter check to PR pipeline (Owner: Alex)
+- [ ] [IN PROGRESS] Update staging database seed script (Owner: Sam)
+
+## 2. Feedback Summary
+- **🟢 What Went Well:** Quick PR turnaround times; clear TRDs.
+- **🔴 What Needs Improvement:** Staging environment instability; missing acceptance criteria on incoming tickets.
+- **💡 Ideas & Experiments:** Implement a 15-minute daily blocker clearance drop-in call.
+
+## 3. Actionable Commitments for Next Sprint
+| Action Item | Type | Owner | Target Ticket / Sprint |
+| :--- | :--- | :--- | :--- |
+| Add DoR checklist enforcement before pulling tickets | Process | Technical Analyst | Sprint [X+1] |
+| Set up alert notifications for staging build failures | Tooling | DevOps / Sam | Jira: PLAT-402 |
+
+```
+
+:::warning
+
+### Pitfalls & Edge Cases
+
+* **Common Mistake:** Accumulating a giant list of 10+ action items that nobody owns or completes, destroying team faith in the retro process.
+* **Pro Tip:** Strictly cap action items at 1 to 3 per sprint. It is far better to execute *one* meaningful workflow change than to log ten ideas that get ignored.
+:::
