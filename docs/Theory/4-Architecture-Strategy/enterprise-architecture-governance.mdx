@@ -1,644 +1,152 @@
 ---
-title: "Documentations"
+title: Enterprise Architecture & Governance
+sidebar_label: Enterprise Architecture & Governance
+description: Architectural patterns, decision frameworks, and governance models for aligning technology capabilities with business strategy at scale.
+sidebar_position: 4
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+# Enterprise Architecture & Governance
+
 :::tip
-### Definition
-Documentation Architecture describes how technical knowledge is structured, communicated, and maintained across systems, teams, and lifecycles to ensure shared understanding and safe operation.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Enterprise architecture governance establishes the strategic guardrails, decision frameworks, and standard models required to align distributed technical capabilities with long-term business goals.
+* **Core Primitives:** Architecture decision records (ADRs), technology radar lifecycles, capability modeling, and federated review boards.
+* **BAU & Operational Realities:** Bureaucratic paralysis, shadow IT proliferation, stale architecture blueprints, and unaligned multi-team tech stacks.
 :::
 
-**When to Use**
+## 🔍 Theory Focus Point
 
-- Sharing knowledge across teams or roles  
-- Designing APIs, systems, or operational workflows  
-- Onboarding new engineers  
-- Ensuring operational safety and reducing outages  
-- Supporting compliance, audits, or governance  
-- Coordinating work across distributed teams  
-
-**When Not to Use**
-
-- Information is volatile and changes daily  
-- A simple README or code comment is sufficient  
-- The system is experimental or short‑lived  
-- Documentation is being used to justify poor design  
-- The audience does not need long‑form documentation  
+* **Strategic Alignment:** Focus on **business capability modeling** and **technology roadmapping** to evaluate architectural investment and future-proofing.
+* **Decision Frameworks:** Focus on **Architecture Decision Records (ADRs)** and **lightweight RFC processes** to evaluate consensus velocity and technical traceability.
+* **Governance Models:** Focus on **federated architecture boards** versus **command-and-control gatekeeping** to evaluate organizational compliance and engineering autonomy.
 
 ---
 
-## 🎯 What Problem Does This Solve?
-
-Documentation Architecture solves the problem of **knowledge fragmentation**, **tribal knowledge**, and **unsafe operation**.
-
-It enables:
-
-- Shared understanding across teams  
-- Faster onboarding  
-- Reliable operations through runbooks  
-- Consistent API behaviour via contracts  
-- Traceability for governance and audits  
-- Scalable collaboration without constant meetings  
-
-Documentation is a **system**, not a deliverable — it ensures teams can build, operate, and evolve software safely.
-
----
-
-## 🧠 Conceptual Model
-
-Documentation spans **four layers**, each serving a different purpose:
-
-### Core Components
-
-#### **1. Product & User Documentation**  
-Explains *what the system does*.
-
-#### **2. Architecture & Design Documentation**  
-Explains *how the system works*.
-
-#### **3. API & Contract Documentation**  
-Explains *how to interact with the system*.
-
-#### **4. Operational Documentation**  
-Explains *how to run, debug, and maintain the system*.
-
-### Axes of Variation
-
-- **Audience** → user, engineer, operator, auditor  
-- **Purpose** → understanding, interaction, operation, governance  
-- **Format** → narrative, diagrams, schemas, contracts  
-- **Lifecycle** → static vs frequently updated  
-- **Scope** → system‑wide vs component‑specific  
-
----
-
-### Typical Lifecycle or Flow
-
-**Diagram:**
-
-```mermaid
-flowchart TD
-    A[Design] --> B[Document]
-    B --> C[Review & Validate]
-    C --> D[Publish & Share]
-    D --> E[Operate & Maintain]
-    E --> F[Update as System Evolves]
-    F --> B
-```
-
----
-
-## 🔍 TA Lens
-
-:::info How a TA Evaluates This Concept
-- What changes, what stays constant, what becomes a bottleneck  
-- Whether documentation reflects reality or has drifted  
-- Whether contracts and runbooks are complete and unambiguous  
-- Whether diagrams match system behaviour under load  
-- Whether documentation supports safe operation and onboarding  
-:::
-
-**What happens when:**
-
-- **Data grows** → schemas and data dictionaries become critical  
-- **Traffic increases** → operational docs must cover scaling and failure modes  
-- **Concurrency rises** → API contracts and sequencing diagrams matter  
-- **Resources become constrained** → runbooks guide safe recovery  
-
----
-
-## 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| Contract | Agreed behaviour between systems |
-| Specification | Formal description of an API or schema |
-| Runbook | Step‑by‑step operational instructions |
-| Playbook | Strategy for handling classes of incidents |
-| ADR | Architecture Decision Record |
-| Schema | Structured definition of data |
-
----
-
-## 🧬 Variants / Types
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="api" label="API & Contract Documentation">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Strategic Alignment** | Local team roadmap planning, sprint prioritization friction | Cross-departmental budget contention, enterprise portfolio dependency gridlocks |
+| **Decision Frameworks** | Local engineering design reviews, code-level RFC discussions | Distributed technical working group syncs, architecture review board approval queues |
+| **Governance Models** | Local security/compliance checklist execution, linting rules | Enterprise-wide policy propagation, cloud guardrail policy enforcement (e.g., OPA) |
 
-### API & Contract Documentation
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-**Purpose**  
-Define how systems communicate and what they expect.
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Strategic Alignment** | Local technical debt backlog growth, refactoring overhead | Wide-scale system obsolescence, multi-year legacy migration bottlenecks |
+| **Decision Frameworks** | Local documentation storage (Markdown/Confluence) footprints | Distributed knowledge base fragmentation, search indexing latency across portals |
+| **Governance Models** | Local compliance audit log collection | Centralized governance dashboard data aggregation, cross-region policy sync latency |
 
-**Key Characteristics**
-- Machine‑readable contracts  
-- Strong typing or schema validation  
-- Clear request/response structures  
-
-**Behaviour**  
-Ensures consistent API behaviour across teams and clients.
-
-**Trade-offs**  
-Strict contracts require disciplined versioning.
-
----
-
-#### OpenAPI (REST)
-
-- Machine‑readable HTTP API specification  
-- Used for SDK generation, validation, and portals  
-
-#### GraphQL Schema
-
-- Self‑describing via introspection  
-- Strong typing and flexible querying  
-
-#### gRPC / Protobuf
-
-- Binary, schema‑driven  
-- High‑performance service‑to‑service communication  
-
-#### SOAP / WSDL (Legacy)
-
-- XML‑based enterprise contracts  
-- Strict schema validation  
-
-</TabItem>
-
-<TabItem value="architecture" label="Architecture & System Documentation">
-
-### Architecture & System Documentation
-
-**Purpose**  
-Explain how systems are designed, structured, and interact.
-
-**Key Characteristics**
-- Components, flows, dependencies  
-- Failure modes and scaling behaviour  
-- Historical decisions (ADRs)  
-
-**Behaviour**  
-Provides shared understanding for design, review, and onboarding.
-
-**Trade-offs**  
-Can drift if not maintained.
-
----
-
-#### Architecture Decision Records (ADRs)
-
-Capture *why* decisions were made.
-
-#### System Design Docs
-
-Describe components, flows, dependencies, and failure modes.
-
-#### Sequence & Flow Diagrams
-
-Explain runtime behaviour and interactions.
-
-</TabItem>
-
-<TabItem value="operational" label="Operational Documentation">
-
-### Operational Documentation
-
-**Purpose**  
-Enable safe operation, debugging, and maintenance.
-
-**Key Characteristics**
-- Runbooks for known scenarios  
-- Playbooks for incident classes  
-- SLO/SLA definitions  
-
-**Behaviour**  
-Reduces outages and accelerates incident response.
-
-**Trade-offs**  
-Requires continuous updates as systems evolve.
-
----
-
-#### Runbooks
-
-Step‑by‑step instructions for predictable failures.
-
-#### Playbooks
-
-Higher‑level strategies for incident response.
-
-#### SLO/SLA Documentation
-
-Defines availability targets, error budgets, and expectations.
-
-</TabItem>
-
-<TabItem value="product" label="Product & User Documentation">
-
-### Product & User Documentation
-
-**Purpose**  
-Explain what the system does and how to use it.
-
-**Key Characteristics**
-- User guides  
-- Tutorials  
-- Release notes  
-
-**Behaviour**  
-Supports end‑users and internal consumers.
-
-**Trade-offs**  
-Must balance detail with usability.
-
-</TabItem>
-
-<TabItem value="schema" label="Schema & Data Documentation">
-
-### Schema & Data Documentation
-
-**Purpose**  
-Define the structure, meaning, and constraints of data.
-
-**Key Characteristics**
-- JSON Schema  
-- XSD  
-- Avro/Protobuf schemas  
-- Data dictionaries  
-
-**Behaviour**  
-Ensures semantic consistency across pipelines and teams.
-
-**Trade-offs**  
-Requires alignment between engineering and analytics.
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🧩 System Interactions
-
-:::info How a TA Understands the System
-- How documentation interacts with architecture, data, and runtime  
-- How documentation supports safe operation under pressure  
-- What becomes a bottleneck when systems scale or evolve  
-:::
-
-### Local Systems
-
-- OS  
-- Runtime  
-- Network  
-- Storage  
-- Concurrency  
-- Scaling  
-
-### Remote Systems
-
-- Pods  
-- Data Centers  
-- API Gateways  
-- CI/CD Platforms  
-- Knowledge Portals (e.g., Backstage)  
-
-### Questions to ask during reviews or incidents
-
-- Does documentation reflect current reality?  
-- Are runbooks complete and actionable?  
-- Are API contracts versioned and validated?  
-- Are diagrams accurate under load or failure?  
-- Is ownership and update responsibility clear?  
-
----
-
-## 💥 Outputs / Results
-
-:::note Special Considerations
-Documentation must be accurate, discoverable, and maintained — stale documentation is dangerous.
-:::
-
-### Success Modes
-
-| Result Type | Description |
-|-------------|-------------|
-| Shared Understanding | Teams align without meetings |
-| Reliable Operations | Runbooks prevent outages and mistakes |
-| API Reliability | Contracts ensure consistent behaviour |
-| Faster Onboarding | New engineers become productive quickly |
-
-### Failure Modes
-
-| Failure Type | Description |
-|--------------|-------------|
-| Documentation Drift | Docs no longer match reality |
-| Ambiguous Contracts | APIs behave inconsistently |
-| Missing Runbooks | Incidents escalate unnecessarily |
-| Tribal Knowledge | Only a few people understand the system |
-
----
-
-### "Project Architecture"
-
-:::tip
-### Definition
-Project Architecture describes how a software project is structured across code, dependencies, tooling, workflows, and team conventions — the system that shapes how engineers build, test, deploy, and operate software.
-:::
-
-**When to Use**
-
-- Designing or updating a project template
-- Reviewing a team’s repo to understand constraints
-- Diagnosing structural issues (build failures, dependency drift, CI pain)
-- Identifying fixed vs flexible vs team‑specific elements
-- Ensuring templates support real‑world engineering needs
-
-**When Not to Use**
-
-- Assuming all teams should follow identical structures
-- Forcing a template onto a team with domain‑specific needs
-- Treating flexible elements as fixed (or vice versa)
-- Over‑engineering structure for small or short‑lived projects
-
----
-
-## 🎯 What Problem Does This Solve?
-
-Project Architecture solves the problem of **how work gets done** inside a software project.
-
-It enables:
-
-- **Clarity of constraints** — what must stay stable vs what can change
-- **Template alignment** — ensuring cookiecutter templates match real needs
-- **Risk reduction** — identifying brittle or non‑standard structures early
-- **Faster onboarding** — new engineers understand the project shape quickly
-- **Better requirements** — grounding requirements in engineering reality
-
-A project’s architecture is the *skeleton* that determines how teams build, test, deploy, and operate software.
-
----
-
-## 🧠 Conceptual Model
-
-### Core Components
-
-#### **Language & Runtime Constraints**
-- Packaging model
-- Directory conventions
-- Build tools
-- Dependency resolution
-
-#### **Team Workflow**
-- CI/CD pipelines
-- Testing strategy
-- Deployment model
-- Observability patterns
-
-#### **Domain Requirements**
-- Data pipelines
-- API boundaries
-- Infrastructure‑as‑code
-- ML workflows
-
-#### **Organisational Standards**
-- Templates
-- Security requirements
-- Naming conventions
-- Internal libraries
-
-Together, these form the **project skeleton** — the structure that governs how work gets done.
-
-### Axes of Variation
-
-- **Fixed vs Flexible vs Team‑Specific elements**
-- **Monorepo vs Polyrepo**
-- **Strict vs Loose conventions**
-- **Lightweight vs Heavyweight tooling**
-- **Runtime‑driven vs Domain‑driven structure**
-
----
-
-### Typical Lifecycle or Flow
-
-**Diagram:**
-
-```mermaid
-flowchart TD
-    A[Clone Repo] --> B[Inspect Structure]
-    B --> C[Identify Fixed/Flexible/Team-Specific Elements]
-    C --> D[Map Constraints to Template]
-    D --> E[Review with Team]
-    E --> F[Iterate & Maintain Architecture]
-```
-
----
-
-## 🔍 TA Lens
-
-:::info How a TA Evaluates Project Architecture
-- Identify **fixed elements** dictated by language, runtime, or organisation
-- Identify **flexible elements** that teams can change with effort
-- Identify **team‑specific elements** that require extension points
-- Look for structural signals: modularity, testability, dependency hygiene
-- Ask whether the architecture supports the team’s domain and workflow
-:::
-
-**What happens when:**
-
-- **Data grows** → repo structure must support pipelines, schemas, storage
-- **Traffic increases** → CI/CD must scale, tests must be layered
-- **Concurrency rises** → build tools and runtimes must handle parallelism
-- **Resources become constrained** → builds slow, dependencies drift, CI bottlenecks appear
-
----
-
-## 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| Fixed Element | A project component that cannot change without major cost |
-| Flexible Element | A component that can change with effort and coordination |
-| Team‑Specific Element | A domain‑driven component unique to a team’s workflow |
-| Extension Point | A template mechanism allowing teams to customise behaviour |
-| Project Skeleton | The baseline directory and tooling structure |
-
----
-
-## 🧬 Variants / Types
+## Domain Deep-Dives
 
 <Tabs>
+  <TabItem value="subtopic1" label="Strategic Alignment">
 
-<TabItem value="baseline" label="Baseline Structure">
+### 🗺️ Business Capability & Technical Roadmapping
 
-### Baseline Project Structure
+:::tip
 
-**Purpose**
-Provide a predictable, navigable foundation for engineering work.
+**Definition**
+The strategic mapping of enterprise business capabilities to underlying software architectures, ensuring technology investments directly drive organizational goals.
+:::
 
-**Key Characteristics**
-- Source code layout
-- Dependencies and package management
-- Build & packaging tools
-- Testing structure
-- CI/CD pipelines
-- Runtime & deployment configuration
-- Observability hooks
+> **Interview Pitch:** *"Enterprise architecture alignment bridges the gap between boardroom business strategy and engineering execution, ensuring every technical system maps directly to a core business capability."*
 
-**Behaviour**
-Defines the default shape of the project.
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Enterprise Capability Modeling:** Large organizations undergoing massive digital transformation, mergers, or multi-year structural modernization.
+* **Choose / Prioritize Ad-Hoc Roadmapping:** Early-stage startups where business models and technical stacks pivot rapidly on a monthly basis.
 
-**Trade-offs**
-Too rigid → slows teams; too loose → creates chaos.
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-</TabItem>
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Business Capability Map** | A hierarchical catalog of what a business does, independent of how it is implemented. | Provides an objective anchor for evaluating software duplication and portfolio investment. | Capability-Based Planning |
+| **Technology Radar** | A categorized visualization of adopted, trial, hold, and abandoned technologies. | Guides engineering teams toward standardized tech stacks while allowing controlled experimentation. | Enterprise Tech Radar |
+| **Target Architecture Blueprint** | A strategic destination model defining how systems should look over a 3-to-5 year horizon. | Prevents short-term tactical fixes from compounding into long-term technical debt traps. | Target State Architecture |
 
-<TabItem value="fixed" label="Fixed Elements">
+#### 🚨 Misapplication Diagnostics in Production
 
-### Fixed Elements
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Ivory Tower Planning** | Architects designing complex multi-year roadmaps completely disconnected from engineering reality. | Roadmaps ignored by developers, massive budget overruns, and delivery paralysis. | Co-create roadmaps iteratively with engineering leads and tie milestones to working software increments. |
 
-**Purpose**
-Represent non‑negotiable constraints imposed by language, runtime, or organisation.
+  </TabItem>
 
-**Key Characteristics**
-- Language‑specific directory conventions
-- Build tools (Maven, sbt, Poetry, npm)
-- Packaging models (JAR, wheel, container image)
-- Required internal libraries or security tooling
+  <TabItem value="subtopic2" label="Decision Frameworks">
 
-**Behaviour**
-Stable across teams; must be supported by templates.
+### 📝 Architecture Decision Frameworks
 
-**Trade-offs**
-Rigid but predictable.
+:::tip
 
----
+**Definition**
+Lightweight, transparent processes for proposing, debating, and recording significant architectural decisions across distributed engineering teams.
+:::
 
-**Examples**
+> **Interview Pitch:** *"Decision frameworks replace tribal knowledge with transparent Architecture Decision Records (ADRs), ensuring future engineers understand not just what was built, but why."*
 
-| Language | Fixed Elements | Why Fixed |
-|---------|----------------|-----------|
-| Java | Maven/Gradle, `src/main/java`, JAR/WAR | JVM conventions |
-| Scala | sbt, multi‑module builds | Compiler + ecosystem |
-| Python | `src/` layout, virtualenv/poetry | Packaging + interpreter |
-| Node.js | `package.json`, npm/yarn | Runtime + dependency model |
+#### 🧠 Decision Drivers
+* **Choose / Prioritize ADRs & RFCs:** Distributed engineering organizations where team members rotate frequently and historical context is easily lost.
+* **Choose / Prioritize Verbal Agreements:** Small co-located teams where informal communication provides immediate alignment.
 
-</TabItem>
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-<TabItem value="flexible" label="Flexible Elements">
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Architecture Decision Record (ADR)** | A short, immutable text document capturing a single architectural choice, context, and consequences. | Preserves historical rationale and prevents circular architectural debates over past decisions. | Architectural Provenance Tracking |
+| **Request for Comments (RFC)** | A collaborative proposal document open for peer review before major technical changes occur. | Gathers cross-functional feedback early, reducing costly rework post-implementation. | Consensus Engineering RFC |
+| **Architectural Fitness Function** | An automated test or check that measures an architectural characteristic (e.g., modularity or latency). | Ensures governance rules are enforced by code rather than manual human inspections. | Evolutionary Fitness Functions |
 
-### Flexible Elements
+#### 🚨 Misapplication Diagnostics in Production
 
-**Purpose**
-Allow teams to adapt structure to their workflow.
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Analysis Paralysis** | Requiring heavy, multi-page RFC approvals for minor, reversible code-level changes. | Feature velocity collapsing, developer frustration rising, and teams bypassing governance entirely. | Scale governance weight proportionally to decision reversibility (use lightweight ADRs for local choices). |
 
-**Key Characteristics**
-- Directory structure
-- Testing framework
-- CI pipeline design
-- Dockerfile patterns
+  </TabItem>
 
-**Behaviour**
-Can change, but with cost and coordination.
+  <TabItem value="subtopic3" label="Governance Models">
 
-**Trade-offs**
-Flexibility increases autonomy but reduces standardisation.
+### ⚖️ Federated Governance & Guardrails
 
-</TabItem>
+:::tip
 
-<TabItem value="team" label="Team‑Specific Elements">
+**Definition**
+An organizational model that replaces slow, manual architectural approval gates with automated platform guardrails and federated decision-making.
+:::
 
-### Team‑Specific Elements
+> **Interview Pitch:** *"Modern governance doesn't act as a roadblock; instead of saying 'no' via committee, it builds self-serve platform guardrails that make the secure, compliant path the easiest path."*
 
-**Purpose**
-Capture domain‑driven needs unique to a team.
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Federated Guardrails:** High-scale engineering organizations seeking to maximize team autonomy while maintaining enterprise security and compliance standards.
+* **Choose / Prioritize Central Approval Boards:** Highly regulated monoliths where every production change requires explicit legal and security sign-off.
 
-**Key Characteristics**
-- ETL folders, schemas, pipeline configs
-- API routing conventions
-- ML model folders, notebooks, experiment tracking
-- Terraform modules, infra scripts
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-**Behaviour**
-Require extension points, not standardisation.
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Golden Paths / Templates** | Pre-packaged, compliant project skeletons and infrastructure modules provided to teams. | Accelerates onboarding and ensures compliance defaults are baked into every new service. | Golden Path Engineering |
+| **Policy-as-Code** | Writing security and governance rules as executable code (e.g., Open Policy Agent). | Automatically validates infrastructure and configuration pull requests against compliance rules. | Automated Policy Enforcement |
+| **Federated Architecture Board** | A rotating council of domain engineers collaborating on global standards rather than dictating them. | Ensures governance standards reflect ground-level engineering realities rather than ivory-tower theory. | Federated Enterprise Governance |
 
-**Trade-offs**
-High variability; templates must support customisation.
+#### 🚨 Misapplication Diagnostics in Production
 
-</TabItem>
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Gatekeeper Bureaucracy** | A central architecture team acting as a manual ticket-queue approval bottleneck for deployments. | Teams waiting weeks for simple environment changes, shadow IT proliferation, and low morale. | Replace manual approval tickets with automated CI/CD pipeline policy checks and self-service guardrails. |
 
+  </TabItem>
 </Tabs>
-
----
-
-## 🧩 System Interactions
-
-:::info How a TA Understands the System
-- How project structure interacts with build tools, CI/CD, and runtime
-- How architecture behaves under load (large repos, heavy tests)
-- What becomes a bottleneck as teams scale or add dependencies
-:::
-
-### Local Systems
-
-- OS
-- Runtime
-- Build tools
-- Dependency managers
-- Local testing frameworks
-
-### Remote Systems
-
-- CI/CD platforms
-- Artifact registries
-- Cloud runtimes
-- Data centers
-- Internal library repositories
-
-### Questions to ask during reviews or incidents
-
-- What parts of the structure are fixed vs flexible?
-- Does the architecture support the team’s domain?
-- Are dependencies well‑managed or drifting?
-- Are CI/CD pipelines aligned with project shape?
-- Are extension points clearly defined?
-
----
-
-## 💥 Outputs / Results
-
-:::note Special Considerations
-Historical decisions often explain structural quirks; avoid assuming mistakes.
-:::
-
-### Success Modes
-
-| Result Type | Description |
-|-------------|-------------|
-| Project Map | Clear breakdown of fixed/flexible/team‑specific elements |
-| Template Requirements | Structured list of what templates must support |
-| Risk Assessment | Identification of brittle or inconsistent structures |
-| Extension Points | Areas where teams can safely customise |
-
-### Failure Modes
-
-| Failure Type | Description |
-|--------------|-------------|
-| Structural Drift | Repo becomes inconsistent or unmaintainable |
-| Dependency Drift | Versions diverge, causing build failures |
-| CI Pain | Slow, flaky, or brittle pipelines |
-| Template Misalignment | Templates fail to support real workflows |
-
----
-
-## 🔗 Related Runbook Concepts
-
-- OS Architecture
-- Memory Management
-- Build Systems
-- Dependency Management
-- CI/CD Architecture
-

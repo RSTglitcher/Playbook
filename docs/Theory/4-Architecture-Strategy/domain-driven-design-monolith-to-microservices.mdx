@@ -1,0 +1,152 @@
+---
+title: Domain-Driven Design & Microservices
+sidebar_label: DDD & Microservices
+description: Architectural patterns and strategic decomposition principles for transitioning from monolithic systems to decoupled domain-driven microservices.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Domain-Driven Design & Microservices
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Domain-Driven Design (DDD) and microservice decomposition align software boundaries with complex business domains, replacing tangled monolithic codebases with autonomous, bounded services.
+* **Core Primitives:** Bounded contexts, aggregate roots, domain events, and strangler fig migration patterns.
+* **BAU & Operational Realities:** Distributed monoliths, tight coupling through shared databases, cascading failure loops, and unmanaged distributed transactions.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Strategic Domain Modeling:** Focus on **bounded contexts** and **ubiquitous language** to evaluate business alignment and cognitive load distribution.
+* **Tactical Decomposition:** Focus on **aggregate boundaries** and **event-driven integration** to evaluate consistency boundaries and coupling reduction.
+* **Monolith Migration:** Focus on **strangler fig patterns** and **database decoupling** to evaluate risk mitigation and incremental migration velocity.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Strategic Boundaries** | In-memory object reference sharing, local package method calls | Network boundary crossings, cross-service synchronous HTTP/gRPC invocation chains |
+| **Tactical Aggregates** | Local database row-level locking, in-memory aggregate state validation | Distributed locking challenges, eventual consistency lag across services |
+| **Migration & Strangling** | Dual-write local application routing logic, proxy request inspection | API gateway traffic splitting, dual-read shadow validation latency |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Strategic Boundaries** | Shared monolithic database connection pool, multi-table joins | Distributed data ownership boundaries, database-per-service isolation overhead |
+| **Tactical Aggregates** | Local transaction log growth, transactional state caching | Multi-service distributed transactions (Sagas), cross-service event payload payloads |
+| **Migration & Strangling** | Temporary staging tables during data backfills, dual database writes | Wide-area network replication between legacy and new service datastores |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Strategic Modeling">
+
+### 🗺️ Strategic Domain Modeling & Bounded Contexts
+
+:::tip
+
+**Definition**
+The architectural practice of dividing a sprawling business domain into explicit, autonomous boundaries (Bounded Contexts) with a shared Ubiquitous Language.
+:::
+
+> **Interview Pitch:** *"Strategic DDD stops you from building a giant ball of mud by defining hard linguistic and structural boundaries around specific business capabilities."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Bounded Contexts:** Large enterprise systems with multiple teams where business terminology conflicts or code coupling slows down feature velocity.
+* **Choose / Prioritize Shared Kernels:** Early-stage startups or compact applications where shared data models simplify rapid initial iteration.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Bounded Context** | An explicit boundary within which a domain model and its terminology apply universally. | Prevents concept pollution (e.g., 'Customer' meaning different things in Sales vs. Support). | Domain Boundary Context |
+| **Ubiquitous Language** | A rigorous, shared vocabulary used by both developers and domain experts in code and conversation. | Eliminates translation friction between technical implementation and business logic. | Linguistic Domain Modeling |
+| **Context Mapping** | Documenting the relationships and integration patterns between distinct bounded contexts. | Clarifies upstream/downstream dependencies and communication protocols across teams. | Context Mapping Patterns |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Shared Database Coupling** | Multiple microservices directly reading and writing to the same underlying database tables. | Schema changes in one service silently breaking foreign keys or queries in another (Distributed Monolith). | Enforce strict database-per-service isolation; communicate changes exclusively via APIs or events. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Tactical Decomposition">
+
+### ⚙️ Tactical DDD & Aggregate Boundaries
+
+:::tip
+
+**Definition**
+The patterns (Entities, Value Objects, and Aggregates) that govern internal code design and consistency boundaries within a single domain service.
+:::
+
+> **Interview Pitch:** *"Tactical DDD ensures transactional consistency by grouping related entities under a single Aggregate Root, preventing invalid states while keeping transaction scopes small and fast."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Aggregates:** Complex transactional domains requiring strict invariant enforcement and predictable state change boundaries.
+* **Choose / Prioritize Anemic Domain Models:** Simple CRUD applications where business logic is minimal and transaction boundaries are trivial.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Aggregate Root** | A cluster of domain objects treated as a single unit with a single entry point for changes. | Guarantees transactional consistency and invariant enforcement within its boundary. | Aggregate Consistency Root |
+| **Domain Event** | An immutable record representing something meaningful that occurred within the domain. | Decouples services by broadcasting state changes asynchronously to interested subscribers. | Domain Event Pub/Sub |
+| **Value Object** | An immutable object defined solely by its attributes rather than a unique identifier. | Eliminates side effects and simplifies state comparison across domain logic. | Immutable Value Semantics |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Massive Aggregates** | Grouping too many related entities under a single giant aggregate root. | Database lock contention, slow transaction processing, and frequent optimistic locking failures. | Shrink aggregate boundaries to reference other entities by ID rather than direct object graphs. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Monolith Migration">
+
+### 🔄 Monolith to Microservices Migration
+
+:::tip
+
+**Definition**
+The evolutionary refactoring strategy used to break down legacy monolithic applications into decoupled microservices safely and incrementally.
+:::
+
+> **Interview Pitch:** *"You don't rewrite a monolith overnight; you use the strangler fig pattern to gradually intercept traffic, carve out bounded contexts, and migrate services without downtime."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Strangler Fig Pattern:** Large, mission-critical legacy monoliths that cannot afford a risky "big bang" rewrite.
+* **Choose / Prioritize Complete Rewrite:** Unmaintainable legacy systems with zero test coverage where refactoring costs exceed rebuilding from scratch.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Strangler Fig Pattern** | Gradually replacing specific functionality of a monolith with new microservices behind a router. | Minimizes migration risk by allowing incremental feature extraction and instant rollback. | Incremental Monolith Extraction |
+| **API Gateway Proxy** | A single entry point that routes client requests to either the legacy monolith or new microservices. | Shields clients from underlying refactoring changes and structural topology shifts. | Edge Routing Proxy |
+| **Saga Pattern** | Managing distributed transactions across multiple microservices via compensating actions. | Overcomes the absence of ACID transactions across separate service databases. | Distributed Transaction Saga |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **The Distributed Monolith** | Breaking a monolith into microservices that still require synchronous chaining for every request. | Cascading network latency, compounding failure rates, and worse operational complexity than the original monolith. | Introduce asynchronous event-driven messaging and decouple service dependency chains. |
+
+  </TabItem>
+</Tabs>
