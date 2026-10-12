@@ -1,0 +1,152 @@
+---
+title: ETL & Batch Processing
+sidebar_label: ETL & Batch Processing
+description: Architectural patterns and design principles for extracting, transforming, and loading large datasets in scheduled batch execution windows.
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ETL & Batch Processing
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** ETL and batch processing patterns govern how massive volumes of data are extracted, transformed, and loaded in scheduled windows, prioritizing high-throughput computational efficiency over sub-second latency.
+* **Core Primitives:** Extract-Transform-Load pipelines, partitioning strategies, idempotent load loads, and staging storage buffers.
+* **BAU & Operational Realities:** Out-of-memory worker crashes during large joins, delayed batch window SLAs, unmanaged state growth, and source database contention under load.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Extraction & Staging:** Focus on **delta extraction watermarks** and **staging storage buffers** to evaluate source database impact and ingest efficiency.
+* **Transformation Compute:** Focus on **distributed shuffle joins** and **memory-constrained data frames** to evaluate cluster scaling and spillover risks.
+* **Loading & Persistence:** Focus on **idempotent upserts** and **partition replacement strategies** to evaluate target table consistency and failure recovery.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Extraction & Staging** | Local disk I/O staging file writes, buffer allocation | Source database connection pool saturation, wide-area network bandwidth consumption |
+| **Transformation Compute** | Worker thread-pool thread contention, memory-mapped spillover files | Distributed shuffle phase network congestion, cluster node resource contention |
+| **Loading & Persistence** | Local transaction lock acquisition on staging partitions | Target data warehouse write queue congestion, concurrent analytical reader throttling |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Extraction & Staging** | Staging directory storage growth, intermediate object caching | Large dataset transfer overhead across storage boundaries, extraction window elongation |
+| **Transformation Compute** | Heap memory pressure during large partition sorts and shuffles | Cross-node shuffle network data transmission volume, cluster scaling costs |
+| **Loading & Persistence** | Metadata catalog file growth, index rebuilding overhead | Target storage block compaction load, multi-region replication delay |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Extraction & Staging">
+
+### 📥 Extraction & Staging Strategies
+
+:::tip
+
+**Definition**
+The initial phase of batch pipelines that pulls data from source systems into temporary staging environments without impacting production transactional workloads.
+:::
+
+> **Interview Pitch:** *"Efficient extraction uses incremental watermarks and staging buffers to pull only what changed, protecting your source databases from heavy analytical query loads during peak hours."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Incremental Watermarking:** Large operational tables where full extractions are too expensive and time-consuming.
+* **Choose / Prioritize Full Table Snapshots:** Small configuration tables, reference lists, or systems lacking reliable timestamp tracking columns.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Watermark Tracking** | Recording the highest timestamp or ID processed in the previous run. | Enables precise delta extractions without scanning entire historic tables. | Delta High-Watermark Filtering |
+| **Staging Storage Zone** | A neutral holding directory where raw files land before transformation. | Decouples extraction from transformation code; provides a raw recovery backup. | Landing Zone Staging |
+| **Change Data Extraction** | Querying source logs or audit tables specifically for modified records. | Minimizes source database read footprint compared to broad table scans. | Delta Change Extraction |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Full Scans** | Running full table extractions on multi-terabyte transactional tables every hour. | Source database CPU starvation, query timeouts, and degradation of user-facing web requests. | Refactor extraction jobs to use incremental timestamp or ID-based watermarking. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Transformation Compute">
+
+### ⚙️ Transformation & Distributed Compute
+
+:::tip
+
+**Definition**
+The computational phase where raw extracted data is cleaned, filtered, joined, and aggregated into structured formats suitable for business consumption.
+:::
+
+> **Interview Pitch:** *"Transformation engines handle heavy data lifting—sorting, joining, and aggregating terabytes of data across distributed clusters by managing memory shuffles efficiently."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Distributed Compute (Spark/Ray):** Massive datasets exceeding single-node RAM capacities requiring parallel cluster processing.
+* **Choose / Prioritize In-Database Transformations (SQL):** Moderately sized datasets where data warehouse elasticity handles compute natively.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Distributed Shuffle** | Redistributing data across cluster nodes so records with the same key end up together. | Essential for multi-table joins and aggregations; a primary network bottleneck. | Cluster Shuffle Partitioning |
+| **Lazy Evaluation** | Delaying execution of transformation steps until an action forces computation. | Allows query optimizers to combine steps and eliminate redundant scans. | Lazy Execution Graph |
+| **Spill-to-Disk** | Writing intermediate data blocks to local disk when worker RAM fills up. | Prevents out-of-memory crashes at the cost of severe execution slowdowns. | Disk Spillover Management |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Uncontrolled Joins** | Performing wide cross-joins or joining un-partitioned massive datasets on skew keys. | Out-Of-Memory (OOM) cluster errors, task shuffle failures, and runaway execution times. | Pre-filter datasets, broadcast small lookup tables, and re-partition data on balanced keys. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Loading & Persistence">
+
+### 📤 Loading & Persistence Patterns
+
+:::tip
+
+**Definition**
+The final phase of batch processing that persists transformed data into target warehouses or data lakes with consistency and idempotency guarantees.
+:::
+
+> **Interview Pitch:** *"Loading patterns ensure that your target data stores are updated cleanly, using atomic partition swaps and idempotent upserts so pipeline retries never create duplicate records."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Atomic Partition Swaps:** Large historical datasets where replacing entire partitions or days of data must happen instantly without downtime.
+* **Choose / Prioritize Row-Level Upserts:** Streaming or incremental updates where specific records change frequently within existing tables.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Idempotent Upsert** | Inserting new records or updating existing ones based on a unique primary key. | Safely absorbs duplicate batch reruns without corrupting target table metrics. | Merge-On-Read / Write Upserts |
+| **Atomic Partition Swap** | Building new data in a staging folder and swapping it into production instantly. | Eliminates read-visibility gaps during data refresh cycles. | Zero-Downtime Partition Swap |
+| **Append-Only Ledger** | Writing all batch outputs as new immutable files without modifying history. | Simplifies pipeline logic and preserves complete historical audit trails. | Append-Only Persistence |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Non-Idempotent Appends** | Running batch insert tasks twice during a retry without clearing previous output. | Duplicate rows in reporting tables, inflated aggregate metrics, and inaccurate financial totals. | Implement idempotent merge statements (`MERGE INTO`) or enforce partition-level overwrites. |
+
+  </TabItem>
+</Tabs>

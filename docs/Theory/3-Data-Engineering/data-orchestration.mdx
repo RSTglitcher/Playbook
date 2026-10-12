@@ -1,0 +1,152 @@
+---
+title: Data Orchestration
+sidebar_label: Data Orchestration
+description: Architectural patterns and control-plane mechanisms designed to schedule, coordinate, and monitor complex data pipelines and dependency graphs.
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Data Orchestration
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Data orchestration acts as the control plane for data platforms, managing task dependencies, execution scheduling, and error recovery across distributed pipelines.
+* **Core Primitives:** Directed Acyclic Graphs (DAGs), dynamic task mapping, state backfills, and sensor polling mechanisms.
+* **BAU & Operational Realities:** Scheduler bottlenecks, zombie worker states, cascading task timeouts, and silent dependency deadlocks under load.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Execution Graph Management:** Focus on **Directed Acyclic Graphs (DAGs)** and **task dependency resolution** to evaluate execution ordering and cycle prevention.
+* **State & Concurrency Control:** Focus on **scheduler worker pools** and **metadata state locking** to evaluate concurrency limits and scheduling latency.
+* **Fault Recovery & Resilience:** Focus on **automatic retries** and **historical backfills** to evaluate pipeline recovery velocity and data completeness.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Execution Graphs** | Local worker thread pool allocations, task queue memory management | Distributed task worker scheduling coordination, API scheduler polling overhead |
+| **State & Concurrency** | Database metadata lock contention during state updates | Centralized metadata store throughput limits, concurrent DAG run throttling |
+| **Fault Recovery** | Local exception catching and retry execution logging | Distributed task re-queuing, worker node failure redistribution |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Execution Graphs** | DAG definition parsing memory overhead, task metadata caching | Metadata payload transmission across worker nodes, scheduler loop latency |
+| **State & Concurrency** | Metadata database storage growth over millions of historical runs | Cross-region metadata replication lag, remote state verification overhead |
+| **Fault Recovery** | Historical log buffering during backfill execution runs | Large-scale historical data re-scanning across remote object storage |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Graph Management">
+
+### 🕸️ Execution Graph Management
+
+:::tip
+
+**Definition**
+The control mechanism that structures data tasks into directed acyclic graphs (DAGs), enforcing strict execution order and dependency logic.
+:::
+
+> **Interview Pitch:** *"DAGs provide a clear, deterministic blueprint of your pipeline's dependencies, ensuring that downstream transformations never execute before their upstream data sources have finished loading."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize DAG Orchestration:** Complex multi-step data pipelines, cross-system dependency chains, and workflows requiring strict execution auditing.
+* **Choose / Prioritize Simple Cron Scripts:** Linear, independent scripts where task dependencies do not exist and sequencing failure risk is minimal.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Directed Acyclic Graph (DAG)** | A workflow model where tasks flow in one direction without circular loops. | Guarantees deterministic task ordering and prevents infinite execution loops. | Topological Sort Execution |
+| **Task Sensor** | A polling mechanism that waits for an external file, table, or event before proceeding. | Decouples schedules from time, triggering pipelines based on actual data readiness. | Event-Driven Polling Sensors |
+| **Dynamic Task Mapping** | Generating downstream tasks dynamically at runtime based on upstream data counts. | Enables scalable parallel execution for variable workloads without hardcoded structures. | Runtime Parametric Mapping |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Sensor Polling Abuse** | Spawning hundreds of active task sensors polling external APIs or tables every 10 seconds. | Scheduler CPU exhaustion, database connection pool depletion, and scheduler heartbeat freezes. | Replace aggressive polling sensors with webhook triggers or event-driven push notifications. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="State & Concurrency">
+
+### ⚖️ State & Concurrency Control
+
+:::tip
+
+**Definition**
+The backend architecture that tracks task states (success, failure, running) and manages worker concurrency limits across the platform.
+:::
+
+> **Interview Pitch:** *"State management is the memory of your orchestrator; when thousands of concurrent tasks run, the metadata database must track execution states without locking up the scheduler."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Distributed Workers:** High-scale enterprise data platforms with thousands of concurrent tasks spanning multiple compute clusters.
+* **Choose / Prioritize Single-Node Runners:** Lightweight internal pipelines where local worker concurrency fully satisfies operational demand.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Metadata State Store** | A relational database tracking the exact lifecycle and state of every task run. | Provides auditability and recovery state; becomes a primary system bottleneck if un-optimized. | Centralized State Repository |
+| **Worker Concurrency Pool** | Capping the maximum active tasks a worker node can execute simultaneously. | Prevents worker memory exhaustion and CPU thrashing under high workloads. | Resource Slot Allocation |
+| **Scheduler Heartbeat** | Periodic ping verifying that scheduler and worker nodes are alive and responsive. | Enables rapid detection and failover of dead worker instances. | Node Health Telemetry |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Metadata DB Saturation** | Configuring short scheduler heartbeat intervals and high task logging frequencies. | Database IOPS exhaustion, delayed scheduler loop evaluation, and pipeline start lag. | Tune scheduler heartbeat intervals, archive old task run history, and scale database IOPS. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Fault Recovery">
+
+### 🔄 Fault Recovery & Backfills
+
+:::tip
+
+**Definition**
+The resilience mechanisms that handle task failures through automated retries and manage historical data recalculations via backfills.
+:::
+
+> **Interview Pitch:** *"Orchestration resilience ensures that transient failures recover automatically, while backfill tooling allows you to recompute historical data safely when business logic changes."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Automated Backfills:** Time-series analytics, financial reporting updates, and model retraining workflows requiring historical data consistency.
+* **Choose / Prioritize Append-Only Logs:** Immutable event streams where historical data is never recomputed or modified.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Automated Task Retries** | Re-running failed tasks automatically after a configured delay interval. | Absorbs transient network blips and temporary downstream outages without pager alerts. | Exponential Retry Backoff |
+| **Historical Backfill** | Running past DAG execution dates sequentially or in parallel to catch up on data. | Rebuilds historical datasets after code updates; can overwhelm downstream storage. | Date-Partitioned Replay |
+| **Task SLA Alarms** | Setting maximum execution time boundaries that trigger alerts if breached. | Catches hung queries and runaway jobs before they block downstream reporting SLAs. | Execution Duration Monitoring |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded Backfills** | Triggering unthrottled historical backfills spanning years of data concurrently. | Downstream database connection starvation, memory exhaustion, and complete platform outage. | Partition backfills into manageable date windows and apply concurrency throttling flags. |
+
+  </TabItem>
+</Tabs>

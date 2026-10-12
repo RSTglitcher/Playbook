@@ -1,395 +1,152 @@
 ---
-title: "Analytical Systems"
+title: Analytical Systems
+sidebar_label: Analytical Systems
+description: Analytical storage systems and architecture patterns designed to store, organize, and process large volumes of data for reporting and decision-making.
+sidebar_position: 1
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+# Analytical Systems
+
 :::tip
-### Definition
-Analytical Storage Systems describe how large volumes of data are stored, organised, and processed to support analytical workloads such as BI, reporting, and decision‑making.
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Analytical storage systems govern how massive datasets are structured and queried separately from transactional databases to support business intelligence, reporting, and machine learning workloads.
+* **Core Primitives:** Columnar storage formats, data warehouses, data lakes, and lakehouse transaction log layers.
+* **BAU & Operational Realities:** Exploding joins, slow table scans, unpartitioned dataset growth, and stale data pipelines under load.
 :::
 
-**When to Use**
+## 🔍 Theory Focus Point
 
-- You need to run analytical queries over large datasets
-- You need historical or aggregated views
-- You need scalable compute for BI, ML, or ad‑hoc SQL
-- You need separation between OLTP and OLAP workloads
-- You need consistent modelling (facts, dimensions, schemas)
-
-**When Not to Use**
-
-- You need high‑frequency transactional writes
-- You need millisecond‑latency key‑based lookups
-- You need unstructured storage without governance
-- You need operational storage for application workloads
+* **Storage & Formats:** Focus on **columnar file compression** and **partition pruning** to evaluate scan efficiency and storage cost optimization.
+* **Analytical Architecture:** Focus on **data warehouse schema design** versus **data lake flexibility** to evaluate query performance and governance trade-offs.
+* **Transactional Reliability:** Focus on **ACID table transaction logs** and **versioned time-travel mechanics** to evaluate data consistency and stream-batch integration.
 
 ---
 
-## 🎯 What Problem Does This Solve?
-
-Analytical Storage Systems solve the problem of **efficiently analysing large datasets** without impacting operational systems.
-
-They provide:
-
-- Fast analytical queries (scans, joins, aggregations)
-- Long‑term historical storage
-- Separation of analytical and transactional workloads
-- Scalable compute for large datasets
-- Consistent modelling for BI and reporting
-
-These systems are optimised for **read‑heavy analytical workloads**, not transactional updates.
-
----
-
-## 🧠 Conceptual Model
-
-### Core Components
-
-- **Storage Layer** — files, tables, partitions
-- **Compute Layer** — distributed SQL engines
-- **Modelling Layer** — facts, dimensions, schemas
-- **Ingestion Layer** — ETL/ELT pipelines
-- **Consumption Layer** — BI tools, dashboards, ML pipelines
-
-### Axes of Variation
-
-- Warehouse vs Lake vs Lakehouse
-- Schema‑on‑write vs Schema‑on‑read
-- Row‑based vs Columnar formats
-- Batch vs Streaming ingestion
-- Centralised vs Decentralised modelling
-
----
-
-### Typical Lifecycle or Flow
-
-**Diagram(s):**
-
-```mermaid
-flowchart TD
-    A[Source Systems] --> B[ETL/ELT Pipelines]
-    B --> C[Lake / Warehouse / Lakehouse]
-    C --> D[BI Tools]
-    C --> E[ML/AI Pipelines]
-    C --> F[Ad-hoc SQL]
-```
-
----
-
-## 🔍 TA Lens
-
-:::info How a TA Evaluates This Concept
-- What changes, what stays constant, what becomes a bottleneck
-- Whether modelling (grain, facts, dimensions) matches analytical needs
-- How ingestion latency affects freshness
-- How partitioning, clustering, and file formats affect performance
-- Whether cost is driven by unnecessary scans or joins
-- Where schema drift or data quality issues originate
-:::
-
-**What happens when:**
-
-- **Data grows** → partitions, clustering, and columnar formats matter
-- **Traffic increases** → compute scaling and caching become critical
-- **Concurrency rises** → warehouses autoscale; lakes rely on engines
-- **Resources become constrained** → queries spill to disk, slow scans
-
----
-
-## 📘 Key Terminology
-
-| Term | Definition |
-|------|------------|
-| OLAP | Analytical processing model |
-| Fact Table | Stores measurable events |
-| Dimension Table | Stores descriptive attributes |
-| ETL/ELT | Data ingestion and transformation |
-| Partitioning | Dividing data for efficient scans |
-| Columnar Storage | Format optimised for analytics |
-
----
-
-## 🧬 Variants / Types
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="warehouse" label="Data Warehouses">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Data Warehouses** | Local query execution memory pools, worker thread thread-pool contention | Cloud warehouse query queue saturation, concurrent analytical user workload throttling |
+| **Data Lakes** | Local file system block reading, memory caching of index metadata | Distributed object storage request rate limits, remote listing API bottlenecks |
+| **Lakehouse Storage** | Transaction log lock contention, metadata file compaction processes | Multi-writer concurrency conflicts, distributed table commit protocol coordination |
 
-### Data Warehouses
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-**Purpose**
-Provide fast, structured analytical queries with strong modelling.
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Data Warehouses** | Local staging memory footprint, intermediate join spillover files | Network transmission of large result sets, storage volume capacity scaling costs |
+| **Data Lakes** | Small file problem overhead, OS file handle exhaustion during scans | Wide-area network storage retrieval latency, long-term object retention costs |
+| **Lakehouse Storage** | Transaction log size growth, metadata checkpoint memory allocation | Cross-region replication lag, checkpoint synchronization latency over object stores |
 
-**Key Characteristics**
-- Schema‑on‑write
-- Fact/dimension modelling
-- Columnar storage
-- Distributed compute
-- Strong governance and metadata
-
-**Behaviour**
-Fast joins, aggregations, and predictable performance.
-
-**Trade-offs**
-Higher cost; less flexible for raw/unstructured data.
-
----
-
-### Core Concepts
-
-#### Schema Design
-- **Star Schema** — fact + denormalised dimensions
-- **Snowflake Schema** — normalised dimensions
-- **Galaxy Schema** — multiple fact tables sharing dimensions
-
-#### ETL / ELT
-- Extract → Transform → Load
-- Or Load → Transform inside the warehouse
-
-#### OLAP
-Supports slicing, dicing, rollups, drill‑downs.
-
-#### Aggregation
-Warehouses excel at grouping and summarising metrics.
-
----
-
-### Exceptions (Not Universal)
-- Some warehouses support semi‑structured data
-- Some offer limited ACID support
-
-</TabItem>
-
-<TabItem value="lake" label="Data Lakes">
-
-### Data Lakes
-
-**Purpose**
-Store raw, semi‑structured, or unstructured data cheaply.
-
-**Key Characteristics**
-- Schema‑on‑read
-- Object storage (Parquet, ORC, Avro)
-- Supports batch + streaming ingestion
-- Raw + curated zones
-
-**Behaviour**
-Highly flexible ingestion; performance depends on file layout.
-
-**Trade-offs**
-Weak governance; slower queries; harder to enforce quality.
-
----
-
-### Core Concepts
-
-#### Raw vs Curated Zones
-- **Raw Zone** — unprocessed data
-- **Curated Zone** — cleaned, structured data
-
-#### Schema-on-Read
-Applied at query time → flexible but risky.
-
-#### Partitioning
-Improves performance and reduces scan cost.
-
----
-
-### When to Use
-- Raw/semi‑structured data
-- ML, experimentation, exploratory analytics
-- Shared data access across teams
-
-### Avoid When
-- You need ACID guarantees
-- You need low‑latency lookups
-- You need frequent updates to structured relational data
-
----
-
-### Variants
-- Cloud Data Lakes
-- On‑Prem Data Lakes (HDFS, Ceph)
-
-### Strategies
-- Raw ingestion
-- Data curation
-- Partitioning & indexing
-- Governance & security
-
----
-
-### Architecture Diagram
-
-```mermaid
-Source Systems --> Ingestion Pipeline --> Data Lake (Raw)
-Data Lake (Raw) --> ETL/ELT --> Curated Data Zone
-Curated Data Zone --> Analytics / ML / BI Tools
-```
-
----
-
-### Exceptions (Not Universal)
-- Some lakes support ACID‑like behaviour via add‑on layers
-- Some enforce schema‑on‑write for curated zones
-
-</TabItem>
-
-<TabItem value="lakehouse" label="Lakehouse Architecture">
-
-### Lakehouse Architecture
-
-**Purpose**
-Combine warehouse performance with lake flexibility.
-
-**Key Characteristics**
-- ACID transactions on object storage
-- Schema enforcement + evolution
-- Versioned tables / time travel
-- Supports batch + streaming
-- Unified storage + compute
-
-**Behaviour**
-Warehouse‑like performance with lake‑like flexibility.
-
-**Trade-offs**
-More complex to operate; requires metadata layers.
-
----
-
-### Core Concepts
-- Transaction logs
-- Table formats
-- Schema evolution
-- Compaction and clustering
-
-### Variants
-- Delta
-- Iceberg
-- Hudi
-
-### Strategies
-- Unified storage
-- Transactional tables
-- Time travel
-- Partitioning & clustering
-
-### Exceptions (Not Universal)
-- Not all engines support streaming
-- Not all support full ACID semantics
-
-</TabItem>
-
-<TabItem value="cloud" label="Cloud Warehouses">
-
-### Cloud Warehouses
-
-**Purpose**
-Provide elastic, serverless analytical compute.
-
-**Key Characteristics**
-- Fully managed
-- Automatic scaling
-- Columnar storage
-- Separation of compute and storage
-
-**Behaviour**
-Very fast for large scans; simple operational model.
-
-**Trade-offs**
-Vendor lock‑in; cost spikes from full scans.
-
----
-
-### Core Concepts
-- OLAP vs OLTP
-- Append‑oriented ingestion
-- Partitioning and clustering
-- Relaxed consistency
-
-### When to Use
-- Large‑scale analytics
-- BI dashboards
-- Historical trend analysis
-
-### Avoid When
-- High‑frequency transactional writes
-- Low‑latency key‑based lookups
-- OLTP workloads
-
-### Exceptions (Not Universal)
-- Some support semi‑structured updates
-- Some support streaming ingestion
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🧩 System Interactions
+## Domain Deep-Dives
 
-:::info How a TA Understands the System
-- How ingestion interacts with storage and modelling
-- How compute engines behave under load
-- How BI tools and ML pipelines consume data
-- What becomes a bottleneck as data volume grows
+<Tabs>
+  <TabItem value="subtopic1" label="Data Warehouses">
+
+### 🏭 Data Warehouses
+
+:::tip
+
+**Definition**
+Centralized analytical storage systems optimized for fast, structured SQL queries, relational modeling, and business intelligence reporting.
 :::
 
-### Local Systems
+> **Interview Pitch:** *"Data warehouses provide lightning-fast, highly structured analytical queries using columnar storage and strict relational schemas, perfectly separating your reporting layer from transactional workloads."*
 
-- File formats (Parquet, ORC, Avro)
-- Query engines (Spark, Presto, DuckDB)
-- Metadata/catalog systems
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Data Warehouses:** Enterprise business intelligence dashboards, structured SQL reporting, complex multi-table joins, and strict data governance requirements.
+* **Choose / Prioritize Data Lakes:** Raw unstructured data exploration, machine learning training files, or highly flexible, low-cost multi-format storage.
 
-### Remote Systems
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-- Cloud warehouses (BigQuery, Snowflake, Redshift)
-- Data lakes (S3, GCS, ADLS)
-- ETL/ELT orchestrators (Airflow, dbt, Dataflow)
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Columnar Storage** | Storing data by columns rather than rows on disk. | Drastically reduces disk I/O scan costs for analytical queries aggregating specific fields. | Column-Oriented Storage |
+| **Star Schema** | Relational model consisting of central fact tables surrounded by dimension tables. | Simplifies complex analytical queries and accelerates multi-table join performance. | Dimensional Modeling |
+| **Materialized Views** | Pre-computed query results stored physically to speed up repeating reports. | Eliminates expensive on-the-fly aggregations at the cost of background refresh overhead. | Pre-aggregated View Caching |
 
-### Questions to ask during reviews or incidents
+#### 🚨 Misapplication Diagnostics in Production
 
-- Is the query slow due to modelling or compute?
-- Are partitions aligned with access patterns?
-- Is ingestion causing schema drift or stale data?
-- Are joins exploding due to incorrect grain?
-- Are costs driven by unnecessary full‑table scans?
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Exploding Joins** | Joining tables at mismatched grains without accounting for many-to-many relationships. | Query execution memory exhaustion, runaway cloud compute costs, and infinite execution hangs. | Redesign dimensional models to match correct business process grains and use pre-aggregated views. |
 
----
+  </TabItem>
 
-## 💥 Outputs / Results
+  <TabItem value="subtopic2" label="Data Lakes">
 
-:::note Special Considerations
-Most performance issues originate in modelling, not the tool.
+### 🌊 Data Lakes
+
+:::tip
+
+**Definition**
+Scalable, low-cost object storage repositories designed to store raw, semi-structured, and unstructured data in its native format.
 :::
 
-### Success Modes
+> **Interview Pitch:** *"Data lakes act as cheap, infinite storage sinks for raw data of any structure, offering maximum flexibility for exploratory analytics and machine learning at the expense of strict out-of-the-box governance."*
 
-| Result Type | Description |
-|-------------|-------------|
-| Fast Queries | Efficient scans, joins, and aggregations |
-| Fresh Data | Ingestion pipelines deliver timely updates |
-| Consistent Models | Facts/dimensions reflect business processes |
-| Scalable Compute | System handles large datasets gracefully |
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Data Lakes:** Storing raw log files, JSON payloads, audio/video assets, machine learning datasets, or building multi-tenant exploratory data science environments.
+* **Choose / Prioritize Data Warehouses:** Immediate transactional consistency, strict relational constraints, and high-performance BI reporting.
 
-### Failure Modes
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-| Failure Type | Description |
-|--------------|-------------|
-| Exploding Joins | Incorrect grain or modelling errors |
-| Slow Queries | Poor partitioning or excessive scans |
-| Schema Drift | Inconsistent ingestion or weak governance |
-| Stale Data | Pipeline failures or long refresh cycles |
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Schema-on-Read** | Applying data structure definitions at query time rather than upon ingestion. | Enables instantaneous raw data ingestion; defers data cleaning complexity to query engines. | Lazy Schema Enforcement |
+| **Object Storage (S3/GCS)** | Flat, highly durable distributed key-value object stores. | Provides virtually limitless scalable storage with low baseline costs. | Distributed Cloud Object Store |
+| **Partition Directory Layout** | Organizing data into folder hierarchies (e.g., year=2026/month=10/). | Allows query engines to skip irrelevant folders entirely during scans. | Partition Pruning Mechanics |
 
----
+#### 🚨 Misapplication Diagnostics in Production
 
-## 🔗 Related Runbook Concepts
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Small File Problem** | Ingesting millions of tiny files into object storage via frequent streaming micro-batches. | Severe API listing latency, metadata catalog bloat, and slow query scan performance. | Implement background compaction jobs to merge small files into optimal sized blocks (e.g., 128MB+ Parquet files). |
 
-- Data Pipeline Quality
-- Data Modelling
-- Application Storage Systems
-- Performance Storage Systems
-- ETL/ELT Pipelines
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Lakehouse Architecture">
+
+### 🏛️ Lakehouse Architecture
+
+:::tip
+
+**Definition**
+An open architectural design that combines the cheap, flexible storage of data lakes with the ACID transactions, schema enforcement, and performance of data warehouses.
+:::
+
+> **Interview Pitch:** *"Lakehouses bridge the gap between lakes and warehouses by introducing transactional metadata layers on top of cheap object storage, delivering ACID guarantees and time-travel directly over your data files."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Lakehouses:** Unified analytical architectures requiring both raw data science access and warehouse-grade reliability, compliance auditing, and concurrent batch/streaming updates.
+* **Choose / Prioritize Traditional Warehouses:** Pure enterprise BI use cases where fully managed proprietary vendor ecosystems are preferred over open table formats.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Transaction Log (Delta/Iceberg)** | An ordered ledger tracking every file addition, deletion, and modification. | Brings ACID transactions, rollbacks, and concurrent read/write safety to object storage. | ACID Table Transaction Log |
+| **Time Travel / Versioning** | The ability to query historical table states as of a specific timestamp or version. | Enables instant data auditing, reproducible ML training runs, and emergency rollbacks. | Snapshot Isolation & Time Travel |
+| **Z-Order / Clustering** | Multi-dimensional clustering that co-locates related data within files. | Accelerates data skipping during filtering queries without requiring rigid partitions. | Data Skipping & Colocation |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Neglected Table Maintenance** | Failing to run regular VACUUM, compaction, and snapshot expiration maintenance tasks. | Ballooning storage costs from un-cleaned old data files and degraded query scan speeds due to metadata overhead. | Schedule automated table maintenance pipelines to optimize transaction logs and compact small data files regularly. |
+
+  </TabItem>
+</Tabs>

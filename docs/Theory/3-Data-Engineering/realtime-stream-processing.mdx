@@ -1,0 +1,152 @@
+---
+title: Real-Time Stream Processing
+sidebar_label: Real-Time Stream Processing
+description: Architectural patterns and computational models designed to ingest, transform, and analyze continuous data streams with low latency.
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Real-Time Stream Processing
+
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Real-time stream processing patterns govern how continuous data streams are computed, joined, and windowed on-the-fly, balancing latency, throughput, and stateful consistency under high load.
+* **Core Primitives:** Stateful event windows, watermarking for late data, stream-table joins, and exactly-once processing engines.
+* **BAU & Operational Realities:** State store memory exhaustion, out-of-order event drops, checkpoint latency spikes, and consumer lag amplification under load.
+:::
+
+## 🔍 Theory Focus Point
+
+* **Time & Windowing:** Focus on **event time vs. processing time** and **watermark generation** to evaluate late-arriving data handling and window completeness.
+* **Stateful Compute:** Focus on **RocksDB state stores** and **stream-to-stream joins** to evaluate checkpoint memory pressure and state migration overhead.
+* **Execution Engines:** Focus on **micro-batching** vs. **native continuous streaming** to evaluate throughput capacity versus end-to-end latency trade-offs.
+
+---
+
+## 🧩 System Interactions & Scaling Realities
+
+<Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Time & Windowing** | Local timer thread evaluation, sorting queues | Distributed watermark propagation across cluster partitions, synchronization delay |
+| **Stateful Compute** | Local RocksDB state reads/writes, cache eviction locks | Distributed state checkpoint uploads to object storage, coordinator node coordination |
+| **Execution Engines** | Worker thread scheduling, memory buffer handoffs | Broker partition leader rebalancing, cluster resource reallocation under scaling |
+
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
+
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Time & Windowing** | State memory footprint for open time windows | Late-arriving event backpressure, network queue saturation for buffered records |
+| **Stateful Compute** | State store file growth, compaction CPU overhead | Large-scale state snapshot transmission to remote object storage sinks |
+| **Execution Engines** | Heap allocation per message batch, garbage collection pressure | End-to-end network transmission latency, cross-node shuffle bandwidth limits |
+
+  </TabItem>
+</Tabs>
+
+---
+
+## Domain Deep-Dives
+
+<Tabs>
+  <TabItem value="subtopic1" label="Time & Windowing">
+
+### ⏰ Time Semantics & Windowing
+
+:::tip
+
+**Definition**
+The architectural framework managing how continuous stream events are grouped into finite time intervals, accounting for network delays and out-of-order data.
+:::
+
+> **Interview Pitch:** *"In streaming, you must distinguish between when an event happened (event time) and when your system processed it (processing time), using watermarks to measure progress and handle late arrivals."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Event-Time Processing:** Analytics requiring accurate historical reconstruction, user behavior tracking, or financial event correlation regardless of network delay.
+* **Choose / Prioritize Processing-Time Windows:** Low-latency operational monitoring or simple metric dashboards where exact historical accuracy is less critical than speed.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Event Time** | The timestamp embedded inside the data payload when the event originally occurred. | Ensures deterministic, repeatable calculations independent of system lag. | Payload Timestamping |
+| **Watermark** | A moving threshold signaling that all events up to a certain timestamp have arrived. | Tells stream windows when it is safe to close and emit final aggregations. | Progress Heuristics |
+| **Sliding Window** | Overlapping time intervals that move forward continuously by fixed steps. | Smooths out high-frequency metric spikes over rolling periods. | Sliding Time Windows |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Aggressive Watermarks** | Setting overly tight watermark delay thresholds to minimize reporting latency. | Massive dropping or premature closing of windows, dumping late-arriving events into side outputs. | Tune watermark delays based on observed network jitter percentiles and maximum lag telemetry. |
+
+  </TabItem>
+
+  <TabItem value="subtopic2" label="Stateful Compute">
+
+### 🧠 Stateful Stream Compute
+
+:::tip
+
+**Definition**
+The computational capability to maintain, update, and query local state (such as aggregations or sessions) across incoming stream events.
+:::
+
+> **Interview Pitch:** *"Stateful stream processing remembers past events across time, enabling complex features like session tracking and real-time fraud detection without querying external databases on every single event."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Stateful Streaming:** Complex pattern matching, sessionization, deduplication, and stream-to-stream joins.
+* **Choose / Prioritize Stateless Processing:** Simple data transformation, masking, or routing pipelines where no historical context is required.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Embedded State Store (RocksDB)** | A fast, embedded key-value store maintaining stream state locally on worker nodes. | Enables sub-millisecond state lookups that scale beyond single-node RAM limits. | Embedded LSM-Tree Storage |
+| **Distributed Checkpoint** | Periodically taking a consistent snapshot of all worker states and flushing to storage. | Enables fault tolerance and exactly-once recovery after worker node crashes. | Chandy-Lamport Snapshots |
+| **Stream-Table Join** | Joining a high-velocity event stream with a changing reference database table. | Enriches stream events with dimensional data in real-time. | Stateful Enrichment Joins |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unbounded State Growth** | Maintaining streaming sessions or aggregations without configuring time-to-live (TTL) expiration. | Out-Of-Memory (OOM) worker crashes, disk space exhaustion on RocksDB stores, and slow checkpointing. | Implement strict state TTL expiration policies and configure incremental state checkpointing. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="Execution Engines">
+
+### ⚙️ Stream Execution Engines
+
+:::tip
+
+**Definition**
+The core runtime architectures (micro-batch vs. native continuous) that execute stream transformations and manage resource scheduling across cluster nodes.
+:::
+
+> **Interview Pitch:** *"Execution engines dictate your latency-throughput tradeoff: micro-batch engines process data in rapid chunks for high throughput, while native continuous engines process events one-by-one for ultra-low latency."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Micro-Batching (Spark Structured Streaming):** High-throughput analytical processing, simpler operational debugging, and transactional lakehouse integration.
+* **Choose / Prioritize Native Continuous (Flink):** Sub-millisecond latency requirements, complex event processing (CEP), and real-time fraud detection.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Micro-Batching** | Grouping incoming stream records into tiny, bounded time batches (e.g., 100ms). | Simplifies fault tolerance and resource management; introduces small baseline latency. | Micro-Batch Scheduling |
+| **Native Continuous Processing** | Processing every single incoming event immediately as an unbounded stream. | Achieves true sub-millisecond latency; requires complex distributed coordination for recovery. | Continuous Operator Model |
+| **Backpressure Propagation** | Slowing down upstream ingestion when downstream operators cannot keep up. | Prevents cascading worker memory explosions and buffer overflows under heavy load. | Dynamic Flow Control |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Ignoring Backpressure** | Running continuous streams without monitoring operator buffer queues and network backpressure. | Worker node memory exhaustion, task heartbeats timing out, and cascading cluster restarts. | Enable reactive backpressure signaling, autoscale worker compute nodes, and optimize slow operators. |
+
+  </TabItem>
+</Tabs>
