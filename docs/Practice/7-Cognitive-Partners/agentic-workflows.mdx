@@ -1,0 +1,76 @@
+---
+title: Cognitive Partners Agentic Workflows
+sidebar_label: Agentic Workflows
+description: Operational runbook and interaction guide for autonomous AI agents, execution loops, tool-calling permissions, safety guardrails, and pipeline triage.
+sidebar_position: 2
+---
+
+# 📘 Cognitive Partners Agentic Workflows
+
+:::tip
+
+## Cognitive Partners Agentic Workflows
+
+**What is it?**
+Autonomous AI agent frameworks and SDK-driven orchestration runtimes (such as custom LLM agent loops, autonomous coding agents, and API-driven execution engines) designed to execute multi-step plans, invoke external tools, and modify codebases with minimal human intervention.
+
+### 📚 Related Theory References
+* Cognitive Partners & Human-AI Collaboration — Architecture of agentic control loops, tool-calling token schemas, and execution permission boundaries.
+:::
+
+## 🧭 When to Use It
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Automated multi-file refactoring, test generation, and closed-loop debugging suites with human approval gates.<br>• Programmatic data extraction, repository migration scripting, and batch documentation generation.<br>• Executing structured workflows requiring multi-step tool invocation and error self-correction. | • Executing unverified production database mutations or destructive infrastructure deletions without strict sandboxing.<br>• Handling real-time low-latency systems or safety-critical control loops requiring deterministic execution.<br>• Processing unmasked production secrets, credentials, or high-risk compliance data. |
+
+---
+
+## 🚀 Getting Started & Prerequisites
+
+What prerequisites, dependencies, or initial configurations are required before interacting with agentic runtimes?
+1. **Local Environment:** Sandboxed container environment (Docker / ephemeral VM) with restricted filesystem permissions and required CLI runtimes installed.
+2. **Configuration Setup:** API credentials configured via secure environment variables (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`), agent execution manifests defined, and hard guardrail permission boundaries enforced.
+
+---
+
+## 🔑 Tool Requirements
+
+* **Access URL / Portal:** Local agent execution runtime or managed enterprise agent console (e.g., internal agent platform endpoint or CLI runner).
+* **Authentication Method:** Scoped API bearer tokens, workspace service accounts, or isolated container tokens.
+* **Initial Setup Check:** Verify container sandbox isolation, check tool execution permission flags (e.g., read-only vs write access), and test dry-run execution modes before launching autonomous agent loops.
+
+---
+
+## 📋 Common & Useful Workflows
+
+```bash
+# 1. Initialize an agentic run session in a sandboxed directory
+agent-cli init --workspace ./sandbox --mode interactive
+
+# 2. Execute an agentic task with strict tool-calling constraints and max iteration limits
+agent-cli run --prompt "Refactor unit tests in tests/" --max-steps 10 --allow-read --deny-shell
+
+# 3. Inspect agent execution trace logs and tool call histories for auditing
+agent-cli logs --session-id <session_id> --format json
+
+# 4. Dry-run a proposed agent code patch and review unified diffs before applying
+git diff --no-index ./original ./agent_output
+
+```
+
+---
+
+## 🚨 Operational Triage Snapshots
+
+:::danger
+Quick-reference diagnostics for common agentic execution and loop failures:
+:::
+
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Infinite Agent Execution Loop** | Model trapped repeating failed tool calls or misinterpreting error feedback outputs. | Step counters, agent execution logs, and repetitive API call payloads. | Terminate the agent process immediately, inject corrective system instructions, and lower max iteration limits. |
+| **Unauthorized Tool Access / Escape** | Misconfigured sandbox permissions allowing arbitrary shell command execution. | Container isolation boundaries, tool schema definitions, and execution permissions. | Revoke shell execution tools (`--deny-shell`), enforce strict container sandboxing, and audit access logs. |
+| **Context Degradation / Hallucinated States** | Long-running agent context window filling up with irrelevant execution history or errors. | Token usage metrics across agent steps and historical message arrays. | Implement context window summarization, reset state between sub-tasks, or checkpoint stable memory. |
+| **Malformed Tool Argument Payload** | JSON schema mismatch between model-generated tool calls and expected API arguments. | Tool definition schemas, parameter type validations, and agent stderr error outputs. | Refine strict JSON schema definitions in tool wrappers and add robust argument validation checks. |
+

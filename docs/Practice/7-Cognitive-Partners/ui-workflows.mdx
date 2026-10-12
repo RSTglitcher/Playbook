@@ -1,0 +1,78 @@
+---
+title: Cognitive Partners UI & IDE Workflows
+sidebar_label: UI Workflows
+description: Operational runbook and interaction guide for browser-based LLM chats, IDE extensions, context window hygiene, and enterprise data privacy configurations.
+sidebar_position: 1
+---
+
+# 📘 Cognitive Partners UI & IDE Workflows
+
+:::tip
+
+## Cognitive Partners UI & IDE Workflows
+
+**What is it?**
+Interactive cognitive partner interfaces—such as web-based chat portals (ChatGPT, Claude), inline IDE extensions (GitHub Copilot, Augment), and desktop assistants—designed for human-in-the-loop code generation, debugging, and text synthesis.
+
+### 📚 Related Theory References
+* Cognitive Partners & Human-AI Collaboration — Architecture of prompt context windows, token limits, and data privacy boundaries.
+:::
+
+## 🧭 When to Use It
+
+| When to Use | When Not to Use |
+| :--- | :--- |
+| • Interactive code generation, refactoring suggestions, and exploratory debugging in IDEs.<br>• Brainstorming architectural patterns, drafting documentation, and reviewing code diffs.<br>• Rapid prototyping and querying codebases via human-in-the-loop web chat interfaces. | • Autonomous unattended execution of multi-step code deployments or CI/CD pipelines.<br>• Processing unmasked production customer PII or sensitive restricted corporate intellectual property on public tiers.<br>• Real-time high-throughput programmatic data transformation loops. |
+
+---
+
+## 🚀 Getting Started & Prerequisites
+
+What prerequisites, dependencies, or initial configurations are required before interacting with UI cognitive tools?
+1. **Local Environment:** Supported IDE installed (VS Code, JetBrains IDEs) with official extension plugins enabled.
+2. **Configuration Setup:** Enterprise SSO authentication, organization-level data privacy toggle verification (ensuring history/training retention is disabled for sensitive code), and valid API keys or seat licenses assigned.
+
+---
+
+## 🔑 Tool Requirements
+
+* **Access URL / Portal:** Enterprise tenant portals (e.g., `https://chatgpt.com`, `https://claude.ai`, or corporate GitHub/Augment console).
+* **Authentication Method:** Corporate Single Sign-On (SAML/OAuth) or personal access tokens mapped to enterprise seat tiers.
+* **Initial Setup Check:** Verify that enterprise privacy settings are active (e.g., zero data retention policies enabled) and extension status indicators show successful connection to your organization's tenant before pasting source code.
+
+---
+
+## 📋 Common & Useful Workflows
+
+```bash
+# 1. Verify IDE extension health and connection status via IDE command palette
+# (Press Cmd+Shift+P / Ctrl+Shift+P and run:)
+> GitHub Copilot: Status / Augment: Check Connection
+
+# 2. Scope IDE context cleanly before prompting by targeting specific files
+# Reference local files explicitly using workspace tagging or chat attachments:
+# "@file:src/auth/service.py Can you explain the token validation logic?"
+
+# 3. Export chat session logs or diagnostic error traces for troubleshooting
+# Use the export/share history features in web UI or save chat history markdown locally.
+
+# 4. Clear context window / reset chat session when switching tasks to avoid prompt drift
+# Start a fresh thread to clear old token memory and stale assumptions.
+
+```
+
+---
+
+## 🚨 Operational Triage Snapshots
+
+:::danger
+Quick-reference diagnostics for common cognitive UI and IDE partner failures:
+:::
+
+| Symptom / Telemetry | Root Cause | What to Check | Immediate Action |
+| --- | --- | --- | --- |
+| **Hallucinated Code / APIs** | Outdated training cutoffs or lack of local repository context in web chat. | Model awareness limitations, missing imports, or unprovided library documentation. | Provide explicit documentation snippets or switch to IDE extensions with workspace indexing. |
+| **Context Window Exhaustion** | Pasting massive log files or entire code repositories into a single chat prompt. | Conversation length, token count warnings, and prompt payload size. | Truncate logs to relevant stack traces, clear chat history, and open a focused new session. |
+| **Inline Suggestions Lagging** | Network timeout, high latency, or heavy background file indexing by the IDE. | IDE extension status icon, network firewall rules, and CPU/memory utilization. | Restart the IDE extension service, check corporate proxy settings, or toggle inline completions off and on. |
+| **Data Privacy / Compliance Warning** | Accidental pasting of internal secrets, API keys, or restricted PII into public LLM tiers. | Active account tier (consumer vs enterprise) and organization data retention logs. | Revoke and rotate any leaked API credentials immediately; ensure enterprise SSO workspace mode is enforced. |
+
