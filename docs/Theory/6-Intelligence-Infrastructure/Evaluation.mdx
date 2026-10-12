@@ -1,232 +1,152 @@
 ---
-title: "Evaluation"
+title: Model & System Evaluation Theory
+sidebar_label: Evaluation
+description: Architectural patterns, measurement frameworks, and validation methodologies for machine learning and LLM systems.
+sidebar_position: 2
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip
-**What it is:**
-The process of measuring model performance using metrics, tests, datasets, and real‑world feedback.
+# Model & System Evaluation Theory
 
-- **Year developed:** 2010–present
-- **Primary purpose:** Ensure models behave correctly and reliably
-- **Target problem:** “How do we know if this model is good — and stays good?”
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Model evaluation is the rigorous measurement framework that determines whether a predictive or generative system is fit for purpose, reliable, and safe for production deployment.
+* **Core Primitives:** Precision/recall metrics, regression errors, RAG retrieval relevance, and drift detection.
+* **BAU & Operational Realities:** Misleading single-metric optimisation, unlabelled open-ended outputs, undetected data distribution drift, and long-tail hallucination risks in production.
 :::
 
----
+## 🔍 Theory Focus Point
 
-## 🗺️ Context
-
-### History
-Evaluation evolved alongside ML and AI:
-
-- Early ML → accuracy, precision, recall
-- Deep learning → confusion matrices, ROC curves
-- Modern ML → drift detection, fairness, calibration
-- LLM era → hallucination tests, RAG evaluation, grounding checks
-
-Today, evaluation is essential for:
-
-- ML models (classification, regression, ranking)
-- LLMs (reasoning, generation, retrieval)
-- RAG systems (context relevance, grounding)
-- Personalisation (ranking quality, engagement)
-- Safety and reliability
-
-### Strengths
-- Provides objective measurement
-- Enables comparison across models
-- Detects drift and degradation
-- Supports safe deployment
-- Helps diagnose failure modes
-
-### Limitations
-- Metrics can be misleading
-- Hard to evaluate open‑ended outputs
-- Requires high‑quality labelled data
-- Needs continuous monitoring
-- Can miss rare or long‑tail failures
-
-### TA‑Relevant Insights
-Evaluation matters for Technical Analysts because it:
-
-- reveals whether a model is fit for purpose
-- explains why predictions degrade over time
-- informs design decisions and trade‑offs
-- exposes risks in RAG and LLM systems
-- supports stakeholder communication
-- helps diagnose issues in production
-
-Evaluation is the **evidence layer** of AI systems.
+* **Statistical & Classification Accuracy:** Focus on **confusion matrices** and **precision-recall trade-offs** to evaluate classification reliability and false positive costs.
+* **Retrieval & Generation Quality (RAG):** Focus on **grounding verification** and **context relevance scoring** to evaluate hallucination risks in LLM pipelines.
+* **Production Stability:** Focus on **data distribution drift** and **continuous telemetry monitoring** to evaluate long-term model degradation and retraining triggers.
 
 ---
 
-## 🧠 Mental Model
-
-### How to Think in Evaluation
-Evaluation is not about “is the model good?”
-It is about **how the model behaves under different conditions**.
-
-Think of evaluation as:
-
-- a test suite
-- a measurement framework
-- a monitoring system
-- a risk detector
-- a comparison tool
-
-Evaluation answers:
-
-- How accurate is the model?
-- How reliable is it?
-- How does it behave on edge cases?
-- How does it degrade over time?
-- How does it compare to alternatives?
-
-### Ecosystem
-Evaluation interacts with:
-
-- training datasets
-- validation/test sets
-- production logs
-- monitoring dashboards
-- drift detectors
-- human feedback
-- RAG retrieval metrics
-- hallucination tests
-
-It is the **quality‑assurance backbone** of AI.
-
----
-
-## 📚 Core Concepts
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="engineering" label="Engineering">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Offline Evaluation Suites** | Local multi-threaded test runner execution, batch matrix math | Shared test harness queue contention, CI/CD pipeline test runner congestion |
+| **RAG Grounding Checks** | Local vector comparison and context token analysis | Distributed embedding database query fan-out and LLM judge API rate limits |
+| **Drift Monitoring** | In-memory statistical distribution calculation (KS-test) | High-concurrency production inference log aggregation and stream queue backpressure |
 
-### Engineering Workflows
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-```shell
---------------
-Evaluation Workflows
---------------
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Offline Evaluation Suites** | Large test dataset memory footprint, vector array allocation | Wide-area network transport of large golden test datasets to execution nodes |
+| **RAG Grounding Checks** | Document chunk parsing memory overhead | Remote LLM payload transmission costs for automated LLM-as-a-judge evaluations |
+| **Drift Monitoring** | Baseline vs. current window statistical state storage | High-volume production request logging to remote time-series data warehouses |
 
-# Evaluate classification model
-precision, recall, f1 = evaluate(model, test_set)
-
-# Compute regression error
-rmse = sqrt(mean((y_pred - y_true)^2))
-
-# Compare model versions
-compare(model_v11, model_v12)
-
-# Evaluate RAG retrieval
-retrieval_precision = relevant_docs / retrieved_docs
-
-# Monitor drift
-drift_score = drift_detector(current_data, baseline_data)
-```
-
-These workflows underpin ML and RAG evaluation.
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-### Analyst Interpretation Patterns
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Understand trade-offs
-"Why does increasing recall reduce precision?"
-
-# Diagnose drift
-"How has the model's performance changed over the last 30 days?"
-
-# Evaluate RAG
-"Are the retrieved documents relevant to the query?"
-
-# Assess hallucination risk
-"Which parts of the output are unsupported by the context?"
-
-# Compare models
-"Which version performs better on edge cases?"
-```
-
-These patterns help analysts reason about model quality and risk.
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🔁 Common Patterns
+## Domain Deep-Dives
 
-### Idioms & Typical Approaches
-- “Precision vs recall…” → classification trade‑offs
-- “RMSE/MAE…” → regression error
-- “Top‑k accuracy…” → ranking
-- “Relevance scoring…” → RAG
-- “Grounding checks…” → hallucination detection
-- “Drift monitoring…” → production reliability
-- “A/B testing…” → model comparison
+<Tabs>
+  <TabItem value="subtopic1" label="1. Statistical & Classification">
 
-### Pitfalls
-- Over‑optimising for a single metric
-- Ignoring edge cases
-- Using test data that doesn’t match production
-- Missing drift until it’s too late
-- Evaluating only offline, not in production
-- Assuming high accuracy = good model
-- Forgetting that LLM evaluation is probabilistic
+### 📊 Statistical & Classification Evaluation
 
----
+:::tip
 
-## 🧪 Examples
+**Definition**
+The mathematical measurement of model prediction correctness using ground-truth validation sets and categorical confusion matrices.
+:::
 
-### Example 1 — Classification
-```text
-Precision: 0.92
-Recall: 0.61
-Interpretation: Model is cautious — misses many positives.
-```
+> **Interview Pitch:** *"Classification evaluation is about understanding the asymmetry of errors—balancing precision and recall ensures you weigh the cost of false positives against dangerous false negatives."*
 
-### Example 2 — Regression
-```text
-RMSE: 4.2
-Interpretation: Predictions deviate by ~4 units on average.
-```
+#### 🧠 Decision Drivers
+* **Choose / Prioritize High Precision:** Safety-critical or financial domains where false positives carry high operational friction or high transaction costs.
+* **Choose / Prioritize High Recall:** Diagnostic or security threat detection where missing a true positive (false negative) has catastrophic consequences.
 
-### Example 3 — RAG
-```text
-Retrieved 5 documents
-Only 2 were relevant
-Retrieval precision = 40%
-```
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-### Example 4 — Drift
-```text
-Model accuracy dropped from 88% → 72% after data distribution changed.
-```
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Precision** | Out of all positive predictions made, how many were actually correct? | Minimizes false alarms, ensuring system reliability under heavy alert volume. | Positive Predictive Value |
+| **Recall** | Out of all actual true instances in the data, how many did the model find? | Measures completeness; ensures the model doesn't miss critical target events. | Sensitivity / True Positive Rate |
+| **Root Mean Square Error (RMSE)** | Measuring the average magnitude of squared prediction errors in regression. | Heavily penalizes large outlier errors, guiding continuous optimization loops. | Regression Error Variance |
 
----
+#### 🚨 Misapplication Diagnostics in Production
 
-## 📝 Glossary
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Single-Metric Optimisation** | Relying exclusively on overall accuracy while ignoring severe class imbalance in the dataset. | High apparent model accuracy (e.g., 98%) while failing entirely to catch the rare target class (0% recall). | Track balanced metrics such as F1-Score, Precision-Recall AUC, and confusion matrix distributions. |
 
-| Term | Meaning |
-|------|---------|
-| **Precision** | How many predicted positives were correct |
-| **Recall** | How many actual positives were found |
-| **F1 Score** | Harmonic mean of precision and recall |
-| **RMSE** | Root Mean Square Error for regression |
-| **Drift** | Model performance degrades as data changes |
-| **Grounding** | Ensuring LLM outputs are supported by retrieved context |
-| **Hallucination** | LLM output that is incorrect or unsupported |
-| **A/B Testing** | Comparing two model versions in production |
+  </TabItem>
 
+  <TabItem value="subtopic2" label="2. RAG & LLM Evaluation">
+
+### 🤖 RAG & Generative LLM Evaluation
+
+:::tip
+
+**Definition**
+The framework for assessing probabilistic language model outputs, hallucination rates, and retrieval grounding quality in generative architectures.
+:::
+
+> **Interview Pitch:** *"Evaluating LLMs and RAG systems requires moving beyond deterministic tests—you must continuously measure context relevance and grounding to ensure answers are derived strictly from retrieved documents rather than parametric hallucinations."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Automated LLM-as-a-Judge:** Rapid continuous integration pipelines requiring scalable, automated semantic evaluation of text generation.
+* **Choose / Prioritize Human-in-the-Loop Evaluation:** High-stakes customer-facing applications requiring nuanced subjective judgment and compliance review.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Retrieval Precision** | Measuring what percentage of retrieved documents were actually relevant to the user query. | Prevents noise injection into the prompt context window, reducing token waste and hallucinations. | Context Precision Scoring |
+| **Grounding Verification** | Checking whether generated statements are explicitly supported by the provided source text. | Eliminates fabrications, enforcing factual reliability in enterprise knowledge assistants. | Faithfulness & Factuality Metrics |
+| **Hallucination Detection** | Identifying instances where an LLM generates plausible-sounding but factually incorrect information. | Protects brand reputation and prevents downstream operational errors caused by bad advice. | Parametric Hallucination Scoring |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Prompt-Drift Blindness** | Assuming an LLM evaluation score remains valid after modifying system prompts or switching base model versions. | Sudden spikes in hallucination rates or broken response formatting in production clients. | Implement automated regression test suites that run across every system prompt or model version change. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="3. Production Monitoring & Drift">
+
+### 🔄 Production Monitoring & Drift Detection
+
+:::tip
+
+**Definition**
+The continuous runtime observation of deployed model performance and data distribution shifts against baseline training conditions.
+:::
+
+> **Interview Pitch:** *"A model that passes offline evaluation will eventually fail in production if the underlying world changes—drift detection acts as your early-warning system for silent model degradation."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Automated Retraining Pipelines:** High-velocity environments with fast-changing user behavior where static models degrade rapidly.
+* **Choose / Prioritize Stable Baseline Monitoring:** Highly regulated models where automated retraining requires strict compliance and manual audit approval.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Data Distribution Drift** | Detecting when incoming production data characteristics deviate from the training distribution. | Flags when historical model assumptions no longer hold true in the live environment. | Covariate Shift Detection |
+| **Production A/B Testing** | Routing live traffic between two model versions to measure real-world user engagement. | Provides definitive business-impact validation before fully cutting over a new model version. | Controlled Experimentation |
+| **Performance Degradation Alerting** | Automated alarms triggered when key evaluation metrics drop below defined thresholds. | Prevents silent failures by alerting engineering teams the moment prediction quality dips. | Automated Telemetry Thresholding |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Silent Model Decay** | Deploying a model without tracking downstream business metrics or input feature drift. | Gradual decline in prediction quality and business conversion over months without any visible application crash. | Establish continuous telemetry pipelines comparing live request feature statistics against training baselines. |
+
+  </TabItem>
+</Tabs>

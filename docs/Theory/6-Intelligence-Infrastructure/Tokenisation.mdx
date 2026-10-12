@@ -1,230 +1,152 @@
 ---
-title: "Tokenisation"
+title: Tokenisation & Subword Mechanics Theory
+sidebar_label: Tokenisation
+description: Architectural patterns, subword algorithms, and context window management principles for LLM text processing.
+sidebar_position: 4
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip
-**What it is:**
-The process of converting text into tokens — the atomic units models operate on.
+# Tokenisation & Subword Mechanics Theory
 
-- **Year developed:** 2012–present
-- **Primary purpose:** Convert text into a numerical form models can process
-- **Target problem:** “How can a model understand and compute over human language?”
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Tokenisation is the foundational process of breaking text into atomic numerical units that models can compute over, acting as the bridge between human language and vector math.
+* **Core Primitives:** Subword tokenisation, Byte-Pair Encoding (BPE), token density, and context window limits.
+* **BAU & Operational Realities:** Unexpected context window overflows, asymmetric multi-language token costs, and high-frequency truncation of long prompt payloads.
 :::
 
----
+## 🔍 Theory Focus Point
 
-## 🗺️ Context
-
-### History
-Tokenisation evolved alongside NLP:
-
-- Early NLP → whitespace tokenisation
-- Word2Vec era → word‑level tokens
-- BPE (Byte Pair Encoding) → subword tokens
-- SentencePiece → language‑agnostic tokenisation
-- Modern LLMs → byte‑level and multimodal tokenisation
-
-Today, tokenisation is central to:
-
-- LLM inference
-- RAG
-- embeddings
-- cost estimation
-- context window management
-- multilingual processing
-
-### Strengths
-- Efficient representation of text
-- Handles rare or unknown words
-- Works across languages
-- Enables compression of long text
-- Predictable cost and context usage
-
-### Limitations
-- Not human‑interpretable
-- Different models use different tokenisers
-- Token boundaries can be surprising
-- Tokenisation errors can break meaning
-- Impacts cost and latency significantly
-
-### TA‑Relevant Insights
-Tokenisation matters for Technical Analysts because it:
-
-- determines how much text fits in a context window
-- affects cost and performance of AI features
-- influences retrieval quality in RAG
-- explains why some prompts behave unexpectedly
-- reveals why certain languages cost more to process
-- helps diagnose truncation, overflow, and hallucination risks
-
-Tokenisation is the **computational substrate** of LLMs.
+* **Algorithm & Subword Modeling:** Focus on **Byte-Pair Encoding (BPE)** and **vocabulary compression** to evaluate unknown word handling and memory overhead.
+* **Context Window Economics:** Focus on **token density variations** and **payload length calculations** to evaluate API cost and token exhaustion risks.
+* **Cross-Lingual Fairness:** Focus on **token expansion ratios across languages** to evaluate multilingual performance disparities.
 
 ---
 
-## 🧠 Mental Model
-
-### How to Think in Tokenisation
-Tokenisation is not about words — it is about **units of meaning the model can predict**.
-
-Think of tokenisation as:
-
-- the “alphabet” of the model
-- the smallest building blocks of its internal language
-- the units it counts, prices, and reasons over
-
-Examples:
-
-- “authentication” → may become 3–5 tokens
-- “login” → often 1 token
-- emojis → often 1 token
-- rare words → many tokens
-- code → highly token‑dense
-
-### Ecosystem
-Tokenisation interacts with:
-
-- embeddings
-- vector stores
-- RAG pipelines
-- prompt engineering
-- model serving
-- cost estimation
-- context windows
-
-It is the **entry point** to all LLM computation.
-
----
-
-## 📚 Core Concepts
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="engineering" label="Engineering">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Tokenisation Processing** | CPU-bound string regex matching and vocabulary lookup trees | API gateway request payload parsing and token counting overhead |
+| **Context Window Management** | In-memory token array allocation and index tracking | Large prompt transmission latency over network transport layers |
+| **Cost & Quota Calculation** | Local arithmetic accounting per batch submission | Metering broker queue throughput and rate-limit tracking |
 
-### Engineering Workflows
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-```shell
---------------
-Tokenisation Workflows
---------------
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Tokenisation Processing** | String memory overhead during massive corpus ingestion | High data transfer payload expansion during multi-turn chat logging |
+| **Context Window Management** | Fixed token limit threshold checks per request payload | Wide-area network bandwidth consumption for oversized prompt structures |
+| **Cost & Quota Calculation** | Local state storage of historical token usage logs | Cloud provider billing telemetry aggregation and synchronization lag |
 
-# Count tokens in a prompt
-POST /tokenize
-{
-  "model": "gpt-4o",
-  "input": "Explain the checkout flow."
-}
-
-# Estimate cost
-tokens * price_per_token
-
-# Detect truncation
-if (tokens > context_window) {
-  throw "Context overflow"
-}
-
-# Compress text
-"Summarise this to reduce token count"
-```
-
-These workflows underpin cost, latency, and context management.
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-### Analyst Interpretation Patterns
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Diagnose overflow
-"Why did the model ignore the last section of my prompt?"
-
-# Evaluate compression
-"How many tokens can we save by summarising this?"
-
-# Understand behaviour
-"Why does the model treat these two phrases differently?"
-
-# Compare languages
-"Why does this French text use more tokens than the English version?"
-
-# Optimise prompts
-"Rewrite this to be shorter but preserve meaning."
-```
-
-These patterns help analysts reason about model behaviour and cost.
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🔁 Common Patterns
+## Domain Deep-Dives
 
-### Idioms & Typical Approaches
-- “Count tokens…” → cost estimation
-- “Compress this…” → context optimisation
-- “Rewrite shorter…” → prompt efficiency
-- “Detect overflow…” → debugging
-- “Compare token counts…” → multilingual analysis
-- “Chunk text…” → RAG preparation
+<Tabs>
+  <TabItem value="subtopic1" label="1. Subword Mechanics">
 
-### Pitfalls
-- Assuming tokens = words
-- Mixing tokenisers across models
-- Ignoring token limits
-- Overloading prompts with unnecessary text
-- Forgetting that code is token‑dense
-- Assuming all languages tokenise equally
+### 🔠 Subword Tokenisation & Algorithms
 
----
+:::tip
 
-## 🧪 Examples
+**Definition**
+The algorithmic process of splitting text into subword units using frequency statistics, balancing vocabulary size with unknown word handling.
+:::
 
-### Example 1 — Token Density
-```text
-"authentication" → 4 tokens
-"auth" → 1 token
-```
+> **Interview Pitch:** *"Subword tokenisation solves the vocabulary explosion problem—instead of tracking every whole word, algorithms like Byte-Pair Encoding build a compact vocabulary of frequent character chunks that can construct any arbitrary word."*
 
-### Example 2 — Multilingual
-```text
-English: "Hello, how are you?" → ~6 tokens
-Japanese: "こんにちは、お元気ですか？" → ~12 tokens
-```
+#### 🧠 Decision Drivers
+* **Choose / Prioritize BPE / SentencePiece:** Modern LLM pipelines requiring language-agnostic text processing and robust handling of rare words.
+* **Choose / Prioritize Strict Word/Whitespace Tokenisation:** Legacy NLP applications or domain-specific parsers with fixed, closed vocabularies.
 
-### Example 3 — Code
-```python
-def calculate_total(items):
-    total = sum(items)
-    return total
-```
-→ often 20–40 tokens
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-### Example 4 — Compression
-```text
-Original: 500 tokens
-Summarised: 120 tokens
-```
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Byte-Pair Encoding (BPE)** | Iteratively merging the most frequent pairs of bytes or characters in a corpus. | Compresses vocabulary size while enabling the construction of unseen words from subword pieces. | Subword Vocabulary Compression |
+| **Vocabulary Size** | The total fixed dictionary of tokens recognized by the model's tokenizer. | Larger vocabularies improve compression efficiency but increase embedding matrix memory footprints. | Tokenizer Vocabulary Matrix |
+| **Special Tokens** | Designated tokens (e.g., `<|endoftext|>`, `<pad>`) marking structural boundaries. | Instructs the model on sequence starts, ends, and padding mechanics during generation. | Control Token Delimiters |
 
----
+#### 🚨 Misapplication Diagnostics in Production
 
-## 📝 Glossary
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Tokenizer Mismatch** | Using a tokenizer from one model architecture (e.g., GPT-4) to count or truncate tokens for a different model (e.g., Llama 3). | Subtle context overflow errors, misaligned token index boundaries, and incorrect token billing estimates. | Ensure programmatic verification that the active client tokenizer strictly matches the target serving model version. |
 
-| Term | Meaning |
-|------|---------|
-| **Token** | The smallest unit of text a model processes |
-| **Tokeniser** | The algorithm that splits text into tokens |
-| **BPE** | Byte Pair Encoding, a common tokenisation method |
-| **Context Window** | Maximum number of tokens a model can handle |
-| **Token Density** | How many tokens a piece of text produces |
-| **Compression** | Reducing token count while preserving meaning |
+  </TabItem>
 
+  <TabItem value="subtopic2" label="2. Context & Economics">
+
+### 📉 Context Windows & Cost Economics
+
+:::tip
+
+**Definition**
+The operational management of model token limits, payload sizing, and API cost attribution driven by input/output token counts.
+:::
+
+> **Interview Pitch:** *"Tokens are the currency and the boundary of LLMs—managing token density and context windows directly dictates your API inference costs and application failure rates."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Concise Prompt Structures:** High-throughput, cost-sensitive production applications operating under strict latency and token budgets.
+* **Choose / Prioritize Verbose, Context-Heavy Prompts:** Complex reasoning tasks requiring maximum background context despite higher API costs.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Context Window Limit** | The strict maximum sum of input and output tokens a model can process at once. | Exceeding this limit causes immediate hard truncations or API rejection errors. | Maximum Sequence Length |
+| **Token Density** | The ratio of tokens produced per word or character in a given payload. | Dense text (like code or dense numbers) consumes significantly more tokens per character than standard prose. | Character-to-Token Ratio |
+| **Dynamic Truncation** | Programmatically trimming historical prompt context when approaching window limits. | Prevents application crashes at the cost of losing older conversational history. | Sliding Context Window |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Silent Truncation Failure** | Sending oversized chat histories to an LLM without client-side token counting or summarisation. | The model ignores critical instructions placed at the beginning of the prompt because history overflowed the tail boundary. | Implement pre-flight token counting middleware and automatic conversation summarisation pipelines. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="3. Multilingual & Code">
+
+### 🌐 Multilingual & Code Tokenization Disparities
+
+:::tip
+
+**Definition**
+The analysis of how tokenizers handle non-English scripts, code syntax, and special characters with varying efficiency.
+:::
+
+> **Interview Pitch:** *"Not all tokens are created equal—tokenizers trained primarily on English text penalize non-English languages and dense source code with inflated token counts and higher operational costs."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Multilingual Tokenizers (e.g., Tiktoken, SentencePiece):** Global applications serving diverse linguistic markets to maintain cost and performance parity.
+* **Choose / Prioritize Specialized Code Tokenizers:** Development assistants and IDE extensions requiring efficient parsing of programmatic syntax.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Token Inflation** | When non-Latin scripts or code require 2x to 4x more tokens to express the same semantic meaning as English. | Results in disproportionately high API costs and faster context window exhaustion for international users. | Cross-Lingual Token Efficiency |
+| **Whitespace Sensitivity** | How tokenizers handle leading, trailing, or multiple spaces in source strings. | Small formatting differences can drastically alter token IDs and downstream model interpretation. | Lexical Whitespace Parsing |
+| **Code Token Density** | The high concentration of punctuation, camelCase, and indentations in code snippets. | Forces code inputs to consume far more tokens per line than natural language prose. | Programmatic Token Compression |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Multilingual Cost Blindness** | Budgeting API costs based solely on English user testing metrics before launching internationally. | Unexpected cost spikes and rapid token exhaustion when deployed to regions using non-Latin alphabets. | Calculate language-specific token multipliers during financial forecasting and capacity planning. |
+
+  </TabItem>
+</Tabs>

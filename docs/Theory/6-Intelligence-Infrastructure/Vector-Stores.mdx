@@ -1,232 +1,152 @@
 ---
-title: "Vector Stores"
+title: Vector Stores & Similarity Search Theory
+sidebar_label: Vector Stores
+description: Architectural patterns, indexing mechanisms, and similarity search principles for vector databases and retrieval systems.
+sidebar_position: 5
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip
-**What they are:**
-Databases optimised for storing embeddings and performing similarity search.
+# Vector Stores & Similarity Search Theory
 
-- **Year developed:** 2018–present
-- **Primary purpose:** Fast retrieval of semantically similar items
-- **Target problem:** “How can we search by meaning instead of keywords?”
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Vector stores are specialized databases optimized to store high-dimensional embeddings and perform lightning-fast similarity searches, serving as the semantic backbone of modern AI systems.
+* **Core Primitives:** Approximate Nearest Neighbor (ANN) search, vector indexing algorithms, spatial distance metrics, and metadata filtering.
+* **BAU & Operational Realities:** Massive RAM memory footprints, slow index build/compaction times, cross-model embedding contamination, and unpredictable latency spikes during high-concurrency vector query fan-out.
 :::
 
----
+## 🔍 Theory Focus Point
 
-## 🗺️ Context
-
-### History
-Vector stores emerged as embeddings became central to AI systems:
-
-- Early ANN (Approximate Nearest Neighbour) libraries → FAISS, Annoy
-- First vector databases → Pinecone, Milvus
-- Modern integrated stores → Weaviate, Chroma, Elasticsearch vector search
-
-They now power:
-
-- RAG
-- semantic search
-- recommendation systems
-- anomaly detection
-- clustering
-- personalisation
-- knowledge retrieval
-
-### Strengths
-- Extremely fast similarity search
-- Scales to millions or billions of vectors
-- Supports metadata filtering
-- Integrates with RAG pipelines
-- Enables semantic search and ranking
-
-### Limitations
-- Requires embeddings of consistent dimension
-- Sensitive to embedding quality
-- Needs careful indexing and tuning
-- Harder to debug than keyword search
-- Retrieval quality depends on vector density and distribution
-
-### TA‑Relevant Insights
-Vector stores matter for Technical Analysts because they:
-
-- determine which documents an AI system retrieves
-- explain why certain results appear (or don’t)
-- influence the quality of RAG responses
-- reveal how personalisation systems match users to content
-- expose issues like drift, stale embeddings, or poor indexing
-- help diagnose relevance, ranking, and retrieval failures
-
-Vector stores are the **semantic backbone** of AI systems.
+* **Indexing & Spatial Architecture:** Focus on **graph-based structures (HNSW)** and **quantization techniques** to evaluate memory consumption and query latency trade-offs.
+* **Distance Metrics & Retrieval:** Focus on **cosine similarity** and **Euclidean distance mathematics** to evaluate search precision and vector alignment.
+* **Hybrid Operations:** Focus on **metadata filtering boundaries** and **sparse-dense fusion** to evaluate multi-tenant data isolation and ranking relevance.
 
 ---
 
-## 🧠 Mental Model
-
-### How to Think in Vector Stores
-Vector stores are not relational databases.
-They are **geometric search engines**.
-
-Think of a vector store as:
-
-- a map of meaning
-- where each item is a point in high‑dimensional space
-- and search is “find the closest points to this meaning”
-
-Similarity is measured using:
-
-- cosine similarity
-- dot product
-- Euclidean distance
-
-Vector stores let AI systems:
-
-- retrieve relevant documents
-- match users to items
-- cluster similar content
-- detect anomalies
-- power semantic search
-
-### Ecosystem
-Vector stores interact with:
-
-- embeddings
-- RAG pipelines
-- LLMs
-- metadata filters
-- ranking algorithms
-- caching layers
-- ETL pipelines
-
-They are the **retrieval layer** of AI systems.
-
----
-
-## 📚 Core Concepts
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="engineering" label="Engineering">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Vector Index Queries** | CPU thread lock contention during nearest neighbor graph traversals | Distributed cluster shard query fan-out and network aggregation latency |
+| **Index Compaction & Updates** | Memory heap locking during background HNSW graph re-indexing | Node synchronization overhead during parallel vector ingestion and batch updates |
+| **Metadata Filtering** | Local inverted index lock acquisition alongside vector lookups | Distributed relational filter pushdown contention across clustered shards |
 
-### Engineering Workflows
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-```shell
---------------
-Vector Store Workflows
---------------
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Index Storage Footprint** | Massive RAM consumption for uncompressed raw vector indexes | High disk-to-memory synchronization bandwidth demands across distributed nodes |
+| **Query Payload Transfer** | High-dimensional array memory allocation per search operation | Wide-area network transport of large query vectors and result record sets |
+| **Data Ingestion Scaling** | Sequential disk block writing during bulk vector inserts | Replication lag across distributed storage nodes during high-volume ingestion |
 
-# Insert a vector
-INSERT INTO vector_store (id, vector, metadata);
-
-# Query by similarity
-SELECT *
-FROM vector_store
-ORDER BY vector <-> query_embedding
-LIMIT 5;
-
-# Filter by metadata
-SELECT *
-FROM vector_store
-WHERE metadata.category = 'payments'
-ORDER BY vector <-> query_embedding;
-
-# Update embeddings
-UPDATE vector_store
-SET vector = new_embedding
-WHERE id = 'doc_123';
-```
-
-These workflows underpin semantic search and RAG retrieval.
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-### Analyst Interpretation Patterns
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Diagnose retrieval
-"Why did the system retrieve these items instead of others?"
-
-# Evaluate relevance
-"Are these retrieved documents semantically aligned with the query?"
-
-# Understand ranking
-"Explain why this item ranked higher than the others."
-
-# Identify drift
-"Which embeddings are outdated or inconsistent with the new model?"
-
-# Validate personalisation
-"How does the user embedding compare to recommended items?"
-```
-
-These patterns help analysts reason about retrieval behaviour.
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🔁 Common Patterns
+## Domain Deep-Dives
 
-### Idioms & Typical Approaches
-- “Find similar items…” → semantic search
-- “Retrieve context…” → RAG
-- “Cluster these…” → grouping
-- “Match user to content…” → personalisation
-- “Rank by similarity…” → relevance scoring
-- “Filter by metadata…” → hybrid search
+<Tabs>
+  <TabItem value="subtopic1" label="1. Indexing Architectures">
 
-### Pitfalls
-- Mixing embeddings from different models
-- Using vector search without metadata filters
-- Forgetting to re‑embed after data changes
-- Assuming vector search is deterministic
-- Using vector stores for exact matching
-- Ignoring embedding drift over time
+### 🗺️ Vector Storage & Indexing Architectures
 
----
+:::tip
 
-## 🧪 Examples
+**Definition**
+The specialized data structures and storage engines designed to organize high-dimensional vectors for rapid spatial retrieval without exhaustive linear scans.
+:::
 
-### Example 1 — Semantic Search
-```text
-Query: "How do I reset my password?"
-Vector store retrieves: authentication, login, MFA docs
-```
+> **Interview Pitch:** *"As datasets scale to millions of embeddings, exact linear search becomes impossible—vector stores use sophisticated indexing architectures like HNSW graphs to trade a fraction of recall accuracy for massive speedups."*
 
-### Example 2 — Personalisation
-```text
-User embedding ≈ embeddings of items they are likely to engage with
-```
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Graph-Based Indexes (HNSW):** Low-latency, high-throughput production retrieval requirements where query speed is paramount.
+* **Choose / Prioritize Inverted File Indexes (IVF) / Quantization:** Massive, billion-scale datasets where memory constraints require aggressive compression of vector footprints.
 
-### Example 3 — RAG Retrieval
-```text
-Query embedding → vector store → top 5 relevant documents → LLM
-```
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-### Example 4 — Metadata Filtering
-```text
-Retrieve only documents tagged with "billing" AND semantically similar
-```
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Hierarchical Navigable Small World (HNSW)** | Multilayer graph structure that skips through vector space like navigating a multi-level transit map. | Delivers lightning-fast search speeds at the cost of higher memory consumption to store graph links. | Graph-Based ANN Indexing |
+| **Product Quantization (PQ)** | Breaking long vectors into smaller sub-vectors and compressing them into codebook centroids. | Dramatically reduces RAM footprint for massive vector collections with minimal recall loss. | Vector Space Quantization |
+| **Vector Partitioning** | Splitting vector collections across multiple physical database shards or nodes. | Enables horizontal scalability for datasets exceeding single-node memory capacities. | Distributed Vector Sharding |
 
----
+#### 🚨 Misapplication Diagnostics in Production
 
-## 📝 Glossary
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **RAM Exhaustion** | Deploying uncompressed HNSW indices on resource-constrained nodes without monitoring memory limits. | Sudden Out-Of-Memory (OOM) kernel panics and cluster node crashes during peak index traversal loads. | Implement vector quantization (PQ/SQ), tune construction parameters (`ef_construction`), or scale node RAM. |
 
-| Term | Meaning |
-|------|---------|
-| **Vector** | A list of numbers representing meaning |
-| **Embedding** | A vector that encodes semantic information |
-| **ANN Search** | Approximate nearest neighbour search |
-| **Cosine Similarity** | A measure of vector similarity |
-| **Hybrid Search** | Combining metadata filters + vector search |
-| **RAG** | Retrieval‑Augmented Generation |
+  </TabItem>
+
+  <TabItem value="subtopic2" label="2. Similarity Metrics">
+
+### 📐 Approximate Nearest Neighbor & Similarity Metrics
+
+:::tip
+
+**Definition**
+The mathematical algorithms and distance formulas used to calculate semantic proximity between query vectors and stored records.
+:::
+
+> **Interview Pitch:** *"Vector search is geometry in high-dimensional space—choosing the right similarity metric (like cosine similarity or dot product) ensures your system accurately interprets semantic direction versus absolute magnitude."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Cosine Similarity:** Normalized text embeddings where directional semantic alignment matters more than vector length.
+* **Choose / Prioritize Dot Product (Inner Product):** Recommendation systems or recommendation models where vector magnitude encodes item popularity or confidence.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **ANN Search (Approximate Nearest Neighbour)** | Probabilistic searching algorithms that find close vectors quickly without checking every item. | Reduces search time complexity from linear ($O(N)$) to logarithmic ($O(\log N)$). | Approximate Nearest Neighbour |
+| **Euclidean Distance (L2)** | Measuring the straight-line geometric distance between two points in multidimensional space. | Sensitive to absolute vector magnitude; requires normalized vectors for consistent semantic ranking. | L2 Norm Distance |
+| **Recall Rate** | The percentage of true nearest neighbors successfully captured by an approximate search query. | Quantifies the accuracy trade-off accepted when trading exact search speed for ANN performance. | Retrieval Recall Accuracy |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Metric Mismatch** | Using Euclidean distance on non-normalized vectors when cosine similarity was required for semantic text matching. | Irrelevant search results and degraded retrieval quality because length variations skew distance calculations. | Audit vector store configuration to ensure the chosen distance metric strictly matches the embedding model training specification. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="3. Hybrid Search & Metadata">
+
+### 🔍 Hybrid Search & Metadata Filtering
+
+:::tip
+
+**Definition**
+The integration of traditional relational metadata filtering and keyword search with dense vector similarity to refine retrieval results.
+:::
+
+> **Interview Pitch:** *"Pure vector search is blind to exact identifiers and business rules—hybrid search combines metadata filtering and keyword scoring with semantic retrieval to ensure precision and context work together."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Hybrid Search (Vector + BM25):** Enterprise applications requiring both exact keyword lookups (SKUs, IDs) and semantic intent matching.
+* **Choose / Prioritize Pure Vector Search:** Exploratory conceptual knowledge bases where exact identifiers are secondary to thematic discovery.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Metadata Filtering** | Restricting vector similarity search results to records matching specific relational attributes (e.g., tenant ID = X). | Ensures data security boundaries and contextual accuracy in multi-tenant systems. | Filtered Vector Retrieval |
+| **Sparse-Dense Fusion** | Combining traditional keyword scoring (BM25) with dense vector scores into a unified ranking. | Solves the limitation where vector search fails to match exact acronyms, serial numbers, or rare terms. | Hybrid Search Reciprocal Rank Fusion |
+| **Re-ranking (Cross-Encoder)** | Passing top-k retrieved vector results through a heavy scoring model for precise final ordering. | Dramatically improves top-result relevance at the cost of slight additional latency. | Two-Stage Retrieval and Re-ranking |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Post-Filtering Performance Collapse** | Executing vector similarity search first across millions of rows, then filtering results down by a rare metadata tag. | Severe query latency timeouts because the vector engine evaluates millions of discarded records before applying filters. | Enforce pre-filtering or integrated metadata indexing so filters restrict the search space before ANN traversal. |
+
+  </TabItem>
+</Tabs>

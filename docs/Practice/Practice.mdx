@@ -21,7 +21,7 @@ Short, professional definition of what this tool is, its primary purpose, and th
 
 | When to Use | When Not to Use |
 | :--- | :--- |
-| • High-frequency operational interactions requiring standard tooling.<br>• Querying, mutating, or deploying through official supported interfaces. | • As an unmanaged workaround or shadow IT bypass.<br>• For workloads exceeding the system's intended architectural scale. |
+| • High-frequency operational interactions requiring standard tooling. • Querying, mutating, or deploying through official supported interfaces. | • As an unmanaged workaround or shadow IT bypass. • For workloads exceeding the system's intended architectural scale. |
 
 ---
 
@@ -79,16 +79,16 @@ Common symptoms, root causes, and immediate triage steps for this platform:
 
 | Symptom / Telemetry | TLDR Root Cause | What to Check | Action to Propose |
 | --- | --- | --- | --- |
-| **Connection Timeout / 504 Gateway Error** | Network congestion, firewall blocking, or target service down. | • Check DNS resolution<br>
+| **Connection Timeout / 504 Gateway Error** | Network congestion, firewall blocking, or target service down. | • Check DNS resolution 
 
-<br>• Verify VPN / VPC peering status | • Test connection via curl<br>
+ • Verify VPN / VPC peering status | • Test connection via curl 
 
-<br>• Escalate to platform infra team if upstream is down. |
-| **Authentication Expired / 401 Unauthorized** | Token TTL expired or missing credentials profile. | • Check local credential store<br>
+ • Escalate to platform infra team if upstream is down. |
+| **Authentication Expired / 401 Unauthorized** | Token TTL expired or missing credentials profile. | • Check local credential store 
 
-<br>• Review token expiration timestamp | • Re-authenticate via CLI login command.<br>
+ • Review token expiration timestamp | • Re-authenticate via CLI login command. 
 
-<br>• Refresh API tokens. |
-| **Rate Limit Exceeded / 429 Too Many Requests** | Query concurrency too high or missing request pagination. | • Review client request frequency<br>
+ • Refresh API tokens. |
+| **Rate Limit Exceeded / 429 Too Many Requests** | Query concurrency too high or missing request pagination. | • Review client request frequency 
 
-<br>• Check query cost / complexity score | • Implement request batching or exponential backoff retry logic. |
+ • Check query cost / complexity score | • Implement request batching or exponential backoff retry logic. |

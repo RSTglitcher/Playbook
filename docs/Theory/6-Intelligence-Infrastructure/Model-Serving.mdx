@@ -1,238 +1,152 @@
 ---
-title: "Model Serving"
+title: Model Serving & Inference Infrastructure
+sidebar_label: Model Serving
+description: Architectural patterns, runtime engines, and scaling methodologies for deploying machine learning and LLM workloads.
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-:::tip
-**What it is:**
-The infrastructure and processes that expose a trained model as an API or service.
+# Model Serving & Inference Infrastructure
 
-- **Year developed:** 2015–present
-- **Primary purpose:** Run models reliably at scale
-- **Target problem:** “How do we turn a trained model into a production system?”
+:::tip
+
+**Persona Lens: Workshop & Interview Mode**
+* **Quick Pitch:** Model serving is the operational discipline of exposing trained machine learning models as high-throughput, low-latency APIs while managing scarce GPU/CPU resources.
+* **Core Primitives:** Inference runtimes, dynamic batching, KV caching, and autoscaling thresholds.
+* **BAU & Operational Realities:** Out-of-memory GPU panics, long-tail latency spikes under token generation variance, and prohibitive cloud inference costs at scale.
 :::
 
----
+## 🔍 Theory Focus Point
 
-## 🗺️ Context
-
-### History
-Model serving evolved from early ML scripts into full production systems:
-
-- Early ML → cron jobs, batch scoring
-- Microservices era → model APIs
-- Cloud ML → managed endpoints (SageMaker, Vertex AI)
-- Modern AI → GPU‑accelerated, multi‑model, low‑latency serving
-
-Today, model serving powers:
-
-- recommendation engines
-- fraud detection
-- personalisation
-- ranking and scoring
-- real‑time predictions
-- RAG pipelines
-- LLM inference
-
-### Strengths
-- Enables real‑time predictions
-- Scales with traffic
-- Supports versioning and rollback
-- Integrates with monitoring and observability
-- Can run on CPU, GPU, or specialised hardware
-
-### Limitations
-- Requires careful optimisation
-- Sensitive to latency and load
-- Needs robust monitoring
-- Can be expensive at scale
-- Requires coordination with data pipelines
-
-### TA‑Relevant Insights
-Model serving matters for Technical Analysts because it:
-
-- determines how predictions reach downstream systems
-- explains latency, throughput, and reliability constraints
-- reveals how models interact with APIs, queues, and pipelines
-- exposes failure modes like drift, stale features, or cold starts
-- helps evaluate feasibility of ML‑powered features
-- informs design decisions around sync vs async predictions
-
-Model serving is the **runtime reality** of ML systems.
+* **Runtime & Hardware Utilization:** Focus on **GPU memory offloading** and **tensor parallelization** to evaluate hardware throughput and latency constraints.
+* **Batching & Request Optimization:** Focus on **continuous batching mechanisms** and **KV cache management** to evaluate concurrency scaling.
+* **Deployment Topology:** Focus on **edge serving runtimes** versus **centralized cluster gateways** to evaluate network latency and privacy isolation.
 
 ---
 
-## 🧠 Mental Model
-
-### How to Think in Model Serving
-Model serving is not training — it is **systems engineering**.
-
-Think of model serving as:
-
-- a microservice
-- that loads a model
-- receives requests
-- runs inference
-- returns predictions
-- under strict latency and reliability constraints
-
-It is where:
-
-- ML meets distributed systems
-- predictions meet SLAs
-- data freshness meets performance
-- scaling meets cost
-
-### Ecosystem
-Model serving interacts with:
-
-- feature stores
-- data pipelines
-- APIs
-- queues
-- GPUs/CPUs
-- monitoring systems
-- autoscaling
-- caching layers
-- model registries
-
-It is the **operational backbone** of ML.
-
----
-
-## 📚 Core Concepts
+## 🧩 System Interactions & Scaling Realities
 
 <Tabs>
+  <TabItem value="concurrency" label="1. Concurrency & Contention" default>
 
-<TabItem value="engineering" label="Engineering">
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Inference Engines** | GPU thread scheduling, CUDA stream execution contention | API gateway request queue congestion, client connection pool limits |
+| **Dynamic Batching** | Worker thread lock acquisition during request queue pooling | Distributed load balancer distribution across heterogeneous GPU workers |
+| **KV Cache Management** | VRAM allocation tracking, page table memory locking | Cross-node tensor communication bottlenecks during distributed model shards |
 
-### Engineering Workflows
+  </TabItem>
+  <TabItem value="data" label="2. Data Growth & Latency">
 
-```shell
---------------
-Model Serving Workflows
---------------
+| Domain / Concept | Local Runtime Interaction | Remote & Distributed Interaction |
+| :--- | :--- | :--- |
+| **Inference Engines** | Model weights loading into VRAM, tensor memory footprints | Large request payload transmission and token streaming bandwidth |
+| **Dynamic Batching** | Dynamic input padding memory overhead | Wide-area network latency for multi-turn conversational request payloads |
+| **KV Cache Management** | Context window memory consumption growth per active session | State synchronization costs across distributed multi-node inference clusters |
 
-# Deploy a model endpoint
-POST /deploy
-{
-  "model": "fraud-model-v12",
-  "hardware": "gpu",
-  "autoscale": true
-}
-
-# Query the model
-POST /predict
-{
-  "features": { ... }
-}
-
-# Check model health
-GET /health
-
-# Roll back to previous version
-POST /rollback
-{
-  "model": "fraud-model-v11"
-}
-```
-
-These workflows underpin real‑time inference.
-
-</TabItem>
-
-<TabItem value="analyst" label="Analyst">
-
-### Analyst Interpretation Patterns
-
-```shell
---------------
-Analyst Interpretation Patterns
---------------
-
-# Understand latency
-"Why does this model take 300ms to respond?"
-
-# Diagnose failures
-"What happens if the model endpoint is unavailable?"
-
-# Evaluate scaling
-"How does the system handle traffic spikes?"
-
-# Interpret versioning
-"Which version of the model is currently serving predictions?"
-
-# Assess feasibility
-"Can this model run synchronously in the checkout flow?"
-```
-
-These patterns help analysts reason about runtime behaviour and system impact.
-
-</TabItem>
-
+  </TabItem>
 </Tabs>
 
 ---
 
-## 🔁 Common Patterns
+## Domain Deep-Dives
 
-### Idioms & Typical Approaches
-- “Serve as an API…” → real‑time inference
-- “Batch scoring…” → offline predictions
-- “Shadow deployment…” → safe rollout
-- “A/B testing…” → model comparison
-- “Autoscaling…” → traffic handling
-- “Caching…” → reduce latency
-- “GPU serving…” → heavy models
+<Tabs>
+  <TabItem value="subtopic1" label="1. Inference Runtimes">
 
-### Pitfalls
-- Cold starts causing latency spikes
-- Serving stale models or features
-- Missing monitoring → silent failures
-- Overloading GPUs/CPUs
-- Using sync serving where async is needed
-- Not versioning models properly
-- Ignoring drift and degradation
+### ⚡ Inference Infrastructure & Runtimes
 
----
+:::tip
 
-## 🧪 Examples
+**Definition**
+Specialized execution environments designed to optimize machine learning models for low-latency, high-throughput hardware serving.
+:::
 
-### Example 1 — Real‑Time API
-```text
-Client → Model Endpoint → Prediction → Downstream System
-```
+> **Interview Pitch:** *"Standard Python frameworks are too slow for production—production model serving requires specialized engines like vLLM or TensorRT-LLM that optimize memory layout and kernel execution for raw hardware speed."*
 
-### Example 2 — Batch Scoring
-```text
-Nightly job → Score all users → Store results in DB
-```
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Specialized Runtimes (vLLM/TGI):** High-throughput LLM serving requiring advanced memory management and token streaming.
+* **Choose / Prioritize Lightweight Standard Runtimes (ONNX/TorchScript):** Traditional classification or embedding models where standard container runtimes provide sufficient velocity.
 
-### Example 3 — Shadow Deployment
-```text
-New model receives traffic but does not affect users
-```
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
 
-### Example 4 — A/B Testing
-```text
-50% of users → model v11
-50% of users → model v12
-Compare performance
-```
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **KV Cache Optimization** | Storing previously computed attention keys and values so they aren't recalculated for every new token. | Dramatically accelerates generation speed and reduces memory fragmentation during text generation. | PagedAttention Memory Management |
+| **Tensor Parallelism** | Splitting large model weights across multiple GPUs within a single node. | Enables serving massive models that exceed the VRAM capacity of a single graphics card. | Multi-GPU Model Sharding |
+| **Quantization** | Converting model weights from 16-bit or 32-bit floats down to 8-bit or 4-bit integer values. | Cuts memory footprint in half or quarters with minimal degradation in output quality. | Weight Quantization (AWQ/GPTQ) |
 
----
+#### 🚨 Misapplication Diagnostics in Production
 
-## 📝 Glossary
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Unmanaged VRAM Allocation** | Loading oversized LLM models into GPU VRAM without accounting for peak dynamic batch context sizes. | Sudden CUDA Out-Of-Memory (OOM) crashes during peak user traffic spikes. | Implement strict memory budgeting, configure paged memory managers, and enforce maximum concurrency limits. |
 
-| Term | Meaning |
-|------|---------|
-| **Inference** | Running a model to generate predictions |
-| **Endpoint** | API exposing the model |
-| **Cold Start** | Delay when a model loads for the first time |
-| **Autoscaling** | Automatically adjusting compute based on load |
-| **Shadow Deployment** | Testing a model without affecting users |
-| **Model Registry** | Version control for models |
-| **Feature Store** | System for managing model inputs |
+  </TabItem>
 
+  <TabItem value="subtopic2" label="2. Dynamic Batching">
+
+### 🔄 Dynamic Batching & Scaling
+
+:::tip
+
+**Definition**
+The runtime mechanism of grouping incoming independent inference requests together on-the-fly to maximize hardware compute utilization.
+:::
+
+> **Interview Pitch:** *"Unlike traditional batch processing, continuous dynamic batching interleaves generation steps at the token level, ensuring GPUs stay saturated without forcing early requests to wait for late ones."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Continuous Batching:** High-concurrency generative AI APIs serving hundreds of concurrent chat users.
+* **Choose / Prioritize Static Batching:** Batch analytics pipelines or offline scoring jobs with fixed, predictable workloads.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Continuous Batching** | Inserting new inference requests into the batch at every generation iteration step. | Maximizes GPU compute efficiency and eliminates idle waiting times for variable-length outputs. | Iteration-Level Scheduling |
+| **Request Queueing** | Buffering incoming inference requests when traffic exceeds immediate hardware capacity. | Protects the serving cluster from crashing under sudden traffic bursts at the cost of slight initial latency. | Backpressure Rate Limiting |
+| **Autoscaling Metrics** | Scaling worker nodes based on active queue depth and GPU utilization rather than CPU load. | Ensures infrastructure scales up precisely when inference demand surges, avoiding cold-start stalls. | GPU-Aware Autoscaling |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Queue Starvation** | Setting maximum batch timeouts too high while receiving high volumes of long-generation prompts. | High tail latency (p99) where late-arriving requests experience massive delays before processing begins. | Tune maximum batch sizes and implement fair-share scheduling algorithms across client requests. |
+
+  </TabItem>
+
+  <TabItem value="subtopic3" label="3. Edge & Distributed Serving">
+
+### 🌐 Edge & Distributed Serving Topologies
+
+:::tip
+
+**Definition**
+The architectural placement of inference runtimes either locally on user hardware (edge) or distributed across multi-region cloud clusters.
+:::
+
+> **Interview Pitch:** *"Deciding where to serve a model is a trade-off between network latency, data privacy, and infrastructure cost—pushing inference to the edge eliminates network hops but limits compute capacity."*
+
+#### 🧠 Decision Drivers
+* **Choose / Prioritize Edge/On-Device Serving:** Latency-critical applications requiring offline operation or strict data privacy compliance (e.g., healthcare/finance).
+* **Choose / Prioritize Cloud Cluster Serving:** Large foundational models requiring massive multi-GPU clusters that cannot run locally.
+
+#### 🧬 Core Primitives & Off-the-Cuff Explanations
+
+| Primitive / Mechanism | Off-the-Cuff Explanation | Architectural Impact / Mechanism | Deep-Dive Research Term |
+| :--- | :--- | :--- | :--- |
+| **Model Distillation** | Training a smaller "student" model to mimic the outputs of a massive "teacher" model. | Produces compact models capable of running efficiently on edge devices or CPUs. | Knowledge Distillation |
+| **Geo-Distributed Routing** | Directing user inference requests to the nearest regional cloud serving cluster. | Minimizes wide-area network latency for global user bases. | Anycast DNS Routing |
+| **Warm Pool Management** | Maintaining idle initialized container replicas ready to handle sudden traffic spikes. | Eliminates cold-start model loading delays when scaling up instances. | Container Warm Pools |
+
+#### 🚨 Misapplication Diagnostics in Production
+
+| Concept | Misapplication Scenario | Production BAU Symptom / Telemetry | Remediation |
+| :--- | :--- | :--- | :--- |
+| **Cold-Start Latency Spikes** | Scaling inference pods to zero to save costs without maintaining warm container instances. | Initial user requests timing out or taking tens of seconds while weights load from object storage into VRAM. | Maintain minimum active replica warm pools or use shared network storage caching for fast weight loading. |
+
+  </TabItem>
+</Tabs>
