@@ -72,7 +72,7 @@ const config = {
             label: 'Play',
           },
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/RSTglitcher',
             label: 'GitHub',
             position: 'right',
           },
